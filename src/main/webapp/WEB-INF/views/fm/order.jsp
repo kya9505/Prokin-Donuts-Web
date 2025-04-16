@@ -615,6 +615,7 @@
         $('#memberDeleteModal').modal('show');
     });
 
+    //mypageData
     <%@ include file="/WEB-INF/views/includes/mypageData.jsp" %>
 
 </script>
