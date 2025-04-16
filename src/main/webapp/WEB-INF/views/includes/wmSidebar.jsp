@@ -32,10 +32,10 @@
                    data-bs-toggle="collapse"
                    data-bs-target="#ddmenu_55"
                    aria-controls="ddmenu_55"
-                   aria-expanded="true"
+                   aria-expanded="false"
                    aria-label="Toggle navigation">
                     <span class="icon">
-                        <i class="lni lni-cart"></i>
+                        <i width="20" height="20" viewBox="0 0 20 20" fill="none" class="lni lni-cart"></i>
                     </span>
                     <span class="text">입고관리</span>
                 </a>
