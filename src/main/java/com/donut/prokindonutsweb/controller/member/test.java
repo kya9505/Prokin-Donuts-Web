@@ -18,8 +18,11 @@ public class test {
     @GetMapping("/home/findPassword")
     public void findPassword(){}
 
-
     @GetMapping("/fm/order")
     public void order(){}
+
+    @GetMapping("/wm/outbound")
+    public void outbound(){}
+
 
 }
