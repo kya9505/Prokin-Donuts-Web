@@ -3,7 +3,7 @@ plugins {
     id 'war'
 }
 
-group 'com.donut'
+group 'com.ssg'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -26,6 +26,81 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+
+    /**
+     * Spring Framework 의 핵심 기능을 프로젝트에 포함시킨다.
+     */
+    // https://mvnrepository.com/artifact/org.springframework/spring-core
+    implementation 'org.springframework:spring-core:5.3.27'
+
+    /**
+     * Spring-core 의 상위 모듈로
+     * ApplicationContext, 스프링 빈 관리 기능, 애노테이션 기반 설정 등을 포함한다.
+     */
+    implementation 'org.springframework:spring-context:5.3.27'
+
+    /**
+     * Spring 의 웹 애플리케이션, MVC 구조를 구현할 때 필요한 모든 기능
+     */
+    implementation 'org.springframework:spring-webmvc:5.3.27'
+
+    /**
+     * 단위 테스트, 통합 테스트에서 Spring 의 기능을 활용
+     */
+    implementation 'org.springframework:spring-test:5.3.27'
+
+    /**
+     * @Data, @Builder 등 반복되는 코드를 자동으로 생성해주는 lombok 라이브러리 추가
+     * 컴파일 시점에만 필요하기 때문에 compileOnly
+     */
+    //https://mvnrepository.com/artifact/org.projectlombok/lombok
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    testCompileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    /**
+     * 로그 출력을 도와주는 라이브러리(콘솔, 파일, 레벨별 로깅 등)
+     */
+    implementation 'org.apache.logging.log4j:log4j-api:2.22.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.22.1'
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.22.1'
+
+    /**
+     * JSP 에서 자주 사용하는 기능들을 태그로 쉽게 사용할 수 있게 해주는 라이브러리
+     */
+    // https://mvnrepository.com/artifact/jstl/jstl
+    implementation 'jstl:jstl:1.2'
+
+    /**
+     * Java 에서 MySQL DB 에 접속할 수 있게 해주는 드라이버 (JDBC 드라이버)
+     */
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.21'
+
+    /**
+     * 순수 JDBC 보다 쉽게 DB 를 다룰 수 있도록 해주는 Spring 모듈
+     */
+    implementation 'org.springframework:spring-jdbc:5.3.27'
+
+    /**
+     * 트랜잭션 관리 모듈
+     * @Transactional 어노테이션으로 트랜잭션 제어 가능
+     */
+    implementation 'org.springframework:spring-tx:5.3.27'
+
+    /**
+     * DB 커넥션 풀 라이브러리
+     * DB 연결을 매번 새로 하지 않고, 미리 만들어진 커넥션을 재사용
+     */
+    // https://mvnrepository.com/artifact/com.zaxxer/HikariCP
+    implementation 'com.zaxxer:HikariCP:5.0.0'
+
+    /**
+     * MyBatis 를 Spring 프레임워크에 통합시켜주는 모듈
+     * Mapper 자동 연결, 트랜잭션 연동 등 제공
+     */
+    implementation 'org.mybatis:mybatis:3.5.7'
+    implementation 'org.mybatis:mybatis-spring:2.0.6'
 }
 
 test {
