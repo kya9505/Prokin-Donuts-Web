@@ -19,14 +19,30 @@ public class test {
     public void findPassword(){}
 
     @GetMapping("/fm/order")
-    public void order(){}
+    public void Forder(){}
 
     @GetMapping("/wm/outbound")
-    public void outbound(){}
+    public void Woutbound(){}
 
 
     @GetMapping("/wm/inbound/status")
-    public void status(){}
+    public void Wstatus(){}
+
+
+    @GetMapping("/wm/inbound/approval")
+    public void Wapproval(){}
+
+    @GetMapping("/wm/warehouse")
+    public void Wwarehouse(){}
+
+    @GetMapping("/wm/inbound/request")
+    public void Wrequest(){}
+
+    @GetMapping("/wm/member")
+    public void Wmember(){}
+    @GetMapping("/wm/Dashboard")
+    public void WDashboard(){}
+
 
 
 }
