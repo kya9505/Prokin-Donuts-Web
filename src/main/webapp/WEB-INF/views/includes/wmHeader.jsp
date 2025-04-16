@@ -24,8 +24,8 @@
                                         <img src="<c:url value='/resources/images/profile/user_profile.png'/>" alt="" />
                                     </div>
                                     <div>
-                                        <h6 class="fw-500">김관리자</h6>
-                                        <p>QH Admin</p>
+                                        <h6 class="fw-500">박창고</h6>
+                                        <p>WM Admin</p>
                                     </div>
                                 </div>
                             </div>
@@ -34,7 +34,7 @@
                             <li>
                                 <div class="flex items-center !p-1">
                                     <div class="content-a">
-                                        <h6>김관리자</h6>
+                                        <h6>박창고</h6>
                                         <p>Email@gmail.com</p>
                                     </div>
                                 </div>
