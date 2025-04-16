@@ -6,8 +6,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class test {
 
-    @GetMapping("/qh/login/login")
-    public void login(){
+    @GetMapping("/home/login")
+    public void login(){}
 
-    }
+    @GetMapping("/home/signup")
+    public void signup(){}
+
+    @GetMapping("/home/findId")
+    public void findId(){}
+
+    @GetMapping("/home/findPassword")
+    public void findPassword(){}
+
 }
