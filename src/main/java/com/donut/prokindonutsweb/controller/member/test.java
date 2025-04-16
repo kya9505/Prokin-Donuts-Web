@@ -25,4 +25,8 @@ public class test {
     public void outbound(){}
 
 
+    @GetMapping("/wm/inbound/status")
+    public void status(){}
+
+
 }
