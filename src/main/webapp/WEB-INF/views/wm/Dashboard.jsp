@@ -27,16 +27,16 @@
 <!-- ======== Preloader =========== -->
 
 <!-- ======== sidebar-nav start =========== -->
-<%@include file="/WEB-INF/views/includes/wmSidebar.jsp"%>
+<%@include file="/WEB-INF/views/includes/sidebar/wmSidebar.jsp"%>
 <!-- ======== sidebar-nav end =========== -->
 
 <!-- ======== main-wrapper start =========== -->
 <main class="main-wrapper">
     <!-- ========== header start ========== -->
-    <%@include file="/WEB-INF/views/includes/wmHeader.jsp"%>
+    <%@include file="/WEB-INF/views/includes/Header/wmHeader.jsp"%>
     <!-- ========== header end ========== -->
     <!-- Modal HTML Start -->
-    <%@ include file="/WEB-INF/views/includes/mypage.jsp" %>
+    <%@ include file="/WEB-INF/views/includes/mypage/mypage.jsp" %>
     <!-- Modal HTML End -->
 
     <!-- ========== section start ========== -->
@@ -207,7 +207,7 @@
 
 <script>
     //mypageData
-    <%@ include file="/WEB-INF/views/includes/mypageData.jsp" %>
+    <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
     // ======== jvectormap activation
     var markers = [
         { name: "Egypt", coords: [26.8206, 30.8025] },
