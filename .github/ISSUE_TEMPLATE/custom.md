@@ -6,7 +6,8 @@
 `log.info()` 메서드를 사용했지만, 콘솔에 로그가 출력되지 않음.  
 </details>
 
-
+- (내용)
+- (내용)
 ---
 
 ## 🧠 Why did it happen?  
@@ -18,7 +19,8 @@
 - `resources` 경로에 있는 설정이 테스트 실행 시 인식되지 않기 때문에 별도 설정 필요
 </details>
 
-
+- (내용)
+- (내용)
 ---
 
 ## 🔧 How was it fixed?  
@@ -29,7 +31,8 @@
 - `src/test/resources` 경로에 `log4j2-test.xml` 파일을 추가하여 테스트 환경에서도 로그 출력 가능하게 설정
 </details>
 
-
+- (내용)
+- (내용)
 ---
 
 ## 📎 Notes  
@@ -41,3 +44,5 @@
 - `log4j2.xml`과 `log4j2-test.xml`의 우선순위 확인 필요  
 </details>
 
+- (내용)
+- (내용)
