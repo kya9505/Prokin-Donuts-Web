@@ -110,7 +110,7 @@
     </header>
     <!-- ========== header end ========== -->
     <!-- Modal HTML Start -->
-    <%@ include file="/WEB-INF/views/includes/mypage.jsp" %>
+    <%@ include file="/WEB-INF/views/includes/mypage/mypage.jsp" %>
     <!-- Modal HTML End -->
 
     <!-- ========== section start ========== -->
@@ -616,7 +616,7 @@
     });
 
     //mypageData
-    <%@ include file="/WEB-INF/views/includes/mypageData.jsp" %>
+    <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
 
 </script>
 
