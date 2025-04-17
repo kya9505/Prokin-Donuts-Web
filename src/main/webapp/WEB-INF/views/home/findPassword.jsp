@@ -27,7 +27,7 @@
 
 
 <!-- ======== sidebar-nav start =========== -->
-<%@ include file="/WEB-INF/views/includes/homeSidebar.jsp" %>
+<%@ include file="/WEB-INF/views/includes/sidebar/homeSidebar.jsp" %>
 <!-- ======== sidebar-nav end =========== -->
 
 <!-- ======== main-wrapper start =========== -->
@@ -140,11 +140,11 @@
                                 <div class="col-12">
                                     <ul style="display: flex; align-items: center; padding: 0; margin-top: 1rem; list-style: none;">
                                         <li style="flex: 1;">
-                                            <a href="signup.html">Create an account</a>
+                                            <a href="<c:url value='/home/signup'/>">Create an account</a>
 
                                         </li>
                                         <li style="margin-left: 12px;">
-                                            <a href="index.html"> Sign In</a>
+                                            <a href="<c:url value='/home/login'/>">Sign In</a>
 
                                         </li>
                                     </ul>

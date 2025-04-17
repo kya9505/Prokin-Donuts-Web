@@ -27,7 +27,7 @@
 <!-- ======== Preloader =========== -->
 
 <!-- ======== sidebar-nav start =========== -->
-<%@ include file="/WEB-INF/views/includes/homeSidebar.jsp" %>
+<%@ include file="/WEB-INF/views/includes/sidebar/homeSidebar.jsp" %>
 <!-- ======== sidebar-nav end =========== -->
 
 <!-- ======== main-wrapper start =========== -->
@@ -120,8 +120,8 @@
                                     <div class="col-xxl-6 col-lg-12 col-md-6">
                                         <div class="mb-30 text-end">
                                             <p class="mb-0">
-                                                <a href="find-id.html" class="hover-underline">아이디 찾기</a> &nbsp;|&nbsp;
-                                                <a href="find-password.html" class="hover-underline">비밀번호 찾기</a>
+                                                <a href="<c:url value='/home/findId'/>" class="hover-underline">아이디 찾기</a>
+                                                <a href="<c:url value='/home/findPassword'/>" class="hover-underline">비밀번호 찾기</a>
                                             </p>
                                         </div>
                                     </div>
@@ -139,7 +139,7 @@
                             <div class="singin-option pt-40">
                                 <p class="text-sm text-medium text-dark text-center">
                                     Don’t have any account yet?
-                                    <a href="signup.html">Create an account</a>
+                                    <a href="<c:url value='/home/signup'/>">Create an account</a>
                                 </p>
                             </div>
                         </div>
