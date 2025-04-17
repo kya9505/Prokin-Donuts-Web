@@ -10,7 +10,7 @@
     <nav class="sidebar-nav">
         <ul>
             <li class="nav-item">
-                <a href="qh-dashboard.html">
+                <a href="<c:url value='/qh/Dashboard'/>">
               <span class="icon">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -21,7 +21,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="wm-dashboard.html">
+                <a href="<c:url value='/wm/Dashboard'/>">
               <span class="icon">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -32,7 +32,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="fm-dashboard.html">
+                <a href="<c:url value='/fm/order'/>">
               <span class="icon">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
