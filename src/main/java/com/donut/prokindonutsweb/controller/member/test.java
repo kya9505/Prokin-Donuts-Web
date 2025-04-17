@@ -43,6 +43,35 @@ public class test {
     @GetMapping("/wm/Dashboard")
     public void WDashboard(){}
 
+    @GetMapping("/qh/Dashboard")
+    public void QDashboard(){}
+
+    @GetMapping("/qh/inbound/request")
+    public void QIrequest(){}
+
+    @GetMapping("/qh/inbound/status")
+    public void QIstatus(){}
+
+    @GetMapping("/qh/member/list")
+    public void QMlist(){}
+
+    @GetMapping("/qh/member/request")
+    public void QMrequest(){}
+
+    @GetMapping("/qh/franchise")
+    public void Qfranchise(){}
+
+    @GetMapping("/qh/inventory")
+    public void Qinventory(){}
+
+    @GetMapping("/qh/outbound")
+    public void Qoutbound(){}
+
+    @GetMapping("/qh/product")
+    public void Qproduct(){}
+
+    @GetMapping("/qh/warehouse")
+    public void Qwarehouse(){}
 
 
 }
