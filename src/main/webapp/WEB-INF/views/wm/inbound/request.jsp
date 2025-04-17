@@ -27,16 +27,16 @@
 <!-- ======== Preloader =========== -->
 
 <!-- ======== sidebar-nav start =========== -->
-<%@include file="/WEB-INF/views/includes/wmSidebar.jsp"%>
+<%@include file="/WEB-INF/views/includes/sidebar/wmSidebar.jsp"%>
 <!-- ======== sidebar-nav end =========== -->
 
 <!-- ======== main-wrapper start =========== -->
 <main class="main-wrapper">
     <!-- ========== header start ========== -->
-    <%@include file="/WEB-INF/views/includes/wmHeader.jsp"%>
+    <%@include file="/WEB-INF/views/includes/Header/wmHeader.jsp"%>
     <!-- ========== header end ========== -->
     <!-- Modal HTML Start -->
-    <%@ include file="/WEB-INF/views/includes/mypage.jsp" %>
+    <%@ include file="/WEB-INF/views/includes/mypage/mypage.jsp" %>
     <!-- Modal HTML End -->
 
     <!-- ========== section start ========== -->
@@ -402,7 +402,7 @@
         $('#datatable tbody input.row-checkbox:checked').prop('checked', false);
     });
     //mypageData
-    <%@ include file="/WEB-INF/views/includes/mypageData.jsp" %>
+    <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
 
 
 </script>
