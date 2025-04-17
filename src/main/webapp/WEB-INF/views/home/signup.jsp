@@ -27,7 +27,7 @@
 <!-- ======== Preloader =========== -->
 
 <!-- ======== sidebar-nav start =========== -->
-<%@ include file="/WEB-INF/views/includes/homeSidebar.jsp" %>
+<%@ include file="/WEB-INF/views/includes/sidebar/homeSidebar.jsp" %>
 <!-- ======== sidebar-nav end =========== -->
 
 <!-- ======== main-wrapper start =========== -->
@@ -168,7 +168,7 @@
                                     <div class="singin-option pt-40">
                                         <p class="text-sm text-medium text-dark text-center">
                                             Already have an account?
-                                            <a href="index.html">Sign In</a>
+                                            <a href="<c:url value='/home/login'/>">Sign In</a>
                                         </p>
                                     </div>
                                 </div>
