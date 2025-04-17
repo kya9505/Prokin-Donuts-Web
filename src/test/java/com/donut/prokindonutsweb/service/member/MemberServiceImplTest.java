@@ -17,7 +17,7 @@ import java.util.Optional;
 @ContextConfiguration(locations = "file:src/main/webapp/WEB-INF/spring/root-context.xml")
 class MemberServiceImplTest {
     @Autowired
-    private MemberServiceImpl memberService;
+    private MemberService memberService;
 
     @Test
     public void loadMember(){
