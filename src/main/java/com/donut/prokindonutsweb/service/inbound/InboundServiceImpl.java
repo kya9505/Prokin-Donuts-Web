@@ -1,9 +1,6 @@
 package com.donut.prokindonutsweb.service.inbound;
 
-import com.donut.prokindonutsweb.dto.inbound.InboundDetailVO;
-import com.donut.prokindonutsweb.dto.inbound.InboundVO;
-import com.donut.prokindonutsweb.dto.inbound.ProductDTO;
-import com.donut.prokindonutsweb.dto.inbound.ProductVO;
+import com.donut.prokindonutsweb.dto.inbound.*;
 import com.donut.prokindonutsweb.mappers.inbound.InboundMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,7 +30,7 @@ public class InboundServiceImpl implements InboundService {
     }
 
     @Override
-    public void saveInbound(InboundVO inboundVO) {
+    public void saveInbound(InboundDTO inboundDTO) {
 
     }
 
