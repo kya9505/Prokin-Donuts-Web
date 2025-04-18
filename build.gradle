@@ -107,6 +107,13 @@ dependencies {
     * DTO와 VO 간의 매핑을 자동으로 처리
     */
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.1.1'
+
+
+
+
+    // Mockito -> 테스트를 위한 설정
+    testImplementation 'org.mockito:mockito-core:4.11.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.11.0'
 }
 
 test {

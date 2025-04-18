@@ -4,7 +4,7 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.donut.prokindonutsweb.mappers.inbound.InboundMapper">
 
-    <select id="selectAllProductList" resultType="com.donut.prokindonutsweb.dto.inbound.ProductDTO">
+    <select id="selectAllProductList" resultType="com.donut.prokindonutsweb.dto.inbound.ProductVO">
         select productCode, productName, productPrice, storedType from product
     </select>
 
