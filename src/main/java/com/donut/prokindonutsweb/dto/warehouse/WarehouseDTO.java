@@ -1,0 +1,18 @@
+package com.donut.prokindonutsweb.dto.warehouse;
+
+import lombok.*;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
+public class WarehouseDTO {
+  private String warehouseCode;
+  private String warehouseName;
+  private int capacityLimit;
+  private String address;
+  private String memberCode;
+  private String memberName;
+  private String memberEmail;
+}

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.donut.prokindonutsweb.mappers.warehouse.WarehouseMapper">
+
+    <!-- 1) 창고 조회 -->
+    <select id="selectWarehouseList" resultType="WarehouseDTO">
+        SELECT
+            w.warehouseCode,
+            w.warehouseName,
+            w.capacityLimit,
+            w.address,
+            w.memberCode,
+            m.name   AS memberName,
+            m.email  AS memberEmail
+        FROM Warehouse w
+        LEFT JOIN MemberAccount m
+        ON w.memberCode = m.memberCode
+    </select>
+
+    <!-- 2) 창고 등록 -->
+    <insert id="insertWarehouse" parameterType="WarehouseDTO">
+        INSERT INTO Warehouse
+            (warehouseCode, warehouseName, capacityLimit, address, memberCode)
+        VALUES
+            (#{warehouseCode}, #{warehouseName}, #{capacityLimit}, #{address}, #{memberCode})
+    </insert>
+
+    <!-- 3) 창고 수정 -->
+    <update id="updateWarehouse" parameterType="WarehouseDTO">
+        UPDATE Warehouse
+        SET warehouseName   = #{warehouseName},
+            memberCode      = #{memberCode}
+        WHERE warehouseCode   = #{warehouseCode}
+    </update>
+
+    <!-- 4) 창고 삭제 -->
+    <delete id="deleteWarehouse" parameterType="WarehouseDTO">
+        DELETE FROM Warehouse
+        WHERE warehouseCode = #{warehouseCode}
+    </delete>
+
+    <!-- 5) 할당되지 않은 창고 관리자 목록 조회 -->
+    <select id="selectUnAccountWMList" resultType="MemberAccountVO">
+        SELECT
+            m.memberCode,
+            m.authorityCode,
+            m.name
+        FROM MemberAccount m
+        WHERE m.memberCode NOT IN (
+            SELECT w.memberCode
+            FROM Warehouse w
+            WHERE w.memberCode IS NOT NULL
+        ) AND m.authorityCode LIKE '%WM%'
+    </select>
+
+</mapper>

@@ -263,8 +263,8 @@
 
                                 <!-- 담당자 (드롭다운) -->
                                 <div class="mb-3">
-                                    <label for="manager" class="form-label">담당자</label>
-                                    <select class="form-select" id="manager" name="manager">
+                                    <label for="member" class="form-label">담당자</label>
+                                    <select class="form-select" id="member" name="member">
                                         <option value="">담당자 선택</option>
                                         <!-- 더미데이터는 AJAX 시뮬레이션으로 채워집니다 -->
                                     </select>
@@ -317,8 +317,8 @@
 
                                 <!-- 담당자 드롭박스 -->
                                 <div class="mb-3">
-                                    <label for="modifyWarehouseManager" class="form-label">담당자</label>
-                                    <select class="form-select" id="modifyWarehouseManager">
+                                    <label for="modifyWarehouseMember" class="form-label">담당자</label>
+                                    <select class="form-select" id="modifyWarehouseMember">
                                         <option value="">담당자 선택</option>
                                         <!-- 옵션은 스크립트에서 동적으로 채워집니다. -->
                                     </select>
@@ -463,7 +463,7 @@
                         "warehouseName": "남양주DT센터",
                         "warehouseLocation": "경기도",
                         "capacityLimit": 1000000,
-                        "mamberCode": "WM1",
+                        "memberCode": "WM1",
                         "name": "이근면",
                         "email": "lee233@gmail.com"
                     },
@@ -472,7 +472,7 @@
                         "warehouseName": "대전DT센터",
                         "warehouseLocation": "대전광역시",
                         "capacityLimit": 2000000,
-                        "mamberCode": "WM2",
+                        "memberCode": "WM2",
                         "name": "김세진",
                         "email": "sejin_wm2@gmail.com"
                     },
@@ -481,7 +481,7 @@
                         "warehouseName": "전주DT센터",
                         "warehouseLocation": "전라북도",
                         "capacityLimit": 1200000,
-                        "mamberCode": null,
+                        "memberCode": null,
                         "name": null,
                         "email": null
                     },
@@ -490,7 +490,7 @@
                         "warehouseName": "부산서면DT센터",
                         "warehouseLocation": "부산광역시",
                         "capacityLimit": 1500000,
-                        "mamberCode": null,
+                        "memberCode": null,
                         "name": null,
                         "email": null
                     }
@@ -657,26 +657,26 @@
         });
 
         // 담당자 드롭다운: AJAX 시뮬레이션 (더미 데이터)
-        function loadManagers() {
-            const dummyManagers = [
+        function loadMembers() {
+            const dummyMembers = [
                 { id: "WM1", name: "이근면" },
                 { id: "WM2", name: "김세진" },
                 { id: "WM3", name: "박수연" },
                 { id: "WM4", name: "오민재" }
             ];
 
-            const $select = $('#manager');
+            const $select = $('#member');
             $select.empty().append(`<option value="">담당자 선택</option>`); // 기본값 초기화
 
-            dummyManagers.forEach(manager => {
-                const label = `${manager.id} | ${manager.name}`;
-                $select.append(`<option value="${manager.id}">${label}</option>`);
+            dummyMembers.forEach(member => {
+                const label = `${member.id} | ${member.name}`;
+                $select.append(`<option value="${member.id}">${label}</option>`);
             });
         }
 
         // 모달 표시될 때마다 담당자 목록 로드(필요 시점에 맞춰 호출)
         $("#warehouseAddModal").on("show.bs.modal", function () {
-            loadManagers();
+            loadMembers();
         });
 
         // 창고명 필드 변경 시 중복 체크 상태 초기화 (재검증 필요)
@@ -778,8 +778,8 @@
             if (rowData) {
                 // 창고명 입력란에 데이터를 세팅
                 $("#modifyWarehouseName").val(rowData.warehouseName);
-                // 담당자 드롭박스에 선택할 값으로 rowData의 managerCode를 세팅
-                $("#modifyWarehouseManager").val(rowData.managerCode);
+                // 담당자 드롭박스에 선택할 값으로 rowData의 memberCode를 세팅
+                $("#modifyWarehouseMember").val(rowData.memberCode);
             }
 
             // 3. 전역 변수: 창고 수정 모달에서 창고명 중복 체크 상태 (초기값 false)
@@ -812,25 +812,25 @@
             });
 
             // 6. 담당자 드롭박스: 더미 데이터로 채워넣는 함수 (실제 AJAX 호출 시 변경 가능)
-            function loadModifyWarehouseManagers() {
-                var dummyManagers = [
+            function loadModifyWarehouseMembers() {
+                var dummyMembers = [
                     { id: "WM1", name: "이근면" },
                     { id: "WM2", name: "김세진" },
                     { id: "WM3", name: "박수연" },
                     { id: "WM4", name: "오민재" }
                 ];
-                var $select = $("#modifyWarehouseManager");
+                var $select = $("#modifyWarehouseMember");
                 $select.empty().append('<option value="">담당자 선택</option>');
-                $.each(dummyManagers, function (i, mgr) {
+                $.each(dummyMembers, function (i, mgr) {
                     $select.append(`<option value="${mgr.id}">${mgr.id} | ${mgr.name}</option>`);
                 });
             }
 
             // 7. 모달이 열릴 때마다 담당자 목록을 로드하고, rowData에 저장된 담당자 값이 있다면 선택
             $("#warehouseEditModal").off("show.bs.modal").on("show.bs.modal", function () {
-                loadModifyWarehouseManagers();
-                if (rowData && rowData.mamberCode) {
-                    $("#modifyWarehouseManager").val(rowData.mamberCode);
+                loadModifyWarehouseMembers();
+                if (rowData && rowData.memberCode) {
+                    $("#modifyWarehouseMember").val(rowData.memberCode);
                 }
             });
 
@@ -906,8 +906,8 @@
                 $('#deleteContentOk').show();
                 $('#deleteContentNo').hide();
 
-                // 담당자 정보: 만약 rowData.mamberCode가 있다면 "담당자코드 | 담당자명"을, 없으면 "담당자없음"으로 표시
-                var 담당자정보 = rowData.mamberCode ? (rowData.mamberCode + " | " + rowData.name) : "담당자없음";
+                // 담당자 정보: 만약 rowData.memberCode가 있다면 "담당자코드 | 담당자명"을, 없으면 "담당자없음"으로 표시
+                var 담당자정보 = rowData.memberCode ? (rowData.memberCode + " | " + rowData.name) : "담당자없음";
 
                 $('#deleteWarehouseNameOk').html(
                     `<li class="list-group-item d-flex justify-content-between align-items-center">
@@ -922,7 +922,7 @@
                 $('#deleteContentOk').hide();
                 $('#deleteContentNo').show();
 
-                var 담당자정보 = rowData.mamberCode ? (rowData.mamberCode + " | " + rowData.name) : "담당자없음";
+                var 담당자정보 = rowData.memberCode ? (rowData.memberCode + " | " + rowData.name) : "담당자없음";
 
                 $('#deleteWarehouseNameNo').html(
                     `<li class="list-group-item d-flex justify-content-between align-items-center">

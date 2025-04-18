@@ -5,5 +5,8 @@
 <configuration>
     <typeAliases>
         <typeAlias alias="MemberAccountVO" type="com.donut.prokindonutsweb.dto.member.MemberAccountVO"/>
+        <!-- 창고 DTO -->
+        <typeAlias alias="WarehouseDTO" type="com.donut.prokindonutsweb.dto.warehouse.WarehouseDTO"/>
     </typeAliases>
+
 </configuration>
