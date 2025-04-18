@@ -4,6 +4,6 @@
         "https://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <typeAliases>
-
+        <typeAlias alias="MemberAccountVO" type="com.donut.prokindonutsweb.dto.member.MemberAccountVO"/>
     </typeAliases>
 </configuration>
