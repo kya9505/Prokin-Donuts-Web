@@ -1,6 +1,6 @@
 package com.donut.prokindonutsweb.mappers.warehouse;
 
-import com.donut.prokindonutsweb.dto.member.MemberAccountVO;
+import com.donut.prokindonutsweb.vo.member.MemberAccountVO;
 import com.donut.prokindonutsweb.dto.warehouse.WarehouseDTO;
 import com.donut.prokindonutsweb.vo.warehouse.WarehouseVO;
 import org.apache.ibatis.annotations.Mapper;
