@@ -21,7 +21,7 @@
     </select>
 
     <!-- 2) 창고 등록 -->
-    <insert id="insertWarehouse" parameterType="WarehouseDTO">
+    <insert id="insertWarehouse" parameterType="WarehouseVO">
         INSERT INTO Warehouse
             (warehouseCode, warehouseName, capacityLimit, address, memberCode)
         VALUES
@@ -29,7 +29,7 @@
     </insert>
 
     <!-- 3) 창고 수정 -->
-    <update id="updateWarehouse" parameterType="WarehouseDTO">
+    <update id="updateWarehouse" parameterType="WarehouseVO">
         UPDATE Warehouse
         SET warehouseName   = #{warehouseName},
             memberCode      = #{memberCode}
@@ -37,7 +37,7 @@
     </update>
 
     <!-- 4) 창고 삭제 -->
-    <delete id="deleteWarehouse" parameterType="WarehouseDTO">
+    <delete id="deleteWarehouse" parameterType="WarehouseVO">
         DELETE FROM Warehouse
         WHERE warehouseCode = #{warehouseCode}
     </delete>

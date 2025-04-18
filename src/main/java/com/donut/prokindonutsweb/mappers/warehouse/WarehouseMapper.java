@@ -13,7 +13,7 @@ import java.util.List;
 public interface WarehouseMapper {
   List<WarehouseDTO> selectWarehouseList();
   void insertWarehouse(WarehouseVO warehouse);
-  void updateWarehouse(WarehouseUpdateDTO warehouse);
-  void deleteWarehouse(WarehouseDeleteDTO warehouse);
+  void updateWarehouse(WarehouseVO warehouse);
+  void deleteWarehouse(WarehouseVO warehouse);
   List<MemberAccountVO> selectUnAccountWMList();
 }
