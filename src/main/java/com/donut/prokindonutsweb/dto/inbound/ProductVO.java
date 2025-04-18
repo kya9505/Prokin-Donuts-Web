@@ -1,16 +1,17 @@
-package com.donut.prokindonutsweb.vo.inbound;
+package com.donut.prokindonutsweb.dto.inbound;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
-public class InboundDetailVO {
+public class ProductVO {
     private String productCode;
     private String productName;
     private Integer productPrice;
     private String storedType;
-    private Integer quantity;
 }

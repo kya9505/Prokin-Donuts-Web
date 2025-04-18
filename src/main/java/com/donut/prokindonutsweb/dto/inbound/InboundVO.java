@@ -1,4 +1,4 @@
-package com.donut.prokindonutsweb.vo.inbound;
+package com.donut.prokindonutsweb.dto.inbound;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

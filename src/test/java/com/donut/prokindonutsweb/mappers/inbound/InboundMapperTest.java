@@ -14,10 +14,8 @@ class InboundMapperTest {
 
     @Autowired(required = false)
     private InboundMapper inboundMapper;
-
     @Test
     void mapper() {
         inboundMapper.selectAllProductList().forEach(System.out::println);
     }
-
 }

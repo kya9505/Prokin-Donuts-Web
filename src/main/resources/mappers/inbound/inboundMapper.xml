@@ -4,11 +4,11 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.donut.prokindonutsweb.mappers.inbound.InboundMapper">
 
-    <select id="getProductList" resultType="ProductDTO">
+    <select id="selectAllProductList" resultType="com.donut.prokindonutsweb.dto.inbound.ProductDTO">
         select productCode, productName, productPrice, storedType from product
     </select>
 
-    <insert id="insertInbound">
+   <!-- <insert id="insertInbound">
         Insert into inbound (inboundCode, inboundDate, inboundStatus, warehouseCode)
         values (#{inboundCode},#{inboundDate},#{inboundStatus}, #{warehouseCode})
     </insert>
@@ -25,7 +25,7 @@
             #{detail.sectionCode}
             )
         </foreach>
-    </insert>
+    </insert>-->
 
     <sql id="search">
         <if test="(types != null and keyword != null)">
