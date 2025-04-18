@@ -24,7 +24,7 @@ class MemberMapperTest {
     //loadMember MapperTest
     @Test
     public void loadMember(){
-        List<MemberAccountVO> memberList = mapper.loadMember();
+        List<MemberAccountVO> memberList = mapper.selectMember();
         memberList.forEach(log::info);
     }
 

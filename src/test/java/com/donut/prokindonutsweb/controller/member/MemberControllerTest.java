@@ -30,7 +30,7 @@ class MemberControllerTest {
     @Test
     public void wmMemberListTest(){
         Model model = new ExtendedModelMap(); //model은 interface이므로 객체생성 불가, 구현체 주입
-        memberController.wmMemberList(model);
+        memberController.wmGetMember(model);
         List<MemberAccountDTO> memberList = (List<MemberAccountDTO>)model.getAttribute("memberList");
         assertNotNull(memberList);
         memberList.forEach(log::info);
