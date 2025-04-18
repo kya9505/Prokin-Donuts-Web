@@ -1,5 +1,6 @@
 package com.donut.prokindonutsweb.service.inbound;
 
+import com.donut.prokindonutsweb.dto.inbound.InboundDTO;
 import com.donut.prokindonutsweb.dto.inbound.ProductDTO;
 import com.donut.prokindonutsweb.dto.inbound.ProductVO;
 import com.donut.prokindonutsweb.mappers.inbound.InboundMapper;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,5 +43,18 @@ class InboundServiceImplTest {
     void findNextInboundCode() {
         String nextInboundCode = inboundService.findNextInboundCode();
         log.info(nextInboundCode);
+    }
+
+    @Test
+    @DisplayName("saveInbound 메서드 호출 테스트")
+    void saveInbound() {
+        InboundDTO dto = InboundDTO.builder()
+                .inboundCode(inboundService.findNextInboundCode())
+                .inboundDate(Date.valueOf("2025-04-30"))
+                .inboundStatus("입고요청")
+                .warehouseCode("GG1")
+                .build();
+        inboundService.saveInbound(dto);
+
     }
 }

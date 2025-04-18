@@ -31,11 +31,17 @@ public class InboundServiceImpl implements InboundService {
 
     @Override
     public void saveInbound(InboundDTO inboundDTO) {
-
+        InboundVO vo = InboundVO.builder()
+                .inboundCode(inboundDTO.getInboundCode())
+                .inboundDate(inboundDTO.getInboundDate())
+                .inboundStatus(inboundDTO.getInboundStatus())
+                .warehouseCode(inboundDTO.getWarehouseCode())
+                        .build();
+        inboundMapper.insertInbound(vo);
     }
 
     @Override
-    public void saveInboundDetail(List<InboundDetailVO> inboundDetailVO) {
+    public void saveInboundDetail(List<InboundDetailDTO> inboundDetailDTO) {
 
     }
 

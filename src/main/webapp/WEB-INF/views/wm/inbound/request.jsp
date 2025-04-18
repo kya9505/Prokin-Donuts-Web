@@ -1,9 +1,10 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" href="<c:url value='/resources/images/logo/favicon_logo.png'/>" type="image/png" />
@@ -104,7 +105,7 @@
 
             <!-- Modal HTML Start -->
             <!-- 입고 요청 모달 -->
-            <form id="inboundForm" method="post" action="/wm/inbound/request">
+            <form id="inboundForm" action="/wm/inbound/request" method="post"  accept-charset="UTF-8">
                 <div class="modal fade" id="addInboundModal" tabindex="-1" role="dialog" aria-labelledby="addInboundModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg" role="document"> <!-- modal-lg: 큰 창 -->
                         <div class="modal-content">
@@ -387,7 +388,7 @@
         // 체크박스 초기화
         $('#datatable tbody input.row-checkbox:checked').prop('checked', false);
     });*/
-    $('#addInboundModal .btn-primary').on('click', function () {
+   /* $('#addInboundModal .btn-primary').on('click', function () {
         // 기존 동적 input 제거
         $('#inboundForm input.dynamic-field').remove();
 
@@ -430,6 +431,70 @@
                 type: 'hidden',
                 name: 'productList[' + i + '].storedType',
                 value: $tds.eq(4).text(),
+                class: 'dynamic-field'
+            }).appendTo('#inboundForm');
+
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'productList[' + i + '].quantity',
+                value: quantity,
+                class: 'dynamic-field'
+            }).appendTo('#inboundForm');
+        });
+
+        // form 전송
+        $('#inboundForm').submit();
+    });*/
+
+    $('#addInboundModal .btn-primary').on('click', function () {
+        // 기존 input 정리
+        $('#inboundForm input.dynamic-field').remove();
+
+        // 날짜 추가
+        const inboundDate = $('#inboundDate').val();
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'inboundDate',
+            value: inboundDate,
+            class: 'dynamic-field'
+        }).appendTo('#inboundForm');
+
+        // 제품 목록 반복
+        $('#selectedProductsTable tbody tr').each(function (i) {
+            const $tds = $(this).find('td');
+            const quantity = $(this).find('.quantity-input').val();
+
+            const productCode = $tds.eq(1).text().trim();
+            const productName = $tds.eq(2).text().trim();
+            const productPrice = $tds.eq(3).text().trim();
+            const storedType = $tds.eq(4).text().trim();
+
+            // form에 hidden input 추가
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'productList[' + i + '].productCode',
+                value: productCode,
+                class: 'dynamic-field'
+            }).appendTo('#inboundForm');
+
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'productList[' + i + '].productName',
+                value: productName,
+                class: 'dynamic-field'
+            }).appendTo('#inboundForm');
+
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'productList[' + i + '].productPrice',
+                value: productPrice,
+                class: 'dynamic-field'
+            }).appendTo('#inboundForm');
+
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'productList[' + i + '].storedType',
+                value: storedType,
                 class: 'dynamic-field'
             }).appendTo('#inboundForm');
 

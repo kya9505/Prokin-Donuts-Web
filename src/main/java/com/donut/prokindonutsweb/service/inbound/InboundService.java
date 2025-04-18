@@ -1,9 +1,6 @@
 package com.donut.prokindonutsweb.service.inbound;
 
-import com.donut.prokindonutsweb.dto.inbound.InboundDTO;
-import com.donut.prokindonutsweb.dto.inbound.InboundDetailVO;
-import com.donut.prokindonutsweb.dto.inbound.InboundVO;
-import com.donut.prokindonutsweb.dto.inbound.ProductDTO;
+import com.donut.prokindonutsweb.dto.inbound.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +10,7 @@ public interface InboundService {
 
     void saveInbound(InboundDTO inboundDTO);
 
-    void saveInboundDetail(List<InboundDetailVO> inboundDetailVO);
+    void saveInboundDetail(List<InboundDetailDTO> inboundDetailDTO);
 
     String findNextInboundCode();
 }

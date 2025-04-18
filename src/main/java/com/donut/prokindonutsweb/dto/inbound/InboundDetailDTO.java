@@ -13,5 +13,4 @@ public class InboundDetailDTO {
     private Integer productPrice;
     private String storedType;
     private Integer quantity;
-
 }
