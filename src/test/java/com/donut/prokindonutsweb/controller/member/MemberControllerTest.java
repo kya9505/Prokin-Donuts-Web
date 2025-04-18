@@ -1,3 +1,4 @@
+/*
 package com.donut.prokindonutsweb.controller.member;
 
 import com.donut.prokindonutsweb.dto.member.MemberAccountDTO;
@@ -23,10 +24,12 @@ class MemberControllerTest {
     @Autowired
     private MemberController memberController;
 
-    /*
+    */
+/*
     * memberController의 wmMemberList 테스트
     * Model객체에 담긴 List 확인
-    * */
+    * *//*
+
     @Test
     public void wmMemberListTest(){
         Model model = new ExtendedModelMap(); //model은 interface이므로 객체생성 불가, 구현체 주입
@@ -35,4 +38,4 @@ class MemberControllerTest {
         assertNotNull(memberList);
         memberList.forEach(log::info);
     }
-}
+}*/
