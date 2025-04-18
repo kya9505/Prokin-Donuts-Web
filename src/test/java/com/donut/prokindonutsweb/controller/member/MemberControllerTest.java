@@ -31,7 +31,16 @@ class MemberControllerTest {
     public void wmMemberListTest(){
         Model model = new ExtendedModelMap(); //model은 interface이므로 객체생성 불가, 구현체 주입
         memberController.wmGetMember(model);
-        List<MemberAccountDTO> memberList = (List<MemberAccountDTO>)model.getAttribute("memberList");
+        List<MemberAccountDTO> memberList = (List<MemberAccountDTO>)model.getAttribute("wmMemberList");
+        assertNotNull(memberList);
+        memberList.forEach(log::info);
+    }
+
+    @Test
+    public void qhMemberListTest(){
+        Model model = new ExtendedModelMap(); //model은 interface이므로 객체생성 불가, 구현체 주입
+        memberController.qhGetMemberList(model);
+        List<MemberAccountDTO> memberList = (List<MemberAccountDTO>)model.getAttribute("qhMemberList");
         assertNotNull(memberList);
         memberList.forEach(log::info);
     }

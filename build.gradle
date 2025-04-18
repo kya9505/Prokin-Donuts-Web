@@ -107,6 +107,12 @@ dependencies {
     * DTO와 VO 간의 매핑을 자동으로 처리
     */
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.1.1'
+
+    /*
+     * Valid 애너테이션
+     */
+    implementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.2.0.Final'
+
 }
 
 test {
