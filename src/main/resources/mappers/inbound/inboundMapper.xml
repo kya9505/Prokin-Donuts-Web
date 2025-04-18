@@ -27,6 +27,10 @@
         </foreach>
     </insert>
 
+    <select id="selectInboundCode" resultType="String">
+        Select inboundCode From Inbound Order by CAST(substring(inboundCode, 3) AS UNSIGNED) DESC LIMIT 1;
+    </select>
+
     <sql id="search">
         <if test="(types != null and keyword != null)">
             <foreach collection="types" item="type" open=" and ( " separator="OR" close=")">

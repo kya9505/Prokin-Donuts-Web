@@ -1,5 +1,7 @@
 package com.donut.prokindonutsweb.service.inbound;
 
+import com.donut.prokindonutsweb.dto.inbound.InboundDetailVO;
+import com.donut.prokindonutsweb.dto.inbound.InboundVO;
 import com.donut.prokindonutsweb.dto.inbound.ProductDTO;
 import com.donut.prokindonutsweb.dto.inbound.ProductVO;
 import com.donut.prokindonutsweb.mappers.inbound.InboundMapper;
@@ -29,4 +31,21 @@ public class InboundServiceImpl implements InboundService {
                 .toList();// 또는 collect(Collectors.toList());
         return list.isEmpty() ? Optional.empty() : Optional.of(list);
     }
+
+    @Override
+    public void saveInbound(InboundVO inboundVO) {
+
+    }
+
+    @Override
+    public void saveInboundDetail(List<InboundDetailVO> inboundDetailVO) {
+
+    }
+
+    @Override
+    public void findNextInboundCode() {
+
+    }
+
+
 }

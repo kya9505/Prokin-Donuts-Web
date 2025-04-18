@@ -11,4 +11,6 @@ public interface InboundMapper {
     void insertInbound(InboundVO inboundVO);
     // 입고 상세 정보
     void insertInboundDetailList(@Param("list") List<InboundDetailVO> list);
+
+    String selectInboundCode();
 }

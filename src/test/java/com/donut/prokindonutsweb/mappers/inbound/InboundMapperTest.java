@@ -63,4 +63,11 @@ class InboundMapperTest {
 
         inboundMapper.insertInboundDetailList(list);
     }
+
+    @Test
+    @DisplayName("다음 입고 코드 반환 테스트")
+    void selectInboundCode() {
+        String s = inboundMapper.selectInboundCode();
+        System.out.println(s);
+    }
 }
