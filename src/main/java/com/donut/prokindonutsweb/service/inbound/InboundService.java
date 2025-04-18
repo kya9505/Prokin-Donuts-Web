@@ -14,5 +14,5 @@ public interface InboundService {
 
     void saveInboundDetail(List<InboundDetailVO> inboundDetailVO);
 
-    void findNextInboundCode();
+    String findNextInboundCode();
 }

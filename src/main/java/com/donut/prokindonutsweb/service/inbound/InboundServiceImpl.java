@@ -43,8 +43,10 @@ public class InboundServiceImpl implements InboundService {
     }
 
     @Override
-    public void findNextInboundCode() {
-
+    public String findNextInboundCode() {
+        String inboundCode = inboundMapper.selectInboundCode();
+        int number = Integer.parseInt(inboundCode.replaceAll("\\D", ""));
+        return "IN" + (number+1);
     }
 
 

@@ -34,6 +34,12 @@ class InboundServiceImplTest {
                 .stream()
                 .flatMap(List::stream)
                 .forEach(dto -> log.info("DTO: {}", dto));
+    }
 
+    @Test
+    @DisplayName("다음 입고코드 번호 반환 기능")
+    void findNextInboundCode() {
+        String nextInboundCode = inboundService.findNextInboundCode();
+        log.info(nextInboundCode);
     }
 }
