@@ -6,7 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,7 +20,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/wm/member")
-    public void wmGetMember(Model model){
+    public void wmGetMember( Model model){
         List<MemberAccountDTO> wmMemberList = memberService.saveMember().orElse(Collections.emptyList());
         model.addAttribute("wmMemberList",wmMemberList);
     }
