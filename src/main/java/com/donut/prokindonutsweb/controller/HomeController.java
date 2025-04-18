@@ -45,8 +45,6 @@ public class HomeController {
     @GetMapping("/wm/inbound/request")
     public void Wrequest(){}
 
-    @GetMapping("/wm/member")
-    public void Wmember(){}
     @GetMapping("/wm/Dashboard")
     public void WDashboard(){}
 
