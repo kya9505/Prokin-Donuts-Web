@@ -20,12 +20,9 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/wm/member")
-    public void wmMemberList(Model model){
-        List<MemberAccountDTO> memberList = memberService.loadMember().orElse(Collections.emptyList());
+    public void wmGetMember(Model model){
+        List<MemberAccountDTO> memberList = memberService.saveMember().orElse(Collections.emptyList());
         model.addAttribute("memberList",memberList);
     }
-    @PostMapping("/wm/member")
-    public void wmMemberListPost(Model model,List<MemberAccountDTO> memberList){
 
-    }
 }
