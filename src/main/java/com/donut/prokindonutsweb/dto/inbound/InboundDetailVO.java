@@ -8,9 +8,9 @@ import lombok.*;
 @Builder
 @ToString
 public class InboundDetailVO {
-    private String productCode;
-    private String productName;
-    private Integer productPrice;
-    private String storedType;
+    private String inboundDetailCode;
     private Integer quantity;
+    private String inboundCode;
+    private String productCode;
+    private String sectionCode;
 }
