@@ -1,4 +1,4 @@
-package com.donut.prokindonutsweb.dto.member;
+package com.donut.prokindonutsweb.vo.member;
 
 import lombok.*;
 

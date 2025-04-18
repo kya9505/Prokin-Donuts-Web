@@ -74,7 +74,7 @@
                                 <thead>
                                 <tr>
                                     <th>회원코드</th>
-                                    <th>성함</th>
+                                    <th>이름</th>
                                     <th>전화번호</th>
                                     <th>이메일</th>
                                     <th>주소</th>
@@ -83,7 +83,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <c:forEach var="member" items="${memberList}">
+                                <c:forEach var="member" items="${wmMemberList}">
                                     <tr>
                                         <td>${member.memberCode}</td>
                                         <td>${member.name}</td>

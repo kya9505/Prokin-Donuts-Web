@@ -1,6 +1,7 @@
 package com.donut.prokindonutsweb.mappers.member;
 
-import com.donut.prokindonutsweb.dto.member.MemberAccountVO;
+
+import com.donut.prokindonutsweb.vo.member.MemberAccountVO;
 
 import java.util.List;
 import java.util.Optional;
