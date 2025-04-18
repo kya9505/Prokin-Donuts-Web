@@ -24,7 +24,7 @@ public class MemberServiceImpl implements MemberService {
     * */
     @Override
     public Optional<List<MemberAccountDTO>> saveMember() {
-        List<MemberAccountVO> memberVOList = memberMapper.insertMember();
+        List<MemberAccountVO> memberVOList = memberMapper.selectMember();
         List<MemberAccountDTO> memberDTOList = memberVOList.stream()
                 .map(member -> modelMapper.map(member, MemberAccountDTO.class)).toList();
         return Optional.ofNullable(memberDTOList.isEmpty() ? null : memberDTOList);

@@ -21,7 +21,7 @@ class MemberServiceImplTest {
 
     @Test
     public void loadMember(){
-        Optional<List<MemberAccountDTO>> OmemberList = memberService.loadMember();
+        Optional<List<MemberAccountDTO>> OmemberList = memberService.saveMember();
         List<MemberAccountDTO> memberList = OmemberList.get();
         memberList.forEach(log::info);
     }
