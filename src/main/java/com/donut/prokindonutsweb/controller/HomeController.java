@@ -12,7 +12,6 @@ public class HomeController {
         return "redirect:/home/login";
     }
 
-    /*jsp test*/
     @GetMapping("/home/login")
     public void login(){}
 
@@ -44,7 +43,6 @@ public class HomeController {
 
     @GetMapping("/wm/inbound/request")
     public void Wrequest(){}
-
     @GetMapping("/wm/Dashboard")
     public void WDashboard(){}
 
