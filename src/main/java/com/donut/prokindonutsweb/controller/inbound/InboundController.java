@@ -3,6 +3,7 @@ package com.donut.prokindonutsweb.controller.inbound;
 import com.donut.prokindonutsweb.dto.inbound.ProductDTO;
 import com.donut.prokindonutsweb.service.inbound.InboundService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
