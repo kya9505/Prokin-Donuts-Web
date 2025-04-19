@@ -28,8 +28,16 @@
     </insert>
 
     <select id="selectInboundCode" resultType="String">
-        Select inboundCode From Inbound Order by CAST(substring(inboundCode, 3) AS UNSIGNED) DESC LIMIT 1;
+        Select inboundCode From Inbound Order by CAST(substring(inboundCode, 3) AS UNSIGNED) DESC LIMIT 1
     </select>
+
+<!--    창고관리자 - 입고관리-->
+
+<!--    입고목록 반환-->
+    <select id="selectAllInboundList" resultType="com.donut.prokindonutsweb.dto.inbound.InboundVO">
+        select inboundCode, inboundDate, inboundStatus, warehouseCode from Inbound
+    </select>
+
 
     <sql id="search">
         <if test="(types != null and keyword != null)">
