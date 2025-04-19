@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 public class InboundServiceImpl implements InboundService {
 
     private final InboundMapper inboundMapper;
+
     @Override
     public Optional<List<ProductDTO>> findAllProductList() {
 
@@ -38,7 +39,7 @@ public class InboundServiceImpl implements InboundService {
                 .inboundDate(inboundDTO.getInboundDate())
                 .inboundStatus(inboundDTO.getInboundStatus())
                 .warehouseCode(inboundDTO.getWarehouseCode())
-                        .build();
+                .build();
         inboundMapper.insertInbound(vo);
     }
 
@@ -46,7 +47,7 @@ public class InboundServiceImpl implements InboundService {
     public void saveInboundDetail(List<InboundDetailDTO> list) {
         String inboundCode = inboundMapper.selectInboundCode();
 
-        AtomicInteger i= new AtomicInteger(1);
+        AtomicInteger i = new AtomicInteger(1);
 
         List<InboundDetailVO> inboundDetailVOList = list.stream().map(
                 dto -> {
@@ -67,19 +68,34 @@ public class InboundServiceImpl implements InboundService {
 
     private String getSection(String storedType) {
         // 창코코드 알게 되면 변경 예정
-        if(storedType.equals("냉장")) return "R";
-        else if(storedType.equals("냉동")) return "F";
+        if (storedType.equals("냉장")) return "R";
+        else if (storedType.equals("냉동")) return "F";
         else return "A";
     }
-
 
 
     @Override
     public String findNextInboundCode() {
         String inboundCode = inboundMapper.selectInboundCode();
         int number = Integer.parseInt(inboundCode.replaceAll("\\D", ""));
-        return "IN" + (number+1);
+        return "IN" + (number + 1);
     }
 
-
+    //    입고관리 페이지에는 (입고요청, 승인대기) 상태 입고목록만 보여진다.
+    @Override
+    public Optional<List<InboundDTO>> findAllInboundList() {
+        List<InboundDTO> list = inboundMapper.selectAllInboundList().stream()
+                .filter(vo -> "입고요청".equals(vo.getInboundStatus()) || "승인대기".equals(vo.getInboundStatus()))
+                .map(vo -> {
+                            InboundDTO dto = InboundDTO.builder()
+                                    .inboundCode(vo.getInboundCode())
+                                    .inboundDate(vo.getInboundDate())
+                                    .inboundStatus(vo.getInboundStatus())
+                                    .warehouseCode(vo.getWarehouseCode())
+                                    .build();
+                            return dto;
+                        }
+                ).toList();
+        return list.isEmpty() ? Optional.empty() : Optional.of(list);
+    }
 }

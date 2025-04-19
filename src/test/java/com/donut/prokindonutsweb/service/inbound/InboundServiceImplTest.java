@@ -55,6 +55,11 @@ class InboundServiceImplTest {
                 .warehouseCode("GG1")
                 .build();
         inboundService.saveInbound(dto);
+    }
 
+    @Test
+    @DisplayName("(입고요청, 승인대기) 상태 입고목록만 반환하는 기능")
+    void findAllInboundList() {
+        inboundService.findAllInboundList().stream().forEach(System.out::println);
     }
 }

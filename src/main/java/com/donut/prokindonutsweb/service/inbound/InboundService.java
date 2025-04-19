@@ -13,4 +13,6 @@ public interface InboundService {
     void saveInboundDetail(List<InboundDetailDTO> inboundDetailDTO);
 
     String findNextInboundCode();
+
+    Optional<List<InboundDTO>> findAllInboundList();
 }
