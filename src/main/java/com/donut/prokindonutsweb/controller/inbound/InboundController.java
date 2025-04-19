@@ -61,7 +61,8 @@ public class InboundController {
     @GetMapping("/manage")
     public void wmGetAllInboundList(Model model) {
         List<InboundDTO> inboundList = inboundService.findAllInboundList().get();
+        List<InboundDetailDTO> inboundDetailList = inboundService.findAllInboundDetailList().get();
         model.addAttribute("inboundList", inboundList);
+        model.addAttribute("inboundDetailList", inboundDetailList);
     }
-
 }
