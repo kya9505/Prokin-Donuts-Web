@@ -147,6 +147,38 @@
                                 </thead>
 
                                 <tbody>
+                                <c:forEach var="w" items="${warehouseList}">
+                                    <tr>
+                                        <td>${w.warehouseCode}</td>
+                                        <td>${w.warehouseName}</td>
+                                        <td>${w.address}</td>
+                                        <td>${w.capacityLimit}</td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${not empty w.memberName}">
+                                                    ${w.memberName}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    담당자없음
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${not empty w.memberEmail}">
+                                                    ${w.memberEmail}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    없음
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-edit" data-code="${w.warehouseCode}">수정</button>
+                                            <button class="btn btn-delete" data-code="${w.warehouseCode}">삭제</button>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
                                 </tbody>
 
                             </table>
@@ -181,7 +213,7 @@
                             <p class="text-danger fw-normal mb-3">(*)는 필수 입력 항목입니다.</p>
 
                             <!-- 등록 폼 -->
-                            <form id="warehouseRegisterForm" action="#" method="post">
+                            <form id="warehouseRegisterForm" action="${pageContext.request.contextPath}/qh/warehouse/add" method="post">
 
                                 <!-- 창고명 (중복확인 버튼 포함) -->
                                 <div class="mb-3">
@@ -243,6 +275,7 @@
                                     <input type="hidden" name="zonecode" id="zonecode_hidden" />
                                     <input type="hidden" name="roadAddress" id="roadAddress_hidden" />
                                     <input type="hidden" name="detailAddress" id="detailAddress_hidden" />
+                                    <input type="hidden" name="address" id="fullAddress" />
 
                                 </div>
 
@@ -254,7 +287,7 @@
                                                 type="text"
                                                 class="form-control"
                                                 id="capacity"
-                                                name="capacity"
+                                                name="capacityLimit"
                                                 placeholder="한도를 입력하세요"
                                         />
                                         <span class="input-group-text">m제곱</span>
@@ -264,9 +297,11 @@
                                 <!-- 담당자 (드롭다운) -->
                                 <div class="mb-3">
                                     <label for="member" class="form-label">담당자</label>
-                                    <select class="form-select" id="member" name="member">
+                                    <select class="form-select" id="member" name="memberCode">
                                         <option value="">담당자 선택</option>
-                                        <!-- 더미데이터는 AJAX 시뮬레이션으로 채워집니다 -->
+                                        <c:forEach var="m" items="${unassignedWMs}">
+                                            <option value="${m.memberCode}">${m.memberCode} | ${m.name}</option>
+                                        </c:forEach>
                                     </select>
                                 </div>
 
@@ -304,7 +339,8 @@
                             <p class="text-danger fw-normal mb-3">(*)는 필수 입력 항목입니다.</p>
 
                             <!-- 창고명 (중복확인 버튼 포함) -->
-                            <form id="modifyWarehouseForm" action="#" method="post">
+                            <form id="modifyWarehouseForm" action="${pageContext.request.contextPath}/qh/warehouse/update" method="post">
+                                <input type="hidden" name="warehouseCode" id="modifyWarehouseCode" />
 
                                 <!-- 창고명 입력 & 중복확인 -->
                                 <div class="mb-3">
@@ -318,9 +354,11 @@
                                 <!-- 담당자 드롭박스 -->
                                 <div class="mb-3">
                                     <label for="modifyWarehouseMember" class="form-label">담당자</label>
-                                    <select class="form-select" id="modifyWarehouseMember">
+                                    <select class="form-select" id="modifyWarehouseMember" name="memberCode">
                                         <option value="">담당자 선택</option>
-                                        <!-- 옵션은 스크립트에서 동적으로 채워집니다. -->
+                                        <c:forEach var="m" items="${unassignedWMs}">
+                                            <option value="${m.memberCode}">${m.memberCode} | ${m.name}</option>
+                                        </c:forEach>
                                     </select>
                                 </div>
 
@@ -345,31 +383,37 @@
                             <h3 class="modal-title" id="warehouseDeleteModalLabel">창고 삭제</h3>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-
                         <!-- 모달 바디 -->
                         <div class="modal-body">
 
-                            <!-- (1) 삭제 가능 시 보여줄 영역 -->
-                            <div id="deleteContentOk" style="display: none;">
-                                <h5>선택한 창고를 정말 삭제하시겠습니까?</h5><br>
-                                <!-- 창고명(담당자ID|담당자명) 표시 -->
-                                <div id="deleteWarehouseNameOk" class="list-group mb-3"></div>
-                            </div>
+                            <form id="warehouseDeleteForm" action="${pageContext.request.contextPath}/qh/warehouse/delete" method="post">
+                                <input type="hidden" name="warehouseCode" id="deleteWarehouseCode" />
 
-                            <!-- (2) 삭제 불가능 시 보여줄 영역 -->
-                            <div id="deleteContentNo" style="display: none;">
-                                <h5>선택한 창고는 진행 중인 업무로 인해 삭제할 수 없습니다.</h5><br>
-                                <!-- 창고명(담당자ID|담당자명) 표시 -->
-                                <div id="deleteWarehouseNameNo" class="list-group mb-3"></div>
-                            </div>
+                                <!-- (1) 삭제 가능 시 보여줄 영역 -->
+                                <div id="deleteContentOk" style="display: none;">
+                                    <h5>선택한 창고를 정말 삭제하시겠습니까?</h5><br>
+                                    <!-- 창고명(담당자ID|담당자명) 표시 -->
+                                    <div id="deleteWarehouseNameOk" class="list-group mb-3"></div>
+                                </div>
 
-                            <!-- 모달 푸터 -->
-                            <div class="d-flex justify-content-end gap-2">
-                                <button type="button" class="main-btn primary-btn btn-hover text-center" id="confirmDeleteWarehouse">삭제</button>
-                            </div>
+                                <!-- (2) 삭제 불가능 시 보여줄 영역 -->
+                                <div id="deleteContentNo" style="display: none;">
+                                    <h5>선택한 창고는 진행 중인 업무로 인해 삭제할 수 없습니다.</h5><br>
+                                    <!-- 창고명(담당자ID|담당자명) 표시 -->
+                                    <div id="deleteWarehouseNameNo" class="list-group mb-3"></div>
+                                </div>
+
+                                <!-- 모달 푸터 -->
+                                <div class="d-flex justify-content-end gap-2">
+                                    <button type="submit"
+                                            class="main-btn primary-btn btn-hover text-center"
+                                            id="confirmDeleteWarehouse">삭제</button>
+                                </div>
+                            </form>
+
                         </div>
-
                     </div>
+
                 </div>
             </div>
 
@@ -456,75 +500,6 @@
                 { targets: [0, 1, 2, 3, 4, 5, 6], className: 'text-center' } // JS 속성으로 가운데 정렬
             ],
             order: [[0, 'asc']],
-            ajax: function(data, callback, settings) {
-                const dummyData = [
-                    {
-                        "warehouseCode": "GG1",
-                        "warehouseName": "남양주DT센터",
-                        "warehouseLocation": "경기도",
-                        "capacityLimit": 1000000,
-                        "memberCode": "WM1",
-                        "name": "이근면",
-                        "email": "lee233@gmail.com"
-                    },
-                    {
-                        "warehouseCode": "DJ1",
-                        "warehouseName": "대전DT센터",
-                        "warehouseLocation": "대전광역시",
-                        "capacityLimit": 2000000,
-                        "memberCode": "WM2",
-                        "name": "김세진",
-                        "email": "sejin_wm2@gmail.com"
-                    },
-                    {
-                        "warehouseCode": "JB1",
-                        "warehouseName": "전주DT센터",
-                        "warehouseLocation": "전라북도",
-                        "capacityLimit": 1200000,
-                        "memberCode": null,
-                        "name": null,
-                        "email": null
-                    },
-                    {
-                        "warehouseCode": "BS1",
-                        "warehouseName": "부산서면DT센터",
-                        "warehouseLocation": "부산광역시",
-                        "capacityLimit": 1500000,
-                        "memberCode": null,
-                        "name": null,
-                        "email": null
-                    }
-                ];
-                Promise.resolve().then(() => {
-                    callback({ data: dummyData });
-                });
-            },
-            columns: [
-                { data: 'warehouseCode', title: '창고코드' },
-                { data: 'warehouseName', title: '창고명' },
-                { data: 'warehouseLocation', title: '소재지' },
-                { data: 'capacityLimit', title: '수용한도' },
-                { data: 'name', title: '담당자' },
-                { data: 'email', title: '담당자 이메일' },
-                { // Edit/Delete 버튼
-                    data: null,
-                    orderable: false,
-                    searchable: false,
-                    render: function(data, type, row, meta) {
-                        return `
-                  <div class="btu-group-2">
-                    <button class="btn btn-edit text-primary-2">
-                      <i class="lni lni-pencil"></i>
-                    </button>
-                    <button class="btn btn-delete text-danger">
-                      <i class="lni lni-trash-can"></i>
-                    </button>
-                  </div>
-                `;
-                    },
-                    title: '설정'
-                }
-            ],
             paging: true,
             pageLength: 10,
             lengthMenu: [[5, 10, 20, -1], ['5개', '10개', '20개', '전체']],
@@ -649,119 +624,102 @@
         // 9. Edit/Delete 버튼 이벤트
         // 등록 버튼 클릭 시
         // 전역 변수: 창고명 중복 체크 상태 (초기값 false)
-        var isWarehouseNameChecked = false;
+        let isWarehouseNameChecked = false;
 
-        // 모달 열기 버튼 (등록 버튼) 이벤트: ID 일치 확인
+        // 1. 등록 모달 열기
         $("#btnWarehouseAdd_clone").on("click", function () {
             $("#warehouseAddModal").modal("show");
         });
 
-        // 담당자 드롭다운: AJAX 시뮬레이션 (더미 데이터)
-        function loadMembers() {
-            const dummyMembers = [
-                { id: "WM1", name: "이근면" },
-                { id: "WM2", name: "김세진" },
-                { id: "WM3", name: "박수연" },
-                { id: "WM4", name: "오민재" }
-            ];
-
-            const $select = $('#member');
-            $select.empty().append(`<option value="">담당자 선택</option>`); // 기본값 초기화
-
-            dummyMembers.forEach(member => {
-                const label = `${member.id} | ${member.name}`;
-                $select.append(`<option value="${member.id}">${label}</option>`);
-            });
-        }
-
-        // 모달 표시될 때마다 담당자 목록 로드(필요 시점에 맞춰 호출)
-        $("#warehouseAddModal").on("show.bs.modal", function () {
-            loadMembers();
-        });
-
-        // 창고명 필드 변경 시 중복 체크 상태 초기화 (재검증 필요)
+        // 2. 창고명 변경 시 중복 체크 초기화
         $("#warehouseName").on("input", function () {
             isWarehouseNameChecked = false;
         });
 
-        // 창고명 중복 확인 버튼 이벤트 (더미 AJAX 처리)
+        // 3. 중복 확인 버튼 (SSR과 연계된 fetch 방식)
         $("#checkDuplicate").on("click", function () {
-            var warehouseName = $("#warehouseName").val().trim();
-            // 창고명 필수 검증
-            if (!warehouseName) {
+            const name = $("#warehouseName").val().trim();
+            if (!name) {
                 alert("창고명을 입력하세요.");
                 return;
             }
-            // 창고명 정규식: 한글, 영어, 숫자만 허용, 1~10글자
-            var regWarehouseName = /^[A-Za-z0-9가-힣]{1,10}$/;
-            if (!regWarehouseName.test(warehouseName)) {
-                alert("창고명은 한글, 영어, 숫자만 가능하며 최대 10글자까지 입력할 수 있습니다.");
+            const reg = /^[A-Za-z0-9가-힣]{1,10}$/;
+            if (!reg.test(name)) {
+                alert("한글/영어/숫자만 가능하며 최대 10글자입니다.");
                 return;
             }
-            // 중복확인 로직 (여기서는 항상 중복 없음으로 가정)
-            alert("사용 가능한 창고명입니다.");
-            isWarehouseNameChecked = true;
+
+            const contextPath = "${pageContext.request.contextPath}";
+            fetch(contextPath + "/qh/warehouse/check?warehouseName=" + encodeURIComponent(name))
+                .then(function (res) { return res.text(); })  // ← 여기!!
+                .then(function (text) {
+                    console.log("서버 응답:", text);
+                    const isDup = (text === 'true');  // 문자열 비교
+                    if (isDup) {
+                        alert("이미 존재하는 창고명입니다.");
+                        isWarehouseNameChecked = false;
+                    } else {
+                        alert("사용 가능한 창고명입니다.");
+                        isWarehouseNameChecked = true;
+                    }
+                })
+                .catch(function () {
+                    alert("중복 확인 중 오류가 발생했습니다.");
+                });
         });
 
-        // Daum 우편번호 찾기 버튼 이벤트
+        // 4. 다음 주소 API 연동
         $("#search-btn").on("click", function () {
             new daum.Postcode({
                 oncomplete: function (data) {
                     $("#zonecode_disp").val(data.zonecode);
                     $("#roadAddress_disp").val(data.roadAddress);
-                    $("#zonecode_hidden").val(data.zonecode);
-                    $("#roadAddress_hidden").val(data.roadAddress);
-                },
+                }
             }).open();
         });
 
-        // 상세 주소 변경 시 hidden 필드 업데이트
+        // 5. 상세 주소 입력 시 숨겨진 필드 업데이트
         $("#detailAddress_disp").on("change", function () {
             $("#detailAddress_hidden").val($(this).val());
         });
 
-        // 폼 제출 시 유효성 검사
-        $("#warehouseRegisterForm").on("submit", function (e) {
-            e.preventDefault();
+        // 6. 폼 제출 전 유효성 검사 및 address 합치기
+        $("#warehouseRegisterForm").on("submit", function () {
+            const name = $("#warehouseName").val().trim();
+            const zonecode = $("#zonecode_disp").val().trim();
+            const roadAddress = $("#roadAddress_disp").val().trim();
+            const detailAddress = $("#detailAddress_disp").val().trim();
+            const capacity = $("#capacity").val().trim();
+            const regName = /^[A-Za-z0-9가-힣]{1,10}$/;
+            const regCap = /^[0-9]+$/;
 
-            // 필수 항목 검사
-            var warehouseName = $("#warehouseName").val().trim();
-            var zonecode = $("#zonecode_disp").val().trim();
-            var roadAddress = $("#roadAddress_disp").val().trim();
-            var detailAddress = $("#detailAddress_disp").val().trim();
-            var capacity = $("#capacity").val().trim();
-
-            if (!warehouseName || !zonecode || !roadAddress || !detailAddress || !capacity) {
-                alert("필수 입력 항목이 비어있습니다. 모두 입력해주세요.");
-                return;
+            if (!name || !zonecode || !roadAddress || !detailAddress || !capacity) {
+                alert("필수 항목을 모두 입력해주세요.");
+                return false;
             }
 
-            // 창고명: 한글, 영어, 숫자만 허용, 최대 10글자
-            var regWarehouseName = /^[A-Za-z0-9가-힣]{1,10}$/;
-            if (!regWarehouseName.test(warehouseName)) {
-                alert("창고명은 한글, 영어, 숫자만 가능하며 최대 10글자까지 입력할 수 있습니다.");
-                return;
+            if (!regName.test(name)) {
+                alert("창고명은 한글/영어/숫자 조합이며 최대 10글자입니다.");
+                return false;
             }
 
-            // 중복 확인 여부 검사
+            if (!regCap.test(capacity)) {
+                alert("수용한도는 숫자만 입력 가능합니다.");
+                return false;
+            }
+
             if (!isWarehouseNameChecked) {
                 alert("창고명 중복확인을 해주세요.");
-                return;
+                return false;
             }
 
-            // 수용한도: 숫자만 있는지 검사 (정규식 사용)
-            var regCapacity = /^[0-9]+$/;
-            if (!regCapacity.test(capacity)) {
-                alert("수용한도는 숫자만 입력할 수 있습니다.");
-                return;
-            }
-
-            // 모든 검증 통과 시 등록 성공 처리 (추가 서버 전송 로직 가능)
-            alert("창고가 성공적으로 등록되었습니다.");
-            $("#warehouseAddModal").modal("hide");
-            // 폼 초기화 및 중복확인 상태 초기화
-            $(this)[0].reset();
-            isWarehouseNameChecked = false;
+            // address 하나로 합쳐서 hidden 필드 추가
+            const fullAddress = zonecode + " " + roadAddress + " " + detailAddress;
+            $("<input>").attr({
+                type: "hidden",
+                name: "address",
+                value: fullAddress
+            }).appendTo(this);
         });
 
         // 수정 버튼 클릭 시

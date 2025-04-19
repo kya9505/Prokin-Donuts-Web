@@ -66,4 +66,11 @@
         </if>
     </select>
 
+    <!-- 7) prefix로 시작하는 기존 창고코드들 조회 -->
+    <select id="findWarehouseCodesByPrefix" resultType="string">
+        SELECT warehouseCode
+        FROM Warehouse
+        WHERE warehouseCode LIKE CONCAT(#{prefix}, '%')
+    </select>
+
 </mapper>
