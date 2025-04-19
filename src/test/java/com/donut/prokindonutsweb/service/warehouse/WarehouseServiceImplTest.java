@@ -1,10 +1,9 @@
-package com.donut.prokindonutsweb.service.member;
+package com.donut.prokindonutsweb.service.warehouse;
 
 import com.donut.prokindonutsweb.dto.warehouse.WarehouseCheckDTO;
 import com.donut.prokindonutsweb.dto.warehouse.WarehouseDTO;
 import com.donut.prokindonutsweb.dto.warehouse.WarehouseDeleteDTO;
 import com.donut.prokindonutsweb.dto.warehouse.WarehouseUpdateDTO;
-import com.donut.prokindonutsweb.service.warehouse.WarehouseService;
 import com.donut.prokindonutsweb.vo.member.MemberAccountVO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
