@@ -25,6 +25,7 @@ class MemberMapperTest {
 
     //loadMember MapperTest
     @Test
+    @DisplayName("DB의 전체 회원조회 테스트")
     public void loadMember(){
         List<MemberAccountVO> memberList = mapper.selectMember();
         memberList.forEach(log::info);
