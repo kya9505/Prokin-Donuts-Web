@@ -1,5 +1,6 @@
 package com.donut.prokindonutsweb.service.warehouse;
 
+import com.donut.prokindonutsweb.dto.warehouse.WarehouseCheckDTO;
 import com.donut.prokindonutsweb.dto.warehouse.WarehouseDTO;
 import com.donut.prokindonutsweb.dto.warehouse.WarehouseDeleteDTO;
 import com.donut.prokindonutsweb.dto.warehouse.WarehouseUpdateDTO;
@@ -54,5 +55,13 @@ public class WarehouseServiceImpl implements WarehouseService {
   public List<MemberAccountVO> getUnassignedWarehouseManagers() {
     log.debug("Service : getUnassignedWarehouseManagers called");
     return warehouseMapper.selectUnAccountWMList();
+  }
+  
+  @Override
+  public boolean checkWarehouseDuplicate(WarehouseCheckDTO warehouseCheckDTO) {
+    log.debug("Service : checkWarehouseDuplicate called");
+    WarehouseVO warehouseVO = modelMapper.map(warehouseCheckDTO, WarehouseVO.class);
+    int count = warehouseMapper.checkWarehouseDuplicate(warehouseVO);
+    return count > 0;
   }
 }

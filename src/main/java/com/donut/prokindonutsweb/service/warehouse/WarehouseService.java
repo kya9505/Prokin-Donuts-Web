@@ -1,5 +1,6 @@
 package com.donut.prokindonutsweb.service.warehouse;
 
+import com.donut.prokindonutsweb.dto.warehouse.WarehouseCheckDTO;
 import com.donut.prokindonutsweb.dto.warehouse.WarehouseDTO;
 import com.donut.prokindonutsweb.dto.warehouse.WarehouseDeleteDTO;
 import com.donut.prokindonutsweb.dto.warehouse.WarehouseUpdateDTO;
@@ -14,4 +15,5 @@ public interface WarehouseService {
   void updateWarehouse(WarehouseUpdateDTO warehouseUpdateDTO);
   void deleteWarehouse(WarehouseDeleteDTO warehouseDeleteDTO);
   List<MemberAccountVO> getUnassignedWarehouseManagers();
+  boolean checkWarehouseDuplicate(WarehouseCheckDTO warehouseCheckDTO);
 }

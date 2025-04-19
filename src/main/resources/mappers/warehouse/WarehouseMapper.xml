@@ -56,4 +56,14 @@
         ) AND m.authorityCode LIKE '%WM%'
     </select>
 
+    <!-- 6) 창고명 중복 확인 -->
+    <select id="checkWarehouseDuplicate" resultType="int">
+        SELECT COUNT(*)
+        FROM Warehouse
+        WHERE warehouseName = #{warehouseName}
+        <if test="warehouseCode != null and warehouseCode != ''">
+            AND warehouseCode != #{warehouseCode}
+        </if>
+    </select>
+
 </mapper>

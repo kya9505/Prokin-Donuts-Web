@@ -123,4 +123,40 @@ public class WarehouseMapperTest {
       log.info("미할당 관리자: {}", vo);
     }
   }
+  
+  @Test
+  public void testCheckWarehouseDuplicate_whenInserting() {
+    WarehouseVO vo = new WarehouseVO();
+    vo.setWarehouseName("대전DT센터");
+    vo.setWarehouseCode(null);
+    
+    int result = warehouseMapper.checkWarehouseDuplicate(vo);
+    
+    log.info("중복 결과 (등록): {}", result);
+    assertTrue(result > 0, "같은 이름이 있을 경우 count > 0 이어야 함");
+  }
+  
+  @Test
+  public void testCheckWarehouseDuplicate_whenUpdatingSelf() {
+    WarehouseVO vo = new WarehouseVO();
+    vo.setWarehouseName("남양주DT센터");
+    vo.setWarehouseCode("GG1");
+    
+    int result = warehouseMapper.checkWarehouseDuplicate(vo);
+    
+    log.info("중복 결과 (자기 자신): {}", result);
+    assertEquals(0, result, "자기 자신은 중복에서 제외되어야 함");
+  }
+  
+  @Test
+  public void testCheckWarehouseDuplicate_whenUpdatingConflict() {
+    WarehouseVO vo = new WarehouseVO();
+    vo.setWarehouseName("남양주DT센터");
+    vo.setWarehouseCode("DJ1");
+    
+    int result = warehouseMapper.checkWarehouseDuplicate(vo);
+    
+    log.info("중복 결과 (다른 창고 중복): {}", result);
+    assertTrue(result > 0, "다른 창고가 같은 이름을 가지고 있으면 중복이어야 함");
+  }
 }

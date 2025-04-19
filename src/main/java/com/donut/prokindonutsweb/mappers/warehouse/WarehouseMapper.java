@@ -1,5 +1,6 @@
 package com.donut.prokindonutsweb.mappers.warehouse;
 
+import com.donut.prokindonutsweb.dto.warehouse.WarehouseCheckDTO;
 import com.donut.prokindonutsweb.dto.warehouse.WarehouseDeleteDTO;
 import com.donut.prokindonutsweb.dto.warehouse.WarehouseUpdateDTO;
 import com.donut.prokindonutsweb.vo.member.MemberAccountVO;
@@ -16,4 +17,5 @@ public interface WarehouseMapper {
   void updateWarehouse(WarehouseVO warehouse);
   void deleteWarehouse(WarehouseVO warehouse);
   List<MemberAccountVO> selectUnAccountWMList();
+  int checkWarehouseDuplicate(WarehouseVO warehouse);
 }
