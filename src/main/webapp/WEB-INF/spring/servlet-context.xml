@@ -21,4 +21,12 @@
     <!--    Spring MVC 에서 정적 자원을 처리하기 위한 설정 -->
     <!--    클라이언트가 /resources/** 로 접근하면, 내부적으로는 resources/static/ 경로에서 해당 파일을 찾아 반환해 준다. -->
     <mvc:resources mapping="/resources/**" location="classpath:/static/"/>
+
+    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="formatters">
+            <set>
+                <bean class="com.donut.prokindonutsweb.fomatters.LocalDateFormatter"/>
+            </set>
+        </property>
+    </bean>
 </beans>
