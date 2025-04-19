@@ -56,4 +56,12 @@ public class InboundController {
 
         return "redirect:/wm/inbound/request";
     }
+
+//    창고관리자 - 입고관리 페이지
+    @GetMapping("/manage")
+    public void wmGetAllInboundList(Model model) {
+        List<InboundDTO> inboundList = inboundService.findAllInboundList().get();
+        model.addAttribute("inboundList", inboundList);
+    }
+
 }
