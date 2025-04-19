@@ -50,7 +50,7 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("Controller 회원 등록 DB 반영 테스트")
+    @DisplayName("qh add Controller 회원 등록 DB 반영 테스트")
     public void qhAddMemberList(){
         MemberAccountDTO memberDTO = MemberAccountDTO.builder().memberCode("QH100")
                 .authorityCode("QH")
@@ -64,7 +64,7 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("Controller 회원 수정 DB 반영 테스트")
+    @DisplayName("qh update controller 회원 수정 DB 반영 테스트")
     public void qhUpdateMembers(){
         MemberAccountDTO memberDTO = MemberAccountDTO.builder()
                 .memberCode("QH100")
@@ -83,7 +83,7 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("Controller 회원 삭제 DB 반영 테스트")
+    @DisplayName("qh delete controller 회원 삭제 DB 반영 테스트")
     public void qhDeleteMembers(){
         List<String> memberCodeList = new ArrayList<>(Arrays.asList("QH100"));
         qhMemberController.qhDeleteMembers(memberCodeList);
