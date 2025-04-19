@@ -33,7 +33,7 @@
 <!-- ======== main-wrapper start =========== -->
 <main class="main-wrapper">
     <!-- ========== header start ========== -->
-    <%@include file="/WEB-INF/views/includes/Header/wmHeader.jsp"%>
+    <%@include file="/WEB-INF/views/includes/header/wmHeader.jsp"%>
     <!-- ========== header end ========== -->
     <!-- Modal HTML Start -->
     <%@ include file="/WEB-INF/views/includes/mypage/mypage.jsp" %>
