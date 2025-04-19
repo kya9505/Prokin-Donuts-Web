@@ -21,13 +21,13 @@ public class MemberController {
 
     @GetMapping("/wm/member")
     public void wmGetMember( Model model){
-        List<MemberAccountDTO> wmMemberList = memberService.saveMember().orElse(Collections.emptyList());
+        List<MemberAccountDTO> wmMemberList = memberService.findMember().orElse(Collections.emptyList());
         model.addAttribute("wmMemberList",wmMemberList);
     }
 
     @GetMapping("/qh/member/list")
     public void qhGetMemberList(Model model){
-        List<MemberAccountDTO> qhMemberList = memberService.saveMember().orElse(Collections.emptyList());
+        List<MemberAccountDTO> qhMemberList = memberService.findMember().orElse(Collections.emptyList());
         model.addAttribute("qhMemberList",qhMemberList);
     }
 }

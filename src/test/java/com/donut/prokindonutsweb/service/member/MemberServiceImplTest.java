@@ -20,7 +20,7 @@ class MemberServiceImplTest {
 
     @Test
     public void loadMember(){
-        Optional<List<MemberAccountDTO>> OmemberList = memberService.saveMember();
+        Optional<List<MemberAccountDTO>> OmemberList = memberService.findMember();
         List<MemberAccountDTO> memberList = OmemberList.get();
         memberList.forEach(log::info);
     }

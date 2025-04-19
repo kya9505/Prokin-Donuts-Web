@@ -23,7 +23,7 @@ public class MemberServiceImpl implements MemberService {
     * List<vo>->List<dto>->optional<List<dto>>
     * */
     @Override
-    public Optional<List<MemberAccountDTO>> saveMember() {
+    public Optional<List<MemberAccountDTO>> findMember() {
         List<MemberAccountVO> memberVOList = memberMapper.selectMember();
         List<MemberAccountDTO> memberDTOList = memberVOList.stream()
                 .map(member -> modelMapper.map(member, MemberAccountDTO.class)).toList();
