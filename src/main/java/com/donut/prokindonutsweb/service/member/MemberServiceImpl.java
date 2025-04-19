@@ -1,8 +1,8 @@
 package com.donut.prokindonutsweb.service.member;
 
 import com.donut.prokindonutsweb.dto.member.MemberAccountDTO;
-import com.donut.prokindonutsweb.dto.member.MemberAccountVO;
 import com.donut.prokindonutsweb.mappers.member.MemberMapper;
+import com.donut.prokindonutsweb.vo.member.MemberAccountVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
