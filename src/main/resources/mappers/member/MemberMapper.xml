@@ -4,7 +4,33 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.donut.prokindonutsweb.mappers.member.MemberMapper">
+
     <select id="selectMember" resultType="MemberAccountVO">
         select * from memberaccount
     </select>
+    
+    <insert id="insertMember">
+        insert into memberaccount (memberCode,authorityCode,name,phoneNumber,email,address,id,password)
+        values (#{memberCode},#{authorityCode},#{name},#{phoneNumber},#{email},#{address},#{id},#{password})
+    </insert>
+
+    <update id="updateMember">
+        <foreach collection="list" item="member" separator=";">
+            update memberaccount
+            set authorityCode = #{member.authorityCode},
+            name = #{member.name},
+            phoneNumber = #{member.phoneNumber},
+            email = #{member.email},
+            address = #{member.address},
+            id = #{member.id},
+            password = #{member.password}
+            where memberCode = #{member.memberCode}
+        </foreach>
+    </update>
+
+
+    <delete id="deleteMember">
+        delete from memberaccount where memberCode = #{memberCode}
+    </delete>
+
 </mapper>
