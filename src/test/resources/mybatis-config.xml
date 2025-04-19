@@ -4,6 +4,12 @@
         "https://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <typeAliases>
-        <typeAlias alias="MemberAccountVO" type="com.donut.prokindonutsweb.dto.member.MemberAccountVO"/>
+        <typeAlias alias="MemberAccountVO" type="com.donut.prokindonutsweb.vo.member.MemberAccountVO"/>
+        <typeAlias alias="WarehouseDTO" type="com.donut.prokindonutsweb.dto.warehouse.WarehouseDTO"/>
+        <typeAlias alias="WarehouseUpdateDTO" type="com.donut.prokindonutsweb.dto.warehouse.WarehouseUpdateDTO"/>
+        <typeAlias alias="WarehouseDeleteDTO" type="com.donut.prokindonutsweb.dto.warehouse.WarehouseDeleteDTO"/>
+        <typeAlias alias="WarehouseVO" type="com.donut.prokindonutsweb.vo.warehouse.WarehouseVO"/>
+        <typeAlias alias="SectionVO" type="com.donut.prokindonutsweb.vo.warehouse.SectionVO"/>
     </typeAliases>
+
 </configuration>

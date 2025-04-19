@@ -70,7 +70,7 @@ public class HomeController {
     @GetMapping("/qh/product")
     public void Qproduct(){}
 
-    @GetMapping("/qh/warehouse")
-    public void Qwarehouse(){}
+//    @GetMapping("/qh/warehouse")
+//    public void Qwarehouse(){}
 
 }

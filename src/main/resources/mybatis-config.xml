@@ -7,5 +7,7 @@
         <package name="com.donut.prokindonutsweb.dto.inbound"/>
         <package name="com.donut.prokindonutsweb.dto.member"/>
         <package name="com.donut.prokindonutsweb.vo.member"/>
+        <package name="com.donut.prokindonutsweb.dto.warehouse"/>
+        <package name="com.donut.prokindonutsweb.vo.warehouse"/>
     </typeAliases>
 </configuration>

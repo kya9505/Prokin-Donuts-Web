@@ -1,6 +1,6 @@
 package com.donut.prokindonutsweb.mappers.member;
 
-import com.donut.prokindonutsweb.dto.member.MemberAccountVO;
+import com.donut.prokindonutsweb.vo.member.MemberAccountVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
