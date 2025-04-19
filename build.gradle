@@ -109,7 +109,10 @@ dependencies {
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.1.1'
 
 
-
+    /*
+    * Valid 애너테이션
+    */
+    implementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.2.0.Final'
 
     // Mockito -> 테스트를 위한 설정
     testImplementation 'org.mockito:mockito-core:4.11.0'
