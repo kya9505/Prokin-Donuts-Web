@@ -98,4 +98,21 @@ public class InboundServiceImpl implements InboundService {
                 ).toList();
         return list.isEmpty() ? Optional.empty() : Optional.of(list);
     }
+
+    @Override
+    public Optional<List<InboundDetailDTO>> findAllInboundDetailList() {
+        /*List<InboundDTO> list = inboundMapper.selectAllInboundDetailList().stream()
+                .filter(vo -> "입고요청".equals(vo.getInboundStatus()) || "승인대기".equals(vo.getInboundStatus()))
+                .map(vo -> {
+                            InboundDTO dto = InboundDTO.builder()
+                                    .inboundCode(vo.getInboundCode())
+                                    .inboundDate(vo.getInboundDate())
+                                    .inboundStatus(vo.getInboundStatus())
+                                    .warehouseCode(vo.getWarehouseCode())
+                                    .build();
+                            return dto;
+                        }
+                ).toList();*/
+        return Optional.empty();
+    }
 }

@@ -15,4 +15,6 @@ public interface InboundService {
     String findNextInboundCode();
 
     Optional<List<InboundDTO>> findAllInboundList();
+
+    Optional<List<InboundDetailDTO>> findAllInboundDetailList();
 }
