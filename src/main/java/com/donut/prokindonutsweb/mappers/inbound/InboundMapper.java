@@ -13,4 +13,10 @@ public interface InboundMapper {
     void insertInboundDetailList(@Param("list") List<InboundDetailVO> list);
 
     String selectInboundCode();
+
+
+    //창고관리자 - 입고관리
+
+    // 입고목록 반환
+    List<InboundVO> selectAllInboundList();
 }

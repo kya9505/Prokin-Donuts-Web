@@ -2,6 +2,7 @@ package com.donut.prokindonutsweb.mappers.inbound;
 
 import com.donut.prokindonutsweb.dto.inbound.InboundDetailVO;
 import com.donut.prokindonutsweb.dto.inbound.InboundVO;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Slf4j
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations="file:src/main/webapp/WEB-INF/spring/root-context.xml")
 class InboundMapperTest {
@@ -69,5 +71,11 @@ class InboundMapperTest {
     void selectInboundCode() {
         String s = inboundMapper.selectInboundCode();
         System.out.println(s);
+    }
+
+    @Test
+    @DisplayName("입고목록 반환 메서드 테스트")
+    void selectAllInboundList() {
+        inboundMapper.selectAllInboundList().forEach(System.out::println);
     }
 }
