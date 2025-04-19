@@ -58,11 +58,12 @@ public class InboundController {
     }
 
 //    창고관리자 - 입고관리 페이지
-    @GetMapping("/manage")
+    @GetMapping("/approval")
     public void wmGetAllInboundList(Model model) {
         List<InboundDTO> inboundList = inboundService.findAllInboundList().get();
         List<InboundDetailDTO> inboundDetailList = inboundService.findAllInboundDetailList().get();
         model.addAttribute("inboundList", inboundList);
         model.addAttribute("inboundDetailList", inboundDetailList);
+
     }
 }
