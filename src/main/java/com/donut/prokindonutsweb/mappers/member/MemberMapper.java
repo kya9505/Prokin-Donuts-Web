@@ -11,5 +11,5 @@ public interface MemberMapper{
     List<MemberAccountVO> selectMember();
     void insertMember(MemberAccountVO memberVO);
     void updateMember(@Param("list") List<MemberAccountVO> memberVOList);
-    void deleteMember(String memberCode);
+    void deleteMember(@Param("list") List<String> memberList);
 }

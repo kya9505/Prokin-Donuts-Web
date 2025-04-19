@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Log4j2
@@ -68,6 +69,7 @@ class MemberMapperTest {
     @Test
     @DisplayName("회원 삭제 DB 반영 테스트")
     public void deleteMember(){
-        mapper.deleteMember("QH100");
+        List<String> memberCodeList = new ArrayList<>(Arrays.asList("QH100"));
+        mapper.deleteMember(memberCodeList);
     }
 }
