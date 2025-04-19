@@ -43,6 +43,17 @@
         select inboundDetailCode, quantity, inboundCode, productCode, sectionCode from InboundDetail
     </select>
 
+<!--    제품이름 반환 -->
+    <select id="selectProductName" resultType="String">
+        select productName from Product where productCode = #{productCode}
+    </select>
+
+<!--    제품 가격 반환-->
+    <select id="selectProductPrice" resultType="Integer">
+        select productPrice from Product where productCode = #{productCode}
+    </select>
+
+
     <sql id="search">
         <if test="(types != null and keyword != null)">
             <foreach collection="types" item="type" open=" and ( " separator="OR" close=")">

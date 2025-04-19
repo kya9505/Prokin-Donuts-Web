@@ -3,6 +3,7 @@ package com.donut.prokindonutsweb.mappers.inbound;
 import com.donut.prokindonutsweb.dto.inbound.InboundDetailVO;
 import com.donut.prokindonutsweb.dto.inbound.InboundVO;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -84,5 +85,18 @@ class InboundMapperTest {
     @DisplayName("입고상세 목록 반환 메서드 테스트")
     void selectAllInboundDetailList() {
         inboundMapper.selectAllInboundDetailList().forEach(System.out::println);
+    }
+
+    @Test
+    @DisplayName("제품 이름 반환 메서드")
+    void selectProductName() {
+        String productName = inboundMapper.selectProductName("BGL1");
+        System.out.println(productName);
+    }
+
+    @Test
+    @DisplayName("제품 가격 반환 메서드")
+    void selectProductPrice() {
+        System.out.println(inboundMapper.selectProductPrice("BGL1"));
     }
 }

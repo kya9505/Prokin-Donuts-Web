@@ -21,4 +21,8 @@ public interface InboundMapper {
     List<InboundVO> selectAllInboundList();
 
     List<InboundDetailVO> selectAllInboundDetailList();
+
+    String selectProductName(String productCode);
+
+    Integer selectProductPrice(String productCode);
 }
