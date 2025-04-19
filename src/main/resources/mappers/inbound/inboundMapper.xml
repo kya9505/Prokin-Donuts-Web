@@ -38,6 +38,10 @@
         select inboundCode, inboundDate, inboundStatus, warehouseCode from Inbound
     </select>
 
+<!--    입고상세 목록 반환-->
+    <select id="selectAllInboundList" resultType="com.donut.prokindonutsweb.dto.inbound.InboundDetailVO">
+        select inboundDetailCode, quantity, inboundCode, productCode, sectionCode from InboundDetail
+    </select>
 
     <sql id="search">
         <if test="(types != null and keyword != null)">
