@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,7 +47,6 @@ public class InboundController {
                 .warehouseCode("GG1")
                 .build();
         inboundService.saveInbound(dto);
-
         // 입고상세 저장 (service 단에서 VO 만들어서 반환)
         inboundService.saveInboundDetail(list);
 
