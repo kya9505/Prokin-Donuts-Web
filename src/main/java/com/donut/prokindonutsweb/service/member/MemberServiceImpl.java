@@ -29,4 +29,22 @@ public class MemberServiceImpl implements MemberService {
                 .map(member -> modelMapper.map(member, MemberAccountDTO.class)).toList();
         return Optional.ofNullable(memberDTOList.isEmpty() ? null : memberDTOList);
     }
+
+    @Override
+    public void saveMember(MemberAccountDTO memberAccountDTO) {
+        MemberAccountVO memberAccountVO =  modelMapper.map(memberAccountDTO,MemberAccountVO.class);
+        memberMapper.insertMember(memberAccountVO);
+    }
+
+    @Override
+    public void updateMember(List<MemberAccountDTO> memberList) {
+        List<MemberAccountVO> memberVOList = memberList.stream()
+                .map(member -> modelMapper.map(member,MemberAccountVO.class)).toList();
+        memberMapper.updateMember(memberVOList);
+    }
+
+    @Override
+    public void deleteMember(List<String> memberList) {
+        memberMapper.deleteMember(memberList);
+    }
 }
