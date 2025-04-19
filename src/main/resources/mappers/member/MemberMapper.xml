@@ -15,7 +15,7 @@
     </insert>
 
     <update id="updateMember">
-        <foreach collection="list" item="member" separator=";">
+        <foreach collection="list" item="member">
             update memberaccount
             set authorityCode = #{member.authorityCode},
             name = #{member.name},
@@ -29,8 +29,12 @@
     </update>
 
 
-    <delete id="deleteMember">
-        delete from memberaccount where memberCode = #{memberCode}
+    <delete id="deleteMember" parameterType="list">
+        delete from memberaccount
+        where memberCode in
+        <foreach collection="list" item="code" open="(" separator="," close=")">
+            #{code}
+        </foreach>
     </delete>
 
 </mapper>
