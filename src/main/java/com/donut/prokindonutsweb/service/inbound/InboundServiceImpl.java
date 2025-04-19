@@ -99,21 +99,31 @@ public class InboundServiceImpl implements InboundService {
         return list.isEmpty() ? Optional.empty() : Optional.of(list);
     }
 
+    // 입고상세 목록 변환 작업
     @Override
     public Optional<List<InboundDetailDTO>> findAllInboundDetailList() {
-        /*List<InboundDTO> list = inboundMapper.selectAllInboundDetailList().stream()
-                .filter(vo -> "입고요청".equals(vo.getInboundStatus()) || "승인대기".equals(vo.getInboundStatus()))
+        List<InboundDetailDTO> list = inboundMapper.selectAllInboundDetailList()
+                .stream()
                 .map(vo -> {
-                            InboundDTO dto = InboundDTO.builder()
-                                    .inboundCode(vo.getInboundCode())
-                                    .inboundDate(vo.getInboundDate())
-                                    .inboundStatus(vo.getInboundStatus())
-                                    .warehouseCode(vo.getWarehouseCode())
-                                    .build();
+                    InboundDetailDTO dto = InboundDetailDTO.builder()
+                            .productCode(vo.getProductCode())
+                            .productName(inboundMapper.selectProductName(vo.getProductCode()))
+                            .productPrice(inboundMapper.selectProductPrice(vo.getProductCode()))
+                            .storedType(getStoredType(vo.getSectionCode()))
+                            .quantity(vo.getQuantity())
+                            .build();
                             return dto;
                         }
-                ).toList();*/
-        return Optional.empty();
+                ).toList();
+
+        return list.isEmpty() ? Optional.empty() : Optional.of(list);
+    }
+
+    private String getStoredType(String sectionCode) {
+        char type = sectionCode.charAt(sectionCode.length() - 1);
+        if(type=='R') return "냉장";
+        else if(type=='F') return "냉동";
+        else return "상온";
     }
 
 

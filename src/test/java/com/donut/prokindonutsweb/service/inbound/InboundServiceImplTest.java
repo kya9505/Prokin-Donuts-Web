@@ -62,4 +62,10 @@ class InboundServiceImplTest {
     void findAllInboundList() {
         inboundService.findAllInboundList().stream().forEach(System.out::println);
     }
+
+    @Test
+    @DisplayName("입고 상세 목록 반환")
+    void findAllInboundDetailList() {
+        inboundService.findAllInboundDetailList().stream().forEach(System.out::println);
+    }
 }
