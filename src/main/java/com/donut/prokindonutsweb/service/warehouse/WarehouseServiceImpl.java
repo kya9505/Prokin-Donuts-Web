@@ -59,7 +59,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         .orElseThrow(() -> new IllegalArgumentException("주소에서 지역코드를 추출할 수 없습니다."));
     
     // 2. 해당 prefix로 시작하는 기존 창고코드들 조회
-    List<String> existingCodes = warehouseMapper.findWarehouseCodesByPrefix(prefix); // ex: GG1, GG4, GG5
+    List<String> existingCodes = warehouseMapper.selectWarehouseCodesByPrefix(prefix); // ex: GG1, GG4, GG5
     
     // 3. 숫자만 추출하여 최대값 + 1 결정
     int nextNum = existingCodes.stream()
@@ -100,7 +100,7 @@ public class WarehouseServiceImpl implements WarehouseService {
   
   @Override
   @Transactional(readOnly = true)
-  public List<MemberAccountVO> getUnassignedWarehouseManagers() {
+  public List<MemberAccountVO> findUnassignedWarehouseManagers() {
     log.info("Service : getUnassignedWarehouseManagers called");
     return warehouseMapper.selectUnAccountWMList();
   }
@@ -111,5 +111,10 @@ public class WarehouseServiceImpl implements WarehouseService {
     WarehouseVO warehouseVO = modelMapper.map(warehouseCheckDTO, WarehouseVO.class);
     int count = warehouseMapper.checkWarehouseDuplicate(warehouseVO);
     return count > 0;
+  }
+  
+  @Override
+  public String findWarehouseStatus(String warehouseCode) {
+    return warehouseMapper.selectWarehouseStatus(warehouseCode);
   }
 }

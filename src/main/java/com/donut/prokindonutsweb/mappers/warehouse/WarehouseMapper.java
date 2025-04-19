@@ -18,5 +18,6 @@ public interface WarehouseMapper {
   void deleteWarehouse(WarehouseVO warehouse);
   List<MemberAccountVO> selectUnAccountWMList();
   int checkWarehouseDuplicate(WarehouseVO warehouse);
-  List<String> findWarehouseCodesByPrefix(String prefix);
+  List<String> selectWarehouseCodesByPrefix(String prefix);
+  String selectWarehouseStatus(String warehouseCode);
 }

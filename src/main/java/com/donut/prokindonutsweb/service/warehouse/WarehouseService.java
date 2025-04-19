@@ -14,6 +14,7 @@ public interface WarehouseService {
   void addWarehouse(WarehouseDTO warehouseDTO);
   void updateWarehouse(WarehouseUpdateDTO warehouseUpdateDTO);
   void deleteWarehouse(WarehouseDeleteDTO warehouseDeleteDTO);
-  List<MemberAccountVO> getUnassignedWarehouseManagers();
+  List<MemberAccountVO> findUnassignedWarehouseManagers();
   boolean checkWarehouseDuplicate(WarehouseCheckDTO warehouseCheckDTO);
+  String findWarehouseStatus(String warehouseCode);
 }

@@ -67,10 +67,28 @@
     </select>
 
     <!-- 7) prefix로 시작하는 기존 창고코드들 조회 -->
-    <select id="findWarehouseCodesByPrefix" resultType="string">
+    <select id="selectWarehouseCodesByPrefix" resultType="string">
         SELECT warehouseCode
         FROM Warehouse
         WHERE warehouseCode LIKE CONCAT(#{prefix}, '%')
+    </select>
+
+    <!-- 8) 창고 상태를 조회 (입고진행, 출고진행(보류), 재고있음, 삭제가능) -->
+    <select id="selectWarehouseStatus" resultType="string">
+        SELECT
+            CASE
+                WHEN EXISTS (
+                    SELECT 1 FROM Inbound
+                    WHERE warehouseCode = #{warehouseCode}
+                      AND inboundStatus IN ('입고진행', '승인대기')
+                ) THEN '입고진행'
+                WHEN EXISTS (
+                    SELECT 1 FROM Inventory
+                    WHERE warehouseCode = #{warehouseCode}
+                      AND quantity > 0
+                ) THEN '재고있음'
+                ELSE '삭제가능'
+                END AS status
     </select>
 
 </mapper>

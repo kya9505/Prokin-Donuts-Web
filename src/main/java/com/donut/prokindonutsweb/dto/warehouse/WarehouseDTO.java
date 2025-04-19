@@ -15,4 +15,5 @@ public class WarehouseDTO {
   private String memberCode;
   private String memberName;
   private String memberEmail;
+  private String status;
 }

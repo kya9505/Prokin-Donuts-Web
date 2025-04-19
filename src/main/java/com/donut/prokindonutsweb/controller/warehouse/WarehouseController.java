@@ -28,7 +28,13 @@ public class WarehouseController {
   public void qhGetWarehouseList(Model model){
     log.info("Controller : qhGetWarehouseList called");
     List<WarehouseDTO> warehouseList = warehouseService.findWarehouseList();
-    List<MemberAccountVO> unassignedWMs = warehouseService.getUnassignedWarehouseManagers();
+    List<MemberAccountVO> unassignedWMs = warehouseService.findUnassignedWarehouseManagers();
+    
+    for (WarehouseDTO dto : warehouseList) {
+      String status = warehouseService.findWarehouseStatus(dto.getWarehouseCode());
+      // null 이면 삭제 가능 상태로 간주
+      dto.setStatus(status != null ? status : "삭제가능");
+    }
     
     model.addAttribute("warehouseList",warehouseList);
     model.addAttribute("unassignedWMs",unassignedWMs);
@@ -37,6 +43,9 @@ public class WarehouseController {
   // 2. 창고 등록
   @PostMapping("/add")
   public String addWarehouse(WarehouseDTO warehouseDTO) {
+    if ("null".equals(warehouseDTO.getMemberCode()) || "".equals(warehouseDTO.getMemberCode())) {
+      warehouseDTO.setMemberCode(null);
+    }
     log.info("Controller : addWarehouse called");
     warehouseService.addWarehouse(warehouseDTO);
     return "redirect:/qh/warehouse";
@@ -45,6 +54,10 @@ public class WarehouseController {
   // 3. 창고 수정
   @PostMapping("/update")
   public String updateWarehouse(WarehouseUpdateDTO warehouseUpdateDTO) {
+    if ("null".equals(warehouseUpdateDTO.getMemberCode()) || "".equals(warehouseUpdateDTO.getMemberCode())) {
+      warehouseUpdateDTO.setMemberCode(null);
+    }
+    
     log.info("Controller : updateWarehouse called");
     warehouseService.updateWarehouse(warehouseUpdateDTO);
     return "redirect:/qh/warehouse";
@@ -58,7 +71,7 @@ public class WarehouseController {
     return "redirect:/qh/warehouse";
   }
   
-  // 6. 창고명 중복 확인
+  // 5. 창고명 중복 확인
   @GetMapping(value = "/check", produces = "application/json")
   @ResponseBody
   public boolean checkWarehouseDuplicate(@RequestParam("warehouseName") String warehouseName,
