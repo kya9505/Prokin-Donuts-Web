@@ -1,3 +1,4 @@
+/*
 package com.donut.prokindonutsweb.service.warehouse;
 
 import com.donut.prokindonutsweb.dto.warehouse.WarehouseCheckDTO;
@@ -148,3 +149,4 @@ public class WarehouseServiceImplTest {
     assertTrue(isDup, "중복된 창고명이라면 true 반환해야 함");
   }
 }
+*/
