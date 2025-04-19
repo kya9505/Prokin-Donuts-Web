@@ -18,11 +18,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations="file:src/main/webapp/WEB-INF/spring/root-context.xml")
+@ContextConfiguration(locations = "file:src/main/webapp/WEB-INF/spring/root-context.xml")
 class InboundMapperTest {
 
     @Autowired(required = false)
     private InboundMapper inboundMapper;
+
     @Test
     void mapper() {
         inboundMapper.selectAllProductList().forEach(System.out::println);
@@ -77,5 +78,11 @@ class InboundMapperTest {
     @DisplayName("입고목록 반환 메서드 테스트")
     void selectAllInboundList() {
         inboundMapper.selectAllInboundList().forEach(System.out::println);
+    }
+
+    @Test
+    @DisplayName("입고상세 목록 반환 메서드 테스트")
+    void selectAllInboundDetailList() {
+        inboundMapper.selectAllInboundDetailList().forEach(System.out::println);
     }
 }

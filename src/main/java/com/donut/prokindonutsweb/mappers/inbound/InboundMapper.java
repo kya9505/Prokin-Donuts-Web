@@ -19,4 +19,6 @@ public interface InboundMapper {
 
     // 입고목록 반환
     List<InboundVO> selectAllInboundList();
+
+    List<InboundDetailVO> selectAllInboundDetailList();
 }
