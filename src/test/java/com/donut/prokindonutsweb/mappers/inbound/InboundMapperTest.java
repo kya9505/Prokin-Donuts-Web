@@ -135,4 +135,11 @@ class InboundMapperTest {
         inboundMapper.selectInboundDetailList("IN2").forEach(System.out::println);
     }
 
+    @Test
+    @DisplayName("입고 취소(입고상태 -> 입고취소)")
+    void deleteInbound() {
+        inboundMapper.deleteInbound("IN7");
+    }
+
+
 }

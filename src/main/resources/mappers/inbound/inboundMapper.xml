@@ -73,6 +73,10 @@
         where i.inboundCode = d.inboundCode and i.inboundCode = #{inboundCode}
     </select>
 
+<!--    입고 취소 (입고상태 -> 입고취소로 변경)-->
+    <update id="deleteInbound">
+        update inbound set inboundStatus = "입고취소" where inboundCode = #{inboundCode}
+    </update>
 
     <sql id="search">
         <if test="(types != null and keyword != null)">

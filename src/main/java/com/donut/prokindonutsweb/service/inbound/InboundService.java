@@ -23,4 +23,6 @@ public interface InboundService {
     Optional<List<InventoryDTO>> findInboundDetailList(String inboundCode);
 
     void updateInventory(InventoryVO inventoryVO);
+
+    void deleteInbound(String inboundCode);
 }

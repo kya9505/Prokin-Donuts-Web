@@ -82,4 +82,10 @@ class InboundServiceImplTest {
     void findInboundDetailList() {
         inboundService.findInboundDetailList("IN1").get().forEach(System.out::println);
     }
+
+    @Test
+    @DisplayName("입고 취소 상태변환 (-> 입고취소)")
+    void deleteInbound() {
+        inboundService.deleteInbound("IN6");
+    }
 }

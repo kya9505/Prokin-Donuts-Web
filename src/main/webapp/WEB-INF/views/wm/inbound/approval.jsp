@@ -129,7 +129,8 @@
                                             <button class="btn btn-edit text-primary-2">
                                                 <i class="lni lni-pencil"></i>
                                             </button>
-                                            <button class="btn btn-delete text-danger" data-inbound-code="${inbound.inboundCode}">
+                                            <button class="btn btn-delete text-danger"  data-inbound-code="${inbound.inboundCode}"
+                                            data-inbound-date="${inbound.inboundDate}">
                                                 <i class="lni lni-trash-can"></i>
                                             </button>
                                         </div>
@@ -170,15 +171,14 @@
                                 <th>수량</th>
                             </tr>
                             </thead>
-                            <tbody id="inboundDetailTableBody">
+                            <tbody id="inboundDetailTableBody_approve">
                             <!-- JavaScript로 채워짐 -->
                             </tbody>
                         </table>
                     </div>
                     <div class="modal-footer d-flex justify-content-between align-items-center">
                       <div class="form-group mb-0">
-
-                              <input type="date" id="inboundDate" class="form-control" disabled />
+                              <input type="date" id="inboundDate_approve" class="form-control" disabled />
                        </div>
                         <div>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
@@ -236,6 +236,7 @@
 
 
         <!-- 입고 삭제 모달 ! -->
+        <form id="inboundDeleteForm" method="post" action="/wm/inbound/cancel" accept-charset="UTF-8">
         <div class="modal fade" id="inboundDeleteModal" tabindex="-1" aria-labelledby="inboundDeleteModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- 크기 조정 가능: modal-sm, modal-lg 등 -->
                 <div class="modal-content">
@@ -244,6 +245,9 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
                     </div>
                     <div class="modal-body">
+
+                        <input type="hidden" id="modalInboundCode_delete" name="inboundCode">
+
                         <table class="table" id="selectedProductsTable">
                             <thead>
                             <tr>
@@ -254,7 +258,7 @@
                                 <th>수량</th>
                             </tr>
                             </thead>
-                            <tbody id="inboundDetailTableBody">
+                            <tbody id="inboundDetailTableBody_delete">
                             <!-- JavaScript로 채워짐 -->
                             </tbody>
                         </table>
@@ -262,18 +266,19 @@
                     <div class="modal-footer d-flex justify-content-between align-items-center">
                         <!-- 왼쪽: 입고 날짜 -->
                         <div class="form-group mb-0">
-                            <label for="inboundDate" class="mr-2 mb-0">입고 날짜:</label>
+                            <input type="date" id="inboundDate_delete" class="form-control" disabled />
 
-                            <input type="date" class="form-control form-control-sm d-inline-block" id="inboundDate" style="width: auto;" />
+                            <%--<input type="date" class="form-control form-control-sm d-inline-block" id="inboundDate" style="width: auto;" />--%>
                         </div>
                         <div>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                            <button type="button" class="main-btn primary-btn btn-primary btn-sm">삭제</button>
+                            <button type="submit" class="main-btn primary-btn btn-primary btn-sm">삭제</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        </form>
 
         </div>
     </section>
@@ -354,34 +359,6 @@
                 { targets: [0, 1, 2, 3], className: 'text-center' } // JS 속성으로 가운데 정렬
             ],
             order: [[0, 'asc']],
-
-            /*columns: [
-                { data: 'inboundCode', title: '입고코드' },
-                { data: 'inboundDate', title: '입고일' },
-                { data: 'inboundStatus', title: '입고상태' },
-                { data: 'warehouseCode', title: '창고코드' },
-                { // Edit/Delete 버튼
-                    data: null,
-                    orderable: false,
-                    searchable: false,
-                    render: function(data, type, row, meta) {
-                        return `
-                <div class="btu-group-2">
-                  <button class="btn btn-approve text-success" title="입고 승인" data-inbound-code="IN1">
-                    <i class="lni lni-checkmark-circle"></i>
-                  </button>
-                  <button class="btn btn-edit text-primary-2">
-                    <i class="lni lni-pencil"></i>
-                  </button>
-                  <button class="btn btn-delete text-danger">
-                    <i class="lni lni-trash-can"></i>
-                  </button>
-                </div>
-              `;
-                    },
-                    title: '승인&nbsp&nbsp|&nbsp&nbsp수정&nbsp&nbsp|&nbsp&nbsp취소'
-                }
-            ],*/
             paging: true,
             pageLength: 10,
             lengthMenu: [[5, 10, 20, -1], ['5개', '10개', '20개', '전체']],
@@ -502,32 +479,6 @@
             return true;
         });
 
-       /* // 입고상세 목업 데이터
-        const inboundDetails = [
-            { inboundCode: 'INBOUND123', productName: '오리지널 도넛', quantity: 100 },
-            { inboundCode: 'INBOUND123', productName: '초코 도넛', quantity: 50 },
-            { inboundCode: 'INBOUND456', productName: '커피', quantity: 30 },
-        ];*/
-
-
-        /*// 9. Edit/Delete 버튼 이벤트 (제품명 대신 productName 사용)
-        // 등록 버튼 클릭 시
-        const dummyManagers = [
-            { id: "FM1", name: "박열정" },
-            { id: "FM2", name: "조아현" },
-            { id: "FM3", name: "백승우" },
-            { id: "FM4", name: "윤가영" }
-        ];*/
-
-       /* function populateManagerDropdown() {
-            const $select = $('#registerinboundManager');
-            $select.empty().append(`<option value="">점주 선택</option>`); // 기본값 초기화
-
-            dummyManagers.forEach(manager => {
-                const label = `${manager.id} | ${manager.name}`;
-                $select.append(`<option value="${manager.id}">${label}</option>`);
-            });
-        }*/
 
         // 모달 열릴 때마다 목록 갱신되게 하면 좋아
         $('#inboundAddModal').on('show.bs.modal', function () {
@@ -549,7 +500,7 @@
             console.log('🔍 필터링된 상세내역:', filteredDetails);
 
             // tbody 비우고 새로 채우기
-            const $tbody = $('#inboundDetailTableBody');
+            const $tbody = $('#inboundDetailTableBody_approve');
             $tbody.empty();
 
             if (filteredDetails.length === 0) {
@@ -570,7 +521,7 @@
 
             }
 
-            $('#inboundDate').val(inboundDate);
+            $('#inboundDate_approve').val(inboundDate);
             $('#modalInboundCode').val(inboundCode);
             console.log(inboundDate);
 
@@ -578,42 +529,6 @@
             const modal = new bootstrap.Modal(document.getElementById('inboundDetailModal'));
             modal.show();
         });
-
-        /* $('body').on('click', '.btn-approve', function () {
-             const inboundCode = this.dataset.inboundCode;
-             console.log(inboundCode);
-             console.log(inboundDetails);
-
-             const filteredDetails = inboundDetails.filter(detail => detail.inboundCode === inboundCode);
-             console.log(filteredDetails);
-
-             const tbody = document.getElementById('inboundDetailTableBody');
-             tbody.innerHTML = '';
-
-             if (filteredDetails.length > 0) {
-                 filteredDetails.forEach(detail => {
-                     const row = `
-               <tr>
-                 <td>`+detail.productName+`</td>
-                 <td>`+detail.productCode+`</td>
-                 <td>`+detail.productName+`</td>
-                 <td>`+detail.productPrice+`</td>
-                 <td>`+detail.storedType+`</td>
-                 <td>`+detail.quantity+`</td>
-
-               </tr>
-             `;
-                     tbody.insertAdjacentHTML('beforeend', row);
-                 });
-             } else {
-                 tbody.innerHTML = '<tr><td colspan="2">데이터가 없습니다.</td></tr>';
-             }
-
-             // 모달 띄우기
-             const modal = new bootstrap.Modal(document.getElementById('inboundDetailModal'));
-             modal.show();
-         });*/
-
 
 
         // 수정 버튼 이벤트
@@ -667,6 +582,54 @@
             $('#inboundEditModal').modal('show');
         });
 
+
+        //삭제
+
+        $('body').on('click', '.btn-delete', function () {
+            const inboundCode = $(this).data('inbound-code'); // 버튼에서 코드 가져오기
+            console.log('✅ 선택된 inboundCode:', inboundCode);
+
+            const inboundDate = $(this).data('inbound-date');
+
+            // server에서 내려받은 전체 리스트에서 코드로 필터링
+            const filteredDetails = inboundDetails.filter(detail => detail.inboundCode === inboundCode);
+            console.log('🔍 필터링된 상세내역:', filteredDetails);
+
+            // tbody 비우고 새로 채우기
+            const $tbody = $('#inboundDetailTableBody_delete');
+            $tbody.empty();
+
+            if (filteredDetails.length === 0) {
+                $tbody.append('<tr><td colspan="5">데이터가 없습니다.</td></tr>');
+            } else {
+                filteredDetails.forEach(detail => {
+                    const row = `
+                <tr>
+                 <td>` + detail.productCode + `</td>
+                 <td>` + detail.productName + `</td>
+                 <td>` + detail.productPrice + `</td>
+                 <td>` + detail.storedType + `</td>
+                 <td>` + detail.quantity + `</td>
+                </tr>
+            `;
+                    $tbody.append(row);
+                });
+
+            }
+
+            $('#inboundDate_delete').val(inboundDate);
+            $('#modalInboundCode_delete').val(inboundCode);
+            console.log(inboundDate);
+
+            // 모달 열기
+            const modal = new bootstrap.Modal(document.getElementById('inboundDeleteModal'));
+            modal.show();
+        });
+
+
+
+
+/*
         // 삭제 버튼 이벤트
         $('#datatable tbody').on('click', '.btn-delete', function(e) {
             e.preventDefault();
@@ -687,7 +650,7 @@
 
             // 삭제 모달을 열기
             $('#inboundDeleteModal').modal('show');
-        });
+        });*/
 
     });
 
