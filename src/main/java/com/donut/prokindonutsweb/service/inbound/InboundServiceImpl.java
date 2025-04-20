@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -127,6 +128,21 @@ public class InboundServiceImpl implements InboundService {
         else if(type=='F') return "냉동";
         else return "상온";
     }
+
+    @Override
+    public void approveInbound(String inboundCode) {
+        inboundMapper.approveInbound(inboundCode);
+    }
+
+    @Override
+    public Optional<List<InventoryDTO>> findInboundDetailList(String inboundCode) {
+       return Optional.of(new ArrayList<>(inboundMapper.selectInboundDetailList(inboundCode)));
+
+    }
+
+
+
+
 
 
 }

@@ -17,4 +17,10 @@ public interface InboundService {
     Optional<List<InboundDTO>> findAllInboundList();
 
     Optional<List<InboundDetailDTO>> findAllInboundDetailList();
+
+    void approveInbound(String inboundCode);
+
+    Optional<List<InventoryDTO>> findInboundDetailList(String inboundCode);
+
+
 }

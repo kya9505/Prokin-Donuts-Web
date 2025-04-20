@@ -69,4 +69,16 @@ class InboundServiceImplTest {
     void findAllInboundDetailList() {
         inboundService.findAllInboundDetailList().stream().forEach(System.out::println);
     }
+
+    @Test
+    @DisplayName("입고 상태 변환(-> 완료)")
+    void approveInbound() {
+        inboundService.approveInbound("IN2");
+    }
+
+    @Test
+    @DisplayName("입고 상세 목록 리스트 반환(재고반영에 필요)")
+    void findInboundDetailList() {
+        inboundService.findInboundDetailList("IN1").get().forEach(System.out::println);
+    }
 }
