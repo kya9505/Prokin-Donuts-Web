@@ -134,18 +134,30 @@
                         <div class="modal-body">
                             <!-- 필수 입력 항목 안내 -->
                             <p class="text-danger fw-normal mb-3">(*)는 필수 입력 항목입니다.</p>
-
+                            <!-- 벨리드 오류 메시지 -->
+                            <c:if test="${not empty errorMessage}">
+                                <div class="text-danger mb-2">
+                                        ${errorMessage}
+                                </div>
+                            </c:if>
                             <!-- 등록 폼 -->
-                            <form id="registerForm">
-
-                                <!-- ID 필드 + ID Check 버튼 -->
+                            <form id="memberAddForm" method="post" action="/qh/member/add" accept-charset="UTF-8">
+                                <div class="mb-3">
+                                    <label class="form-label">authority (*)</label>
+                                    <select class="form-select" name="authorityCode" required>
+                                        <option value="" disabled selected hidden>권한 선택</option>
+                                        <option value="QH">본사관리자</option>
+                                        <option value="WM">창고관리자</option>
+                                        <option value="FM">가맹점주</option>
+                                    </select>
+                                </div>
                                 <div class="mb-3">
                                     <label class="form-label">ID (*)</label>
                                     <div class="d-flex gap-2">
-                                        <input
-                                                type="text"
+                                        <input    name="id"
+                                                  type="text"
                                                 placeholder="아이디"
-                                                class="form-control"
+                                                class="form-control" required
                                         />
                                         <a
                                                 href="#0"
@@ -158,47 +170,47 @@
                                 <!-- Password -->
                                 <div class="mb-3">
                                     <label class="form-label">Password (*)</label>
-                                    <input
-                                            type="password"
+                                    <input      name="password"
+                                                type="password"
                                             placeholder="초기 비밀번호"
-                                            class="form-control"
+                                            class="form-control" required
                                     />
                                 </div>
 
                                 <!-- Password Check -->
                                 <div class="mb-3">
                                     <label class="form-label">Password Check (*)</label>
-                                    <input
+                                    <input  name="passwordCheck"
                                             type="password"
                                             placeholder="초기 비밀번호 확인"
-                                            class="form-control"
+                                            class="form-control" required
                                     />
                                 </div>
 
                                 <!-- Name -->
                                 <div class="mb-3">
                                     <label class="form-label">Name (*)</label>
-                                    <input
+                                    <input  name="name"
                                             type="text"
                                             placeholder="이름"
-                                            class="form-control"
+                                            class="form-control" required
                                     />
                                 </div>
 
                                 <!-- Email -->
                                 <div class="mb-3">
                                     <label class="form-label">Email (*)</label>
-                                    <input
+                                    <input  name="email"
                                             type="email"
                                             placeholder="이메일"
-                                            class="form-control"
+                                            class="form-control" required
                                     />
                                 </div>
 
                                 <!-- Phone Number -->
                                 <div class="mb-3">
                                     <label class="form-label">Phone Number</label>
-                                    <input
+                                    <input  name="phoneNumber"
                                             type="text"
                                             placeholder="전화번호"
                                             class="form-control"
@@ -208,7 +220,7 @@
                                 <!-- Address -->
                                 <div class="mb-3">
                                     <label class="form-label">address</label>
-                                    <input
+                                    <input  name="address"
                                             type="text"
                                             placeholder="주소"
                                             class="form-control"
@@ -223,7 +235,6 @@
                                         회원 등록
                                     </button>
                                 </div>
-
                             </form>
                         </div>
                     </div>
@@ -231,7 +242,7 @@
             </div>
 
     <!-- 수정 모달 -->
-    <form id="memberEditForm" method="post" action="/qh/member/update" accept-charset="UTF-8">
+    <form id="memberEditForm" name="memberList" method="post" action="/qh/member/update" accept-charset="UTF-8">
     <div class="modal fade" id="memberEditModal" tabindex="-1" aria-labelledby="memberEditModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
@@ -252,7 +263,14 @@
                             <th>비밀번호</th>
                         </tr>
                         </thead>
+
                         <tbody id="memberEditModalBody">
+                        <!-- 벨리드 오류 메시지 -->
+                        <c:if test="${not empty errorMessage}">
+                            <div class="text-danger mb-2">
+                                    ${errorMessage}
+                            </div>
+                        </c:if>
                         <c:if test="${not empty memberList}">
                             <c:forEach var="item" items="${memberList}" varStatus="status">
                                 <tr>
@@ -468,6 +486,18 @@
         $('#memberAddModal').modal('show');
     });
 
+    // 등록 시 비밀번호 확인
+    document.getElementById("memberAddForm").addEventListener("submit", function (e) {
+        const password = document.querySelector("#memberAddForm input[name='password']").value.trim();
+        const passwordCheck = document.querySelector("#memberAddForm input[name='passwordCheck']").value.trim();
+
+        if (password !== passwordCheck) {
+            e.preventDefault(); // 서버 전송 막음
+            alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+        }
+    });
+
+
     // 수정 버튼 클릭 시
     $('#btnMemberEdit_clone').on('click', function (e) {
         const selectedData = [];
@@ -531,6 +561,11 @@
 
         <c:if test="${not empty memberList}">
         const modal = new bootstrap.Modal(document.getElementById('memberEditModal'));
+        modal.show();
+        </c:if>
+
+        <c:if test="${not empty errorMessage and empty memberList}">
+        const modal = new bootstrap.Modal(document.getElementById('memberAddModal'));
         modal.show();
         </c:if>
     });
