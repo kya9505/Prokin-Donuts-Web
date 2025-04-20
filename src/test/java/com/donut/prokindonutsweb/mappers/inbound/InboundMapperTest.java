@@ -4,7 +4,6 @@ import com.donut.prokindonutsweb.dto.inbound.InboundDetailVO;
 import com.donut.prokindonutsweb.dto.inbound.InboundVO;
 import com.donut.prokindonutsweb.dto.inbound.InventoryVO;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,12 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @ExtendWith(SpringExtension.class)
@@ -131,6 +127,12 @@ class InboundMapperTest {
                 .warehouseCode("BS1")
                 .build();
         inboundMapper.updateInventory(vo);
+    }
+
+    @Test
+    @DisplayName("입고코드 입력시 입고상세 목록 반환(창고코드, 수량, 제품코드)")
+    void selectInboundDetailList() {
+        inboundMapper.selectInboundDetailList("IN2").forEach(System.out::println);
     }
 
 }

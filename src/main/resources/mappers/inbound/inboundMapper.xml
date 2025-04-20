@@ -66,6 +66,14 @@
         on DUPLICATE KEY update quantity = quantity + #{quantity}
     </insert>
 
+<!--    입고코드 -> 입고상세 목록 반환-->
+    <select id="selectInboundDetailList" resultType="com.donut.prokindonutsweb.dto.inbound.InventoryDTO">
+        select i.warehouseCode, quantity, productCode
+        from inbound i, inboundDetail d
+        where i.inboundCode = d.inboundCode and i.inboundCode = #{inboundCode}
+    </select>
+
+
     <sql id="search">
         <if test="(types != null and keyword != null)">
             <foreach collection="types" item="type" open=" and ( " separator="OR" close=")">
