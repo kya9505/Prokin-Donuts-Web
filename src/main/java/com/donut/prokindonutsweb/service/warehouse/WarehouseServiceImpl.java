@@ -87,14 +87,14 @@ public class WarehouseServiceImpl implements WarehouseService {
   
   @Override
   public void updateWarehouse(WarehouseUpdateDTO warehouseUpdateDTO) {
-    log.info("Service : updateWarehouse called");
+    log.info("Service : qhUpdateWarehouse called");
     WarehouseVO warehouseVO = modelMapper.map(warehouseUpdateDTO, WarehouseVO.class);
     warehouseMapper.updateWarehouse(warehouseVO);
   }
   
   @Override
   public void deleteWarehouse(WarehouseDeleteDTO warehouseDeleteDTO) {
-    log.info("Service : deleteWarehouse called");
+    log.info("Service : qhDeleteWarehouse called");
     WarehouseVO warehouseVO = modelMapper.map(warehouseDeleteDTO, WarehouseVO.class);
     warehouseMapper.deleteWarehouse(warehouseVO);
   }
@@ -108,7 +108,7 @@ public class WarehouseServiceImpl implements WarehouseService {
   
   @Override
   public boolean checkWarehouseDuplicate(WarehouseCheckDTO warehouseCheckDTO) {
-    log.info("Service : checkWarehouseDuplicate called");
+    log.info("Service : qhCheckWarehouseDuplicate called");
     WarehouseVO warehouseVO = modelMapper.map(warehouseCheckDTO, WarehouseVO.class);
     int count = warehouseMapper.checkWarehouseDuplicate(warehouseVO);
     return count > 0;
