@@ -487,7 +487,7 @@
                                 $('#detailAddress_disp').val('').focus();
                             }
                         }).open({
-                            q: roadAddr   // 이 파라미터가 팝업 검색어를 미리 채워줍니다!
+                            q: roadAddr
                         });
                     }
                 }
@@ -548,7 +548,7 @@
         // 2) 초기 지도: 전체 마커가 보이게 축소/이동
         map.setBounds(bounds);
 
-        // 3) 클릭 시 확대 후 이동 (💥 순서 중요)
+        // 3) 클릭 시 확대 후 이동 (순서 매우 중요)
         rows.forEach(row => {
             row.addEventListener('click', () => {
                 const lat = row.dataset.lat;
@@ -562,7 +562,7 @@
                         map.setCenter(pos); // 그다음 이동
                     }, 100);
                 } else {
-                    // 비상상황: geocoding이 아직 안 된 경우
+                    // 비상: geocoding이 아직 안 된 경우
                     geocoder.addressSearch(row.dataset.warehouseAddr, (res, st) => {
                         if (st === kakao.maps.services.Status.OK) {
                             const pos = new kakao.maps.LatLng(res[0].y, res[0].x);
@@ -579,13 +579,6 @@
             });
         });
     });
-</script>
-
-<script>
-    // (등록 모달) 지도 클릭으로 열기 & 주소 세팅
-    // @ts-ignore: kakao.maps.event.addListener is from Kakao SDK, not MediaQueryList
-    // 2) 지도 클릭 → 등록 모달 열기 & 주소 세팅
-    // @ts-ignore: kakao.maps.event.addListener 는 Kakao SDK 메서드입니다
 </script>
 
 <script>
@@ -883,7 +876,7 @@
 
         let isModifyNameChecked = true;
 
-// 1. 수정 버튼 클릭 시 - 모달 열기
+        // 1. 수정 버튼 클릭 시 - 모달 열기
         $('#datatable tbody').on('click', '.btn-edit', function (e) {
             e.preventDefault();
 
@@ -926,12 +919,12 @@
             $('#warehouseEditModal').modal('show');
         });
 
-// 2. 창고명 입력 시 중복확인 초기화
+        // 2. 창고명 입력 시 중복확인 초기화
         $("#modifyWarehouseName").on("input", function () {
             isModifyNameChecked = false;
         });
 
-// 3. 중복 확인 버튼 클릭 시
+        // 3. 중복 확인 버튼 클릭 시
         $("#modifyCheckDuplicateWarehouse").on("click", function (e) {
             e.preventDefault(); // 폼 제출 막기
 
@@ -967,7 +960,7 @@
                 });
         });
 
-// 4. 최종 제출 시 유효성검사 + 중복확인 여부 체크
+        // 4. 최종 제출 시 유효성검사 + 중복확인 여부 체크
         $("#modifyWarehouseForm").on("submit", function (e) {
             const name = $("#modifyWarehouseName").val().trim();
             const reg = /^[A-Za-z0-9가-힣]{1,10}$/;
@@ -1044,7 +1037,7 @@
             $('#warehouseDeleteModal').modal('show');
         });
 
-// (2) 삭제 확정 버튼
+        // 삭제 폼 전송
         $('#confirmDeleteWarehouse').on('click', function() {
             if ($(this).is(':hidden')) {
                 alert('삭제할 수 없는 창고입니다.');
