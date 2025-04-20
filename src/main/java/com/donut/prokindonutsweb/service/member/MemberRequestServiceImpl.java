@@ -54,10 +54,10 @@ public class MemberRequestServiceImpl implements MemberRequestService {
     public void approvalMember(List<String> requestCodeList) {
         //승인 리스트에서 개별 요청 코드 조회
         requestCodeList.stream().forEach(requestCode -> {
-            //요청 코드에 해당하는 객체의 요청 상태를 "승인"으로 변경
-            requestMapper.approvalMember(requestCode);
             //요청 코드에 해당하는 객체 조회
             MemberRequestVO memberRequestVO = requestMapper.selectByMemberRequest(requestCode);
+            //요청 코드에 해당하는 객체의 요청 상태를 "승인"으로 변경
+            requestMapper.approvalMember(memberRequestVO.getRequest());
             //조회한 요청객체를 회원객체로 mapping
             MemberAccountVO memberAccountVO = MemberAccountVO.builder()
                     .memberCode(memberService.memberCode("FM"))
