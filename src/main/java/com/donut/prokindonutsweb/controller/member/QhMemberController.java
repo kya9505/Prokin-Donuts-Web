@@ -34,13 +34,22 @@ public class QhMemberController {
     }
 
     @PostMapping("/add")
-    public String qhAddMemberList(MemberAccountDTO memberAccountDTO) {
+    public String qhAddMemberList(@Valid @ModelAttribute("memberAccountDTO") MemberAccountDTO memberAccountDTO,
+                                  BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            // 에러 메시지 전달
+            String errorMessage = bindingResult.getAllErrors().get(0).getDefaultMessage();
+            redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
+            redirectAttributes.addFlashAttribute("memberAccountDTO", memberAccountDTO);
+            return "redirect:list";
+        }
+
         memberService.saveMember(memberAccountDTO);
         return "redirect:list";
     }
 
     @PostMapping("/update")
-    public String qhUpdateMembers(@Valid @ModelAttribute("memberEditForm")  MemberListForm memberlist,
+    public String qhUpdateMembers(@Valid @ModelAttribute("memberList")  MemberListForm memberlist,
                                   BindingResult bindingResult, RedirectAttributes redirectAttributes) {
             if (bindingResult.hasErrors()) {
                 String errorMessage = bindingResult.getAllErrors().get(0).getDefaultMessage();
@@ -54,7 +63,7 @@ public class QhMemberController {
     }
 
     @PostMapping("/delete")
-    public String qhDeleteMembers(@ModelAttribute("memberDeleteForm") MemberCodeListForm memberCode) {
+    public String qhDeleteMembers( MemberCodeListForm memberCode) {
         memberService.deleteMember(memberCode.getMemberCodeList());
         return "redirect:list";
     }
