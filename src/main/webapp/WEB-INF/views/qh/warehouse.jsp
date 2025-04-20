@@ -755,8 +755,27 @@
         // 전역 변수: 창고명 중복 체크 상태 (초기값 false)
         let isWarehouseNameChecked = false;
 
+        // 폼 초기화 함수
+        function resetRegisterForm() {
+            // HTMLFormElement.reset() 으로 기본 input 값(placeholder 외) 모두 초기화
+            $('#warehouseRegisterForm')[0].reset();
+
+            // hidden 필드, 플래그, 버튼 상태도 명시적으로 초기화
+            $('#zonecode_disp, #roadAddress_disp, #detailAddress_disp').val('');
+            $('#zonecode_hidden, #roadAddress_hidden, #detailAddress_hidden, input[name="address"]').val('');
+            isWarehouseNameChecked = false;
+
+            $('#search-btn').prop('disabled', false).removeClass('disabled');
+        }
+
+        // 모달이 완전히 닫혔을 때
+        $('#warehouseAddModal').on('hidden.bs.modal', function() {
+            resetRegisterForm();
+        });
+
         // 1. 등록 모달 열기
         $("#btnWarehouseAdd_clone").on("click", function () {
+            resetRegisterForm();
             $("#warehouseAddModal").modal("show");
         });
 

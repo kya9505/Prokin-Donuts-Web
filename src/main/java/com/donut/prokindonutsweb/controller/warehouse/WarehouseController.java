@@ -43,12 +43,10 @@ public class WarehouseController {
   // 2. 창고 등록
   @PostMapping("/add")
   public String addWarehouse(WarehouseDTO warehouseDTO) {
-    System.out.println("Controller : addWarehouse called");
+    log.info("Controller : addWarehouse called");
     if ("null".equals(warehouseDTO.getMemberCode()) || "".equals(warehouseDTO.getMemberCode())) {
       warehouseDTO.setMemberCode(null);
     }
-    System.out.println(warehouseDTO.getAddress());
-    log.info("Controller : addWarehouse called");
     warehouseService.addWarehouse(warehouseDTO);
     return "redirect:/qh/warehouse";
   }
