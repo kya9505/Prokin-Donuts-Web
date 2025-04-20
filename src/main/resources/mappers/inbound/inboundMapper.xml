@@ -54,6 +54,11 @@
     </select>
 
 
+<!--    입고 완료시 입고 상태 변경-->
+    <update id="approveInbound">
+        update inbound set inboundStatus = "입고완료" where inboundCode = #{inboundCode}
+    </update>
+
     <sql id="search">
         <if test="(types != null and keyword != null)">
             <foreach collection="types" item="type" open=" and ( " separator="OR" close=")">

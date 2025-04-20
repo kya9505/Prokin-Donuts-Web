@@ -25,4 +25,6 @@ public interface InboundMapper {
     String selectProductName(String productCode);
 
     Integer selectProductPrice(String productCode);
+
+    void approveInbound(String inboundCode);
 }

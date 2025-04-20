@@ -100,4 +100,12 @@ class InboundMapperTest {
     void selectProductPrice() {
         System.out.println(inboundMapper.selectProductPrice("BGL1"));
     }
+
+    @Test
+    @DisplayName("입고 완료 시 상태 변경 메서드")
+    void approveInbound() {
+        inboundMapper.approveInbound("IN1");
+        inboundMapper.selectAllInboundList().forEach(System.out::println);
+    }
+
 }
