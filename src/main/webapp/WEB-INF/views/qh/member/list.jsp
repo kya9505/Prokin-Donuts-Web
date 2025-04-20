@@ -518,7 +518,7 @@
     });
 
 
-    //valid시 에러시 모달 원복
+    //valid시 에러시 수정모달 원복
     window.addEventListener('DOMContentLoaded', function () {
         <c:if test="${not empty errorMessage}">
         alert('${fn:replace(fn:escapeXml(errorMessage), "'", "\\'")}');
