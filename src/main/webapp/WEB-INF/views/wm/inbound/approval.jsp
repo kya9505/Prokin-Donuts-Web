@@ -148,6 +148,7 @@
 
         <!-- 승인 모달 -->
         <!-- 입고 승인 상세 보기 모달 -->
+        <form id="inboundApproveForm" method="post" action="/your/approval/url">
         <div class="modal fade" id="inboundDetailModal" tabindex="-1" aria-labelledby="inboundDetailModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- 크기 조정 가능: modal-sm, modal-lg 등 -->
                 <div class="modal-content">
@@ -156,6 +157,9 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
                     </div>
                     <div class="modal-body">
+<%--                        서버에 inboundCode 전송--%>
+                        <input type="hidden" id="modalInboundCode" name="inboundCode">
+
                         <table class="table" id="selectedProductsTable">
                             <thead>
                             <tr>
@@ -173,30 +177,18 @@
                     </div>
                     <div class="modal-footer d-flex justify-content-between align-items-center">
                       <div class="form-group mb-0">
-                          <%--<input type="date" id="inboundDate" class="form-control" readonly />--%>
+
                               <input type="date" id="inboundDate" class="form-control" disabled />
                        </div>
-
-                        <!-- 왼쪽: 입고 날짜 -->
-                        <%--<div class="form-group mb-0">
-                            <label for="inboundDate" class="mr-2 mb-0">입고 날짜:</label>
-                            <input type="date" class="form-control form-control-sm d-inline-block" id="inboundDate" style="width: auto;" />
-                        </div>--%>
-
-                        <!-- 오른쪽: 버튼 묶음 -->
-                        <!-- <div>
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-                          <button type="button" class="btn btn-primary">입고 요청 완료</button>
-                        </div> -->
-
                         <div>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                            <button type="button" class="main-btn primary-btn btn-primary btn-sm">입고 요청 완료</button>
+                            <button type="submit" class="main-btn primary-btn btn-primary btn-sm">입고 요청 완료</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        </form>
 
         <!-- 입고 요청 수정 모달 -->
         <div class="modal fade" id="inboundEditModal" tabindex="-1" aria-labelledby="inboundEditModalLabel" aria-hidden="true">
@@ -581,6 +573,7 @@
             }
 
             $('#inboundDate').val(inboundDate);
+            $('#inboundCode').val(inboundCode);
             console.log(inboundDate);
 
 
