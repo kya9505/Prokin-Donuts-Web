@@ -570,7 +570,6 @@
                 <tr>
                  <td>` + detail.productCode + `</td>
                  <td>` + detail.productName + `</td>
-                 <td>` + detail.productName + `</td>
                  <td>` + detail.productPrice + `</td>
                  <td>` + detail.storedType + `</td>
                  <td>` + detail.quantity + `</td>
