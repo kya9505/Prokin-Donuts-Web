@@ -12,8 +12,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import java.util.List;
 
@@ -62,7 +64,9 @@ class MemberControllerTest {
                 .address("100")
                 .id("100")
                 .password("100").build();
-        qhMemberController.qhAddMemberList(memberDTO);
+        BindingResult bindingResult = new BeanPropertyBindingResult(memberDTO, "memberAccountDTO");
+        RedirectAttributes redirectAttributes = new RedirectAttributesModelMap();
+        qhMemberController.qhAddMemberList(memberDTO, bindingResult, redirectAttributes);
     }
 
     @Test
