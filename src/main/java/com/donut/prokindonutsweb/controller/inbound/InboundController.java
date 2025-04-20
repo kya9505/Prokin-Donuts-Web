@@ -90,4 +90,11 @@ public class InboundController {
         return "redirect:/wm/inbound/approval";
     }
 
+    @PostMapping("/cancel")
+    public String deleteInbound(@RequestParam String inboundCode) {
+        inboundService.deleteInbound(inboundCode);
+
+        return "redirect:/wm/inbound/approval";
+    }
+
 }
