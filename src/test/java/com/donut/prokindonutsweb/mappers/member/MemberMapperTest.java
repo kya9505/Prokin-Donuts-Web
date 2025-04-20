@@ -74,7 +74,7 @@ class MemberMapperTest {
     }
 
     @Test
-    @DisplayName("DB의 가장 높은 수의 코드 select 테스트")
+    @DisplayName("DB의 가장 높은 수의 회원 코드 select 테스트")
     void memberCode() {
         String maxRequestCode = mapper.memberCode();
         assertEquals("QH100", maxRequestCode);

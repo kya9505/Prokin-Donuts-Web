@@ -9,4 +9,5 @@ public interface MemberRequestMapper {
     void approvalMember(String requestCode);
     void deleteRequestMember(String requestCode);
     String requestCode();
+    MemberRequestVO selectByMemberRequest(String requestCode);
 }
