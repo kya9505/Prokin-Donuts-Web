@@ -132,15 +132,19 @@
                                     <th>수용한도</th>
                                     <th>담당자</th>
                                     <th>담당자 이메일</th>
-                                    <th>설정</th> <!-- 수정/삭제 열 -->
+                                    <th>수정 | 취소</th> <!-- 수정/삭제 열 -->
                                 </tr>
                                 </thead>
 
                                 <tbody>
                                 <c:forEach var="w" items="${warehouseList}">
                                     <tr
+                                            data-warehouse-code="${w.warehouseCode}"
                                             data-warehouse-name="${w.warehouseName}"
-                                            data-warehouse-addr="${w.address}">
+                                            data-warehouse-addr="${w.address}"
+                                            data-status="${w.status}"
+                                            data-member-code="${w.memberCode}"
+                                            data-member-name="${w.memberName}">
                                         <td>${w.warehouseCode}</td>
                                         <td>${w.warehouseName}</td>
                                         <td>${w.address}</td>
@@ -168,10 +172,15 @@
                                         <td style="display: none;">${w.status}</td>
                                         <td style="display: none;">${w.memberCode}</td>
                                         <td>
-                                            <button class="btn btn-edit" data-code="${w.warehouseCode}">수정</button>
-                                            <button class="btn btn-delete" data-code="${w.warehouseCode}">삭제</button>
+                                            <div class="btn-group-2">
+                                                <button class="btn btn-edit text-primary-2" data-code="${w.warehouseCode}">
+                                                    <i class="lni lni-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-delete text-danger" data-code="${w.warehouseCode}">
+                                                    <i class="lni lni-trash-can"></i>
+                                                </button>
+                                            </div>
                                         </td>
-                                    </tr>
                                 </c:forEach>
                                 </tbody>
 
@@ -550,6 +559,8 @@
             { "id": "GJ", "name": "광주광역시" },
             { "id": "BS", "name": "부산광역시" },
             { "id": "US", "name": "울산광역시" },
+            { "id": "SJ", "name": "세종특별자치시" },
+            { "id": "ETC", "name": "기타" }
         ];
 
         // 2. 원본 필터 영역에 소재지 옵션 채우기
@@ -566,7 +577,7 @@
             autoWidth: false,
             columnDefs: [
                 { width: '95px', targets: -1 },  // Actions 열 너비
-                { targets: [0, 1, 2, 3, 4, 5, 8], className: 'text-center' } // JS 속성으로 가운데 정렬
+                { targets: [0, 1, 2, 3, 4, 5, 6, 8], className: 'text-center' } // JS 속성으로 가운데 정렬
             ],
             order: [[0, 'asc']],
             paging: true,
@@ -906,61 +917,66 @@
         });
 
         // 삭제 버튼 클릭 시
-        $('#datatable tbody').on('click', '.btn-delete', function (e) {
+        $(document).on('click', '.btn-delete', function(e) {
             e.preventDefault();
 
-            const rowData = table.row($(this).closest('tr')).data();
+            var $tr = $(this).closest('tr');
+            var warehouseCode = $tr.data('warehouse-code');
+            var warehouseName = $tr.data('warehouse-name');
+            var status        = $tr.data('status') || '';
+            var memberCode    = $tr.data('member-code') || '';
+            var memberName    = $tr.data('member-name') || '담당자없음';
 
-            const warehouseCode = rowData[0];
-            const warehouseName = rowData[1];
-            const memberName = rowData[4];
-            const statusRaw = rowData[6] || "";
-            const memberCode = rowData[7];
+            // 배지 클래스
+            var badgeClass = (status === '삭제가능') ? 'bg-success' : 'bg-secondary';
+            var badge = '<span class="badge ' + badgeClass + '">' + status + '</span>';
 
-            const cleanedStatus = statusRaw.replace(/\s/g, "");
-            const isDeletable = cleanedStatus === "삭제가능";
-            const wm = memberName ? memberName : "담당자없음";
+            // 리스트 아이템 HTML
+            var liHTML =
+                '<li class="list-group-item d-flex justify-content-between align-items-center">' +
+                warehouseName + ' (' +
+                (memberCode ? (memberCode + ' | ' + memberName) : '담당자없음') +
+                ')' +
+                badge +
+                '</li>';
 
-            const badgeClass = isDeletable ? "bg-success" : "bg-danger";
-            const badge = '<span class="badge ' + badgeClass + '">' + statusRaw.trim() + '</span>';
-
-            let content = "";
-
-            if (isDeletable) {
-                content += '<h5>선택한 창고를 정말 삭제하시겠습니까?</h5>';
-            } else {
-                content += '<h5>선택한 창고는 진행 중인 업무로 인해 삭제할 수 없습니다.</h5>';
-            }
-
-            content += '<p>' + warehouseName + ' (' + memberCode + ' | ' + wm + ')</p>';
-            content += badge;
-
+            // 모달 form hidden 세팅
             $('#deleteWarehouseCode').val(warehouseCode);
-            $('#deleteContentOk, #deleteContentNo').hide().empty();
 
-            if (isDeletable) {
-                $('#deleteContentOk').html(content).show();
+            // 내용 초기화
+            $('#deleteContentOk').hide().empty();
+            $('#deleteContentNo').hide().empty();
+
+            if (status === '삭제가능') {
+                $('#deleteContentOk')
+                    .html(
+                        '<h5>선택한 창고를 정말 삭제하시겠습니까?</h5><br>' +
+                        '<ul class="list-group mb-3">' + liHTML + '</ul>'
+                    )
+                    .show();
                 $('#confirmDeleteWarehouse').show();
             } else {
-                $('#deleteContentNo').html(content).show();
+                $('#deleteContentNo')
+                    .html(
+                        '<h5>선택한 창고는 진행 중인 업무로 인해 삭제할 수 없습니다.</h5><br>' +
+                        '<ul class="list-group mb-3">' + liHTML + '</ul>'
+                    )
+                    .show();
                 $('#confirmDeleteWarehouse').hide();
             }
 
+            // 모달 띄우기
             $('#warehouseDeleteModal').modal('show');
         });
 
-        // 삭제 모달의 실제 '삭제' 버튼 클릭 이벤트
+// (2) 삭제 확정 버튼
         $('#confirmDeleteWarehouse').on('click', function() {
             if ($(this).is(':hidden')) {
-                alert("삭제할 수 없는 창고입니다.");
+                alert('삭제할 수 없는 창고입니다.');
                 return;
             }
-            alert("창고가 성공적으로 삭제되었습니다.");
-            $('#warehouseDeleteModal').modal('hide');
-
             $('#warehouseDeleteForm').submit();
         });
-
     });
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
