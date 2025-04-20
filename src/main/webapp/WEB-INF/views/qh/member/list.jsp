@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -109,6 +111,7 @@
                     </div>
                 </div>
             </div>
+        </div>
     </section>
             <!-- Modal HTML Start -->
             <!-- 회원 등록 모달 -->
@@ -131,71 +134,83 @@
                         <div class="modal-body">
                             <!-- 필수 입력 항목 안내 -->
                             <p class="text-danger fw-normal mb-3">(*)는 필수 입력 항목입니다.</p>
-
-                            <!-- 등록 폼 -->
-                            <form id="registerForm">
-
-                                <!-- ID 필드 + ID Check 버튼 -->
+                            <!-- 벨리드 오류 메시지 -->
+                            <c:if test="${not empty errorMessage}">
+                                <div class="text-danger mb-2">
+                                        ${errorMessage}
+                                </div>
+                            </c:if>
+                            <!-- 아이디 중복검사 폼 -->
+                            <form method="post" action="/qh/member/check-id" id="idCheckForm" style="margin-bottom: 0;">
                                 <div class="mb-3">
                                     <label class="form-label">ID (*)</label>
                                     <div class="d-flex gap-2">
-                                        <input
-                                                type="text"
-                                                placeholder="아이디"
-                                                class="form-control"
-                                        />
-                                        <a
-                                                href="#0"
-                                                class="main-btn primary-btn btn-hover btn-smaller">
+                                        <input name="id" type="text" placeholder="아이디" class="form-control" value="${checkedId}" required />
+                                        <button type="submit" class="main-btn primary-btn btn-hover btn-smaller">
                                             ID Check
-                                        </a>
+                                        </button>
                                     </div>
-                                </div>
+                                    <c:if test="${not empty idCheckMessage}">
+                                        <div class="id-check-message" style="color: ${idCheckColor}; font-size: 0.9rem;">${idCheckMessage}</div>
+                                    </c:if>
 
+                                </div>
+                            </form>
+                            <!-- 등록 폼 -->
+                            <form id="memberAddForm" method="post" action="/qh/member/add" accept-charset="UTF-8">
+                                <div class="mb-3">
+                                    <label class="form-label">authority (*)</label>
+                                    <select class="form-select" name="authorityCode" required>
+                                        <option value="" disabled selected hidden>권한 선택</option>
+                                        <option value="QH">본사관리자</option>
+                                        <option value="WM">창고관리자</option>
+                                        <option value="FM">가맹점주</option>
+                                    </select>
+                                </div>
                                 <!-- Password -->
                                 <div class="mb-3">
                                     <label class="form-label">Password (*)</label>
-                                    <input
-                                            type="password"
+                                    <input      name="password"
+                                                type="password"
                                             placeholder="초기 비밀번호"
-                                            class="form-control"
+                                            class="form-control" required
                                     />
                                 </div>
 
                                 <!-- Password Check -->
                                 <div class="mb-3">
                                     <label class="form-label">Password Check (*)</label>
-                                    <input
+                                    <input  name="passwordCheck"
                                             type="password"
                                             placeholder="초기 비밀번호 확인"
-                                            class="form-control"
+                                            class="form-control" required
                                     />
                                 </div>
 
                                 <!-- Name -->
                                 <div class="mb-3">
                                     <label class="form-label">Name (*)</label>
-                                    <input
+                                    <input  name="name"
                                             type="text"
                                             placeholder="이름"
-                                            class="form-control"
+                                            class="form-control" required
                                     />
                                 </div>
 
                                 <!-- Email -->
                                 <div class="mb-3">
                                     <label class="form-label">Email (*)</label>
-                                    <input
+                                    <input  name="email"
                                             type="email"
                                             placeholder="이메일"
-                                            class="form-control"
+                                            class="form-control" required
                                     />
                                 </div>
 
                                 <!-- Phone Number -->
                                 <div class="mb-3">
                                     <label class="form-label">Phone Number</label>
-                                    <input
+                                    <input  name="phoneNumber"
                                             type="text"
                                             placeholder="전화번호"
                                             class="form-control"
@@ -205,7 +220,7 @@
                                 <!-- Address -->
                                 <div class="mb-3">
                                     <label class="form-label">address</label>
-                                    <input
+                                    <input  name="address"
                                             type="text"
                                             placeholder="주소"
                                             class="form-control"
@@ -220,7 +235,6 @@
                                         회원 등록
                                     </button>
                                 </div>
-
                             </form>
                         </div>
                     </div>
@@ -228,6 +242,7 @@
             </div>
 
     <!-- 수정 모달 -->
+    <form id="memberEditForm" name="memberList" method="post" action="/qh/member/update" accept-charset="UTF-8">
     <div class="modal fade" id="memberEditModal" tabindex="-1" aria-labelledby="memberEditModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
@@ -239,29 +254,59 @@
                     <table class="table striped-table w-100 member-datatable" style="width:100%">
                         <thead>
                         <tr>
-                            <th>회원코드</th>
-                            <th>아이디</th>
-                            <th>비밀번호</th>
+                            <th>권한</th>
                             <th>이름</th>
                             <th>이메일</th>
                             <th>전화번호</th>
                             <th>주소</th>
+                            <th>아이디</th>
+                            <th>비밀번호</th>
                         </tr>
                         </thead>
+
                         <tbody id="memberEditModalBody">
-                        <!-- JS로 동적으로 삽입 -->
+                        <!-- 벨리드 오류 메시지 -->
+                        <c:if test="${not empty errorMessage}">
+                            <div class="text-danger mb-2">
+                                    ${errorMessage}
+                            </div>
+                        </c:if>
+                        <c:if test="${not empty memberList}">
+                            <c:forEach var="item" items="${memberList}" varStatus="status">
+                                <tr>
+                                    <td>
+                                        <select class="form-select" name="memberList[${status.index}].authorityCode">
+                                            <option value="QH" ${item.authorityCode eq 'QH' ? 'selected' : ''}>본사관리자</option>
+                                            <option value="WM" ${item.authorityCode eq 'WM' ? 'selected' : ''}>창고관리자</option>
+                                            <option value="FM" ${item.authorityCode eq 'FM' ? 'selected' : ''}>가맹점주</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" name="memberList[${status.index}].name" class="form-control" value="${item.name}" /></td>
+                                    <td><input type="text" name="memberList[${status.index}].email" class="form-control" value="${item.email}" /></td>
+                                    <td><input type="text" name="memberList[${status.index}].phoneNumber" class="form-control" value="${item.phoneNumber}" /></td>
+                                    <td><input type="text" name="memberList[${status.index}].address" class="form-control" value="${item.address}" /></td>
+                                    <td><input type="text" name="memberList[${status.index}].id" class="form-control" value="${item.id}" /></td>
+                                    <td><input type="text" name="memberList[${status.index}].password" class="form-control" value="${item.password}" /></td>
+                                </tr>
+                                <input type="hidden" name="memberList[${status.index}].memberCode" value="${item.memberCode}" />
+                            </c:forEach>
+                        </c:if>
+
                         </tbody>
                     </table>
-                </div>
                 <div class="modal-footer">
                     <button type="submit" class="main-btn primary-btn btn-hover text-center">수정</button>
                 </div>
             </div>
         </div>
+        </div>
     </div>
+</form>
 
     <!-- 삭제 모달 -->
-            <div class="modal fade" id="memberDeleteModal" tabindex="-1" aria-labelledby="memberDeleteModalLabel" aria-hidden="true">
+
+    <form id="memberDeleteForm" method="post" action="/qh/member/delete" accept-charset="UTF-8">
+               <div class="modal fade" id="memberDeleteModal" tabindex="-1" aria-labelledby="memberDeleteModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -280,6 +325,7 @@
                     </div>
                 </div>
             </div>
+    </form>
             <!-- Modal HTML End -->
 
         </div>
@@ -324,8 +370,8 @@
     var table = $('#datatable').DataTable({
         autoWidth: false,
         columnDefs: [
-            { targets: 0, orderable: false, searchable: false }, // 체크박스 컬럼
-            { targets: [1, 2, 3, 4, 6, 7], className: 'text-center' }
+            {targets: 0, orderable: false, searchable: false}, // 체크박스 컬럼
+            {targets: [1, 2, 3, 4, 6, 7], className: 'text-center'}
         ],
         order: [[1, 'asc']],
         paging: true,
@@ -348,12 +394,12 @@
             }
         },
         // 초기에 체크박스에서 정렬 화살표 지우기
-        initComplete: function(settings, json) {
+        initComplete: function (settings, json) {
             $('#datatable thead th').eq(0).removeClass('sorting sorting_asc sorting_desc');
             fixLengthDropdownStyle();
         },
         // 새로고침 후 체크박스에서 정렬 화살표 지우기 (유지)
-        drawCallback: function(settings) {
+        drawCallback: function (settings) {
             $('#datatable thead th').eq(0).removeClass('sorting sorting_asc sorting_desc');
         }
     });
@@ -411,34 +457,53 @@
     $('div.myFilterArea').html($clone.html());
 
     // select 태그 감싸는 구조 적용
-    $('.dataTables_length select').each(function() {
+    $('.dataTables_length select').each(function () {
         const $select = $(this);
         if (!$select.parent().hasClass('select-position')) {
             $select.wrap('<div class="col-lg-2"><div class="select-style-1"><div class="select-position"></div></div></div>');
         }
     });
     // 8. "Select All" 체크박스 이벤트 및 페이지 변경 시 초기화 등은 그대로 유지
-    $('#select-all').on('click', function() {
-        const rows = table.rows({ page: 'current' }).nodes();
+    $('#select-all').on('click', function () {
+        const rows = table.rows({page: 'current'}).nodes();
         $('input.row-checkbox', rows).prop('checked', this.checked);
     });
-    $('#datatable tbody').on('change', 'input.row-checkbox', function() {
-        if(!this.checked) {
+    $('#datatable tbody').on('change', 'input.row-checkbox', function () {
+        if (!this.checked) {
             const el = $('#select-all').get(0);
-            if(el && el.checked) {
+            if (el && el.checked) {
                 el.checked = false;
             }
         }
     });
 
-    table.on('draw', function() {
+    table.on('draw', function () {
         $('#select-all').prop('checked', false);
     });
 
     // 등록 버튼 클릭 시
     $('#btnMemberAdd_clone').on('click', function (e) {
+        $('#idCheckForm input[name="id"]').val('');
+        $('#idCheckForm .id-check-message').text('');
+        $('#memberAddForm')[0].reset(); // 나머지 등록 입력값도 전부 초기화
         $('#memberAddModal').modal('show');
     });
+
+    // 등록 시 비밀번호 확인
+    document.getElementById("memberAddForm").addEventListener("submit", function (e) {
+        const password = document.querySelector("#memberAddForm input[name='password']").value.trim();
+        const passwordCheck = document.querySelector("#memberAddForm input[name='passwordCheck']").value.trim();
+
+        if (password !== passwordCheck) {
+            e.preventDefault(); // 서버 전송 막음
+            alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+        }
+    });
+    // 아이디 체크 후 모달 유지
+    <c:if test="${showAddModal}">
+    const modal = new bootstrap.Modal(document.getElementById('memberAddModal'));
+    modal.show();
+    </c:if>
 
     // 수정 버튼 클릭 시
     $('#btnMemberEdit_clone').on('click', function (e) {
@@ -471,18 +536,20 @@
         selectedData.forEach((item, index) => {
             const rowHtml = `
     <tr>
-         <td><select class="form-select">
+         <td><select class="form-select"  name="memberList[` + index + `].authorityCode">
               <option value="QH">본사관리자</option>
               <option value="WM">창고관리자</option>
               <option value="FM">가맹점주</option>
             </select></td>
-        <td><input type="text" class="form-control" value="`+item.id+`" /></td>
-        <td><input type="text" class="form-control" value="`+item.password+`" /></td>
-        <td><input type="text" class="form-control" value=" `+item.name+`" /></td>
-        <td><input type="text" class="form-control" value="`+item.email+`" /></td>
-        <td><input type="text" class="form-control" value="`+item.phoneNumber+`" /></td>
-        <td><input type="text" class="form-control" value="`+item.address+`" /></td>
+        <td><input type="text" name="memberList[` + index + `].name" class="form-control" value="` + item.name + `" /></td>
+        <td><input type="text" name="memberList[` + index + `].email" class="form-control" value="` + item.email + `" /></td>
+        <td><input type="text" name="memberList[` + index + `].phoneNumber" class="form-control" value="` + item.phoneNumber + `" /></td>
+        <td><input type="text" name="memberList[` + index + `].address" class="form-control" value="` + item.address + `" /></td>
+        <td><input type="text" name="memberList[` + index + `].id" class="form-control" value="` + item.id + `" /></td>
+        <td><input type="text" name="memberList[` + index + `].password" class="form-control" value="` + item.password + `" /></td>
     </tr>
+        <input type="hidden" name="memberList[` + index + `].memberCode" value="` + item.memberCode + `" />
+
     `;
             $tableBody.append(rowHtml);
         });
@@ -493,9 +560,25 @@
     });
 
 
+    //valid시 에러시 모달 원복
+    window.addEventListener('DOMContentLoaded', function () {
+        <c:if test="${not empty errorMessage}">
+        alert('${fn:replace(fn:escapeXml(errorMessage), "'", "\\'")}');
+        </c:if>
+
+        <c:if test="${not empty memberList}">
+        const modal = new bootstrap.Modal(document.getElementById('memberEditModal'));
+        modal.show();
+        </c:if>
+
+        <c:if test="${not empty errorMessage and empty memberList}">
+        const modal = new bootstrap.Modal(document.getElementById('memberAddModal'));
+        modal.show();
+        </c:if>
+    });
+
     // 삭제 버튼 클릭 시
     $('#btnMemberDelete_clone').on('click', function (e) {
-        const selectedRows = table.rows({ page: 'current' }).nodes();
         const selectedData = [];
 
         $('#datatable tbody input.row-checkbox:checked').each(function () {
@@ -520,9 +603,9 @@
 
         selectedData.forEach((item) => {
             const li = `
-      <li class = "list-group-item d-flex justify-content-between align-items-center" >
-        <span>`+item.name+` (`+item.id+`)</span>
-        <span class="badge bg-secondary">`+item.memberCode+`</span>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>` + item.name + ` (` + item.id + `)</span>
+        <span class="badge bg-secondary">` + item.memberCode + `</span>
       </li>
     `;
             $list.append(li);
@@ -532,8 +615,26 @@
         $('#memberDeleteModal').modal('show');
     });
 
+    // 삭제 확인 버튼 클릭 시: form에 hidden input 추가하고 전송
+    $('#confirmDelete').on('click', function (e) {
+        const $form = $('#memberDeleteForm');
+
+        // 혹시 이전에 추가된 hidden input이 있으면 제거
+        $form.find('input[name="memberCodeList"]').remove();
+
+        // <ul> 안의 badge에서 memberCode 꺼내서 hidden input 추가
+        $('#deleteMemberList .badge').each(function () {
+            const memberCode = $(this).text().trim();
+            const input = `<input type="hidden" name="memberCodeList" value="` + memberCode + `" />`;
+            $form.append(input);
+        });
+
+        $form.submit(); // form 전송
+    });
+
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
+
 
 </script>
 </body>

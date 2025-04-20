@@ -23,7 +23,7 @@ class ModelMapperConfigTest {
                 .id("test")
                 .password("test").build();
 
-        MemberAccountVO  memberAccountVO = modelMapper.map(memberAccountDTO, MemberAccountVO.class);
+        MemberAccountVO memberAccountVO = modelMapper.map(memberAccountDTO, MemberAccountVO.class);
         log.info("변환된 VO 객체: {}", memberAccountVO);
     }
 
