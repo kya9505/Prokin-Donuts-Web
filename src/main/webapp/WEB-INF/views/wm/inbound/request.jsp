@@ -189,6 +189,7 @@
 <script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
 
 <script>
+    //ID가 datatable인 테이블을 DataTables로 초기화하고 반환된 객체를 table 변수에 저장.
     var table = $('#datatable').DataTable({
         autoWidth: false,
         columnDefs: [
@@ -359,92 +360,6 @@
         $('#addInboundModal').modal('show');
     });
 
-
-
-    // "입고 요청 완료" 버튼 클릭 시
-    /*$('#addInboundModal .btn-primary').on('click', function () {
-        const requestList = [];
-
-        $('#selectedProductsTable tbody tr').each(function () {
-            const $tds = $(this).find('td');
-            const quantity = $(this).find('.quantity-input').val();
-            const product = {
-                no: $tds.eq(0).text(),
-                productCode: $tds.eq(1).text(),
-                productName: $tds.eq(2).text(),
-                productPrice: $tds.eq(3).text(),
-                storedType: $tds.eq(4).text(),
-                quantity: quantity
-            };
-            requestList.push(product);
-        });
-
-        console.log('입고 요청 제품 목록:', requestList);
-        alert('입고 요청이 완료되었습니다.');
-
-        // 모달 닫기
-        $('#addInboundModal').modal('hide');
-
-        // 체크박스 초기화
-        $('#datatable tbody input.row-checkbox:checked').prop('checked', false);
-    });*/
-   /* $('#addInboundModal .btn-primary').on('click', function () {
-        // 기존 동적 input 제거
-        $('#inboundForm input.dynamic-field').remove();
-
-        // 날짜 추가
-        const inboundDate = $('#inboundDate').val();
-        $('<input>').attr({
-            type: 'hidden',
-            name: 'inboundDate',
-            value: inboundDate,
-            class: 'dynamic-field'
-        }).appendTo('#inboundForm');
-
-        // 제품 목록 반복
-        $('#selectedProductsTable tbody tr').each(function (i) {
-            const $tds = $(this).find('td');
-            const quantity = $(this).find('.quantity-input').val();
-
-            $('<input>').attr({
-                type: 'hidden',
-                name: 'productList[' + i + '].productCode',
-                value: $tds.eq(1).text(),
-                class: 'dynamic-field'
-            }).appendTo('#inboundForm');
-
-            $('<input>').attr({
-                type: 'hidden',
-                name: 'productList[' + i + '].productName',
-                value: $tds.eq(2).text(),
-                class: 'dynamic-field'
-            }).appendTo('#inboundForm');
-
-            $('<input>').attr({
-                type: 'hidden',
-                name: 'productList[' + i + '].productPrice',
-                value: $tds.eq(3).text(),
-                class: 'dynamic-field'
-            }).appendTo('#inboundForm');
-
-            $('<input>').attr({
-                type: 'hidden',
-                name: 'productList[' + i + '].storedType',
-                value: $tds.eq(4).text(),
-                class: 'dynamic-field'
-            }).appendTo('#inboundForm');
-
-            $('<input>').attr({
-                type: 'hidden',
-                name: 'productList[' + i + '].quantity',
-                value: quantity,
-                class: 'dynamic-field'
-            }).appendTo('#inboundForm');
-        });
-
-        // form 전송
-        $('#inboundForm').submit();
-    });*/
 
     $('#addInboundModal .btn-primary').on('click', function () {
         // 기존 input 정리

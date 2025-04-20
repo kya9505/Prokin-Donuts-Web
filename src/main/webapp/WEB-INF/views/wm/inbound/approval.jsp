@@ -3,18 +3,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="shortcut icon" href="<c:url value='/resources/images/logo/favicon_logo.png'/>" type="image/png"/>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="<c:url value='/resources/images/logo/favicon_logo.png'/>" type="image/png" />
     <title>Prokin Donuts</title>
 
     <!-- ========== All CSS files linkup ========= -->
-    <link rel="stylesheet" href="<c:url value='/resources/css/bootstrap.min.css'/>"/>
-    <link rel="stylesheet" href="<c:url value='/resources/css/lineicons.css'/>" type="text/css"/>
-    <link rel="stylesheet" href="<c:url value='/resources/css/materialdesignicons.min.css'/>" type="text/css"/>
-    <link rel="stylesheet" href="<c:url value='/resources/css/fullcalendar.css'/>"/>
-    <link rel="stylesheet" href="<c:url value='/resources/css/main.css'/>"/>
+    <link rel="stylesheet" href="<c:url value='/resources/css/bootstrap.min.css'/>" />
+    <link rel="stylesheet" href="<c:url value='/resources/css/lineicons.css'/>" type="text/css" />
+    <link rel="stylesheet" href="<c:url value='/resources/css/materialdesignicons.min.css'/>" type="text/css" />
+    <link rel="stylesheet" href="<c:url value='/resources/css/fullcalendar.css'/>" />
+    <link rel="stylesheet" href="<c:url value='/resources/css/main.css'/>" />
     <!-- datatable을 위해 필요함 -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 </head>
@@ -27,13 +27,13 @@
 <!-- ======== Preloader =========== -->
 
 <!-- ======== sidebar-nav start =========== -->
-<%@include file="/WEB-INF/views/includes/sidebar/wmSidebar.jsp" %>
+<%@include file="/WEB-INF/views/includes/sidebar/wmSidebar.jsp"%>
 <!-- ======== sidebar-nav end =========== -->
 
 <!-- ======== main-wrapper start =========== -->
 <main class="main-wrapper">
     <!-- ========== header start ========== -->
-    <%@include file="/WEB-INF/views/includes/header/wmHeader.jsp" %>
+    <%@include file="/WEB-INF/views/includes/header/wmHeader.jsp"%>
     <!-- ========== header end ========== -->
     <!-- Modal HTML Start -->
     <%@ include file="/WEB-INF/views/includes/mypage/mypage.jsp" %>
@@ -61,11 +61,13 @@
                 <div class="card-style mb-30">
                     <h6 class="mb-10">입고 목록</h6>
                     <p class="text-sm mb-20">
+
                         <!-- 원하는 필터(중분류, 소분류) 설정 -->
                     <div id="myCustomFilters" style="display: none;">
+
                         <div class="d-flex flex-wrap gap-2">
                             <!-- 중분류 -->
-                            <div>
+                            <div >
                                 <div class="select-style-1">
                                     <div class="select-position">
                                         <select id="InboundCategories">
@@ -74,29 +76,35 @@
                                     </div>
                                 </div>
                             </div>
+
                             <!-- 필터 초기화 -->
                             <div class="mb-20">
-                                <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="resetFilterBtn"
-                                        style="height:auto; min-height:auto;">
+                                <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="resetFilterBtn" style="height:auto; min-height:auto;">
                                     필터 초기화
                                 </button>
                             </div>
                         </div>
+
                     </div>
+
                     </p>
                     <div class="table-wrapper table-responsive p-0">
+
+
                         <!-- Start table -->
                         <table id="datatable" class="table striped-table w-100" style="width:100%">
+
                             <!-- colgroup를 통해 열 폭을 강제 지정 -->
                             <colgroup>
-                                <col style="width: 10%; background-color: null;"/>
-                                <col style="width: 18%; background-color: null;"/>
-                                <col style="width: 14%; background-color: null;"/>
-                                <col style="width: 13%; background-color: null;"/>
-                                <col style="width: 10%; background-color: null;"/>
+                                <col style="width: 10%; background-color: null;" />
+                                <col style="width: 18%; background-color: null;" />
+                                <col style="width: 14%; background-color: null;" />
+                                <col style="width: 13%; background-color: null;" />
+                                <col style="width: 10%; background-color: null;" />
                                 <!-- <col style="width: 20%; background-color: null;" /> -->
                                 <!-- <col style="width: 10%; background-color: null;" /> -->
                             </colgroup>
+
                             <thead>
                             <tr>
                                 <th>입고코드</th>
@@ -106,7 +114,6 @@
                                 <th>승인|수정|취소</th> <!-- 수정/삭제 열 -->
                             </tr>
                             </thead>
-                            <tbody>
                             <c:forEach var="inbound" items="${inboundList}">
                                 <tr>
                                     <td>${inbound.inboundCode}</td>
@@ -115,20 +122,24 @@
                                     <td>${inbound.warehouseCode}</td>
                                     <td>
                                         <div class="btu-group-2">
-                                            <button class="btn btn-approve text-success" title="입고 승인" data-inbound-code="${inbound.inboundCode}">
+                                            <button class="btn btn-approve text-success" title="입고 승인" id="btnInboundAdd" data-inbound-code="${inbound.inboundCode}"
+                                            data-inbound-date="${inbound.inboundDate}">
                                                 <i class="lni lni-checkmark-circle"></i>
                                             </button>
                                             <button class="btn btn-edit text-primary-2">
                                                 <i class="lni lni-pencil"></i>
                                             </button>
-                                            <button class="btn btn-delete text-danger">
+                                            <button class="btn btn-delete text-danger" data-inbound-code="${inbound.inboundCode}">
                                                 <i class="lni lni-trash-can"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
                             </c:forEach>
+
+                            <tbody>
                             </tbody>
+
                         </table>
                     </div>
                 </div>
@@ -137,8 +148,7 @@
 
         <!-- 승인 모달 -->
         <!-- 입고 승인 상세 보기 모달 -->
-        <div class="modal fade" id="inboundDetailModal" tabindex="-1" aria-labelledby="inboundDetailModalLabel"
-             aria-hidden="true">
+        <div class="modal fade" id="inboundDetailModal" tabindex="-1" aria-labelledby="inboundDetailModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- 크기 조정 가능: modal-sm, modal-lg 등 -->
                 <div class="modal-content">
                     <div class="modal-header">
@@ -162,12 +172,16 @@
                         </table>
                     </div>
                     <div class="modal-footer d-flex justify-content-between align-items-center">
+                      <div class="form-group mb-0">
+                          <%--<input type="date" id="inboundDate" class="form-control" readonly />--%>
+                              <input type="date" id="inboundDate" class="form-control" disabled />
+                       </div>
+
                         <!-- 왼쪽: 입고 날짜 -->
-                        <div class="form-group mb-0">
+                        <%--<div class="form-group mb-0">
                             <label for="inboundDate" class="mr-2 mb-0">입고 날짜:</label>
-                            <input type="date" class="form-control form-control-sm d-inline-block" id="inboundDate"
-                                   style="width: auto;"/>
-                        </div>
+                            <input type="date" class="form-control form-control-sm d-inline-block" id="inboundDate" style="width: auto;" />
+                        </div>--%>
 
                         <!-- 오른쪽: 버튼 묶음 -->
                         <!-- <div>
@@ -185,8 +199,7 @@
         </div>
 
         <!-- 입고 요청 수정 모달 -->
-        <div class="modal fade" id="inboundEditModal" tabindex="-1" aria-labelledby="inboundEditModalLabel"
-             aria-hidden="true">
+        <div class="modal fade" id="inboundEditModal" tabindex="-1" aria-labelledby="inboundEditModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document"> <!-- modal-lg: 큰 창 -->
                 <div class="modal-content">
                     <div class="modal-header">
@@ -217,8 +230,7 @@
                         <!-- 왼쪽: 입고 날짜 -->
                         <div class="form-group mb-0">
                             <label for="inboundDate" class="mr-2 mb-0">입고 날짜:</label>
-                            <input type="date" class="form-control form-control-sm d-inline-block" id="inboundDate"
-                                   style="width: auto;"/>
+                            <input type="date" class="form-control form-control-sm d-inline-block" id="inboundDate" style="width: auto;" />
                         </div>
                         <div>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
@@ -232,8 +244,7 @@
 
 
         <!-- 입고 삭제 모달 ! -->
-        <div class="modal fade" id="inboundDeleteModal" tabindex="-1" aria-labelledby="inboundDeleteModalLabel"
-             aria-hidden="true">
+        <div class="modal fade" id="inboundDeleteModal" tabindex="-1" aria-labelledby="inboundDeleteModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- 크기 조정 가능: modal-sm, modal-lg 등 -->
                 <div class="modal-content">
                     <div class="modal-header">
@@ -260,8 +271,8 @@
                         <!-- 왼쪽: 입고 날짜 -->
                         <div class="form-group mb-0">
                             <label for="inboundDate" class="mr-2 mb-0">입고 날짜:</label>
-                            <input type="date" class="form-control form-control-sm d-inline-block" id="inboundDate"
-                                   style="width: auto;"/>
+
+                            <input type="date" class="form-control form-control-sm d-inline-block" id="inboundDate" style="width: auto;" />
                         </div>
                         <div>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
@@ -272,7 +283,7 @@
             </div>
         </div>
 
-
+        </div>
     </section>
     <!-- ========== section end ========== -->
 
@@ -282,8 +293,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="terms d-flex justify-content-center justify-content-md-end">
-                        <a href="https://small-ragdoll-a57.notion.site/Prokin-Donuts-1b83a719d3508047953eeda89caeec14"
-                           class="text-sm">Brand Story</a>
+                        <a href="https://small-ragdoll-a57.notion.site/Prokin-Donuts-1b83a719d3508047953eeda89caeec14" class="text-sm">Brand Story</a>
                         <a href="https://github.com/Prokin-Donuts/Prokin-Donuts" class="text-sm ml-15">Dev Hub</a>
                     </div>
                 </div>
@@ -312,18 +322,32 @@
 <script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
 
 <script>
-    $(document).ready(function () {
+    const inboundDetails = [
+        <c:forEach var="detail" items="${inboundDetailList}" varStatus="loop">
+        {
+            inboundCode: '${detail.inboundCode}',
+            productCode: '${detail.productCode}',
+            productName: '${detail.productName}',
+            productPrice: ${detail.productPrice},
+            storedType: '${detail.storedType}',
+            quantity: ${detail.quantity}
+        }<c:if test="${!loop.last}">,</c:if>
+        </c:forEach>
+    ];
 
+
+    $(document).ready(function() {
         // 1. 더미 데이터 정의 (소재지)
         const dummyInboundCategories = [
-            {"id": "입고요청", "name": "입고요청"},
-            {"id": "입고승인", "name": "입고승인"},
-            {"id": "입고완료", "name": "입고완료"},
+            { "id": "입고요청", "name": "입고요청" },
+            { "id": "입고승인", "name": "입고승인" },
+            { "id": "입고완료", "name": "입고완료" },
+
         ];
 
         // 2. 원본 필터 영역에 소재지 옵션 채우기
         var $midSelect = $('#myCustomFilters #InboundCategories');
-        $.each(dummyInboundCategories, function (index, item) {
+        $.each(dummyInboundCategories, function(index, item) {
             $midSelect.append($('<option>', {
                 value: item.id,
                 text: item.name
@@ -331,26 +355,27 @@
         });
 
         // 5. DataTable 초기화 (dom 옵션에 사용자 정의 영역 포함)
-        const table = $('#datatable').DataTable({
+        var table = $('#datatable').DataTable({
             autoWidth: false,
             columnDefs: [
-                {width: '95px', targets: -1},  // Actions 열 너비
-                {targets: [0, 1, 2, 3], className: 'text-center'} // JS 속성으로 가운데 정렬
+                { width: '95px', targets: -1 },  // Actions 열 너비
+                { targets: [0, 1, 2, 3], className: 'text-center' } // JS 속성으로 가운데 정렬
             ],
             order: [[0, 'asc']],
+
             /*columns: [
-                {data: 'inboundCode', title: '입고코드'},
-                {data: 'inboundDate', title: '입고일'},
-                {data: 'inboundStatus', title: '입고상태'},
-                {data: 'warehouseCode', title: '창고코드'},
+                { data: 'inboundCode', title: '입고코드' },
+                { data: 'inboundDate', title: '입고일' },
+                { data: 'inboundStatus', title: '입고상태' },
+                { data: 'warehouseCode', title: '창고코드' },
                 { // Edit/Delete 버튼
                     data: null,
                     orderable: false,
                     searchable: false,
-                    render: function (data, type, row, meta) {
+                    render: function(data, type, row, meta) {
                         return `
                 <div class="btu-group-2">
-                  <button class="btn btn-approve text-success" title="입고 승인" data-inbound-code="INBOUND123">
+                  <button class="btn btn-approve text-success" title="입고 승인" data-inbound-code="IN1">
                     <i class="lni lni-checkmark-circle"></i>
                   </button>
                   <button class="btn btn-edit text-primary-2">
@@ -384,10 +409,10 @@
                     next: "next >"
                 }
             },
-            initComplete: function (settings, json) {
+            initComplete: function(settings, json) {
                 fixLengthDropdownStyle();
             },
-            drawCallback: function (settings) {
+            drawCallback: function(settings) {
             }
         });
 
@@ -432,10 +457,10 @@
             $('.dataTables_paginate .paginate_button').removeClass().addClass('main-btn deactive-btn-outline square-btn btn-hover mt-1 pt-2 pb-2 pl-15 pr-15');
         });
 
-        // 6. 사용자 정의 필터 영역에 원본 필터를 복제하여 주입
         var $clone = $('#myCustomFilters').clone(true);
         // 복제 후 삽입 시, ID 제거 필수!
         $clone.find('#InboundCategories').attr('id', 'InboundCategories_clone');
+
         $clone.find('#btninboundAdd').attr('id', 'btninboundAdd_clone');
         $clone.find('#btninboundEdit').attr('id', 'btninboundEdit_clone');
         $clone.find('#btninboundDelete').attr('id', 'btninboundDelete_clone');
@@ -443,7 +468,7 @@
         $('div.myFilterArea').html($clone.html());
 
         // select 태그 감싸는 구조 적용
-        $('.dataTables_length select').each(function () {
+        $('.dataTables_length select').each(function() {
             const $select = $(this);
             if (!$select.parent().hasClass('select-position')) {
                 $select.wrap('<div class="col-lg-2"><div class="select-style-1"><div class="select-position"></div></div></div>');
@@ -451,7 +476,7 @@
         });
 
         // 6-1. 이벤트 위임 방식으로 변경된 ID에 새롭게 바인딩 (body를 통해 실제 필터에 작동하게!)
-        $('body').on('change', '#InboundCategories_clone', function () {
+        $('body').on('change', '#InboundCategories_clone', function() {
             $('#InboundSubCategories_clone').val('');
             table.draw();
         });
@@ -468,12 +493,12 @@
         });
 
         // 7. 필터 이벤트: 드롭다운 변경 시 테이블 필터링
-        $('#InboundCategories, #inboundDateInput').on('change keyup', function () {
+        $('#InboundCategories, #inboundDateInput').on('change keyup', function() {
             table.draw();
         });
 
         // 7-1. (7번 함수에서 각각이 변경될 때마다) 필터링 함수도 변경된 ID값을 기준으로 수정
-        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
             const selectedInbound = $('#InboundCategories_clone').val();
             const categoryInbound = data[2]; // 입고상태를 기준으로
 
@@ -485,24 +510,24 @@
             return true;
         });
 
-        // 입고상세 목업 데이터
+       /* // 입고상세 목업 데이터
         const inboundDetails = [
-            {inboundCode: 'INBOUND123', productName: '오리지널 도넛', quantity: 100},
-            {inboundCode: 'INBOUND123', productName: '초코 도넛', quantity: 50},
-            {inboundCode: 'INBOUND456', productName: '커피', quantity: 30},
-        ];
+            { inboundCode: 'INBOUND123', productName: '오리지널 도넛', quantity: 100 },
+            { inboundCode: 'INBOUND123', productName: '초코 도넛', quantity: 50 },
+            { inboundCode: 'INBOUND456', productName: '커피', quantity: 30 },
+        ];*/
 
 
-        // 9. Edit/Delete 버튼 이벤트 (제품명 대신 productName 사용)
+        /*// 9. Edit/Delete 버튼 이벤트 (제품명 대신 productName 사용)
         // 등록 버튼 클릭 시
         const dummyManagers = [
-            {id: "FM1", name: "박열정"},
-            {id: "FM2", name: "조아현"},
-            {id: "FM3", name: "백승우"},
-            {id: "FM4", name: "윤가영"}
-        ];
+            { id: "FM1", name: "박열정" },
+            { id: "FM2", name: "조아현" },
+            { id: "FM3", name: "백승우" },
+            { id: "FM4", name: "윤가영" }
+        ];*/
 
-        function populateManagerDropdown() {
+       /* function populateManagerDropdown() {
             const $select = $('#registerinboundManager');
             $select.empty().append(`<option value="">점주 선택</option>`); // 기본값 초기화
 
@@ -510,40 +535,97 @@
                 const label = `${manager.id} | ${manager.name}`;
                 $select.append(`<option value="${manager.id}">${label}</option>`);
             });
-        }
+        }*/
 
         // 모달 열릴 때마다 목록 갱신되게 하면 좋아
         $('#inboundAddModal').on('show.bs.modal', function () {
             populateManagerDropdown();
         });
 
+
+
         // 이 부분 전체를 바꿔주세요!
+        // 페이지 전체에서 한 번만 실행
         $('body').on('click', '.btn-approve', function () {
-            const inboundCode = this.dataset.inboundCode;
+            const inboundCode = $(this).data('inbound-code'); // 버튼에서 코드 가져오기
+            console.log('✅ 선택된 inboundCode:', inboundCode);
 
+           const inboundDate = $(this).data('inbound-date');
+
+
+
+            // server에서 내려받은 전체 리스트에서 코드로 필터링
             const filteredDetails = inboundDetails.filter(detail => detail.inboundCode === inboundCode);
+            console.log('🔍 필터링된 상세내역:', filteredDetails);
 
-            const tbody = document.getElementById('inboundDetailTableBody');
-            tbody.innerHTML = '';
+            // tbody 비우고 새로 채우기
+            const $tbody = $('#inboundDetailTableBody');
+            $tbody.empty();
 
-            if (filteredDetails.length > 0) {
+            if (filteredDetails.length === 0) {
+                $tbody.append('<tr><td colspan="5">데이터가 없습니다.</td></tr>');
+            } else {
                 filteredDetails.forEach(detail => {
                     const row = `
-              <tr>
-                <td>${detail.productName}</td>
-                <td>${detail.quantity}</td>
-              </tr>
+                <tr>
+                 <td>` + detail.productCode + `</td>
+                 <td>` + detail.productName + `</td>
+                 <td>` + detail.productName + `</td>
+                 <td>` + detail.productPrice + `</td>
+                 <td>` + detail.storedType + `</td>
+                 <td>` + detail.quantity + `</td>
+                </tr>
             `;
-                    tbody.insertAdjacentHTML('beforeend', row);
+                    $tbody.append(row);
                 });
-            } else {
-                tbody.innerHTML = '<tr><td colspan="2">데이터가 없습니다.</td></tr>';
+
             }
 
-            // 모달 띄우기
+            $('#inboundDate').val(inboundDate);
+            console.log(inboundDate);
+
+
+
+            // 모달 열기
             const modal = new bootstrap.Modal(document.getElementById('inboundDetailModal'));
             modal.show();
         });
+
+        /* $('body').on('click', '.btn-approve', function () {
+             const inboundCode = this.dataset.inboundCode;
+             console.log(inboundCode);
+             console.log(inboundDetails);
+
+             const filteredDetails = inboundDetails.filter(detail => detail.inboundCode === inboundCode);
+             console.log(filteredDetails);
+
+             const tbody = document.getElementById('inboundDetailTableBody');
+             tbody.innerHTML = '';
+
+             if (filteredDetails.length > 0) {
+                 filteredDetails.forEach(detail => {
+                     const row = `
+               <tr>
+                 <td>`+detail.productName+`</td>
+                 <td>`+detail.productCode+`</td>
+                 <td>`+detail.productName+`</td>
+                 <td>`+detail.productPrice+`</td>
+                 <td>`+detail.storedType+`</td>
+                 <td>`+detail.quantity+`</td>
+
+               </tr>
+             `;
+                     tbody.insertAdjacentHTML('beforeend', row);
+                 });
+             } else {
+                 tbody.innerHTML = '<tr><td colspan="2">데이터가 없습니다.</td></tr>';
+             }
+
+             // 모달 띄우기
+             const modal = new bootstrap.Modal(document.getElementById('inboundDetailModal'));
+             modal.show();
+         });*/
+
 
 
         // 수정 버튼 이벤트
@@ -556,10 +638,10 @@
             let sortedManagers;
             if (currentMemberCode) {
                 // 현재 점주와 나머지 점주를 분리 (dummyManagers의 id 기준 비교)
-                const currentManager = dummyManagers.filter(function (m) {
+                const currentManager = dummyManagers.filter(function(m) {
                     return m.id === currentMemberCode;
                 });
-                const otherManagers = dummyManagers.filter(function (m) {
+                const otherManagers = dummyManagers.filter(function(m) {
                     return m.id !== currentMemberCode;
                 });
                 // 현재 점주가 가장 먼저 오도록 배열 합치기
@@ -568,7 +650,7 @@
                 sortedManagers = dummyManagers;
             }
 
-            sortedManagers.forEach(function (manager) {
+            sortedManagers.forEach(function(manager) {
                 $select.append(`<option value="${manager.id}">${manager.id} | ${manager.name}</option>`);
             });
 
@@ -577,7 +659,7 @@
         }
 
         // 수정 버튼 클릭시
-        $('#datatable tbody').on('click', '.btn-edit', function (e) {
+        $('#datatable tbody').on('click', '.btn-edit', function(e) {
             e.preventDefault();
             var table = $('#datatable').DataTable();
             var $row = $(this).closest('tr');
@@ -598,7 +680,7 @@
         });
 
         // 삭제 버튼 이벤트
-        $('#datatable tbody').on('click', '.btn-delete', function (e) {
+        $('#datatable tbody').on('click', '.btn-delete', function(e) {
             e.preventDefault();
 
             var table = $('#datatable').DataTable();

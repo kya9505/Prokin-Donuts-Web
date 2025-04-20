@@ -16,6 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +51,7 @@ class InboundServiceImplTest {
     void saveInbound() {
         InboundDTO dto = InboundDTO.builder()
                 .inboundCode(inboundService.findNextInboundCode())
-                .inboundDate(Date.valueOf("2025-04-30"))
+                .inboundDate(LocalDate.parse("2025-04-30"))
                 .inboundStatus("입고요청")
                 .warehouseCode("GG1")
                 .build();

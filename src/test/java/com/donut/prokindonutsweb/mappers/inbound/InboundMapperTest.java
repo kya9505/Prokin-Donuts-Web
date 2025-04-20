@@ -12,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ class InboundMapperTest {
     void insertInbound() {
         InboundVO vo = InboundVO.builder()
                 .inboundCode("IN7")
-                .inboundDate(Date.valueOf("2025-04-20"))
+                .inboundDate(LocalDate.parse("2025-04-20"))
                 .inboundStatus("입고대기")
                 .warehouseCode("GG1")
                 .build();

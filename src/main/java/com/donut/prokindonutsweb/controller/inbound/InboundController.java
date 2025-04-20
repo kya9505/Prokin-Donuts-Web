@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class InboundController {
     public void productList(Model model) {
         List<ProductDTO> list = inboundService.findAllProductList().orElseThrow();
         model.addAttribute("product", list);
+        System.out.println(list.toString());
         log.info(list.toString());
     }
 
@@ -42,7 +44,7 @@ public class InboundController {
         String inboundCode = inboundService.findNextInboundCode();
         InboundDTO dto = InboundDTO.builder()
                 .inboundCode(inboundCode)
-                .inboundDate(Date.valueOf(inboundDate))
+                .inboundDate(LocalDate.parse((inboundDate)))
                 .inboundStatus("입고요청")
                 .warehouseCode("GG1")
                 .build();

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -13,7 +14,7 @@ import java.util.Date;
 @Builder
 public class InboundVO {
     private String inboundCode;
-    private Date inboundDate;
+    private LocalDate inboundDate;
     private String inboundStatus;
     private String warehouseCode;
 }

@@ -8,6 +8,7 @@ import lombok.*;
 @Builder
 @ToString
 public class InboundDetailDTO {
+    private String inboundCode;
     private String productCode;
     private String productName;
     private Integer productPrice;

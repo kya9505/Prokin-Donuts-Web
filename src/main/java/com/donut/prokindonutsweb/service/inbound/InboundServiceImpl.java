@@ -5,6 +5,8 @@ import com.donut.prokindonutsweb.mappers.inbound.InboundMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -106,6 +108,7 @@ public class InboundServiceImpl implements InboundService {
                 .stream()
                 .map(vo -> {
                     InboundDetailDTO dto = InboundDetailDTO.builder()
+                            .inboundCode(vo.getInboundCode())
                             .productCode(vo.getProductCode())
                             .productName(inboundMapper.selectProductName(vo.getProductCode()))
                             .productPrice(inboundMapper.selectProductPrice(vo.getProductCode()))
@@ -115,7 +118,6 @@ public class InboundServiceImpl implements InboundService {
                             return dto;
                         }
                 ).toList();
-
         return list.isEmpty() ? Optional.empty() : Optional.of(list);
     }
 
