@@ -3,7 +3,9 @@ package com.donut.prokindonutsweb.dto.member;
 import lombok.*;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
@@ -12,27 +14,25 @@ import javax.validation.constraints.NotEmpty;
 @ToString
 public class MemberAccountDTO {
 
-    @NotEmpty
     private String memberCode;
 
-    @NotEmpty
+    @NotBlank
     private String authorityCode;
 
-    @NotEmpty
+    @NotBlank
     private String name;
 
    private String phoneNumber;
 
-    @NotEmpty
+   @NotBlank
     @Email
     private String email;
 
-    @NotEmpty
     private String address;
 
-    @NotEmpty
+    @NotBlank
     private String id;
 
-    @NotEmpty
+    @NotBlank
     private String password;
 }
