@@ -66,17 +66,7 @@
                     <!-- 지도 API 띄울 공간 -->
                     <div class="card-style mb-30">
                         <h6 class="mb-10">창고 위치</h6>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
+                        <div id="map" style="width:100%;height:715px;"></div>
                     </div>
                 </div>
 
@@ -87,7 +77,7 @@
                         <h6 class="mb-10">창고 목록</h6>
                         <p class="text-sm mb-20"></p>
 
-                            <!-- 원하는 필터(중분류, 소분류) 설정 -->
+                        <!-- 원하는 필터(중분류, 소분류) 설정 -->
                         <div id="myCustomFilters" style="display: none;">
 
                             <div class="d-flex flex-wrap gap-2">
@@ -142,13 +132,19 @@
                                     <th>수용한도</th>
                                     <th>담당자</th>
                                     <th>담당자 이메일</th>
-                                    <th>설정</th> <!-- 수정/삭제 열 -->
+                                    <th>수정 | 취소</th> <!-- 수정/삭제 열 -->
                                 </tr>
                                 </thead>
 
                                 <tbody>
                                 <c:forEach var="w" items="${warehouseList}">
-                                    <tr>
+                                    <tr
+                                            data-warehouse-code="${w.warehouseCode}"
+                                            data-warehouse-name="${w.warehouseName}"
+                                            data-warehouse-addr="${w.address}"
+                                            data-status="${w.status}"
+                                            data-member-code="${w.memberCode}"
+                                            data-member-name="${w.memberName}">
                                         <td>${w.warehouseCode}</td>
                                         <td>${w.warehouseName}</td>
                                         <td>${w.address}</td>
@@ -176,10 +172,15 @@
                                         <td style="display: none;">${w.status}</td>
                                         <td style="display: none;">${w.memberCode}</td>
                                         <td>
-                                            <button class="btn btn-edit" data-code="${w.warehouseCode}">수정</button>
-                                            <button class="btn btn-delete" data-code="${w.warehouseCode}">삭제</button>
+                                            <div class="btn-group-2">
+                                                <button class="btn btn-edit text-primary-2" data-code="${w.warehouseCode}">
+                                                    <i class="lni lni-pencil"></i>
+                                                </button>
+                                                <button class="btn btn-delete text-danger" data-code="${w.warehouseCode}">
+                                                    <i class="lni lni-trash-can"></i>
+                                                </button>
+                                            </div>
                                         </td>
-                                    </tr>
                                 </c:forEach>
                                 </tbody>
 
@@ -357,10 +358,10 @@
                                 <div class="mb-3">
                                     <label for="modifyWarehouseMember" class="form-label">담당자</label>
                                     <select class="form-select" id="modifyWarehouseMember" name="memberCode">
-                                        <option value="null">담당자 없음</option>
                                         <c:forEach var="m" items="${unassignedWMs}">
                                             <option value="${m.memberCode}">${m.memberCode} | ${m.name}</option>
                                         </c:forEach>
+                                        <option value="null">담당자 없음</option>
                                     </select>
                                 </div>
 
@@ -448,7 +449,137 @@
 
 <!-- 다음 우편번호 API -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<!-- 카카오맵 API -->
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2a5f2e41113ad6da9ca9746f7bcb47f6&libraries=services"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const map = new kakao.maps.Map(document.getElementById('map'), {
+            center: new kakao.maps.LatLng(36.5, 127.5), // 대한민국 중심
+            level: 7 // 초기에는 살짝 넓게
+        });
 
+        // 지도 클릭 → 다음 우편번호 팝업 + 모달 열기
+        kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+            geocoder.coord2Address(
+                mouseEvent.latLng.getLng(),
+                mouseEvent.latLng.getLat(),
+                function(result, status) {
+                    if (status === kakao.maps.services.Status.OK) {
+                        // 1) 도로명주소 추출
+                        var roadAddr = result[0].road_address
+                            ? result[0].road_address.address_name
+                            : result[0].address.address_name;
+
+                        // 2) 다음 우편번호 팝업 호출 (검색 창에 roadAddr 가 바로 채워짐)
+                        new daum.Postcode({
+                            autoClose: true,
+                            oncomplete: function(data) {
+                                // 팝업에서 선택한 결과로 필드 채우기
+                                $('#zonecode_disp').val(data.zonecode);
+                                $('#zonecode_hidden').val(data.zonecode);
+                                $('#roadAddress_disp').val(data.roadAddress);
+                                $('#roadAddress_hidden').val(data.roadAddress);
+
+                                // 모달 열기 (주소 선택이 완료된 직후)
+                                $('#warehouseAddModal').modal('show');
+
+                                // 상세주소 입력 필드만 포커스
+                                $('#detailAddress_disp').val('').focus();
+                            }
+                        }).open({
+                            q: roadAddr
+                        });
+                    }
+                }
+            );
+        });
+
+        // 지도에 확대 축소 컨트롤을 생성한다
+        var zoomControl = new kakao.maps.ZoomControl();
+
+        // 지도의 우측에 확대 축소 컨트롤을 추가한다
+        map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+
+        const geocoder = new kakao.maps.services.Geocoder();
+        const rows = Array.from(document.querySelectorAll('#datatable tbody tr'));
+        const bounds = new kakao.maps.LatLngBounds();
+
+        // 1) 주소별 마커 + 레이블 생성 + bounds 계산
+        await Promise.all(rows.map(row => new Promise(resolve => {
+            const addr = row.dataset.warehouseAddr;
+            const name = row.dataset.warehouseName;
+
+            geocoder.addressSearch(addr, (res, status) => {
+                if (status === kakao.maps.services.Status.OK) {
+                    const lat = res[0].y;
+                    const lng = res[0].x;
+                    const pos = new kakao.maps.LatLng(lat, lng);
+
+                    // 마커 & 레이블
+                    new kakao.maps.Marker({ map, position: pos });
+                    new kakao.maps.CustomOverlay({
+                        map,
+                        position: pos,
+                        content: `<div style="
+                              display:inline-block;
+                              padding:4px 8px;
+                              font-size:12px;
+                              white-space:nowrap;
+                              text-align:center;
+                              background:rgba(255,255,255,0.9);
+                              border:1px solid rgba(0,0,0,0.2);
+                              border-radius:4px;
+                              box-shadow:0 1px 4px rgba(0,0,0,0.2);
+                              transform:translateY(-35px);
+                            ">` + name + `</div>`,
+                        yAnchor: 1
+                    });
+
+                    // 다음 클릭을 위한 좌표 저장
+                    row.dataset.lat = lat;
+                    row.dataset.lng = lng;
+
+                    bounds.extend(pos);
+                }
+                resolve();
+            });
+        })));
+
+        // 2) 초기 지도: 전체 마커가 보이게 축소/이동
+        map.setBounds(bounds);
+
+        // 3) 클릭 시 확대 후 이동 (순서 매우 중요)
+        rows.forEach(row => {
+            row.addEventListener('click', () => {
+                const lat = row.dataset.lat;
+                const lng = row.dataset.lng;
+
+                if (lat && lng) {
+                    const pos = new kakao.maps.LatLng(lat, lng);
+
+                    map.setLevel(3); // 먼저 확대
+                    setTimeout(() => {
+                        map.setCenter(pos); // 그다음 이동
+                    }, 100);
+                } else {
+                    // 비상: geocoding이 아직 안 된 경우
+                    geocoder.addressSearch(row.dataset.warehouseAddr, (res, st) => {
+                        if (st === kakao.maps.services.Status.OK) {
+                            const pos = new kakao.maps.LatLng(res[0].y, res[0].x);
+                            map.setLevel(3);
+                            setTimeout(() => {
+                                map.setCenter(pos);
+                            }, 100);
+
+                            row.dataset.lat = res[0].y;
+                            row.dataset.lng = res[0].x;
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
 
 <script>
     $(document).ready(function() {
@@ -470,6 +601,8 @@
             { "id": "GJ", "name": "광주광역시" },
             { "id": "BS", "name": "부산광역시" },
             { "id": "US", "name": "울산광역시" },
+            { "id": "SJ", "name": "세종특별자치시" },
+            { "id": "ETC", "name": "기타" }
         ];
 
         // 2. 원본 필터 영역에 소재지 옵션 채우기
@@ -486,7 +619,7 @@
             autoWidth: false,
             columnDefs: [
                 { width: '95px', targets: -1 },  // Actions 열 너비
-                { targets: [0, 1, 2, 3, 4, 5, 8], className: 'text-center' } // JS 속성으로 가운데 정렬
+                { targets: [0, 1, 2, 3, 4, 5, 6, 8], className: 'text-center' } // JS 속성으로 가운데 정렬
             ],
             order: [[0, 'asc']],
             paging: true,
@@ -615,8 +748,27 @@
         // 전역 변수: 창고명 중복 체크 상태 (초기값 false)
         let isWarehouseNameChecked = false;
 
+        // 폼 초기화 함수
+        function resetRegisterForm() {
+            // HTMLFormElement.reset() 으로 기본 input 값(placeholder 외) 모두 초기화
+            $('#warehouseRegisterForm')[0].reset();
+
+            // hidden 필드, 플래그, 버튼 상태도 명시적으로 초기화
+            $('#zonecode_disp, #roadAddress_disp, #detailAddress_disp').val('');
+            $('#zonecode_hidden, #roadAddress_hidden, #detailAddress_hidden, input[name="address"]').val('');
+            isWarehouseNameChecked = false;
+
+            $('#search-btn').prop('disabled', false).removeClass('disabled');
+        }
+
+        // 모달이 완전히 닫혔을 때
+        $('#warehouseAddModal').on('hidden.bs.modal', function() {
+            resetRegisterForm();
+        });
+
         // 1. 등록 모달 열기
         $("#btnWarehouseAdd_clone").on("click", function () {
+            resetRegisterForm();
             $("#warehouseAddModal").modal("show");
         });
 
@@ -642,7 +794,6 @@
             fetch(contextPath + "/qh/warehouse/check?warehouseName=" + encodeURIComponent(name))
                 .then(function (res) { return res.text(); })  // ← 여기!!
                 .then(function (text) {
-                    console.log("서버 응답:", text);
                     const isDup = (text === 'true');  // 문자열 비교
                     if (isDup) {
                         alert("이미 존재하는 창고명입니다.");
@@ -681,6 +832,8 @@
             const capacity = $("#capacity").val().trim();
             const regName = /^[A-Za-z0-9가-힣]{1,10}$/;
             const regCap = /^[0-9]+$/;
+            // 상세주소: 한글, 영어, 숫자, 띄어쓰기, 특수문자 허용
+            const regDetail = /^[\uAC00-\uD7A3A-Za-z0-9\s~`!@#$%^&*()\-_=+\[\]{};:'",.<>\/?\\|]*$/;
 
             if (!name || !zonecode || !roadAddress || !detailAddress || !capacity) {
                 alert("필수 항목을 모두 입력해주세요.");
@@ -697,23 +850,33 @@
                 return false;
             }
 
+            if (!regDetail.test(detailAddress)) {
+                alert("상세주소는 한글, 영어, 숫자, 띄어쓰기 및 특수문자만 입력 가능합니다.");
+                return false;
+            }
+
             if (!isWarehouseNameChecked) {
                 alert("창고명 중복확인을 해주세요.");
                 return false;
             }
 
             // address 하나로 합쳐서 hidden 필드 추가
-            const fullAddress = zonecode + " " + roadAddress + " " + detailAddress;
-            $("<input>").attr({
-                type: "hidden",
-                name: "address",
-                value: fullAddress
-            }).appendTo(this);
+            const $existing = $("input[name='address']");
+            const fullAddress = (roadAddress + " " + detailAddress).replace(/^,/, "").trim();
+            if ($existing.length > 0) {
+                $existing.val(fullAddress); // 기존 필드 있으면 값만 바꿈
+            } else {
+                $("<input>").attr({
+                    type: "hidden",
+                    name: "address",
+                    value: fullAddress
+                }).appendTo(this);
+            }
         });
 
-        let isModifyNameChecked = false;
+        let isModifyNameChecked = true;
 
-// 1. 수정 버튼 클릭 시 - 모달 열기
+        // 1. 수정 버튼 클릭 시 - 모달 열기
         $('#datatable tbody').on('click', '.btn-edit', function (e) {
             e.preventDefault();
 
@@ -723,31 +886,45 @@
             const code = rowData[0];        // 창고코드
             const name = rowData[1];        // 창고명
             const memberCode = rowData[7];  // 숨겨진 td: 담당자코드
+            const memberName = rowData[4];  // 담당자이름
 
             // 모달 input 세팅
             $('#modifyWarehouseCode').val(code);
             $('#modifyWarehouseName').val(name);
 
+            const $selectTag = $('#modifyWarehouseMember');
+
+            // 1. 이전에 추가한 현재 담당자 option 제거
+            $selectTag.find('option[data-current="true"]').remove();
+
+            // 2. 현재 값 선택 또는 새로 추가
             const $select = $('#modifyWarehouseMember');
             if ($select.find("option[value='" + memberCode + "']").length > 0) {
                 $select.val(memberCode);
             } else {
-                $select.val("null"); // 없는 경우 기본값
+                if (memberCode) {
+                    const label = memberCode + " | " + memberName;
+                    $select.prepend(`<option value="` + memberCode + `" selected data-current="true" selected>` + label +` </option>`);
+                    $select.val(memberCode);
+                } else {
+                    // 담당자 없는 경우에는 '담당자 없음'을 선택
+                    $select.val("null");
+                }
             }
 
             // 중복확인 상태 초기화
-            isModifyNameChecked = false;
+            isModifyNameChecked = true;
 
             // 모달 열기
             $('#warehouseEditModal').modal('show');
         });
 
-// 2. 창고명 입력 시 중복확인 초기화
+        // 2. 창고명 입력 시 중복확인 초기화
         $("#modifyWarehouseName").on("input", function () {
             isModifyNameChecked = false;
         });
 
-// 3. 중복 확인 버튼 클릭 시
+        // 3. 중복 확인 버튼 클릭 시
         $("#modifyCheckDuplicateWarehouse").on("click", function (e) {
             e.preventDefault(); // 폼 제출 막기
 
@@ -769,7 +946,7 @@
             fetch(contextPath + "/qh/warehouse/check?warehouseName=" + encodeURIComponent(name) + "&warehouseCode=" + encodeURIComponent(code))
                 .then((res) => res.text())
                 .then((text) => {
-                    const isDup = (text === "true");
+                    const isDup = (text === 'true');
                     if (isDup) {
                         alert("이미 존재하는 창고명입니다.");
                         isModifyNameChecked = false;
@@ -783,7 +960,7 @@
                 });
         });
 
-// 4. 최종 제출 시 유효성검사 + 중복확인 여부 체크
+        // 4. 최종 제출 시 유효성검사 + 중복확인 여부 체크
         $("#modifyWarehouseForm").on("submit", function (e) {
             const name = $("#modifyWarehouseName").val().trim();
             const reg = /^[A-Za-z0-9가-힣]{1,10}$/;
@@ -808,61 +985,66 @@
         });
 
         // 삭제 버튼 클릭 시
-        $('#datatable tbody').on('click', '.btn-delete', function (e) {
+        $(document).on('click', '.btn-delete', function(e) {
             e.preventDefault();
 
-            const rowData = table.row($(this).closest('tr')).data();
+            var $tr = $(this).closest('tr');
+            var warehouseCode = $tr.data('warehouse-code');
+            var warehouseName = $tr.data('warehouse-name');
+            var status        = $tr.data('status') || '';
+            var memberCode    = $tr.data('member-code') || '';
+            var memberName    = $tr.data('member-name') || '담당자없음';
 
-            const warehouseCode = rowData[0];
-            const warehouseName = rowData[1];
-            const memberName = rowData[4];
-            const statusRaw = rowData[6] || "";
-            const memberCode = rowData[7];
+            // 배지 클래스
+            var badgeClass = (status === '삭제가능') ? 'bg-success' : 'bg-secondary';
+            var badge = '<span class="badge ' + badgeClass + '">' + status + '</span>';
 
-            const cleanedStatus = statusRaw.replace(/\s/g, "");
-            const isDeletable = cleanedStatus === "삭제가능";
-            const wm = memberName ? memberName : "담당자없음";
+            // 리스트 아이템 HTML
+            var liHTML =
+                '<li class="list-group-item d-flex justify-content-between align-items-center">' +
+                warehouseName + ' (' +
+                (memberCode ? (memberCode + ' | ' + memberName) : '담당자없음') +
+                ')' +
+                badge +
+                '</li>';
 
-            const badgeClass = isDeletable ? "bg-success" : "bg-danger";
-            const badge = '<span class="badge ' + badgeClass + '">' + statusRaw.trim() + '</span>';
-
-            let content = "";
-
-            if (isDeletable) {
-                content += '<h5>선택한 창고를 정말 삭제하시겠습니까?</h5>';
-            } else {
-                content += '<h5>선택한 창고는 진행 중인 업무로 인해 삭제할 수 없습니다.</h5>';
-            }
-
-            content += '<p>' + warehouseName + ' (' + memberCode + ' | ' + wm + ')</p>';
-            content += badge;
-
+            // 모달 form hidden 세팅
             $('#deleteWarehouseCode').val(warehouseCode);
-            $('#deleteContentOk, #deleteContentNo').hide().empty();
 
-            if (isDeletable) {
-                $('#deleteContentOk').html(content).show();
+            // 내용 초기화
+            $('#deleteContentOk').hide().empty();
+            $('#deleteContentNo').hide().empty();
+
+            if (status === '삭제가능') {
+                $('#deleteContentOk')
+                    .html(
+                        '<h5>선택한 창고를 정말 삭제하시겠습니까?</h5><br>' +
+                        '<ul class="list-group mb-3">' + liHTML + '</ul>'
+                    )
+                    .show();
                 $('#confirmDeleteWarehouse').show();
             } else {
-                $('#deleteContentNo').html(content).show();
+                $('#deleteContentNo')
+                    .html(
+                        '<h5>선택한 창고는 진행 중인 업무로 인해 삭제할 수 없습니다.</h5><br>' +
+                        '<ul class="list-group mb-3">' + liHTML + '</ul>'
+                    )
+                    .show();
                 $('#confirmDeleteWarehouse').hide();
             }
 
+            // 모달 띄우기
             $('#warehouseDeleteModal').modal('show');
         });
 
-        // 삭제 모달의 실제 '삭제' 버튼 클릭 이벤트
+        // 삭제 폼 전송
         $('#confirmDeleteWarehouse').on('click', function() {
             if ($(this).is(':hidden')) {
-                alert("삭제할 수 없는 창고입니다.");
+                alert('삭제할 수 없는 창고입니다.');
                 return;
             }
-            alert("창고가 성공적으로 삭제되었습니다.");
-            $('#warehouseDeleteModal').modal('hide');
-
             $('#warehouseDeleteForm').submit();
         });
-
     });
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
