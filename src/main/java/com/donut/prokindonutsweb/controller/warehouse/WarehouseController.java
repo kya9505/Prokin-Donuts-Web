@@ -74,12 +74,12 @@ public class WarehouseController {
   // 5. 창고명 중복 확인
   @GetMapping(value = "/check", produces = "application/json")
   @ResponseBody
-  public boolean checkWarehouseDuplicate(@RequestParam("warehouseName") String warehouseName,
+  public String checkWarehouseDuplicate(@RequestParam("warehouseName") String warehouseName,
                                          @RequestParam(value = "warehouseCode", required = false) String warehouseCode) {
     log.info("Controller : checkWarehouseDuplicate called");
     WarehouseCheckDTO dto = new WarehouseCheckDTO();
     dto.setWarehouseName(warehouseName);
     dto.setWarehouseCode(warehouseCode);  // 수정일 경우만 유효값 전달 그 외 null
-    return warehouseService.checkWarehouseDuplicate(dto);
+    return warehouseService.checkWarehouseDuplicate(dto) ? "true" : "false";
   }
 }

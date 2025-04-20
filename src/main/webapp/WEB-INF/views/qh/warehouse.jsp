@@ -66,17 +66,7 @@
                     <!-- 지도 API 띄울 공간 -->
                     <div class="card-style mb-30">
                         <h6 class="mb-10">창고 위치</h6>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
-                        <p class="text-sm mb-20">지도 배치 예정</p>
+                        <div id="map" style="width:100%;height:350px;"></div>
                     </div>
                 </div>
 
@@ -87,7 +77,7 @@
                         <h6 class="mb-10">창고 목록</h6>
                         <p class="text-sm mb-20"></p>
 
-                            <!-- 원하는 필터(중분류, 소분류) 설정 -->
+                        <!-- 원하는 필터(중분류, 소분류) 설정 -->
                         <div id="myCustomFilters" style="display: none;">
 
                             <div class="d-flex flex-wrap gap-2">
@@ -148,7 +138,9 @@
 
                                 <tbody>
                                 <c:forEach var="w" items="${warehouseList}">
-                                    <tr>
+                                    <tr
+                                            data-warehouse-name="${w.warehouseName}"
+                                            data-warehouse-addr="${w.address}">
                                         <td>${w.warehouseCode}</td>
                                         <td>${w.warehouseName}</td>
                                         <td>${w.address}</td>
@@ -448,7 +440,95 @@
 
 <!-- 다음 우편번호 API -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<!-- 카카오맵 API -->
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2a5f2e41113ad6da9ca9746f7bcb47f6&libraries=services"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const map = new kakao.maps.Map(document.getElementById('map'), {
+            center: new kakao.maps.LatLng(36.5, 127.5), // 대한민국 중심
+            level: 7 // 초기에는 살짝 넓게
+        });
 
+        const geocoder = new kakao.maps.services.Geocoder();
+        const rows = Array.from(document.querySelectorAll('#datatable tbody tr'));
+        const bounds = new kakao.maps.LatLngBounds();
+
+        // 1) 주소별 마커 + 레이블 생성 + bounds 계산
+        await Promise.all(rows.map(row => new Promise(resolve => {
+            const addr = row.dataset.warehouseAddr;
+            const name = row.dataset.warehouseName;
+
+            geocoder.addressSearch(addr, (res, status) => {
+                if (status === kakao.maps.services.Status.OK) {
+                    const lat = res[0].y;
+                    const lng = res[0].x;
+                    const pos = new kakao.maps.LatLng(lat, lng);
+
+                    // 마커 & 레이블
+                    new kakao.maps.Marker({ map, position: pos });
+                    new kakao.maps.CustomOverlay({
+                        map,
+                        position: pos,
+                        content: `<div style="
+                              display:inline-block;
+                              padding:4px 8px;
+                              font-size:12px;
+                              white-space:nowrap;
+                              text-align:center;
+                              background:rgba(255,255,255,0.9);
+                              border:1px solid rgba(0,0,0,0.2);
+                              border-radius:4px;
+                              box-shadow:0 1px 4px rgba(0,0,0,0.2);
+                              transform:translateY(-35px);
+                            ">` + name + `</div>`,
+                        yAnchor: 1
+                    });
+
+                    // 다음 클릭을 위한 좌표 저장
+                    row.dataset.lat = lat;
+                    row.dataset.lng = lng;
+
+                    bounds.extend(pos);
+                }
+                resolve();
+            });
+        })));
+
+        // 2) 초기 지도: 전체 마커가 보이게 축소/이동
+        map.setBounds(bounds);
+
+        // 3) 클릭 시 확대 후 이동 (💥 순서 중요)
+        rows.forEach(row => {
+            row.addEventListener('click', () => {
+                const lat = row.dataset.lat;
+                const lng = row.dataset.lng;
+
+                if (lat && lng) {
+                    const pos = new kakao.maps.LatLng(lat, lng);
+
+                    map.setLevel(3); // 먼저 확대
+                    setTimeout(() => {
+                        map.setCenter(pos); // 그다음 이동
+                    }, 100);
+                } else {
+                    // 비상상황: geocoding이 아직 안 된 경우
+                    geocoder.addressSearch(row.dataset.warehouseAddr, (res, st) => {
+                        if (st === kakao.maps.services.Status.OK) {
+                            const pos = new kakao.maps.LatLng(res[0].y, res[0].x);
+                            map.setLevel(3);
+                            setTimeout(() => {
+                                map.setCenter(pos);
+                            }, 100);
+
+                            row.dataset.lat = res[0].y;
+                            row.dataset.lng = res[0].x;
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
 
 <script>
     $(document).ready(function() {
@@ -703,12 +783,13 @@
             }
 
             // address 하나로 합쳐서 hidden 필드 추가
-            const fullAddress = zonecode + " " + roadAddress + " " + detailAddress;
+            const fullAddress = roadAddress + " " + detailAddress;
             $("<input>").attr({
                 type: "hidden",
                 name: "address",
                 value: fullAddress
             }).appendTo(this);
+            console.log(fullAddress);
         });
 
         let isModifyNameChecked = false;
@@ -769,6 +850,7 @@
             fetch(contextPath + "/qh/warehouse/check?warehouseName=" + encodeURIComponent(name) + "&warehouseCode=" + encodeURIComponent(code))
                 .then((res) => res.text())
                 .then((text) => {
+                    console.log(text);
                     const isDup = (text === "true");
                     if (isDup) {
                         alert("이미 존재하는 창고명입니다.");
