@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.donut.prokindonutsweb.mappers.member.MemberRequestMapper">
+
+    <!--회원가입요청 테이블 조회 -->
+    <select id="selectRequestMember" resultType="MemberRequestVO">
+        select * from memberrequest
+    </select>
+
+
+    <!--회원가입 요청 상태 승인으로 변경 -->
+    <update id="approvalMember">
+            update memberrequest
+            set request = '승인'
+            where requestCode = #{requestCode}
+    </update>
+
+
+    <!--회원가입 요청 삭제-->
+    <delete id="deleteRequestMember" >
+        delete from memberrequest
+        where requestCode = #{requestCode}
+    </delete>
+
+
+    <!--가장 최근 발급한 회원가입 요청 코드 조회 -->
+    <select id="requestCode" resultType="String">
+        Select requestCode From memberrequest  Order by CAST(substring(requestCode, 3) AS UNSIGNED) DESC LIMIT 1;
+    </select>
+
+</mapper>
