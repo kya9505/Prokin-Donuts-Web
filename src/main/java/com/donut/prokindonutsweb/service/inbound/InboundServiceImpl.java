@@ -144,5 +144,10 @@ public class InboundServiceImpl implements InboundService {
         inboundMapper.updateInventory(inventoryVO);
     }
 
+    @Override
+    public void deleteInbound(String inboundCode) {
+        inboundMapper.deleteInbound(inboundCode);
+    }
+
 
 }
