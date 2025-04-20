@@ -14,8 +14,8 @@
         values (#{memberCode},#{authorityCode},#{name},#{phoneNumber},#{email},#{address},#{id},#{password})
     </insert>
 
-    <update id="updateMember">
-        <foreach collection="list" item="member">
+    <update id="updateMember" parameterType="java.util.List">
+        <foreach collection="list" item="member" separator="">
             update memberaccount
             set authorityCode = #{member.authorityCode},
             name = #{member.name},
@@ -24,7 +24,7 @@
             address = #{member.address},
             id = #{member.id},
             password = #{member.password}
-            where memberCode = #{member.memberCode}
+            where memberCode = #{member.memberCode};
         </foreach>
     </update>
 

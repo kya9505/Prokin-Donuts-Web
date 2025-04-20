@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -228,8 +230,9 @@
             </div>
 
     <!-- 수정 모달 -->
+    <form id="memberEditForm" method="post" action="/qh/member/update" accept-charset="UTF-8">
     <div class="modal fade" id="memberEditModal" tabindex="-1" aria-labelledby="memberEditModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-dialog modal-xl mㅁodal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title" id="memberEditModalLabel">회원 수정</h3>
@@ -239,26 +242,46 @@
                     <table class="table striped-table w-100 member-datatable" style="width:100%">
                         <thead>
                         <tr>
-                            <th>회원코드</th>
-                            <th>아이디</th>
-                            <th>비밀번호</th>
+                            <th>권한</th>
                             <th>이름</th>
                             <th>이메일</th>
                             <th>전화번호</th>
                             <th>주소</th>
+                            <th>아이디</th>
+                            <th>비밀번호</th>
                         </tr>
                         </thead>
                         <tbody id="memberEditModalBody">
-                        <!-- JS로 동적으로 삽입 -->
+                        <c:if test="${not empty memberList}">
+                            <c:forEach var="item" items="${memberList}" varStatus="status">
+                                <tr>
+                                    <td>
+                                        <select class="form-select" name="memberList[${status.index}].authorityCode">
+                                            <option value="QH" ${item.authorityCode eq 'QH' ? 'selected' : ''}>본사관리자</option>
+                                            <option value="WM" ${item.authorityCode eq 'WM' ? 'selected' : ''}>창고관리자</option>
+                                            <option value="FM" ${item.authorityCode eq 'FM' ? 'selected' : ''}>가맹점주</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" name="memberList[${status.index}].name" class="form-control" value="${item.name}" /></td>
+                                    <td><input type="text" name="memberList[${status.index}].email" class="form-control" value="${item.email}" /></td>
+                                    <td><input type="text" name="memberList[${status.index}].phoneNumber" class="form-control" value="${item.phoneNumber}" /></td>
+                                    <td><input type="text" name="memberList[${status.index}].address" class="form-control" value="${item.address}" /></td>
+                                    <td><input type="text" name="memberList[${status.index}].id" class="form-control" value="${item.id}" /></td>
+                                    <td><input type="text" name="memberList[${status.index}].password" class="form-control" value="${item.password}" /></td>
+                                </tr>
+                                <input type="hidden" name="memberList[${status.index}].memberCode" value="${item.memberCode}" />
+                            </c:forEach>
+                        </c:if>
+
                         </tbody>
                     </table>
-                </div>
                 <div class="modal-footer">
                     <button type="submit" class="main-btn primary-btn btn-hover text-center">수정</button>
-                </div>
+                </div  >
             </div>
         </div>
     </div>
+</form>
 
     <!-- 삭제 모달 -->
             <div class="modal fade" id="memberDeleteModal" tabindex="-1" aria-labelledby="memberDeleteModalLabel" aria-hidden="true">
@@ -471,18 +494,20 @@
         selectedData.forEach((item, index) => {
             const rowHtml = `
     <tr>
-         <td><select class="form-select">
+         <td><select class="form-select"  name="memberList[`+index+`].authorityCode">
               <option value="QH">본사관리자</option>
               <option value="WM">창고관리자</option>
               <option value="FM">가맹점주</option>
             </select></td>
-        <td><input type="text" class="form-control" value="`+item.id+`" /></td>
-        <td><input type="text" class="form-control" value="`+item.password+`" /></td>
-        <td><input type="text" class="form-control" value=" `+item.name+`" /></td>
-        <td><input type="text" class="form-control" value="`+item.email+`" /></td>
-        <td><input type="text" class="form-control" value="`+item.phoneNumber+`" /></td>
-        <td><input type="text" class="form-control" value="`+item.address+`" /></td>
+        <td><input type="text" name="memberList[`+index+`].name" class="form-control" value="`+item.name+`" /></td>
+        <td><input type="text" name="memberList[`+index+`].email" class="form-control" value="`+item.email+`" /></td>
+        <td><input type="text" name="memberList[`+index+`].phoneNumber" class="form-control" value="`+item.phoneNumber+`" /></td>
+        <td><input type="text" name="memberList[`+index+`].address" class="form-control" value="`+item.address+`" /></td>
+        <td><input type="text" name="memberList[`+index+`].id" class="form-control" value="`+item.id+`" /></td>
+        <td><input type="text" name="memberList[`+index+`].password" class="form-control" value="`+item.password+`" /></td>
     </tr>
+        <input type="hidden" name="memberList[`+index+`].memberCode" value="`+item.memberCode+`" />
+
     `;
             $tableBody.append(rowHtml);
         });
@@ -492,6 +517,18 @@
 
     });
 
+
+    //valid시 에러시 모달 원복
+    window.addEventListener('DOMContentLoaded', function () {
+        <c:if test="${not empty errorMessage}">
+        alert('${fn:replace(fn:escapeXml(errorMessage), "'", "\\'")}');
+        </c:if>
+
+        <c:if test="${not empty memberList}">
+        const modal = new bootstrap.Modal(document.getElementById('memberEditModal'));
+        modal.show();
+        </c:if>
+    });
 
     // 삭제 버튼 클릭 시
     $('#btnMemberDelete_clone').on('click', function (e) {
@@ -534,6 +571,7 @@
 
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
+
 
 </script>
 </body>
