@@ -111,6 +111,7 @@
                     </div>
                 </div>
             </div>
+        </div>
     </section>
             <!-- Modal HTML Start -->
             <!-- 회원 등록 모달 -->
