@@ -1,6 +1,7 @@
 package com.donut.prokindonutsweb.service.inbound;
 
 import com.donut.prokindonutsweb.dto.inbound.InboundDTO;
+import com.donut.prokindonutsweb.dto.inbound.InventoryVO;
 import com.donut.prokindonutsweb.dto.inbound.ProductDTO;
 import com.donut.prokindonutsweb.dto.inbound.ProductVO;
 import com.donut.prokindonutsweb.mappers.inbound.InboundMapper;
@@ -16,6 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,11 +52,40 @@ class InboundServiceImplTest {
     void saveInbound() {
         InboundDTO dto = InboundDTO.builder()
                 .inboundCode(inboundService.findNextInboundCode())
-                .inboundDate(Date.valueOf("2025-04-30"))
+                .inboundDate(LocalDate.parse("2025-04-30"))
                 .inboundStatus("입고요청")
                 .warehouseCode("GG1")
                 .build();
         inboundService.saveInbound(dto);
+    }
 
+    @Test
+    @DisplayName("(입고요청, 승인대기) 상태 입고목록만 반환하는 기능")
+    void findAllInboundList() {
+        inboundService.findAllInboundList().stream().forEach(System.out::println);
+    }
+
+    @Test
+    @DisplayName("입고 상세 목록 반환")
+    void findAllInboundDetailList() {
+        inboundService.findAllInboundDetailList().stream().forEach(System.out::println);
+    }
+
+    @Test
+    @DisplayName("입고 상태 변환(-> 완료)")
+    void approveInbound() {
+        inboundService.approveInbound("IN2");
+    }
+
+    @Test
+    @DisplayName("입고 상세 목록 리스트 반환(재고반영에 필요)")
+    void findInboundDetailList() {
+        inboundService.findInboundDetailList("IN1").get().forEach(System.out::println);
+    }
+
+    @Test
+    @DisplayName("입고 취소 상태변환 (-> 입고취소)")
+    void deleteInbound() {
+        inboundService.deleteInbound("IN6");
     }
 }

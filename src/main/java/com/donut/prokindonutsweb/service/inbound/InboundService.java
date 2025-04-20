@@ -13,4 +13,16 @@ public interface InboundService {
     void saveInboundDetail(List<InboundDetailDTO> inboundDetailDTO);
 
     String findNextInboundCode();
+
+    Optional<List<InboundDTO>> findAllInboundList();
+
+    Optional<List<InboundDetailDTO>> findAllInboundDetailList();
+
+    void approveInbound(String inboundCode);
+
+    Optional<List<InventoryDTO>> findInboundDetailList(String inboundCode);
+
+    void updateInventory(InventoryVO inventoryVO);
+
+    void deleteInbound(String inboundCode);
 }

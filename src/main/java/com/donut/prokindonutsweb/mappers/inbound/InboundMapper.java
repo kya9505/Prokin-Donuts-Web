@@ -1,8 +1,6 @@
 package com.donut.prokindonutsweb.mappers.inbound;
 
-import com.donut.prokindonutsweb.dto.inbound.InboundDetailVO;
-import com.donut.prokindonutsweb.dto.inbound.InboundVO;
-import com.donut.prokindonutsweb.dto.inbound.ProductVO;
+import com.donut.prokindonutsweb.dto.inbound.*;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
@@ -13,4 +11,24 @@ public interface InboundMapper {
     void insertInboundDetailList(@Param("list") List<InboundDetailVO> list);
 
     String selectInboundCode();
+
+
+    //창고관리자 - 입고관리
+
+    // 입고목록 반환
+    List<InboundVO> selectAllInboundList();
+
+    List<InboundDetailVO> selectAllInboundDetailList();
+
+    String selectProductName(String productCode);
+
+    Integer selectProductPrice(String productCode);
+
+    void approveInbound(String inboundCode);
+
+    void updateInventory(InventoryVO inventoryVO);
+
+    List<InventoryDTO> selectInboundDetailList(String inboundCode);
+
+    void deleteInbound(String inboundCode);
 }
