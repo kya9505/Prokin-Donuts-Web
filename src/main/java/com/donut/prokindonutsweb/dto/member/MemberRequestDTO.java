@@ -31,7 +31,7 @@ public class MemberRequestDTO {
 
     private String address;
 
-    //requestCode 서비스단에서 로직하여 등록처리
+    //requestCode 서비스단에서 로직으로 등록처리
     private String requestCode;
     private String request;
     private String authorityCode;
