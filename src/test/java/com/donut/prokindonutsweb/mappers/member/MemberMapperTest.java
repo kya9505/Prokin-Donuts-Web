@@ -60,10 +60,8 @@ class MemberMapperTest {
                 .id("200")
                 .password("200").build();
 
-        List<MemberAccountVO> list = new ArrayList<>();
-        list.add(memberAccountVO);
 
-        mapper.updateMember(list);
+        mapper.updateMember(memberAccountVO);
     }
 
     @Test

@@ -1,6 +1,8 @@
 package com.donut.prokindonutsweb.controller.member;
 
 import com.donut.prokindonutsweb.dto.member.MemberAccountDTO;
+import com.donut.prokindonutsweb.dto.member.MemberCodeListForm;
+import com.donut.prokindonutsweb.dto.member.MemberListForm;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,9 +12,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -75,17 +77,26 @@ class MemberControllerTest {
                 .address("200")
                 .id("200")
                 .password("200").build();
-        List<MemberAccountDTO> list = new ArrayList<>();
-        list.add(memberDTO);
 
-        qhMemberController.qhUpdateMembers(list);
+        MemberListForm memberListForm = new MemberListForm();
+        memberListForm.setMemberList(List.of(memberDTO));
+
+        // BindingResult와 RedirectAttributes는 목 객체로 대체
+        BindingResult bindingResult = new org.springframework.validation.BeanPropertyBindingResult(memberListForm, "memberEditForm");
+        RedirectAttributes redirectAttributes = new org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap();
+
+        String result = qhMemberController.qhUpdateMembers(memberListForm, bindingResult, redirectAttributes);
+        assertEquals("redirect:list", result);
 
     }
 
     @Test
     @DisplayName("qh delete controller 회원 삭제 DB 반영 테스트")
     public void qhDeleteMembers(){
-        List<String> memberCodeList = new ArrayList<>(Arrays.asList("QH100"));
-        qhMemberController.qhDeleteMembers(memberCodeList);
+        MemberCodeListForm memberCodeForm = new MemberCodeListForm();
+        memberCodeForm.setMemberCodeList(List.of("QH100"));
+
+        String result = qhMemberController.qhDeleteMembers(memberCodeForm);
+        assertEquals("redirect:list", result);
     }
 }
