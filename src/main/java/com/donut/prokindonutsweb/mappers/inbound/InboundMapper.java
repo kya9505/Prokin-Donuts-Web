@@ -2,6 +2,7 @@ package com.donut.prokindonutsweb.mappers.inbound;
 
 import com.donut.prokindonutsweb.dto.inbound.InboundDetailVO;
 import com.donut.prokindonutsweb.dto.inbound.InboundVO;
+import com.donut.prokindonutsweb.dto.inbound.InventoryVO;
 import com.donut.prokindonutsweb.dto.inbound.ProductVO;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
@@ -27,4 +28,6 @@ public interface InboundMapper {
     Integer selectProductPrice(String productCode);
 
     void approveInbound(String inboundCode);
+
+    void updateInventory(InventoryVO inventoryVO);
 }

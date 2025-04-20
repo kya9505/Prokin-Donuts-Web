@@ -59,6 +59,13 @@
         update inbound set inboundStatus = "입고완료" where inboundCode = #{inboundCode}
     </update>
 
+<!--    입고 완료시 재고에 반영(트리거를 직접 구현)-->
+    <insert id="updateInventory" parameterType="com.donut.prokindonutsweb.dto.inbound.InventoryVO">
+        Insert into inventory (inventoryCode, quantity, productCode, warehouseCode)
+        values (#{inventoryCode}, #{quantity}, #{productCode}, #{warehouseCode})
+        on DUPLICATE KEY update quantity = quantity + #{quantity}
+    </insert>
+
     <sql id="search">
         <if test="(types != null and keyword != null)">
             <foreach collection="types" item="type" open=" and ( " separator="OR" close=")">

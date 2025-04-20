@@ -2,6 +2,7 @@ package com.donut.prokindonutsweb.mappers.inbound;
 
 import com.donut.prokindonutsweb.dto.inbound.InboundDetailVO;
 import com.donut.prokindonutsweb.dto.inbound.InboundVO;
+import com.donut.prokindonutsweb.dto.inbound.InventoryVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -106,6 +107,30 @@ class InboundMapperTest {
     void approveInbound() {
         inboundMapper.approveInbound("IN1");
         inboundMapper.selectAllInboundList().forEach(System.out::println);
+    }
+
+    @Test
+    @DisplayName("입고 완료시 재고에 반영하는 메서드(재고 O)")
+    void updateInventory1() {
+        InventoryVO vo = InventoryVO.builder()
+                .inventoryCode("BS1-BGL1")
+                .quantity(150)
+                .productCode("BGL1")
+                .warehouseCode("BS1")
+                .build();
+        inboundMapper.updateInventory(vo);
+    }
+
+    @Test
+    @DisplayName("입고 완료시 재고에 반영하는 메서드(재고 X)")
+    void updateInventory2() {
+        InventoryVO vo = InventoryVO.builder()
+                .inventoryCode("BS2-BGL1")
+                .quantity(150)
+                .productCode("BGL1")
+                .warehouseCode("BS1")
+                .build();
+        inboundMapper.updateInventory(vo);
     }
 
 }
