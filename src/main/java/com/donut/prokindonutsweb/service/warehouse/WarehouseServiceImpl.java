@@ -46,7 +46,8 @@ public class WarehouseServiceImpl implements WarehouseService {
       Map.entry("대구광역시", "DG"), Map.entry("대구", "DG"),
       Map.entry("광주광역시", "GJ"), Map.entry("광주", "GJ"),
       Map.entry("부산광역시", "BS"), Map.entry("부산", "BS"),
-      Map.entry("울산광역시", "US"), Map.entry("울산", "US")
+      Map.entry("울산광역시", "US"), Map.entry("울산", "US"),
+      Map.entry("세종특별자치시", "SJ"), Map.entry("세종", "SJ")
   );
   
   // 창고 등록 시 코드 자동 생성 메서드
@@ -56,7 +57,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         .filter(entry -> address.contains(entry.getKey()))
         .map(Map.Entry::getValue)
         .findFirst()
-        .orElseThrow(() -> new IllegalArgumentException("주소에서 지역코드를 추출할 수 없습니다."));
+        .orElse("ETC");  // ← 예외 대신 ETC 처리
     
     // 2. 해당 prefix로 시작하는 기존 창고코드들 조회
     List<String> existingCodes = warehouseMapper.selectWarehouseCodesByPrefix(prefix); // ex: GG1, GG4, GG5

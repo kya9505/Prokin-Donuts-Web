@@ -66,7 +66,7 @@
                     <!-- 지도 API 띄울 공간 -->
                     <div class="card-style mb-30">
                         <h6 class="mb-10">창고 위치</h6>
-                        <div id="map" style="width:100%;height:350px;"></div>
+                        <div id="map" style="width:100%;height:715px;"></div>
                     </div>
                 </div>
 
@@ -349,10 +349,10 @@
                                 <div class="mb-3">
                                     <label for="modifyWarehouseMember" class="form-label">담당자</label>
                                     <select class="form-select" id="modifyWarehouseMember" name="memberCode">
-                                        <option value="null">담당자 없음</option>
                                         <c:forEach var="m" items="${unassignedWMs}">
                                             <option value="${m.memberCode}">${m.memberCode} | ${m.name}</option>
                                         </c:forEach>
+                                        <option value="null">담당자 없음</option>
                                     </select>
                                 </div>
 
@@ -722,7 +722,6 @@
             fetch(contextPath + "/qh/warehouse/check?warehouseName=" + encodeURIComponent(name))
                 .then(function (res) { return res.text(); })  // ← 여기!!
                 .then(function (text) {
-                    console.log("서버 응답:", text);
                     const isDup = (text === 'true');  // 문자열 비교
                     if (isDup) {
                         alert("이미 존재하는 창고명입니다.");
@@ -783,16 +782,20 @@
             }
 
             // address 하나로 합쳐서 hidden 필드 추가
-            const fullAddress = roadAddress + " " + detailAddress;
-            $("<input>").attr({
-                type: "hidden",
-                name: "address",
-                value: fullAddress
-            }).appendTo(this);
-            console.log(fullAddress);
+            const $existing = $("input[name='address']");
+            const fullAddress = (roadAddress + " " + detailAddress).replace(/^,/, "").trim();
+            if ($existing.length > 0) {
+                $existing.val(fullAddress); // 기존 필드 있으면 값만 바꿈
+            } else {
+                $("<input>").attr({
+                    type: "hidden",
+                    name: "address",
+                    value: fullAddress
+                }).appendTo(this);
+            }
         });
 
-        let isModifyNameChecked = false;
+        let isModifyNameChecked = true;
 
 // 1. 수정 버튼 클릭 시 - 모달 열기
         $('#datatable tbody').on('click', '.btn-edit', function (e) {
@@ -804,20 +807,34 @@
             const code = rowData[0];        // 창고코드
             const name = rowData[1];        // 창고명
             const memberCode = rowData[7];  // 숨겨진 td: 담당자코드
+            const memberName = rowData[4];  // 담당자이름
 
             // 모달 input 세팅
             $('#modifyWarehouseCode').val(code);
             $('#modifyWarehouseName').val(name);
 
+            const $selectTag = $('#modifyWarehouseMember');
+
+            // 1. 이전에 추가한 현재 담당자 option 제거
+            $selectTag.find('option[data-current="true"]').remove();
+
+            // 2. 현재 값 선택 또는 새로 추가
             const $select = $('#modifyWarehouseMember');
             if ($select.find("option[value='" + memberCode + "']").length > 0) {
                 $select.val(memberCode);
             } else {
-                $select.val("null"); // 없는 경우 기본값
+                if (memberCode) {
+                    const label = memberCode + " | " + memberName;
+                    $select.prepend(`<option value="` + memberCode + `" selected data-current="true" selected>` + label +` </option>`);
+                    $select.val(memberCode);
+                } else {
+                    // 담당자 없는 경우에는 '담당자 없음'을 선택
+                    $select.val("null");
+                }
             }
 
             // 중복확인 상태 초기화
-            isModifyNameChecked = false;
+            isModifyNameChecked = true;
 
             // 모달 열기
             $('#warehouseEditModal').modal('show');
@@ -850,8 +867,7 @@
             fetch(contextPath + "/qh/warehouse/check?warehouseName=" + encodeURIComponent(name) + "&warehouseCode=" + encodeURIComponent(code))
                 .then((res) => res.text())
                 .then((text) => {
-                    console.log(text);
-                    const isDup = (text === "true");
+                    const isDup = (text === 'true');
                     if (isDup) {
                         alert("이미 존재하는 창고명입니다.");
                         isModifyNameChecked = false;
