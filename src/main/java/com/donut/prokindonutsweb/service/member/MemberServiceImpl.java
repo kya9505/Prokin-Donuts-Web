@@ -40,7 +40,9 @@ public class MemberServiceImpl implements MemberService {
     public void updateMember(List<MemberAccountDTO> memberList) {
         List<MemberAccountVO> memberVOList = memberList.stream()
                 .map(member -> modelMapper.map(member,MemberAccountVO.class)).toList();
-        memberMapper.updateMember(memberVOList);
+        for (MemberAccountVO member : memberVOList) {
+            memberMapper.updateMember(member);
+        }
     }
 
     @Override
