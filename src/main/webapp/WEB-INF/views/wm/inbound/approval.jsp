@@ -148,7 +148,7 @@
 
         <!-- 승인 모달 -->
         <!-- 입고 승인 상세 보기 모달 -->
-        <form id="inboundApproveForm" method="post" action="/your/approval/url">
+        <form id="inboundApproveForm" method="post" action="/wm/inbound/approve" accept-charset="UTF-8">
         <div class="modal fade" id="inboundDetailModal" tabindex="-1" aria-labelledby="inboundDetailModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- 크기 조정 가능: modal-sm, modal-lg 등 -->
                 <div class="modal-content">
@@ -544,8 +544,6 @@
 
            const inboundDate = $(this).data('inbound-date');
 
-
-
             // server에서 내려받은 전체 리스트에서 코드로 필터링
             const filteredDetails = inboundDetails.filter(detail => detail.inboundCode === inboundCode);
             console.log('🔍 필터링된 상세내역:', filteredDetails);
@@ -573,10 +571,8 @@
             }
 
             $('#inboundDate').val(inboundDate);
-            $('#inboundCode').val(inboundCode);
+            $('#modalInboundCode').val(inboundCode);
             console.log(inboundDate);
-
-
 
             // 모달 열기
             const modal = new bootstrap.Modal(document.getElementById('inboundDetailModal'));

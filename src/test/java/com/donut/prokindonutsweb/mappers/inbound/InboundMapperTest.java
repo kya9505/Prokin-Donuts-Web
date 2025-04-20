@@ -121,7 +121,7 @@ class InboundMapperTest {
     @DisplayName("입고 완료시 재고에 반영하는 메서드(재고 X)")
     void updateInventory2() {
         InventoryVO vo = InventoryVO.builder()
-                .inventoryCode("BS2-BGL1")
+                .inventoryCode("BS3-BGL1")
                 .quantity(150)
                 .productCode("BGL1")
                 .warehouseCode("BS1")

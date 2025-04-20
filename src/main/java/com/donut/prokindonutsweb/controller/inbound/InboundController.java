@@ -1,9 +1,6 @@
 package com.donut.prokindonutsweb.controller.inbound;
 
-import com.donut.prokindonutsweb.dto.inbound.InboundDTO;
-import com.donut.prokindonutsweb.dto.inbound.InboundDetailDTO;
-import com.donut.prokindonutsweb.dto.inbound.InboundForm;
-import com.donut.prokindonutsweb.dto.inbound.ProductDTO;
+import com.donut.prokindonutsweb.dto.inbound.*;
 import com.donut.prokindonutsweb.service.inbound.InboundService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,6 +16,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -66,6 +64,30 @@ public class InboundController {
         List<InboundDetailDTO> inboundDetailList = inboundService.findAllInboundDetailList().get();
         model.addAttribute("inboundList", inboundList);
         model.addAttribute("inboundDetailList", inboundDetailList);
-
     }
+
+
+    @PostMapping("/approve")
+    public String wmApproveInbound(@RequestParam String inboundCode) {
+        log.info(inboundCode);
+        // 입고 상태 ( -> 입고완료!)
+        inboundService.approveInbound(inboundCode);
+
+        // 입고상세 목록 재고에 반영
+        List<InventoryDTO> inventoryList = inboundService.findInboundDetailList(inboundCode).get();
+        inventoryList.stream().forEach(
+                dto -> {
+                    InventoryVO vo = InventoryVO.builder()
+                            .inventoryCode(dto.getWarehouseCode()+"-"+dto.getProductCode())
+                            .quantity(dto.getQuantity())
+                            .productCode(dto.getProductCode())
+                            .warehouseCode(dto.getWarehouseCode())
+                            .build();
+                    inboundService.updateInventory(vo);
+                }
+        );
+
+        return "redirect:/wm/inbound/approval";
+    }
+
 }

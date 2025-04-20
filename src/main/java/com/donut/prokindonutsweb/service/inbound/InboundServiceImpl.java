@@ -137,12 +137,12 @@ public class InboundServiceImpl implements InboundService {
     @Override
     public Optional<List<InventoryDTO>> findInboundDetailList(String inboundCode) {
        return Optional.of(new ArrayList<>(inboundMapper.selectInboundDetailList(inboundCode)));
-
     }
 
-
-
-
+    @Override
+    public void updateInventory(InventoryVO inventoryVO) {
+        inboundMapper.updateInventory(inventoryVO);
+    }
 
 
 }
