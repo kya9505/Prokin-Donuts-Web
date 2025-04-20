@@ -24,7 +24,7 @@ public class MemberAccountDTO {
 
    private String phoneNumber;
 
-   @NotBlank
+    @NotBlank
     @Email
     private String email;
 

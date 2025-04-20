@@ -57,4 +57,10 @@ public class MemberServiceImpl implements MemberService {
         int number = Integer.parseInt(memberCode.replaceAll("\\D", ""));
         return authorityCode + (number+1);
     }
+
+    @Override
+    public boolean memberIdCheck(String id) {
+        int count = memberMapper.memberIdCheck(id);
+        return count > 0 ;
+    }
 }

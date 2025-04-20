@@ -39,4 +39,9 @@
         Select memberCode From memberaccount Order by CAST(substring(memberCode, 3) AS UNSIGNED) DESC LIMIT 1;
     </select>
 
+    <!--아이디 중복확인-->
+    <select id="memberIdCheck" resultType="int">
+        SELECT COUNT(*) FROM memberaccount WHERE id = #{id}
+    </select>
+
 </mapper>

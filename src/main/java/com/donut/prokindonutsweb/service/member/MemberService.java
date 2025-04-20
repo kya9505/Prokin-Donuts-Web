@@ -10,5 +10,6 @@ public interface MemberService {
     void saveMember(MemberAccountDTO memberAccountDTO);
     void updateMember(List<MemberAccountDTO> memberList);
     void deleteMember(List<String> memberList);
-
-    String memberCode(String authorityCode);}
+    String memberCode(String authorityCode);
+    boolean memberIdCheck(String id);
+}

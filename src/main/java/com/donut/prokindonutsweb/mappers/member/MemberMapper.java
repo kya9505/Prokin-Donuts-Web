@@ -13,5 +13,6 @@ public interface MemberMapper{
     void updateMember(MemberAccountVO memberVO);
     void deleteMember(@Param("list") List<String> memberList);
     String memberCode();
+    int memberIdCheck(String id);
 
 }

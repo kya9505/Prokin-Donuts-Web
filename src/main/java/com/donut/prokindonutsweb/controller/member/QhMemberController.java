@@ -35,9 +35,10 @@ public class QhMemberController {
 
     @PostMapping("/add")
     public String qhAddMemberList(@Valid @ModelAttribute("memberAccountDTO") MemberAccountDTO memberAccountDTO,
-                                  BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+                                  BindingResult bindingResult,
+                                  RedirectAttributes redirectAttributes) {
+
         if (bindingResult.hasErrors()) {
-            // 에러 메시지 전달
             String errorMessage = bindingResult.getAllErrors().get(0).getDefaultMessage();
             redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
             redirectAttributes.addFlashAttribute("memberAccountDTO", memberAccountDTO);
@@ -47,6 +48,18 @@ public class QhMemberController {
         memberService.saveMember(memberAccountDTO);
         return "redirect:list";
     }
+
+    @PostMapping("/check-id")
+    public String checkId(RedirectAttributes redirectAttributes, String id){
+        boolean duplicated = memberService.memberIdCheck(id);
+
+        redirectAttributes.addFlashAttribute("idCheckMessage", duplicated ? "이미 사용중인 아이디" : "사용가능한 아이디");
+        redirectAttributes.addFlashAttribute("idCheckColor", duplicated ? "red" : "green");
+        redirectAttributes.addFlashAttribute("checkedId", id);
+        redirectAttributes.addFlashAttribute("showAddModal", true);
+        return "redirect:list";
+    }
+
 
     @PostMapping("/update")
     public String qhUpdateMembers(@Valid @ModelAttribute("memberList")  MemberListForm memberlist,
