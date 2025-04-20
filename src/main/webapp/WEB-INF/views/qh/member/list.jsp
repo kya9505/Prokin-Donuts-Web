@@ -232,7 +232,7 @@
     <!-- 수정 모달 -->
     <form id="memberEditForm" method="post" action="/qh/member/update" accept-charset="UTF-8">
     <div class="modal fade" id="memberEditModal" tabindex="-1" aria-labelledby="memberEditModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl mㅁodal-dialog-centered">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title" id="memberEditModalLabel">회원 수정</h3>
@@ -284,7 +284,9 @@
 </form>
 
     <!-- 삭제 모달 -->
-            <div class="modal fade" id="memberDeleteModal" tabindex="-1" aria-labelledby="memberDeleteModalLabel" aria-hidden="true">
+
+    <form id="memberDeleteForm" method="post" action="/qh/member/delete" accept-charset="UTF-8">
+               <div class="modal fade" id="memberDeleteModal" tabindex="-1" aria-labelledby="memberDeleteModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -303,6 +305,7 @@
                     </div>
                 </div>
             </div>
+    </form>
             <!-- Modal HTML End -->
 
         </div>
@@ -532,7 +535,6 @@
 
     // 삭제 버튼 클릭 시
     $('#btnMemberDelete_clone').on('click', function (e) {
-        const selectedRows = table.rows({ page: 'current' }).nodes();
         const selectedData = [];
 
         $('#datatable tbody input.row-checkbox:checked').each(function () {
@@ -567,6 +569,23 @@
 
         // 모달 열기
         $('#memberDeleteModal').modal('show');
+    });
+
+    // 삭제 확인 버튼 클릭 시: form에 hidden input 추가하고 전송
+    $('#confirmDelete').on('click', function (e) {
+        const $form = $('#memberDeleteForm');
+
+        // 혹시 이전에 추가된 hidden input이 있으면 제거
+        $form.find('input[name="memberCodeList"]').remove();
+
+        // <ul> 안의 badge에서 memberCode 꺼내서 hidden input 추가
+        $('#deleteMemberList .badge').each(function () {
+            const memberCode = $(this).text().trim();
+            const input = `<input type="hidden" name="memberCodeList" value="`+ memberCode+`" />`;
+            $form.append(input);
+        });
+
+        $form.submit(); // form 전송
     });
 
     //mypageData

@@ -1,6 +1,7 @@
 package com.donut.prokindonutsweb.controller.member;
 
 import com.donut.prokindonutsweb.dto.member.MemberAccountDTO;
+import com.donut.prokindonutsweb.dto.member.MemberCodeListForm;
 import com.donut.prokindonutsweb.dto.member.MemberListForm;
 import com.donut.prokindonutsweb.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -35,11 +36,11 @@ public class QhMemberController {
     @PostMapping("/add")
     public String qhAddMemberList(MemberAccountDTO memberAccountDTO) {
         memberService.saveMember(memberAccountDTO);
-        return "redirect:/qh/member/list";
+        return "redirect:list";
     }
 
     @PostMapping("/update")
-    public String qhUpdateMembers(@Valid @ModelAttribute MemberListForm memberlist,
+    public String qhUpdateMembers(@Valid @ModelAttribute("memberEditForm")  MemberListForm memberlist,
                                   BindingResult bindingResult, RedirectAttributes redirectAttributes) {
             if (bindingResult.hasErrors()) {
                 String errorMessage = bindingResult.getAllErrors().get(0).getDefaultMessage();
@@ -53,8 +54,8 @@ public class QhMemberController {
     }
 
     @PostMapping("/delete")
-    public String qhDeleteMembers(List<String> memberCode) {
-        memberService.deleteMember(memberCode);
-        return "redirect:/qh/member/list";
+    public String qhDeleteMembers(@ModelAttribute("memberDeleteForm") MemberCodeListForm memberCode) {
+        memberService.deleteMember(memberCode.getMemberCodeList());
+        return "redirect:list";
     }
 }

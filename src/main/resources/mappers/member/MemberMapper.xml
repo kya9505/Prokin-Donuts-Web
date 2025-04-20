@@ -30,8 +30,8 @@
     <delete id="deleteMember" parameterType="list">
         delete from memberaccount
         where memberCode in
-        <foreach collection="list" item="code" open="(" separator="," close=")">
-            #{code}
+        <foreach collection="list" item="memberCode" open="(" separator="," close=")">
+            #{memberCode}
         </foreach>
     </delete>
 
