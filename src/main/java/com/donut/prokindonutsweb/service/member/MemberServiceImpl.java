@@ -23,10 +23,44 @@ public class MemberServiceImpl implements MemberService {
     * List<vo>->List<dto>->optional<List<dto>>
     * */
     @Override
-    public Optional<List<MemberAccountDTO>> saveMember() {
+    public Optional<List<MemberAccountDTO>> findMember() {
         List<MemberAccountVO> memberVOList = memberMapper.selectMember();
         List<MemberAccountDTO> memberDTOList = memberVOList.stream()
                 .map(member -> modelMapper.map(member, MemberAccountDTO.class)).toList();
         return Optional.ofNullable(memberDTOList.isEmpty() ? null : memberDTOList);
+    }
+
+    @Override
+    public void saveMember(MemberAccountDTO memberAccountDTO) {
+        MemberAccountVO memberAccountVO =  modelMapper.map(memberAccountDTO,MemberAccountVO.class);
+        memberAccountVO.setMemberCode(memberCode(memberAccountVO.getAuthorityCode()));
+        memberMapper.insertMember(memberAccountVO);
+    }
+
+    @Override
+    public void updateMember(List<MemberAccountDTO> memberList) {
+        List<MemberAccountVO> memberVOList = memberList.stream()
+                .map(member -> modelMapper.map(member,MemberAccountVO.class)).toList();
+        for (MemberAccountVO member : memberVOList) {
+            memberMapper.updateMember(member);
+        }
+    }
+
+    @Override
+    public void deleteMember(List<String> memberList) {
+        memberMapper.deleteMember(memberList);
+    }
+
+    @Override
+    public String memberCode(String authorityCode) {
+        String memberCode = memberMapper.memberCode();
+        int number = Integer.parseInt(memberCode.replaceAll("\\D", ""));
+        return authorityCode + (number+1);
+    }
+
+    @Override
+    public boolean memberIdCheck(String id) {
+        int count = memberMapper.memberIdCheck(id);
+        return count > 0 ;
     }
 }
