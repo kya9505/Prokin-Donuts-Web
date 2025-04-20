@@ -33,6 +33,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void saveMember(MemberAccountDTO memberAccountDTO) {
         MemberAccountVO memberAccountVO =  modelMapper.map(memberAccountDTO,MemberAccountVO.class);
+        memberAccountVO.setMemberCode(memberCode(memberAccountVO.getAuthorityCode()));
         memberMapper.insertMember(memberAccountVO);
     }
 
@@ -48,5 +49,12 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void deleteMember(List<String> memberList) {
         memberMapper.deleteMember(memberList);
+    }
+
+    @Override
+    public String memberCode(String authorityCode) {
+        String memberCode = memberMapper.memberCode();
+        int number = Integer.parseInt(memberCode.replaceAll("\\D", ""));
+        return authorityCode + (number+1);
     }
 }

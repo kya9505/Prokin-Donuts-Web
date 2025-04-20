@@ -35,4 +35,8 @@
         </foreach>
     </delete>
 
+    <select id="memberCode" resultType="String">
+        Select memberCode From memberaccount Order by CAST(substring(memberCode, 3) AS UNSIGNED) DESC LIMIT 1;
+    </select>
+
 </mapper>
