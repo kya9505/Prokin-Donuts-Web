@@ -30,4 +30,5 @@ public interface InboundMapper {
 
     List<InventoryDTO> selectInboundDetailList(String inboundCode);
 
+    void deleteInbound(String inboundCode);
 }
