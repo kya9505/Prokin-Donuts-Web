@@ -79,6 +79,7 @@
                                 <tr>
                                     <th><input type="checkbox" id="select-all"></th>
                                     <th>요청 날짜</th>
+                                    <th>요청 코드</th>
                                     <th>성함</th>
                                     <th>전화번호</th>
                                     <th>이메일</th>
@@ -88,7 +89,23 @@
                                     <th>요청상태</th>
                                 </tr>
                                 </thead>
-                                <tbody></tbody>
+                                <tbody>
+
+                                <c:forEach var="request" items="${requestList}">
+                                    <tr>
+                                        <td><input type="checkbox" class="row-checkbox" /></td>
+                                        <td>${request.requestDate}</td>
+                                        <td>${request.requestCode}</td>
+                                        <td>${request.name}</td>
+                                        <td>${request.phoneNumber}</td>
+                                        <td>${request.email}</td>
+                                        <td>${request.address}</td>
+                                        <td>${request.id}</td>
+                                        <td>${request.password}</td>
+                                        <td>${request.request}</td>
+                                    </tr>
+
+                                </c:forEach>
                                 </tbody>
                             </table>
                         </div>
@@ -98,6 +115,7 @@
 
             <!-- Modal HTML Start -->
             <!-- 승인 모달 -->
+            <form id="approvalForm" method="post" action="/qh/member/approval" accept-charset="UTF-8">
             <div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -107,16 +125,17 @@
                         </div>
                         <div class="modal-body">
                             <h5>선택한 회원의 가입요청을 승인하겠습니까?</h5><br>
-                            <ul id="approveList" class="list-group mb-3">
+                            <ul id="approvalList" class="list-group mb-3">
                                 <!-- 선택된 회원 목록 삽입 -->
                             </ul>
                             <div class="d-flex justify-content-end gap-2">
-                                <button type="button" class="main-btn primary-btn btn-hover text-center" id="confirmApprove">승인</button>
+                                <button type="button" class="main-btn primary-btn btn-hover text-center" id="confirmApproval">승인</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            </form>
             <!-- Modal HTML End -->
 
         </div>
@@ -165,84 +184,6 @@
             { targets: [1, 2, 3, 4, 6, 7], className: 'text-center' } // JS 속성으로 가운데 정렬
         ],
         order: [[1, 'asc']],
-        ajax: function(data, callback, settings) {
-            const dummyMembers = [
-                {
-                    requestDate: "2025-03-15",
-                    name: "김주현",
-                    phone: "010-3498-1265",
-                    email: "juhyun_kim@gmail.com",
-                    address: "서울특별시 동작구 사당로 22",
-                    id: "juhyun01",
-                    password: "juhyun01!",
-                    status: "승인대기"
-                },
-                {
-                    requestDate: "2025-03-27",
-                    name: "이채원",
-                    phone: "010-8217-9033",
-                    email: "chae_lee@gmail.com",
-                    address: "경기도 고양시 일산동구 중앙로 88",
-                    id: "cwlee99",
-                    password: "cwlee99!",
-                    status: "승인대기"
-                },
-                {
-                    requestDate: "2025-03-30",
-                    name: "박상우",
-                    phone: "010-4726-8859",
-                    email: "sangwoo_p@gmail.com",
-                    address: "인천광역시 연수구 센트럴로 11",
-                    id: "psw321",
-                    password: "psw321!",
-                    status: "승인대기"
-                },
-                {
-                    requestDate: "2025-04-02",
-                    name: "정예린",
-                    phone: "010-6325-7104",
-                    email: "yerin_j@gmail.com",
-                    address: "대전광역시 유성구 유성대로 135",
-                    id: "yerin333",
-                    password: "yerin333!",
-                    status: "승인대기"
-                },
-                {
-                    requestDate: "2025-04-04",
-                    name: "오태경",
-                    phone: "010-2951-4480",
-                    email: "taek_oh@naver.com",
-                    address: "부산광역시 해운대구 마린시티2로 77",
-                    id: "otk_84",
-                    password: "otk_84!",
-                    status: "승인대기"
-                }
-            ];
-
-            // 데이터를 비동기적으로 불러온 후 callback으로 전달
-            // 페이지네이션을 위해 반드시 필요 (단, 본인 더미데이터 변수로 변경 필요)
-            Promise.resolve().then(() => {
-                callback({ data: dummyMembers });
-            });
-        },
-        columns: [
-            { // 체크박스 컬럼
-                data: null,
-                orderable: false,
-                searchable: false,
-                render: function(data, type, row, meta) {
-                    return '<input type="checkbox" class="row-checkbox">';
-                }
-            },
-            { data: 'requestDate', title: '요청날짜' },
-            { data: 'name', title: '성함' },
-            { data: 'phone', title: '전화번호' },
-            { data: 'email', title: '이메일' },
-            { data: 'address', title: '주소' },
-            { data: 'id', title: '아이디' },
-            { data: 'password', title: '비밀번호' },
-            { data: 'status', title: '요청상태' },
-        ],
         paging: true,
         pageLength: 10,
         lengthMenu: [[5, 10, 20, -1], ['5개', '10개', '20개', '전체']],
@@ -349,14 +290,17 @@
 
     // 승인 버튼 클릭 시
     $('#btnApprove_clone').on('click', function (e) {
-        const selectedRows = table.rows({ page: 'current' }).nodes();
         const selectedData = [];
 
-        $(selectedRows).each(function () {
-            if ($(this).find('.row-checkbox').prop('checked')) {
-                const data = table.row(this).data();
-                selectedData.push(data);
-            }
+        $('#datatable tbody input.row-checkbox:checked').each(function () {
+            const $tr = $(this).closest('tr');
+            const rowData = {
+                id: $tr.find('td').eq(7).text().trim(),      // 아이디
+                name: $tr.find('td').eq(3).text().trim(),    // 성함
+                requestCode: $tr.find('td').eq(2).text().trim(),  // 요청 코드
+                request: $tr.find('td').eq(9).text().trim()  // 요청 상태
+            };
+            selectedData.push(rowData);
         });
 
         if (selectedData.length === 0) {
@@ -365,25 +309,42 @@
         }
 
         // 회원 목록을 <ul> 안에 추가
-        const $list = $('#approveList');
+        const $list = $('#approvalList');
         $list.empty(); // 기존 내용 비우고
 
         selectedData.forEach((item) => {
-            const $li = $(`
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <span>${item.name} (${item.id})</span>
-        <span class="badge bg-secondary">${item.status}</span>
+            const li = `
+      <li class="list-group-item d-flex justify-content-between align-items-center" data-request-code="`+ item.requestCode +`">
+        <span>` + item.name + ` (` + item.id + `)</span>
+        <span class="badge bg-secondary">` + item.request + `</span>
       </li>
-    `);
-            $list.append($li);
+    `;
+            $list.append(li);
         });
         $('#approveModal').modal('show');
     });
+
+
+    // 승인 확인 버튼 클릭 시: form에 hidden input 추가하고 전송
+    $('#confirmApproval').on('click', function (e) {
+        const $form = $('#approvalForm');
+
+        // 혹시 이전에 추가된 hidden input이 있으면 제거
+        $form.find('input[name="requestCodeList"]').remove();
+
+        $('#approvalList .list-group-item').each(function () {
+            const requestCode = $(this).data('request-code');
+            const input = `<input type="hidden" name="requestCodeList" value="` + requestCode + `" />`;
+            $form.append(input);
+        });
+
+        $form.submit(); // form 전송
+    });
+
 
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
 
 </script>
-
 </body>
 </html>

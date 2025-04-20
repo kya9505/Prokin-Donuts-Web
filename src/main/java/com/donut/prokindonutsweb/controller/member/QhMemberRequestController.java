@@ -8,6 +8,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Collections;
@@ -25,9 +26,9 @@ public class QhMemberRequestController {
         model.addAttribute("requestList",requestList);
     }
 
-    @GetMapping("/approval")
-    public String qhApprovalMemberRequests(RequestCodeListForm requestCode){
-        requestService.approvalMember(requestCode.getRequestList());
-        return "";
+    @PostMapping("/approval")
+    public String qhApprovalMemberRequests(RequestCodeListForm requestCodeList){
+        requestService.approvalMember(requestCodeList.getRequestCodeList());
+        return "redirect:request";
     }
 }

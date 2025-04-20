@@ -42,7 +42,7 @@ class QhMemberRequestControllerTest {
     @DisplayName("회원가입 요청 승인 controller 반영 테스트")
     void qhApprovalMemberRequests() {
         RequestCodeListForm requestCodeListForm = new RequestCodeListForm();
-        requestCodeListForm.setRequestList(List.of("RQ06","RQ07","RQ08"));
+        requestCodeListForm.setRequestCodeList(List.of("RQ06","RQ07","RQ08"));
         requestController.qhApprovalMemberRequests(requestCodeListForm);
     }
 }
