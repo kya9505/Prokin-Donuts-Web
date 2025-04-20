@@ -13,6 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Log4j2
 @ExtendWith(SpringExtension.class)
@@ -37,15 +38,24 @@ class MemberRequestMapperTest {
       }
 
     @Test
-    @DisplayName("회원 삭제 DB 반영 테스트")
+    @DisplayName("회원 가입요청 삭제 DB 반영 테스트")
     void deleteRequestMember() {
         mapper.deleteRequestMember("RQ06");
     }
 
     @Test
+    @DisplayName("DB의 가장 높은 수의 가입요청코드 select 테스트")
     void requestCode() {
         String maxRequestCode = mapper.requestCode();
         assertEquals("RQ06", maxRequestCode);
         log.info(maxRequestCode);
+    }
+
+    @Test
+    @DisplayName("회원가입 요청 코드로 객체 조회 테스트")
+    public void selectByMemberRequest(){
+        MemberRequestVO memberRequestVO = mapper.selectByMemberRequest("RQ06");
+        assertNotNull(memberRequestVO);
+        log.info(memberRequestVO);
     }
 }

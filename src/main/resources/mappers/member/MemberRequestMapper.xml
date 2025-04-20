@@ -30,5 +30,9 @@
     <select id="requestCode" resultType="String">
         Select requestCode From memberrequest  Order by CAST(substring(requestCode, 3) AS UNSIGNED) DESC LIMIT 1;
     </select>
+    
+    <select id="selectByMemberRequest" resultType="MemberRequestVO">
+        select * from memberrequest where requestCode = #{requestCode}
+    </select>
 
 </mapper>
