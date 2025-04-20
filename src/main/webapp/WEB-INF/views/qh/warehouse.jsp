@@ -820,6 +820,8 @@
             const capacity = $("#capacity").val().trim();
             const regName = /^[A-Za-z0-9가-힣]{1,10}$/;
             const regCap = /^[0-9]+$/;
+            // 상세주소: 한글, 영어, 숫자, 띄어쓰기, 특수문자 허용
+            const regDetail = /^[\uAC00-\uD7A3A-Za-z0-9\s~`!@#$%^&*()\-_=+\[\]{};:'",.<>\/?\\|]*$/;
 
             if (!name || !zonecode || !roadAddress || !detailAddress || !capacity) {
                 alert("필수 항목을 모두 입력해주세요.");
@@ -833,6 +835,11 @@
 
             if (!regCap.test(capacity)) {
                 alert("수용한도는 숫자만 입력 가능합니다.");
+                return false;
+            }
+
+            if (!regDetail.test(detailAddress)) {
+                alert("상세주소는 한글, 영어, 숫자, 띄어쓰기 및 특수문자만 입력 가능합니다.");
                 return false;
             }
 
