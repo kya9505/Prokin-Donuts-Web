@@ -1,7 +1,6 @@
 package com.donut.prokindonutsweb.service.member;
 
 import com.donut.prokindonutsweb.dto.member.MemberAccountDTO;
-import com.donut.prokindonutsweb.vo.member.MemberAccountVO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -72,6 +71,17 @@ class MemberServiceImplTest {
     public void deleteMember(){
         List<String> memberCodeList = new ArrayList<>(Arrays.asList("QH100"));
         memberService.deleteMember(memberCodeList);
+    }
+
+    @Test
+    @DisplayName("Service 회원 코드 생성 테스트")
+    public void memberCode(){
+        String qhMemberCode = memberService.memberCode("QH");
+        String wmMemberCode = memberService.memberCode("WM");
+        String fmMemberCode = memberService.memberCode("FM");
+        log.info("qhMemberCode = " + qhMemberCode +
+                "| wmMemberCode = " + wmMemberCode +
+                "| fmMemberCode = " + fmMemberCode);
     }
 
 }

@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @Log4j2
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations="file:src/main/webapp/WEB-INF/spring/root-context.xml")
@@ -27,7 +29,7 @@ class MemberMapperTest {
     //loadMember MapperTest
     @Test
     @DisplayName("DB의 전체 회원조회 테스트")
-    public void loadMember(){
+    public void selectMember(){
         List<MemberAccountVO> memberList = mapper.selectMember();
         memberList.forEach(log::info);
     }
@@ -69,5 +71,13 @@ class MemberMapperTest {
     public void deleteMember(){
         List<String> memberCodeList = new ArrayList<>(Arrays.asList("QH100"));
         mapper.deleteMember(memberCodeList);
+    }
+
+    @Test
+    @DisplayName("DB의 가장 높은 수의 회원 코드 select 테스트")
+    void memberCode() {
+        String maxRequestCode = mapper.memberCode();
+        assertEquals("QH100", maxRequestCode);
+        log.info(maxRequestCode);
     }
 }
