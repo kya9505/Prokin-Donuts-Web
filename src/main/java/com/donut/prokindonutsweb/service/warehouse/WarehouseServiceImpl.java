@@ -74,8 +74,8 @@ public class WarehouseServiceImpl implements WarehouseService {
   }
   
   @Override
-  public void addWarehouse(WarehouseDTO warehouseDTO) {
-    log.info("Service : addWarehouse called");
+  public void saveWarehouse(WarehouseDTO warehouseDTO) {
+    log.info("Service : saveWarehouse called");
     
     // 자동 창고 코드 생성
     String generatedCode = generateWarehouseCode(warehouseDTO.getAddress());

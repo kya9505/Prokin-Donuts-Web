@@ -46,7 +46,7 @@ public class WarehouseController {
       warehouseDTO.setMemberCode(null);
     }
     
-    warehouseService.addWarehouse(warehouseDTO);
+    warehouseService.saveWarehouse(warehouseDTO);
     return "redirect:/qh/warehouse";
   }
   
