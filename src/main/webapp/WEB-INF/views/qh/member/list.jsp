@@ -277,8 +277,9 @@
                     </table>
                 <div class="modal-footer">
                     <button type="submit" class="main-btn primary-btn btn-hover text-center">수정</button>
-                </div  >
+                </div>
             </div>
+        </div>
         </div>
     </div>
 </form>
@@ -559,7 +560,7 @@
 
         selectedData.forEach((item) => {
             const li = `
-      <li class = "list-group-item d-flex justify-content-between align-items-center" >
+      <li class="list-group-item d-flex justify-content-between align-items-center">
         <span>`+item.name+` (`+item.id+`)</span>
         <span class="badge bg-secondary">`+item.memberCode+`</span>
       </li>
