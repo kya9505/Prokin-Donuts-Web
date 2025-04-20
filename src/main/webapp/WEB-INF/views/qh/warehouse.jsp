@@ -458,6 +458,48 @@
             level: 7 // 초기에는 살짝 넓게
         });
 
+        // 지도 클릭 → 다음 우편번호 팝업 + 모달 열기
+        kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+            geocoder.coord2Address(
+                mouseEvent.latLng.getLng(),
+                mouseEvent.latLng.getLat(),
+                function(result, status) {
+                    if (status === kakao.maps.services.Status.OK) {
+                        // 1) 도로명주소 추출
+                        var roadAddr = result[0].road_address
+                            ? result[0].road_address.address_name
+                            : result[0].address.address_name;
+
+                        // 2) 다음 우편번호 팝업 호출 (검색 창에 roadAddr 가 바로 채워짐)
+                        new daum.Postcode({
+                            autoClose: true,
+                            oncomplete: function(data) {
+                                // 팝업에서 선택한 결과로 필드 채우기
+                                $('#zonecode_disp').val(data.zonecode);
+                                $('#zonecode_hidden').val(data.zonecode);
+                                $('#roadAddress_disp').val(data.roadAddress);
+                                $('#roadAddress_hidden').val(data.roadAddress);
+
+                                // 모달 열기 (주소 선택이 완료된 직후)
+                                $('#warehouseAddModal').modal('show');
+
+                                // 상세주소 입력 필드만 포커스
+                                $('#detailAddress_disp').val('').focus();
+                            }
+                        }).open({
+                            q: roadAddr   // 이 파라미터가 팝업 검색어를 미리 채워줍니다!
+                        });
+                    }
+                }
+            );
+        });
+
+        // 지도에 확대 축소 컨트롤을 생성한다
+        var zoomControl = new kakao.maps.ZoomControl();
+
+        // 지도의 우측에 확대 축소 컨트롤을 추가한다
+        map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+
         const geocoder = new kakao.maps.services.Geocoder();
         const rows = Array.from(document.querySelectorAll('#datatable tbody tr'));
         const bounds = new kakao.maps.LatLngBounds();
@@ -537,6 +579,13 @@
             });
         });
     });
+</script>
+
+<script>
+    // (등록 모달) 지도 클릭으로 열기 & 주소 세팅
+    // @ts-ignore: kakao.maps.event.addListener is from Kakao SDK, not MediaQueryList
+    // 2) 지도 클릭 → 등록 모달 열기 & 주소 세팅
+    // @ts-ignore: kakao.maps.event.addListener 는 Kakao SDK 메서드입니다
 </script>
 
 <script>
