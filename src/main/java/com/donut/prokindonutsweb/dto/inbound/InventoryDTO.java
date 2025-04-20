@@ -5,16 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.util.Date;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class InboundDTO {
-    private String inboundCode;
-    private LocalDate inboundDate;
-    private String inboundStatus;
+public class InventoryDTO {
     private String warehouseCode;
+    private Integer quantity;
+    private String productCode;
 }

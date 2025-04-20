@@ -114,6 +114,28 @@
                                 <th>승인|수정|취소</th> <!-- 수정/삭제 열 -->
                             </tr>
                             </thead>
+                            <c:forEach var="inbound" items="${inboundList}">
+                                <tr>
+                                    <td>${inbound.inboundCode}</td>
+                                    <td>${inbound.inboundDate}</td>
+                                    <td>${inbound.inboundStatus}</td>
+                                    <td>${inbound.warehouseCode}</td>
+                                    <td>
+                                        <div class="btu-group-2">
+                                            <button class="btn btn-approve text-success" title="입고 승인" id="btnInboundAdd" data-inbound-code="${inbound.inboundCode}"
+                                            data-inbound-date="${inbound.inboundDate}">
+                                                <i class="lni lni-checkmark-circle"></i>
+                                            </button>
+                                            <button class="btn btn-edit text-primary-2">
+                                                <i class="lni lni-pencil"></i>
+                                            </button>
+                                            <button class="btn btn-delete text-danger" data-inbound-code="${inbound.inboundCode}">
+                                                <i class="lni lni-trash-can"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
 
                             <tbody>
                             </tbody>
@@ -126,6 +148,7 @@
 
         <!-- 승인 모달 -->
         <!-- 입고 승인 상세 보기 모달 -->
+        <form id="inboundApproveForm" method="post" action="/wm/inbound/approve" accept-charset="UTF-8">
         <div class="modal fade" id="inboundDetailModal" tabindex="-1" aria-labelledby="inboundDetailModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- 크기 조정 가능: modal-sm, modal-lg 등 -->
                 <div class="modal-content">
@@ -134,6 +157,9 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
                     </div>
                     <div class="modal-body">
+<%--                        서버에 inboundCode 전송--%>
+                        <input type="hidden" id="modalInboundCode" name="inboundCode">
+
                         <table class="table" id="selectedProductsTable">
                             <thead>
                             <tr>
@@ -150,26 +176,19 @@
                         </table>
                     </div>
                     <div class="modal-footer d-flex justify-content-between align-items-center">
-                        <!-- 왼쪽: 입고 날짜 -->
-                        <div class="form-group mb-0">
-                            <label for="inboundDate" class="mr-2 mb-0">입고 날짜:</label>
-                            <input type="date" class="form-control form-control-sm d-inline-block" id="inboundDate" style="width: auto;" />
-                        </div>
+                      <div class="form-group mb-0">
 
-                        <!-- 오른쪽: 버튼 묶음 -->
-                        <!-- <div>
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-                          <button type="button" class="btn btn-primary">입고 요청 완료</button>
-                        </div> -->
-
+                              <input type="date" id="inboundDate" class="form-control" disabled />
+                       </div>
                         <div>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                            <button type="button" class="main-btn primary-btn btn-primary btn-sm">입고 요청 완료</button>
+                            <button type="submit" class="main-btn primary-btn btn-primary btn-sm">입고 요청 완료</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        </form>
 
         <!-- 입고 요청 수정 모달 -->
         <div class="modal fade" id="inboundEditModal" tabindex="-1" aria-labelledby="inboundEditModalLabel" aria-hidden="true">
@@ -244,6 +263,7 @@
                         <!-- 왼쪽: 입고 날짜 -->
                         <div class="form-group mb-0">
                             <label for="inboundDate" class="mr-2 mb-0">입고 날짜:</label>
+
                             <input type="date" class="form-control form-control-sm d-inline-block" id="inboundDate" style="width: auto;" />
                         </div>
                         <div>
@@ -294,6 +314,20 @@
 <script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
 
 <script>
+    const inboundDetails = [
+        <c:forEach var="detail" items="${inboundDetailList}" varStatus="loop">
+        {
+            inboundCode: '${detail.inboundCode}',
+            productCode: '${detail.productCode}',
+            productName: '${detail.productName}',
+            productPrice: ${detail.productPrice},
+            storedType: '${detail.storedType}',
+            quantity: ${detail.quantity}
+        }<c:if test="${!loop.last}">,</c:if>
+        </c:forEach>
+    ];
+
+
     $(document).ready(function() {
         // 1. 더미 데이터 정의 (소재지)
         const dummyInboundCategories = [
@@ -320,58 +354,8 @@
                 { targets: [0, 1, 2, 3], className: 'text-center' } // JS 속성으로 가운데 정렬
             ],
             order: [[0, 'asc']],
-            ajax: function(data, callback, settings) {
-                const dummyData = [
-                    {
-                        "inboundCode": "IN1",
-                        "inboundDate": "2025-04-13",
-                        "inboundStatus": "입고요청",
-                        "warehouseCode": "GG1",
-                    },
-                    {
-                        "inboundCode": "IN2",
-                        "inboundDate": "2025-04-14",
-                        "inboundStatus": "입고승인",
-                        "warehouseCode": "GG1",
 
-                    },
-                    {
-                        "inboundCode": "IN3",
-                        "inboundDate": "2025-04-15",
-                        "inboundStatus": "입고완료",
-                        "warehouseCode" : "DG1",
-
-                    },
-                    {
-                        "inboundCode": "IN1",
-                        "inboundDate": "2025-04-13",
-                        "inboundStatus": "입고요청",
-                        "warehouseCode": "GG1",
-                    },
-                    {
-                        "inboundCode": "IN1",
-                        "inboundDate": "2025-04-13",
-                        "inboundStatus": "입고요청",
-                        "warehouseCode": "GG1",
-                    },
-                    {
-                        "inboundCode": "IN1",
-                        "inboundDate": "2025-04-13",
-                        "inboundStatus": "입고요청",
-                        "warehouseCode": "GG1",
-                    },
-                    {
-                        "inboundCode": "IN1",
-                        "inboundDate": "2025-04-13",
-                        "inboundStatus": "입고요청",
-                        "warehouseCode": "GG1",
-                    },
-                ];
-                Promise.resolve().then(() => {
-                    callback({ data: dummyData });
-                });
-            },
-            columns: [
+            /*columns: [
                 { data: 'inboundCode', title: '입고코드' },
                 { data: 'inboundDate', title: '입고일' },
                 { data: 'inboundStatus', title: '입고상태' },
@@ -383,7 +367,7 @@
                     render: function(data, type, row, meta) {
                         return `
                 <div class="btu-group-2">
-                  <button class="btn btn-approve text-success" title="입고 승인" data-inbound-code="INBOUND123">
+                  <button class="btn btn-approve text-success" title="입고 승인" data-inbound-code="IN1">
                     <i class="lni lni-checkmark-circle"></i>
                   </button>
                   <button class="btn btn-edit text-primary-2">
@@ -397,7 +381,7 @@
                     },
                     title: '승인&nbsp&nbsp|&nbsp&nbsp수정&nbsp&nbsp|&nbsp&nbsp취소'
                 }
-            ],
+            ],*/
             paging: true,
             pageLength: 10,
             lengthMenu: [[5, 10, 20, -1], ['5개', '10개', '20개', '전체']],
@@ -465,7 +449,6 @@
             $('.dataTables_paginate .paginate_button').removeClass().addClass('main-btn deactive-btn-outline square-btn btn-hover mt-1 pt-2 pb-2 pl-15 pr-15');
         });
 
-        // 6. 사용자 정의 필터 영역에 원본 필터를 복제하여 주입
         var $clone = $('#myCustomFilters').clone(true);
         // 복제 후 삽입 시, ID 제거 필수!
         $clone.find('#InboundCategories').attr('id', 'InboundCategories_clone');
@@ -519,24 +502,24 @@
             return true;
         });
 
-        // 입고상세 목업 데이터
+       /* // 입고상세 목업 데이터
         const inboundDetails = [
             { inboundCode: 'INBOUND123', productName: '오리지널 도넛', quantity: 100 },
             { inboundCode: 'INBOUND123', productName: '초코 도넛', quantity: 50 },
             { inboundCode: 'INBOUND456', productName: '커피', quantity: 30 },
-        ];
+        ];*/
 
 
-        // 9. Edit/Delete 버튼 이벤트 (제품명 대신 productName 사용)
+        /*// 9. Edit/Delete 버튼 이벤트 (제품명 대신 productName 사용)
         // 등록 버튼 클릭 시
         const dummyManagers = [
             { id: "FM1", name: "박열정" },
             { id: "FM2", name: "조아현" },
             { id: "FM3", name: "백승우" },
             { id: "FM4", name: "윤가영" }
-        ];
+        ];*/
 
-        function populateManagerDropdown() {
+       /* function populateManagerDropdown() {
             const $select = $('#registerinboundManager');
             $select.empty().append(`<option value="">점주 선택</option>`); // 기본값 초기화
 
@@ -544,40 +527,92 @@
                 const label = `${manager.id} | ${manager.name}`;
                 $select.append(`<option value="${manager.id}">${label}</option>`);
             });
-        }
+        }*/
 
         // 모달 열릴 때마다 목록 갱신되게 하면 좋아
         $('#inboundAddModal').on('show.bs.modal', function () {
             populateManagerDropdown();
         });
 
+
+
         // 이 부분 전체를 바꿔주세요!
+        // 페이지 전체에서 한 번만 실행
         $('body').on('click', '.btn-approve', function () {
-            const inboundCode = this.dataset.inboundCode;
+            const inboundCode = $(this).data('inbound-code'); // 버튼에서 코드 가져오기
+            console.log('✅ 선택된 inboundCode:', inboundCode);
 
+           const inboundDate = $(this).data('inbound-date');
+
+            // server에서 내려받은 전체 리스트에서 코드로 필터링
             const filteredDetails = inboundDetails.filter(detail => detail.inboundCode === inboundCode);
+            console.log('🔍 필터링된 상세내역:', filteredDetails);
 
-            const tbody = document.getElementById('inboundDetailTableBody');
-            tbody.innerHTML = '';
+            // tbody 비우고 새로 채우기
+            const $tbody = $('#inboundDetailTableBody');
+            $tbody.empty();
 
-            if (filteredDetails.length > 0) {
+            if (filteredDetails.length === 0) {
+                $tbody.append('<tr><td colspan="5">데이터가 없습니다.</td></tr>');
+            } else {
                 filteredDetails.forEach(detail => {
                     const row = `
-              <tr>
-                <td>${detail.productName}</td>
-                <td>${detail.quantity}</td>
-              </tr>
+                <tr>
+                 <td>` + detail.productCode + `</td>
+                 <td>` + detail.productName + `</td>
+                 <td>` + detail.productPrice + `</td>
+                 <td>` + detail.storedType + `</td>
+                 <td>` + detail.quantity + `</td>
+                </tr>
             `;
-                    tbody.insertAdjacentHTML('beforeend', row);
+                    $tbody.append(row);
                 });
-            } else {
-                tbody.innerHTML = '<tr><td colspan="2">데이터가 없습니다.</td></tr>';
+
             }
 
-            // 모달 띄우기
+            $('#inboundDate').val(inboundDate);
+            $('#modalInboundCode').val(inboundCode);
+            console.log(inboundDate);
+
+            // 모달 열기
             const modal = new bootstrap.Modal(document.getElementById('inboundDetailModal'));
             modal.show();
         });
+
+        /* $('body').on('click', '.btn-approve', function () {
+             const inboundCode = this.dataset.inboundCode;
+             console.log(inboundCode);
+             console.log(inboundDetails);
+
+             const filteredDetails = inboundDetails.filter(detail => detail.inboundCode === inboundCode);
+             console.log(filteredDetails);
+
+             const tbody = document.getElementById('inboundDetailTableBody');
+             tbody.innerHTML = '';
+
+             if (filteredDetails.length > 0) {
+                 filteredDetails.forEach(detail => {
+                     const row = `
+               <tr>
+                 <td>`+detail.productName+`</td>
+                 <td>`+detail.productCode+`</td>
+                 <td>`+detail.productName+`</td>
+                 <td>`+detail.productPrice+`</td>
+                 <td>`+detail.storedType+`</td>
+                 <td>`+detail.quantity+`</td>
+
+               </tr>
+             `;
+                     tbody.insertAdjacentHTML('beforeend', row);
+                 });
+             } else {
+                 tbody.innerHTML = '<tr><td colspan="2">데이터가 없습니다.</td></tr>';
+             }
+
+             // 모달 띄우기
+             const modal = new bootstrap.Modal(document.getElementById('inboundDetailModal'));
+             modal.show();
+         });*/
 
 
 

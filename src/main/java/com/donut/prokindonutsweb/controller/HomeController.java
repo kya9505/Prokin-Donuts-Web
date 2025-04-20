@@ -35,8 +35,6 @@ public class HomeController {
     public void Wstatus(){}
 
 
-    @GetMapping("/wm/inbound/approval")
-    public void Wapproval(){}
 
     @GetMapping("/wm/warehouse")
     public void Wwarehouse(){}
