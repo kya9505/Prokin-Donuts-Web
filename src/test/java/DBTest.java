@@ -3,6 +3,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ public class DBTest {
     private SqlSessionFactory sqlSessionFactory;
 
     @Test
+    @DisplayName("HikariCP 설정 및 DB 연결 테스트")
     public void hikariConnectionTest() throws Exception {
         Connection connection = dataSource.getConnection();
         log.info(connection);
@@ -32,6 +34,7 @@ public class DBTest {
     }
     
     @Test
+    @DisplayName("MyBatis SqlSessionFactory 및 DB 연결 테스트")
     void sqlSessionFactoryLoads() {
         assertNotNull(sqlSessionFactory, "SqlSessionFactory가 로드되어야 합니다");
         try (SqlSession session = sqlSessionFactory.openSession()) {
