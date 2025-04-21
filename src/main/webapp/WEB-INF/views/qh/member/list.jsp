@@ -547,7 +547,7 @@
                 });
         });
 
-        // 6. 폼 제출 전 유효성 검사 및 address 합치기
+        // 6. 폼 제출 전 유효성 검사
         $("#memberAddForm").on("submit", function () {
             const id = $("#addId").val().trim();
             const authority = $("#authority").val().trim();
