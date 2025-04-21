@@ -302,7 +302,7 @@
                         </tbody>
                     </table>
                 <div class="modal-footer">
-                    <button type="submit" class="main-btn primary-btn btn-hover text-center">수정</button>
+                    <button type="submit" class="main-btn primary-btn btn-hover text-center" id="modify-bnt">수정</button>
                 </div>
                     </form>
                 </div>
@@ -547,52 +547,62 @@
                 });
         });
 
-        // 6. 폼 제출 전 유효성 검사 및 address 합치기
-        $("#memberAddForm").on("submit", function () {
-            const id = $("#addId").val().trim();
-            const authority = $("#authority").val().trim();
-            const password = $("#addPassword").val().trim();
-            const passwordCheck = $("#addPasswordCheck").val().trim();
-            const name = $("#addName").val().trim();
-            const email = $("#addEmail").val().trim();
-            const phoneNumber = $("#addPhoneNumber").val().trim();
-            const address = $("#addAddress").val().trim();
+        // 등록 버튼 클릭 시
+        $('#add-bnt').on('click', function (e) {
+            e.preventDefault(); // 기본 submit 막기
+
+            const id = $('#addId').val().trim();
+            const authority = $('#authority').val().trim();
+            const password = $('#addPassword').val().trim();
+            const passwordCheck = $('#addPasswordCheck').val().trim();
+            const name = $('#addName').val().trim();
+            const email = $('#addEmail').val().trim();
+            const phoneNumber = $('#addPhoneNumber').val().trim();
+            const address = $('#addAddress').val().trim();
             const regName = /^[A-Za-z가-힣]{1,10}$/;
             const regPhone = /^[0-9]{10,11}$/;
+            const regEmail = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
-            if (!id || !authority || !password || !passwordCheck || !name|| !email) {
+            if (!isIdChecked) {
+                alert("아이디 중복확인을 해주세요.");
+                return;
+            }
+
+            if (!id || !authority || !password || !passwordCheck || !name || !email) {
                 alert("필수 항목을 모두 입력해주세요.");
-                return false;
+                return;
+            }
+
+            if (password !== passwordCheck) {
+                alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+                return;
             }
 
             if (!regName.test(name)) {
                 alert("이름은 한글/영어 조합이며 최대 10글자입니다.");
-                return false;
+                return;
             }
 
-            if (!regPhone.test(phoneNumber)) {
-                alert("전화번호는 하이픈없이 10~11자리의 숫자입니다.");
-                return false;
+            if (!regEmail.test(email)) {
+                alert("올바른 이메일 형식을 입력해주세요.");
+                return;
             }
 
-            if (password !== (passwordCheck)) {
-                alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
-                return false;
+            if (phoneNumber && !regPhone.test(phoneNumber)) {
+                alert("전화번호는 하이픈 없이 10~11자리 숫자입니다.");
+                return;
             }
 
-            if (!isIdChecked) {
-                alert("아이디 중복확인을 해주세요.");
-                return false;
+            const result = confirm('입력하신 정보로 등록 하시겠습니까?');
+            if (result) {
+                $('#memberAddForm').submit();
+            } else {
+                console.log('등록 취소');
             }
-
-
         });
 
-        $("#add-bnt").on("click", function () {
-            $("#memberAddForm").submit(); // 직접 제출
-        });
 
-    // 수정 버튼 클릭 시
+        // 수정 버튼 클릭 시
     $('#btnMemberEdit_clone').on('click', function (e) {
         const selectedData = [];
 
@@ -641,11 +651,21 @@
             $tableBody.append(rowHtml);
         });
 
-
         $('#memberEditModal').modal('show');
-
     });
 
+        //수정 클릭 시 confirm
+        $('#modify-bnt').on('click', function (e) {
+            e.preventDefault();
+            const result = confirm('입력하신 정보로 수정 하시겠습니까? ');
+
+            if (result) {
+                console.log('수정');
+                $("#memberEditForm").submit();
+            } else {
+                console.log('수정 취소');
+            }
+        });
 
     //valid시 에러시 모달 원복
     window.addEventListener('DOMContentLoaded', function () {
@@ -656,6 +676,7 @@
         <c:if test="${not empty memberList}">
         const modal = new bootstrap.Modal(document.getElementById('memberEditModal'));
         modal.show();
+
         </c:if>
 
         <c:if test="${not empty errorMessage and empty memberList}">
@@ -714,9 +735,15 @@
             const memberCode = $(this).text().trim();
             const input = `<input type="hidden" name="memberCodeList" value="` + memberCode + `" />`;
             $form.append(input);
-        });
 
-        $form.submit(); // form 전송
+            const result = confirm('선택하신 회원을 삭제 하시겠습니까? ');
+            if (result) {
+                console.log('삭제');
+                $form.submit();
+            } else {
+                console.log('삭제 취소');
+            }
+        });// form 전송
     });
 
     //mypageData

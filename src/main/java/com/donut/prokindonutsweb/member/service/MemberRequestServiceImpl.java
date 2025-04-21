@@ -31,13 +31,7 @@ public class MemberRequestServiceImpl implements MemberRequestService {
         return Optional.ofNullable(memberRequestDTOS.isEmpty()? null : memberRequestDTOS);
     }
 
-    //회원가입 신청 시 사용 예정
-    @Override
-    public String memberRequestCode() {
-        String memberRequestCode = requestMapper.requestCode();
-        int number = Integer.parseInt(memberRequestCode.replaceAll("\\D", ""));
-        return "RQ"+(number+1);
-    }
+
 
 
     /*

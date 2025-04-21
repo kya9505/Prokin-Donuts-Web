@@ -4,6 +4,7 @@ import com.donut.prokindonutsweb.inbound.dto.*;
 import com.donut.prokindonutsweb.inbound.service.InboundService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -82,6 +83,20 @@ public class InboundController {
 
         return "redirect:/wm/inbound/approval";
     }
+
+    // 입고 수정
+    @PostMapping("/edit")
+    public String updateInbound(
+            @ModelAttribute InboundUpdateWrapperDTO wrapper,
+            @RequestParam("inboundDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inboundDate
+    ) {
+        List<InboundUpdateDTO> list = wrapper.getItems();
+        inboundService.updateInbound(list, inboundDate);
+
+        return "redirect:/wm/inbound/approval";
+    }
+
+
 
     @PostMapping("/cancel")
     public String deleteInbound(@RequestParam String inboundCode) {
