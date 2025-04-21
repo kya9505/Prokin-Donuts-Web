@@ -29,9 +29,6 @@ public class HomeController {
 
     @GetMapping("/wm/outbound")
     public void Woutbound(){}
-  
-    @GetMapping("/wm/warehouse")
-    public void Wwarehouse(){}
 
    /* @GetMapping("/wm/inbound/request")
     public void Wrequest(){}*/
@@ -40,9 +37,6 @@ public class HomeController {
 
     @GetMapping("/qh/Dashboard")
     public void QDashboard(){}
-
-    @GetMapping("/qh/inventory")
-    public void Qinventory(){}
 
     @GetMapping("/qh/outbound")
     public void Qoutbound(){}

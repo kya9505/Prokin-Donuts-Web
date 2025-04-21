@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.donut.prokindonutsweb.inventory.mapper.QhInventoryMapper">
+
+    <!-- 1) 재고 전체 조회 -->
+    <select id="selectInventoryList" resultType="InventorySelectDTO">
+        SELECT
+            i.inventoryCode,
+            w.warehouseName,
+            p.storedType,
+            c.categoryMid,
+            c.categorySub,
+            p.productName,
+            i.quantity
+        FROM Inventory i
+                 JOIN Warehouse w ON i.warehouseCode = w.warehouseCode
+                 JOIN Product p   ON i.productCode = p.productCode
+                 JOIN Category c  ON p.categoryCode = c.categoryCode
+    </select>
+
+    <!-- 2) 재고 테이블에 존재하는 창고 목록 (중복 없이) -->
+    <select id="selectWarehouseList" resultType="String">
+        SELECT DISTINCT w.warehouseName
+        FROM Inventory i
+                 JOIN Warehouse w ON i.warehouseCode = w.warehouseCode
+    </select>
+
+</mapper>

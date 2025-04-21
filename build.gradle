@@ -119,6 +119,10 @@ dependencies {
     // Mockito -> 테스트를 위한 설정
     testImplementation 'org.mockito:mockito-core:4.11.0'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.11.0'
+
+    // json 객체 전달을 위한 설정
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+
 }
 
 test {

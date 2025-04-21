@@ -1,4 +1,4 @@
 package com.donut.prokindonutsweb.product.dto;
 
-public class ProductDTO {
+public class ProductInsertDTO {
 }

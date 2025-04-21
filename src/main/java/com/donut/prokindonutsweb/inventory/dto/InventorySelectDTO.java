@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class InventoryDTO {
+public class InventorySelectDTO {
   private String inventoryCode;
   private String warehouseName;
   private String storedType;
