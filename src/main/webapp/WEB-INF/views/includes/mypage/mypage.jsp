@@ -41,16 +41,15 @@
                         <label class="form-label">주소</label>
                         <input type="text" class="form-control" id="address">
                     </div>
+                </form>
             </div>
-            </form>
             <div class="text-center w-100 mt-1 mb-3">
-                <button type="submit"class="main-btn primary-btn btn-hover text-center" >수정</button>
+                <button type="submit" class="main-btn primary-btn btn-hover text-center" >수정</button>
             </div>
             <div class="text-center mb-3">
                 <a href=#0 id = "bntMypageSecession">탈퇴</a>
             </div>
         </div>
     </div>
-</div>
 </div>
 
