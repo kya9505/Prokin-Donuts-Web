@@ -9,5 +9,7 @@
         <package name="com.donut.prokindonutsweb.vo.member"/>
         <package name="com.donut.prokindonutsweb.dto.warehouse"/>
         <package name="com.donut.prokindonutsweb.vo.warehouse"/>
+        <package name="com.donut.prokindonutsweb.dto.franchise"/>
+        <package name="com.donut.prokindonutsweb.vo.franchise"/>
     </typeAliases>
 </configuration>
