@@ -4,7 +4,9 @@ import com.donut.prokindonutsweb.inbound.dto.*;
 import com.donut.prokindonutsweb.inbound.mapper.InboundMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -140,6 +142,18 @@ public class InboundServiceImpl implements InboundService {
     public void updateInventory(InventoryVO inventoryVO) {
         inboundMapper.updateInventory(inventoryVO);
     }
+
+    @Transactional
+    @Override
+    public void updateInbound(List<InboundUpdateDTO> list, LocalDate inboundDate) {
+        String inboundCode = list.get(0).getInboundCode();
+        inboundMapper.updateInboundDate(inboundDate, inboundCode);
+
+        list.stream().forEach(
+                inboundMapper::updateInbound
+        );
+    }
+
 
     @Override
     public void deleteInbound(String inboundCode) {
