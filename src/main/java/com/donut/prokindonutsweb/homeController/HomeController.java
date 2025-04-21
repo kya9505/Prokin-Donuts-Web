@@ -14,8 +14,7 @@ public class HomeController {
 
     @GetMapping("/home/login")
     public void login(){}
-
-
+  
     @GetMapping("/home/findId")
     public void findId(){}
 
@@ -38,10 +37,7 @@ public class HomeController {
 
     @GetMapping("/qh/Dashboard")
     public void QDashboard(){}
-
-    @GetMapping("/qh/inventory")
-    public void Qinventory(){}
-
+  
     @GetMapping("/qh/outbound")
     public void Qoutbound(){}
 

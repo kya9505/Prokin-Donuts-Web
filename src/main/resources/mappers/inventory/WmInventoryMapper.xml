@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.donut.prokindonutsweb.inventory.mapper.WmInventoryMapper">
+
+    <!-- 1) 창고명을 조건으로 재고 조회 -->
+    <select id="selectInventoryList" parameterType="String" resultType="InventorySelectDTO">
+        SELECT
+            i.inventoryCode,
+            p.storedType,
+            c.categoryMid,
+            c.categorySub,
+            p.productName,
+            i.quantity
+        FROM Inventory i
+                 JOIN Warehouse w ON i.warehouseCode = w.warehouseCode
+                 JOIN Product p   ON i.productCode = p.productCode
+                 JOIN Category c  ON p.categoryCode = c.categoryCode
+        WHERE w.warehouseCode = #{warehouseCode}
+    </select>
+
+    <!-- 2) memberCode 멤버에게 할당된 창고가 있는지 확인 -->
+    <select id="selectWarehouseCodeByMemberCode" resultType="String" parameterType="String">
+        SELECT warehouseCode
+        FROM Warehouse
+        WHERE memberCode = #{memberCode}
+    </select>
+
+</mapper>
