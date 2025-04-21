@@ -1,4 +1,3 @@
-import com.donut.prokindonutsweb.mappers.warehouse.WarehouseMapper;
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -9,10 +8,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Log4j2
 @ExtendWith(SpringExtension.class)
@@ -29,7 +29,7 @@ public class DBTest {
     public void hikariConnectionTest() throws Exception {
         Connection connection = dataSource.getConnection();
         log.info(connection);
-        Assertions.assertNotNull(connection);
+        assertNotNull(connection);
         connection.close();
     }
     

@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.donut.prokindonutsweb.mappers.member.MemberRequestMapper">
+<mapper namespace="com.donut.prokindonutsweb.member.mapper.MemberRequestMapper">
 
     <!--회원가입요청 테이블 조회 -->
     <select id="selectRequestMember" resultType="MemberRequestVO">

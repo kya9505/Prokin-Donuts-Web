@@ -4,15 +4,25 @@
         "https://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <typeAliases>
-        <typeAlias alias="MemberRequestVO" type="com.donut.prokindonutsweb.vo.member.MemberRequestVO"/>
-        <typeAlias alias="MemberAccountVO" type="com.donut.prokindonutsweb.vo.member.MemberAccountVO"/>
-        <typeAlias alias="MemberAccountDTO" type="com.donut.prokindonutsweb.dto.member.MemberAccountDTO"/>
-        <typeAlias alias="MemberRequestDTO" type="com.donut.prokindonutsweb.dto.member.MemberRequestDTO"/>
-        <typeAlias alias="WarehouseDTO" type="com.donut.prokindonutsweb.dto.warehouse.WarehouseDTO"/>
-        <typeAlias alias="WarehouseUpdateDTO" type="com.donut.prokindonutsweb.dto.warehouse.WarehouseUpdateDTO"/>
-        <typeAlias alias="WarehouseDeleteDTO" type="com.donut.prokindonutsweb.dto.warehouse.WarehouseDeleteDTO"/>
-        <typeAlias alias="WarehouseVO" type="com.donut.prokindonutsweb.vo.warehouse.WarehouseVO"/>
-        <typeAlias alias="SectionVO" type="com.donut.prokindonutsweb.vo.warehouse.SectionVO"/>
+<!--        <typeAlias alias="MemberRequestVO" type="com.donut.prokindonutsweb.member.vo.MemberRequestVO"/>-->
+<!--        <typeAlias alias="MemberAccountVO" type="com.donut.prokindonutsweb.member.vo.MemberAccountVO"/>-->
+<!--        <typeAlias alias="MemberAccountDTO" type="com.donut.prokindonutsweb.member.dto.MemberAccountDTO"/>-->
+<!--        <typeAlias alias="MemberRequestDTO" type="com.donut.prokindonutsweb.member.dto.MemberRequestDTO"/>-->
+<!--        <typeAlias alias="WarehouseDTO" type="com.donut.prokindonutsweb.warehouse.dto.WarehouseDTO"/>-->
+<!--        <typeAlias alias="WarehouseUpdateDTO" type="com.donut.prokindonutsweb.warehouse.dto.WarehouseUpdateDTO"/>-->
+<!--        <typeAlias alias="WarehouseDeleteDTO" type="com.donut.prokindonutsweb.warehouse.dto.WarehouseDeleteDTO"/>-->
+<!--        <typeAlias alias="WarehouseVO" type="com.donut.prokindonutsweb.warehouse.vo.WarehouseVO"/>-->
+<!--        <typeAlias alias="SectionVO" type="com.donut.prokindonutsweb.warehouse.vo.SectionVO"/>-->
+        <package name="com.donut.prokindonutsweb.franchise.dto"/>
+        <package name="com.donut.prokindonutsweb.franchise.vo"/>
+        <package name="com.donut.prokindonutsweb.warehouse.dto"/>
+        <package name="com.donut.prokindonutsweb.warehouse.vo"/>
+
+        <package name="com.donut.prokindonutsweb.member.dto"/>
+        <package name="com.donut.prokindonutsweb.member.vo"/>
+
+        <package name="com.donut.prokindonutsweb.inbound.dto"/>
+        <package name="com.donut.prokindonutsweb.inbound.vo"/>
     </typeAliases>
 
 </configuration>

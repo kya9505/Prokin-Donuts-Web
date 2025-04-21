@@ -14,7 +14,7 @@ class LocalDateFormatterTest {
 
     //String을 Date로 변환
     @Test
-    public void LocalDateparseTest() throws ParseException {
+    public void LocalDateparseTest() throws  ParseException {
         String date = "2025-04-17";
         LocalDate localDate = localDateFormatter.parse(date, Locale.KOREA);
         log.info(localDate);

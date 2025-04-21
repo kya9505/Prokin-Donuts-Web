@@ -1,7 +1,7 @@
 package com.donut.prokindonutsweb.config;
 
-import com.donut.prokindonutsweb.dto.member.MemberAccountDTO;
-import com.donut.prokindonutsweb.vo.member.MemberAccountVO;
+import com.donut.prokindonutsweb.member.dto.MemberAccountDTO;
+import com.donut.prokindonutsweb.member.vo.MemberAccountVO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;

@@ -4,12 +4,15 @@
         "https://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <typeAliases>
-        <package name="com.donut.prokindonutsweb.dto.inbound"/>
-        <package name="com.donut.prokindonutsweb.dto.member"/>
-        <package name="com.donut.prokindonutsweb.vo.member"/>
-        <package name="com.donut.prokindonutsweb.dto.warehouse"/>
-        <package name="com.donut.prokindonutsweb.vo.warehouse"/>
-        <package name="com.donut.prokindonutsweb.dto.franchise"/>
-        <package name="com.donut.prokindonutsweb.vo.franchise"/>
+        <package name="com.donut.prokindonutsweb.franchise.dto"/>
+        <package name="com.donut.prokindonutsweb.franchise.vo"/>
+        <package name="com.donut.prokindonutsweb.warehouse.dto"/>
+        <package name="com.donut.prokindonutsweb.warehouse.vo"/>
+
+        <package name="com.donut.prokindonutsweb.member.dto"/>
+        <package name="com.donut.prokindonutsweb.member.vo"/>
+
+        <package name="com.donut.prokindonutsweb.inbound.dto"/>
+        <package name="com.donut.prokindonutsweb.inbound.vo"/>
     </typeAliases>
 </configuration>

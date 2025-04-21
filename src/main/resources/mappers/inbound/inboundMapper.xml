@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.donut.prokindonutsweb.mappers.inbound.InboundMapper">
+<mapper namespace="com.donut.prokindonutsweb.inbound.mapper.InboundMapper">
 
-    <select id="selectAllProductList" resultType="com.donut.prokindonutsweb.dto.inbound.ProductVO">
+    <select id="selectAllProductList" resultType="com.donut.prokindonutsweb.inbound.dto.ProductVO">
         select productCode, productName, productPrice, storedType from product
     </select>
 
@@ -34,12 +34,12 @@
 <!--    창고관리자 - 입고관리-->
 
 <!--    입고목록 반환-->
-    <select id="selectAllInboundList" resultType="com.donut.prokindonutsweb.dto.inbound.InboundVO">
+    <select id="selectAllInboundList" resultType="com.donut.prokindonutsweb.inbound.dto.InboundVO">
         select inboundCode, inboundDate, inboundStatus, warehouseCode from Inbound
     </select>
 
 <!--    입고상세 목록 반환-->
-    <select id="selectAllInboundDetailList" resultType="com.donut.prokindonutsweb.dto.inbound.InboundDetailVO">
+    <select id="selectAllInboundDetailList" resultType="com.donut.prokindonutsweb.inbound.dto.InboundDetailVO">
         select inboundDetailCode, quantity, inboundCode, productCode, sectionCode from InboundDetail
     </select>
 
@@ -60,14 +60,14 @@
     </update>
 
 <!--    입고 완료시 재고에 반영(트리거를 직접 구현)-->
-    <insert id="updateInventory" parameterType="com.donut.prokindonutsweb.dto.inbound.InventoryVO">
+    <insert id="updateInventory" parameterType="com.donut.prokindonutsweb.inbound.dto.InventoryVO">
         Insert into inventory (inventoryCode, quantity, productCode, warehouseCode)
         values (#{inventoryCode}, #{quantity}, #{productCode}, #{warehouseCode})
         on DUPLICATE KEY update quantity = quantity + #{quantity}
     </insert>
 
 <!--    입고코드 -> 입고상세 목록 반환-->
-    <select id="selectInboundDetailList" resultType="com.donut.prokindonutsweb.dto.inbound.InventoryDTO">
+    <select id="selectInboundDetailList" resultType="com.donut.prokindonutsweb.inbound.dto.InventoryDTO">
         select i.warehouseCode, quantity, productCode
         from inbound i, inboundDetail d
         where i.inboundCode = d.inboundCode and i.inboundCode = #{inboundCode}
@@ -77,6 +77,24 @@
     <update id="deleteInbound">
         update inbound set inboundStatus = "입고취소" where inboundCode = #{inboundCode}
     </update>
+
+<!--    창고관리자 입고 현황-->
+
+<!--    입고현황 목록 반환-->
+    <select id="selectAllInboundStatusList" resultType="com.donut.prokindonutsweb.inbound.dto.InboundStatusVO">
+        select i.inboundCode, p.productCode, p.productName, p.productPrice, i.inboundDate, i.inboundStatus, d.sectionCode, d.quantity
+        from inbound i, inboundDetail d, product p
+        where i.inboundCode = d.inboundCode and p.productCode = d.productCode
+    </select>
+
+<!--    입고상태 변경 ( -> 승인대기)-->
+    <update id="updateQhInboundStatus">
+        update inbound set inboundStatus = "승인대기" where inboundCode = #{inboundCode}
+    </update>
+
+
+
+
 
     <sql id="search">
         <if test="(types != null and keyword != null)">

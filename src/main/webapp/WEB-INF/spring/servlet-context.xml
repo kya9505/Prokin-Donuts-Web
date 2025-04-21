@@ -10,7 +10,16 @@
 
     <!-- 지정한 패키지 및 그 하위 패키지에서 어노테이션이 붙은 클래스를 자동으로 찾아서 Spring 컨테이너에 빈으로 등록하는 역할을 한다. -->
     <!--    @Component, @Controller, @Service 등등-->
-    <context:component-scan base-package="com.donut.prokindonutsweb.controller"/>
+    <context:component-scan base-package="com.donut.prokindonutsweb.franchise.controller"/>
+        <context:component-scan base-package="com.donut.prokindonutsweb.warehouse.controller"/>
+        <context:component-scan base-package="com.donut.prokindonutsweb.product.controller"/>
+        <context:component-scan base-package="com.donut.prokindonutsweb.inventory.controller"/>
+        <context:component-scan base-package="com.donut.prokindonutsweb.inbound.controller"/>
+        <context:component-scan base-package="com.donut.prokindonutsweb.login.controller"/>
+        <context:component-scan base-package="com.donut.prokindonutsweb.member.controller"/>
+        <context:component-scan base-package="com.donut.prokindonutsweb.order.controller"/>
+        <context:component-scan base-package="com.donut.prokindonutsweb.outbound.controller"/>
+    <context:component-scan base-package="com.donut.prokindonutsweb.homeController"/>
 
     <!--    뷰 리졸버로서, 컨트롤러에서 반환하는 문자열을 이용해 JSP 파일 경로를 매핑한다. -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
