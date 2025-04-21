@@ -58,4 +58,19 @@ class MemberRequestMapperTest {
         assertNotNull(memberRequestVO);
         log.info(memberRequestVO);
     }
+
+
+    @Test
+    void insertRequestMember() {
+        MemberRequestVO memberRequestVO = MemberRequestVO.builder()
+                .id("test")
+                .requestCode("RQ100")
+                .email("test")
+                .address("test")
+                .name("test")
+                .password("test")
+                .phoneNumber("test")
+                .build();
+        mapper.insertRequestMember(memberRequestVO);
+    }
 }
