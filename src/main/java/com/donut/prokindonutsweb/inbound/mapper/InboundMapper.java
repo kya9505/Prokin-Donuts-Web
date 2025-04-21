@@ -2,6 +2,8 @@ package com.donut.prokindonutsweb.inbound.mapper;
 
 import com.donut.prokindonutsweb.inbound.dto.*;
 import org.apache.ibatis.annotations.Param;
+
+import java.time.LocalDate;
 import java.util.List;
 
 public interface InboundMapper {
@@ -29,6 +31,13 @@ public interface InboundMapper {
     void updateInventory(InventoryVO inventoryVO);
 
     List<InventoryDTO> selectInboundDetailList(String inboundCode);
+
+    void updateInboundDate(@Param("inboundDate") LocalDate inboundDate, @Param("inboundCode") String inboundCode);
+
+    // Java
+    void updateInbound(InboundUpdateDTO inboundUpdateDTO);
+
+
 
     void deleteInbound(String inboundCode);
 

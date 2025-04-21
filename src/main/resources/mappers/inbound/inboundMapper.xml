@@ -66,6 +66,21 @@
         on DUPLICATE KEY update quantity = quantity + #{quantity}
     </insert>
 
+<!--    입고 날짜 수정-->
+    <update id = "updateInboundDate">
+        update Inbound Set inboundDate = #{inboundDate} where InboundCode=#{inboundCode}
+    </update>
+
+<!--    입고 수량 변경-->
+    <update id="updateInbound">
+            UPDATE inboundDetail
+            SET quantity = #{quantity}
+            WHERE productCode = #{productCode}
+            AND inboundCode = #{inboundCode}
+    </update>
+
+
+
 <!--    입고코드 -> 입고상세 목록 반환-->
     <select id="selectInboundDetailList" resultType="com.donut.prokindonutsweb.inbound.dto.InventoryDTO">
         select i.warehouseCode, quantity, productCode

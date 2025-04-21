@@ -2,6 +2,7 @@ package com.donut.prokindonutsweb.inbound.mapper;
 
 
 import com.donut.prokindonutsweb.inbound.dto.InboundDetailVO;
+import com.donut.prokindonutsweb.inbound.dto.InboundUpdateDTO;
 import com.donut.prokindonutsweb.inbound.dto.InboundVO;
 import com.donut.prokindonutsweb.inbound.dto.InventoryVO;
 import lombok.extern.slf4j.Slf4j;
@@ -128,6 +129,24 @@ class InboundMapperTest {
                 .warehouseCode("BS1")
                 .build();
         inboundMapper.updateInventory(vo);
+    }
+
+    @Test
+    @DisplayName("입고 날짜 수정 메서드")
+    void updateInboundDate() {
+        inboundMapper.updateInboundDate(LocalDate.parse("2025-04-04"), "IN1");
+    }
+
+    @Test
+    @DisplayName("입고 수량 변경 메서드")
+    void updateInbound() {
+        InboundUpdateDTO dto1 = InboundUpdateDTO.builder()
+                .productCode("DLW2")
+                .quantity(200)
+                .inboundCode("IN1")
+                .build();
+
+        inboundMapper.updateInbound(dto1);
     }
 
     @Test
