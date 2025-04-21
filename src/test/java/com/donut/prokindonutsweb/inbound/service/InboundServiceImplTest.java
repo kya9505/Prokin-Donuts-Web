@@ -1,6 +1,7 @@
 package com.donut.prokindonutsweb.inbound.service;
 
 import com.donut.prokindonutsweb.inbound.dto.InboundDTO;
+import com.donut.prokindonutsweb.inbound.dto.InboundUpdateDTO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
@@ -63,6 +65,27 @@ class InboundServiceImplTest {
     @DisplayName("입고 상태 변환(-> 완료)")
     void approveInbound() {
         inboundService.approveInbound("IN2");
+    }
+
+    @Test
+    @DisplayName("입고 수정 (수량, 날짜)")
+    void updateInbound() {
+        List<InboundUpdateDTO> list = new ArrayList<>();
+        InboundUpdateDTO dto1 = InboundUpdateDTO.builder()
+                .inboundCode("IN1")
+                .productCode("DLW1")
+                .quantity(100)
+                .build();
+
+        InboundUpdateDTO dto2 = InboundUpdateDTO.builder()
+                .inboundCode("IN1")
+                .productCode("DLW2")
+                .quantity(100)
+                .build();
+        list.add(dto1);
+        list.add(dto2);
+
+        inboundService.updateInbound(list, LocalDate.parse("2025-05-05"));
     }
 
     @Test
