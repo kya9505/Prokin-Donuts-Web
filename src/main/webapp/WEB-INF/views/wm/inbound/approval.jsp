@@ -123,14 +123,15 @@
                                     <td>
                                         <div class="btu-group-2">
                                             <button class="btn btn-approve text-success" title="입고 승인" id="btnInboundAdd" data-inbound-code="${inbound.inboundCode}"
-                                            data-inbound-date="${inbound.inboundDate}">
+                                                    data-inbound-date="${inbound.inboundDate}">
                                                 <i class="lni lni-checkmark-circle"></i>
                                             </button>
-                                            <button class="btn btn-edit text-primary-2">
+                                            <button class="btn btn-edit text-primary-2" data-inbound-code="${inbound.inboundCode}"
+                                                    data-inbound-date="${inbound.inboundDate}">
                                                 <i class="lni lni-pencil"></i>
                                             </button>
                                             <button class="btn btn-delete text-danger"  data-inbound-code="${inbound.inboundCode}"
-                                            data-inbound-date="${inbound.inboundDate}">
+                                                    data-inbound-date="${inbound.inboundDate}">
                                                 <i class="lni lni-trash-can"></i>
                                             </button>
                                         </div>
@@ -150,134 +151,133 @@
         <!-- 승인 모달 -->
         <!-- 입고 승인 상세 보기 모달 -->
         <form id="inboundApproveForm" method="post" action="/wm/inbound/approve" accept-charset="UTF-8">
-        <div class="modal fade" id="inboundDetailModal" tabindex="-1" aria-labelledby="inboundDetailModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- 크기 조정 가능: modal-sm, modal-lg 등 -->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="inboundDetailModalLabel">입고 상세 내역</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
-                    </div>
-                    <div class="modal-body">
-<%--                        서버에 inboundCode 전송--%>
-                        <input type="hidden" id="modalInboundCode" name="inboundCode">
+            <div class="modal fade" id="inboundDetailModal" tabindex="-1" aria-labelledby="inboundDetailModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- 크기 조정 가능: modal-sm, modal-lg 등 -->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="inboundDetailModalLabel">입고 상세 내역</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+                        </div>
+                        <div class="modal-body">
+                            <%--                        서버에 inboundCode 전송--%>
+                            <input type="hidden" id="modalInboundCode" name="inboundCode">
 
-                        <table class="table" id="selectedProductsTable">
-                            <thead>
-                            <tr>
-                                <th>제품코드</th>
-                                <th>제품명</th>
-                                <th>제품단가</th>
-                                <th>보관타입</th>
-                                <th>수량</th>
-                            </tr>
-                            </thead>
-                            <tbody id="inboundDetailTableBody_approve">
-                            <!-- JavaScript로 채워짐 -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="modal-footer d-flex justify-content-between align-items-center">
-                      <div class="form-group mb-0">
-                              <input type="date" id="inboundDate_approve" class="form-control" disabled />
-                       </div>
-                        <div>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                            <button type="submit" class="main-btn primary-btn btn-primary btn-sm">입고 요청 완료</button>
+                            <table class="table" id="selectedProductsTable">
+                                <thead>
+                                <tr>
+                                    <th>제품코드</th>
+                                    <th>제품명</th>
+                                    <th>제품단가</th>
+                                    <th>보관타입</th>
+                                    <th>수량</th>
+                                </tr>
+                                </thead>
+                                <tbody id="inboundDetailTableBody_approve">
+                                <!-- JavaScript로 채워짐 -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between align-items-center">
+                            <div class="form-group mb-0">
+                                <input type="date" id="inboundDate_approve" class="form-control" disabled />
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                                <button type="submit" class="main-btn primary-btn btn-primary btn-sm">입고 요청 완료</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
         </form>
 
         <!-- 입고 요청 수정 모달 -->
-        <div class="modal fade" id="inboundEditModal" tabindex="-1" aria-labelledby="inboundEditModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document"> <!-- modal-lg: 큰 창 -->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">입고 요청 수정</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>수량과 입고 날짜를 선택하고 입고수정정 완료 버튼을 클릭하세요.</p>
-                        <table class="table" id="selectedProductsTable">
-                            <thead>
-                            <tr>
-                                <th>번호</th>
-                                <th>제품코드</th>
-                                <th>제품명</th>
-                                <th>제품단가</th>
-                                <th>보관타입</th>
-                                <th>수량</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <!-- JS로 동적 추가 -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="modal-footer d-flex justify-content-between align-items-center">
-                        <!-- 왼쪽: 입고 날짜 -->
-                        <div class="form-group mb-0">
-                            <label for="inboundDate" class="mr-2 mb-0">입고 날짜:</label>
-                            <input type="date" class="form-control form-control-sm d-inline-block" id="inboundDate" style="width: auto;" />
+        <form id="inboundEditForm" method="post" action="/wm/inbound/edit" accept-charset="UTF-8">
+            <div class="modal fade" id="inboundEditModal" tabindex="-1" aria-labelledby="inboundDetailModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- 크기 조정 가능: modal-sm, modal-lg 등 -->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="inboundDetailModalLabel">입고 상세 내역</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
                         </div>
-                        <div>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                            <button type="button" class="main-btn primary-btn btn-primary btn-sm">입고 수정 완료</button>
+                        <div class="modal-body">
+                            <%--                        서버에 inboundCode 전송--%>
+<%--                            <input type="hidden" id="modalInboundCode" name="inboundCode">--%>
+
+                            <table class="table" id="selectedProductsTable">
+                                <thead>
+                                <tr>
+                                    <th>제품코드</th>
+                                    <th>제품명</th>
+                                    <th>제품단가</th>
+                                    <th>보관타입</th>
+                                    <th>수량</th>
+                                </tr>
+                                </thead>
+                                <tbody id="inboundDetailTableBody_edit">
+                                <!-- JavaScript로 채워짐 -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between align-items-center">
+
+                            <div class="form-group mb-0">
+                                <label for="inboundDate" class="mr-2 mb-0">입고 날짜:</label>
+                                <input type="date" class="form-control form-control-sm d-inline-block" id="inboundDate" name = "inboundDate" style="width: auto;" />
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                                <button type="submit" class="main-btn primary-btn btn-primary btn-sm">입고수정 완료</button>
+                            </div>
                         </div>
                     </div>
-
                 </div>
             </div>
-        </div>
-
+        </form>
 
         <!-- 입고 삭제 모달 ! -->
         <form id="inboundDeleteForm" method="post" action="/wm/inbound/cancel" accept-charset="UTF-8">
-        <div class="modal fade" id="inboundDeleteModal" tabindex="-1" aria-labelledby="inboundDeleteModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- 크기 조정 가능: modal-sm, modal-lg 등 -->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="inboundDetailModalLabel">입고 상세 내역</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
-                    </div>
-                    <div class="modal-body">
-
-                        <input type="hidden" id="modalInboundCode_delete" name="inboundCode">
-
-                        <table class="table" id="selectedProductsTable">
-                            <thead>
-                            <tr>
-                                <th>제품코드</th>
-                                <th>제품명</th>
-                                <th>제품단가</th>
-                                <th>보관타입</th>
-                                <th>수량</th>
-                            </tr>
-                            </thead>
-                            <tbody id="inboundDetailTableBody_delete">
-                            <!-- JavaScript로 채워짐 -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="modal-footer d-flex justify-content-between align-items-center">
-                        <!-- 왼쪽: 입고 날짜 -->
-                        <div class="form-group mb-0">
-                            <input type="date" id="inboundDate_delete" class="form-control" disabled />
-
-                            <%--<input type="date" class="form-control form-control-sm d-inline-block" id="inboundDate" style="width: auto;" />--%>
+            <div class="modal fade" id="inboundDeleteModal" tabindex="-1" aria-labelledby="inboundDeleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- 크기 조정 가능: modal-sm, modal-lg 등 -->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="inboundDetailModalLabel">입고 상세 내역</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
                         </div>
-                        <div>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                            <button type="submit" class="main-btn primary-btn btn-primary btn-sm">삭제</button>
+                        <div class="modal-body">
+
+                            <input type="hidden" id="modalInboundCode_delete" name="inboundCode">
+
+                            <table class="table" id="selectedProductsTable">
+                                <thead>
+                                <tr>
+                                    <th>제품코드</th>
+                                    <th>제품명</th>
+                                    <th>제품단가</th>
+                                    <th>보관타입</th>
+                                    <th>수량</th>
+                                </tr>
+                                </thead>
+                                <tbody id="inboundDetailTableBody_delete">
+                                <!-- JavaScript로 채워짐 -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between align-items-center">
+                            <!-- 왼쪽: 입고 날짜 -->
+                            <div class="form-group mb-0">
+                                <input type="date" id="inboundDate_delete" class="form-control" disabled />
+
+                                <%--<input type="date" class="form-control form-control-sm d-inline-block" id="inboundDate" style="width: auto;" />--%>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                                <button type="submit" class="main-btn primary-btn btn-primary btn-sm">삭제</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
         </form>
 
         </div>
@@ -486,14 +486,12 @@
         });
 
 
-
-        // 이 부분 전체를 바꿔주세요!
         // 페이지 전체에서 한 번만 실행
         $('body').on('click', '.btn-approve', function () {
             const inboundCode = $(this).data('inbound-code'); // 버튼에서 코드 가져오기
             console.log('✅ 선택된 inboundCode:', inboundCode);
 
-           const inboundDate = $(this).data('inbound-date');
+            const inboundDate = $(this).data('inbound-date');
 
             // server에서 내려받은 전체 리스트에서 코드로 필터링
             const filteredDetails = inboundDetails.filter(detail => detail.inboundCode === inboundCode);
@@ -531,56 +529,58 @@
         });
 
 
-        // 수정 버튼 이벤트
-        // 수정 모달용 드롭다운 채우기 함수: 현재 점주(warehouseCode)가 있으면 그 항목이 목록 최상단에 오도록 정렬
-        function populateinboundManagerDropdown(currentMemberCode) {
-            const $select = $('#modifyinboundManager');
-            // 기존 옵션 초기화 및 플레이스홀더 추가
-            $select.empty().append('<option value="">점주 선택</option>');
 
-            let sortedManagers;
-            if (currentMemberCode) {
-                // 현재 점주와 나머지 점주를 분리 (dummyManagers의 id 기준 비교)
-                const currentManager = dummyManagers.filter(function(m) {
-                    return m.id === currentMemberCode;
-                });
-                const otherManagers = dummyManagers.filter(function(m) {
-                    return m.id !== currentMemberCode;
-                });
-                // 현재 점주가 가장 먼저 오도록 배열 합치기
-                sortedManagers = currentManager.concat(otherManagers);
+        // 수정
+        $('body').on('click', '.btn-edit', function () {
+            const inboundCode = $(this).data('inbound-code'); // 버튼에서 코드 가져오기
+            console.log('✅ 선택된 inboundCode:', inboundCode);
+
+            const inboundDate = $(this).data('inbound-date');
+
+            // server에서 내려받은 전체 리스트에서 코드로 필터링
+            const filteredDetails = inboundDetails.filter(detail => detail.inboundCode === inboundCode);
+            console.log('🔍 필터링된 상세내역:', filteredDetails);
+
+            // tbody 비우고 새로 채우기
+            const $tbody = $('#inboundDetailTableBody_edit');
+            $tbody.empty();
+
+            if (filteredDetails.length === 0) {
+                $tbody.append('<tr><td colspan="5">데이터가 없습니다.</td></tr>');
             } else {
-                sortedManagers = dummyManagers;
+                filteredDetails.forEach((detail, index) => {
+                    const row = `
+                <tr>
+                     <td>` + detail.productCode + `</td>
+                     <td>` + detail.productName + `</td>
+                     <td>` + detail.productPrice + `</td>
+                     <td>` + detail.storedType + `</td>
+                     <td>
+                        <input type="hidden" name="items[`+index+`].inboundCode" value=`+detail.inboundCode+` />
+                        <input type="hidden" name="items[`+index+`].productCode" value=`+detail.productCode+` />
+                        <input type="number" name="items[`+index+`].quantity" class="form-control quantity-input"
+                               value= ` + detail.quantity + ` + step = "100" min="0" required />
+                    </td>
+                </tr>
+            `;
+                    $tbody.append(row);
+                });
+
             }
 
-            sortedManagers.forEach(function(manager) {
-                $select.append(`<option value="${manager.id}">${manager.id} | ${manager.name}</option>`);
-            });
+            $('#inboundDate').val(inboundDate);
+            $('#modalInboundCode').val(inboundCode);
+            console.log(inboundDate);
 
-            // 현재 점주가 있다면 선택 처리
-            $select.val(currentMemberCode);
-        }
-
-        // 수정 버튼 클릭시
-        $('#datatable tbody').on('click', '.btn-edit', function(e) {
-            e.preventDefault();
-            var table = $('#datatable').DataTable();
-            var $row = $(this).closest('tr');
-            var rowData = table.row($row).data();
-
-            if (!rowData) {
-                alert('데이터를 찾을 수 없습니다.');
-                return;
-            }
-
-            $('#modifyinboundDate').val(rowData.inboundDate);
-
-            // 행 데이터의 담당자 ID가 담긴 필드는 dummy 데이터에서는 "warehouseCode"로 되어 있으므로,
-            // 만약 이름이 아닌 고유 id를 기준으로 한다면, 그 값(예: rowData.warehouseCode)을 넘겨야 합니다.
-            populateinboundManagerDropdown(rowData.warehouseCode);
-
-            $('#inboundEditModal').modal('show');
+            // 모달 열기
+            const modal = new bootstrap.Modal(document.getElementById('inboundEditModal'));
+            modal.show();
         });
+
+
+
+
+
 
 
         //삭제
@@ -629,28 +629,6 @@
 
 
 
-/*
-        // 삭제 버튼 이벤트
-        $('#datatable tbody').on('click', '.btn-delete', function(e) {
-            e.preventDefault();
-
-            var table = $('#datatable').DataTable();
-            var $row = $(this).closest('tr');
-            var rowData = table.row($row).data();
-
-            if (!rowData) {
-                alert('데이터를 찾을 수 없습니다.');
-                return;
-            }
-
-            // 삭제 모달의 리스트 영역을 비우고, 해당 행의 가맹점 이름을 추가
-            $('#deleteinboundList').empty().append(
-                '<li class="list-group-item">' + rowData.inboundDate + '</li>'
-            );
-
-            // 삭제 모달을 열기
-            $('#inboundDeleteModal').modal('show');
-        });*/
 
     });
 
