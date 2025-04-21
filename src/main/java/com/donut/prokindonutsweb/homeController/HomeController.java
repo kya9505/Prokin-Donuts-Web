@@ -15,9 +15,6 @@ public class HomeController {
     @GetMapping("/home/login")
     public void login(){}
 
-    @GetMapping("/home/signup")
-    public void signup(){}
-
     @GetMapping("/home/findId")
     public void findId(){}
 
