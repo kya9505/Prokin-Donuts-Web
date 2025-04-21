@@ -297,7 +297,7 @@
                 return;
             }
 
-
+            //signup 클릭 시 confirm
             $('#memberRequestForm').on('click', function (e) {
 
                 const result = confirm('입력하신 정보로 회원가입 요청을 하시겠습니까? ');
@@ -305,7 +305,6 @@
                 if (result) {
                     console.log('회원가입 요청');
                 } else {
-// 취소 눌렀을 때 실행
                     console.log('회원가입 요청 취소');
                 }
             });
