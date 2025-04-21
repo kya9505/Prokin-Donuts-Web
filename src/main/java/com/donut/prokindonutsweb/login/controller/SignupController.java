@@ -18,16 +18,16 @@ import javax.validation.Valid;
 @Controller
 @Log4j2
 @RequiredArgsConstructor
+@RequestMapping("/home")
 public class SignupController {
     private final SignupService signupService;
     private final MemberService memberService;
 
-    @GetMapping("/home/signup")
-    public String signup(Model model){
-        return "redirect:home/login";
+    @GetMapping("/signup")
+    public  void signup(Model model){
     }
 
-    @PostMapping("/home/signup")
+    @PostMapping("/signup")
     public String signup(@Valid @ModelAttribute("memberRequestDTO")MemberRequestDTO memberRequestDTO,
                          BindingResult bindingResult,
                          RedirectAttributes redirectAttributes){
@@ -35,12 +35,12 @@ public class SignupController {
         if (bindingResult.hasErrors()) {
             String errorMessage = bindingResult.getAllErrors().get(0).getDefaultMessage();
             redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
-            redirectAttributes.addFlashAttribute("memberAccountDTO", memberRequestDTO);
-            return "redirect:list";
+            redirectAttributes.addFlashAttribute("memberRequestDTO", memberRequestDTO);
+            return "redirect:signup";
         }
         signupService.saveMemberRequset(memberRequestDTO);
 
-        return "redirect:home/login";
+        return "redirect:login";
     }
 
     @GetMapping(value ="/check",  produces = "text/plain")

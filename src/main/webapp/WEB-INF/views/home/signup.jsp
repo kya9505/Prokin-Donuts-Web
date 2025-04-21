@@ -220,79 +220,99 @@
 <script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
 <script>
 
-    // 중복 확인 버튼 (SSR과 연계된 fetch 방식)
-    $("#idCheck").on("click", function () {
-        const id = $("#id").val().trim();
-        if (!id) {
-            alert("아이디를 입력하세요");
-            return;
-        }
 
-        const contextPath = "${pageContext.request.contextPath}";
-        fetch(contextPath + "/home/signup/check?id=" + encodeURIComponent(id))
-            .then(function (res) { return res.text(); })  //
-            .then(function (text) {
-                const isDup = (text === 'true');  // 문자열 비교
-                if (isDup) {
-                    alert("이미 존재하는 아이디입니다.");
+    let isIdChecked = false;
+
+    $(document).ready(function () {
+
+        // ID 중복 체크
+        $("#idCheck").on("click", function () {
+            const id = $("#id").val().trim();
+            if (!id) {
+                alert("아이디를 입력하세요");
+                return;
+            }
+
+            const contextPath = "${pageContext.request.contextPath}";
+            fetch(contextPath + "/home/check?id=" + encodeURIComponent(id))
+                .then(res => res.text())
+                .then(text => {
+                    const isDup = (text === 'true');
+                    if (isDup) {
+                        alert("이미 존재하는 아이디입니다.");
+                        isIdChecked = false;
+                    } else {
+                        alert("사용 가능한 아이디입니다.");
+                        isIdChecked = true;
+                    }
+                })
+                .catch(() => {
+                    alert("중복 확인 중 오류가 발생했습니다.");
                     isIdChecked = false;
-                } else {
-                    alert("사용 가능한 아이디입니다.");
-                    isIdChecked = true;
-                }
-            })
-            .catch(function () {
-                alert("중복 확인 중 오류가 발생했습니다.");
-            });
+                });
+        });
 
-
-        // 폼 제출 전 유효성 검사
-        $("#memberRequestForm").on("submit", function () {
+        // Sign Up 버튼 → 유효성 검사 후 submit
+        $("#signup-bnt").on("click", function () {
             const id = $("#id").val().trim();
             const password = $("#password").val().trim();
             const passwordCheck = $("#passwordCheck").val().trim();
             const name = $("#name").val().trim();
             const email = $("#email").val().trim();
             const phoneNumber = $("#phoneNumber").val().trim();
-            const address = $("#address").val().trim();
             const regName = /^[A-Za-z가-힣]{1,10}$/;
             const regPhone = /^[0-9]{10,11}$/;
+            const regEmail = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
-            if (!id || !password || !passwordCheck || !name|| !email) {
-                alert("필수 항목을 모두 입력해주세요.");
-                return false;
-            }
 
-            if (!regName.test(name)) {
-                alert("이름은 한글/영어 조합이며 최대 10글자입니다.");
-                return false;
-            }
-
-            if (!regPhone.test(phoneNumber)) {
-                alert("전화번호는 하이픈없이 10~11자리의 숫자입니다.");
-                return false;
-            }
-
-            if (password !== (passwordCheck)) {
-                alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
-                return false;
-            }
 
             if (!isIdChecked) {
                 alert("아이디 중복확인을 해주세요.");
-                return false;
+                return;
             }
-        });
-        $("#signup").on("click", function () {
-            $("#memberRequestForm").submit(); // 직접 제출
-        });
+
+            if (password !== passwordCheck) {
+                alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+                return;
+            }
+            if (!regName.test(name)) {
+                alert("이름은 한글/영어 조합이며 최대 10글자입니다.");
+                return;
+
+            }
+
+            if (!regEmail.test(email)) {
+                alert("올바른 이메일 형식을 입력해주세요.");
+                return;
+
+            }
+
+            if (!id || !password || !passwordCheck || !name || !email) {
+                alert("필수 항목을 모두 입력해주세요.");
+                return;
+            }
+
+            if (phoneNumber && !regPhone.test(phoneNumber)) {
+                alert("전화번호는 하이픈 없이 10~11자리 숫자입니다.");
+                return;
+            }
 
 
+            $('#memberRequestForm').on('click', function (e) {
+
+                const result = confirm('입력하신 정보로 회원가입 요청을 하시겠습니까? ');
+
+                if (result) {
+                    console.log('회원가입 요청');
+                } else {
+// 취소 눌렀을 때 실행
+                    console.log('회원가입 요청 취소');
+                }
+            });
+            // 통과 시 제출
+            $("#memberRequestForm").submit();
+        });
     });
-
-
-
-
 
 </script>
 </body>
