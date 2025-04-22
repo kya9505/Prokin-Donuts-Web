@@ -45,13 +45,13 @@ public class MemberRequestServiceImpl implements MemberRequestService {
     @Override
     @Transactional
     public void approvalMember(List<String> requestCodeList) {
-        //승인 리스트에서 개별 요청 코드 조회
+        // 1. 승인 리스트에서 개별 요청 코드 조회
         requestCodeList.stream().forEach(requestCode -> {
-            //요청 코드에 해당하는 객체 조회
+            // 2. 요청 코드에 해당하는 객체 조회
             MemberRequestVO memberRequestVO = requestMapper.selectByMemberRequest(requestCode);
-            //요청 코드에 해당하는 객체의 요청 상태를 "승인"으로 변경
+            // 3. 요청 코드에 해당하는 객체의 요청 상태를 "승인"으로 변경
             requestMapper.approvalMember(memberRequestVO.getRequest());
-            //조회한 요청객체를 회원객체로 mapping
+            //4. 조회한 요청객체를 회원객체로 mapping
             MemberAccountVO memberAccountVO = MemberAccountVO.builder()
                     .memberCode(memberService.memberCode("FM"))
                     .authorityCode("FM")
@@ -61,10 +61,21 @@ public class MemberRequestServiceImpl implements MemberRequestService {
                     .email(memberRequestVO.getEmail())
                     .id(memberRequestVO.getId())
                     .password(memberRequestVO.getPassword()).build();
-           //회원 테이블에 해당 객체 삽입
+           //5. 회원 테이블에 해당 객체 삽입
             memberMapper.insertMember(memberAccountVO);
-            //요청 테이블에서 해당 객체 삭제
+            //6. 요청 테이블에서 해당 객체 삭제
             requestMapper.deleteRequestMember(requestCode);
         });
+    }
+    @Override
+    public boolean requestIdCheck(String id){
+        int count = requestMapper.requestIdCheck(id);
+        return count > 0;
+    }
+
+    @Override
+    public boolean requestEmailCheck(String email){
+        int count = requestMapper.requestEmailCheck(email);
+        return count > 0;
     }
 }

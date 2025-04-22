@@ -109,10 +109,7 @@ class MemberControllerTest {
     @Test
     @DisplayName("qh 회원등록 시 id 중복확인 테스트")
     public void IdCheck(){
-        Model model = new ExtendedModelMap();
-
-        RedirectAttributes redirectAttributes = new org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap();
-//
-//        qhMemberController.checkId(redirectAttributes,"100");
+        String idCheck = qhMemberController.checkId("100");
+        log.info(idCheck);
     }
 }
