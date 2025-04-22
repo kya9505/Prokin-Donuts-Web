@@ -123,6 +123,10 @@ dependencies {
     // json 객체 전달을 위한 설정
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
 
+    // assertThat 을 사용하기 위한 설정
+    testImplementation 'org.assertj:assertj-core:3.24.2'
+
+
 }
 
 test {

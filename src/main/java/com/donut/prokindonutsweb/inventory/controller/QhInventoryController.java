@@ -43,7 +43,6 @@ public class QhInventoryController {
   @GetMapping(value = "/check", produces = "application/json; charset=UTF-8")
   @ResponseBody
   public List<String> getSubCategoryList(@RequestParam("categoryMid") String categoryMid) {
-    System.out.println(categoryMid);
     
     if (categoryMid == null || categoryMid.trim().isEmpty() || "중분류 선택".equals(categoryMid)) {
       System.out.println("test : " + categoryMid);
