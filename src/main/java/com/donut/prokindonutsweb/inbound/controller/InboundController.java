@@ -19,30 +19,40 @@ import java.util.List;
 public class InboundController {
 
     private final InboundService inboundService;
+
+    /**
+     * 입고 할 수 있는 제품 정보 리스트를 반환한다.
+     * @param '제품리스트'
+     */
     @GetMapping("/request")
-    public void productList(Model model) {
-        List<ProductDTO> list = inboundService.findAllProductList().orElseThrow();
-        model.addAttribute("product", list);
-        System.out.println(list.toString());
-        log.info(list.toString());
+    public void getProductList(Model model) {
+        List<ProductDTO> productList = inboundService.findAllProductList().orElseThrow();
+        model.addAttribute("product", productList);
     }
 
+    /**
+     * 입고 요청 정보를 저장한다.
+     * 입고 정보 + 입고 상세 정보
+     * @param '입고 날짜'
+     * @param '입고 상세 리스트'
+     * @return '입고요청 페이지'
+     */
     @PostMapping("/request")
-    public String request(@RequestParam String inboundDate,
-                          @ModelAttribute InboundForm inboundForm) {
-        List<InboundDetailDTO> list = inboundForm.getProductList();
+    public String addInbound(@RequestParam String inboundDate,
+                             @ModelAttribute InboundForm inboundForm) {
+        List<InboundDetailDTO> inboundDetailList = inboundForm.getProductList();
 
         // 입고요청 저장
         String inboundCode = inboundService.findNextInboundCode();
         InboundDTO dto = InboundDTO.builder()
                 .inboundCode(inboundCode)
                 .inboundDate(LocalDate.parse((inboundDate)))
-                .inboundStatus("입고요청")
+                .inboundStatus(InboundStatus.REQUEST.getStatus())
                 .warehouseCode("GG1")
                 .build();
         inboundService.saveInbound(dto);
         // 입고상세 저장 (service 단에서 VO 만들어서 반환)
-        inboundService.saveInboundDetail(list);
+        inboundService.saveInboundDetail(inboundDetailList);
 
 
         /*System.out.println(inboundDate);
