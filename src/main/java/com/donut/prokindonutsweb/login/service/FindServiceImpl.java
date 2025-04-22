@@ -45,7 +45,7 @@ public class FindServiceImpl implements FindService {
     public void sendEmail(String email,VerificationCodeDTO code) {
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setTo(email);
-        mail.setSubject("ProkinDouts 아이디/비밀번호 찾기 인증번호 입니다.");
+        mail.setSubject("ProkinDonuts 아이디/비밀번호 찾기 인증번호 입니다.");
         mail.setText("인증번호 : " + code.getCode() + "\n 해당 인증번호를 아이디/비밀번호찾기 화면에 입력해주세요.");
         mail.setFrom("prokindonuts@gmail.com");
         mailSender.send(mail);
