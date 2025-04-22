@@ -27,7 +27,7 @@ public class FindServiceImpl implements FindService {
     /*이메일로 객체 찾기
     */
     @Override
-    public Optional<MemberAccountDTO> findId(String email) {
+    public Optional<MemberAccountDTO> findEmail(String email) {
         MemberAccountVO memberAccountVO = findIdMapper.searchEmail(email);
         MemberAccountDTO memberAccountDTO = modelMapper.map(memberAccountVO,MemberAccountDTO.class);
         return Optional.ofNullable(memberAccountDTO);
@@ -36,8 +36,10 @@ public class FindServiceImpl implements FindService {
 
     //아이디로 객체 찾기
     @Override
-    public Optional<MemberAccountDTO> findPassword(String id){
-        return null;
+    public Optional<MemberAccountDTO> findId(String id){
+        MemberAccountVO memberAccountVO = findIdMapper.searchId(id);
+        MemberAccountDTO memberAccountDTO = modelMapper.map(memberAccountVO,MemberAccountDTO.class);
+        return Optional.ofNullable(memberAccountDTO);
     }
 
     //이메일발송
