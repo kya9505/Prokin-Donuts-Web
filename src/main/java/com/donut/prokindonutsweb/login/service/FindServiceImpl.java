@@ -7,12 +7,19 @@ import com.donut.prokindonutsweb.member.vo.MemberAccountVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ResourceUtils;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -44,15 +51,53 @@ public class FindServiceImpl implements FindService {
 
     //이메일발송
     @Override
-    public void sendEmail(String email,VerificationCodeDTO code) {
-        SimpleMailMessage mail = new SimpleMailMessage();
-        mail.setTo(email);
-        mail.setSubject("ProkinDonuts 아이디/비밀번호 찾기 인증번호 입니다.");
-        mail.setText("인증번호 : " + code.getCode() + "\n 해당 인증번호를 아이디/비밀번호찾기 화면에 입력해주세요.");
-        mail.setFrom("prokindonuts@gmail.com");
-        mailSender.send(mail);
+    public void sendEmail(String email, VerificationCodeDTO code) throws MessagingException, FileNotFoundException {
+        MimeMessage message = mailSender.createMimeMessage();
+
+        // multipart=true → 이미지 첨부 허용됨
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        helper.setTo(email);
+        helper.setSubject("ProkinDonuts 아이디/비밀번호 찾기 인증번호입니다.");
+        helper.setFrom("prokindonuts@gmail.com");
+        helper.setText(buildHtml(code.getCode()), true);
+
+        // 이미지 인라인 첨부
+        File file = ResourceUtils.getFile("classpath:images/DONUT2.png");
+        FileSystemResource res = new FileSystemResource(file);
+        helper.addInline("donutLogo", res); // cid:donutLogo 와 일치해야 함
+
+        mailSender.send(message);
+
         log.info("전송 완료 (받는사람: {})", email);
     }
+
+    //메일발송 html
+    private String buildHtml(String authCode) {
+        return """
+        <!DOCTYPE html>
+        <html lang="ko">
+        <head>
+            <meta charset="UTF-8">
+            <title>인증번호 안내</title>
+        </head>
+        <body style="font-family:'Segoe UI', sans-serif; background-color:#f9f9f9; padding:40px;">
+            <div style="background-color:#fff; border-radius:10px; padding:30px; max-width:600px; margin:auto; box-shadow:0 2px 10px rgba(0,0,0,0.1); text-align:center;">
+                <img src="cid:donutLogo" alt="Prokin Donuts" style="width:300px; margin-bottom:10px;" />
+                <p>안녕하세요, Prokin Donuts입니다.<br><br>요청하신 인증번호는 아래와 같습니다<br><br></p>
+                <p style="font-size:28px; color:#ff5722; font-weight:bold;">
+        """ + authCode + """
+                </p>
+                <p><br>인증번호는 10분간 유효합니다.<br><br>시간이 지나면 다시 요청해 주세요.</p>
+                <div style="font-size:12px; color:#999; margin-top:30px;">본 메일은 발신전용입니다. 고객센터를 이용해 주세요.</div>
+            </div>
+        </body>
+        </html>
+        """;
+    }
+
+
+
 
     //6자리의 랜덤한 인증번호 생성하여 적용
     @Override
@@ -67,7 +112,7 @@ public class FindServiceImpl implements FindService {
     }
 
     //코드와 이메일을 세션에 저장
-    public void saveCodeToSession(MemberAccountDTO member,String email ,HttpSession session) {
+    public void saveCodeToSession(MemberAccountDTO member,String email ,HttpSession session) throws MessagingException, FileNotFoundException {
         VerificationCodeDTO code = randomCode();
         sendEmail(email,code);
         session.setAttribute("authCode", code);

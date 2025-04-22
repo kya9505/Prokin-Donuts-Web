@@ -15,6 +15,8 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -46,7 +48,7 @@ public class FindIdServiceTest {
 
     @Test
     @DisplayName("이메일 발송 테스트")
-    public void sendEmail() {
+    public void sendEmail() throws MessagingException, IOException {
         //30초 후 인증번호 만료
         VerificationCodeDTO code = VerificationCodeDTO.builder().code("12345").build();
         findService.sendEmail("dbsdk4211@naver.com", code);
@@ -68,7 +70,7 @@ public class FindIdServiceTest {
 
     @Test
     @DisplayName("생성된 코드와 발송 이메일, 회원객체 세션저장 테스트")
-    public void testSaveCodeToSession() {
+    public void testSaveCodeToSession() throws MessagingException, IOException {
 
         MemberAccountDTO member = MemberAccountDTO.builder()
                 .id("test123")
