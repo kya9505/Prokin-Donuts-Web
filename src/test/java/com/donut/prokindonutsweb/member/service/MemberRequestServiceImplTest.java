@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.util.AssertionErrors.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertNotNull;
 
 @Log4j2
@@ -39,5 +41,21 @@ class MemberRequestServiceImplTest {
     void approvalMember() {
         List<String> approvalList = new ArrayList<>(Arrays.asList("RQ06","RQ07","RQ08"));
         requestService.approvalMember(approvalList);
+    }
+
+    @Test
+    @DisplayName("Service 회원가입 요청테이블 아이디 중복 테스트")
+    public void requestIdCheck(){
+        boolean idCheck = requestService.requestIdCheck("100");
+        assertTrue(idCheck);
+        log.info(idCheck);
+    }
+
+    @Test
+    @DisplayName("Service 회원가입 요청테이블 이메일  중복 테스트")
+    public void requestEmailCheck(){
+        boolean emailCheck = requestService.requestEmailCheck("test@test.test");
+        assertTrue(emailCheck);
+        log.info(emailCheck);
     }
 }

@@ -28,4 +28,11 @@
         WHERE memberCode = #{memberCode}
     </select>
 
+    <!-- 3) warehouseCode 창고의 창고명을 조회 -->
+    <select id="selectWarehouseNameByWarehouseCode" resultType="String" parameterType="String">
+        SELECT warehouseName
+        FROM Warehouse
+        WHERE warehouseCode = #{warehouseCode}
+    </select>
+
 </mapper>

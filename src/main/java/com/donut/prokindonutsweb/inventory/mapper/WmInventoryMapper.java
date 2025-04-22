@@ -7,4 +7,5 @@ import java.util.List;
 public interface WmInventoryMapper {
   List<InventorySelectDTO> selectInventoryList(String warehouseCode);
   String selectWarehouseCodeByMemberCode(String memberCode);
+  String selectWarehouseNameByWarehouseCode(String warehouseCode);
 }

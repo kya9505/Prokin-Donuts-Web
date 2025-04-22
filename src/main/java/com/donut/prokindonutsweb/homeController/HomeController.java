@@ -14,9 +14,6 @@ public class HomeController {
 
     @GetMapping("/home/login")
     public void login(){}
-  
-    @GetMapping("/home/findId")
-    public void findId(){}
 
     @GetMapping("/home/findPassword")
     public void findPassword(){}
@@ -27,9 +24,6 @@ public class HomeController {
     @GetMapping("/wm/outbound")
     public void Woutbound(){}
   
-    @GetMapping("/wm/warehouse")
-    public void Wwarehouse(){}
-
    /* @GetMapping("/wm/inbound/request")
     public void Wrequest(){}*/
     @GetMapping("/wm/Dashboard")

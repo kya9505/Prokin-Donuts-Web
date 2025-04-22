@@ -348,7 +348,7 @@
         });
 
         // 5. 필터링 로직 정의
-        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+        $.fn.dataTable.ext.search.push(function(settings, data) {
             const selectedWarehouse = $('#warehouseCategory_clone').val();
             const selectedMid = $('#midCategory_clone').val();
             const selectedSub = $('#subCategory_clone').val();

@@ -35,6 +35,15 @@
         select * from memberrequest where requestCode = #{requestCode}
     </select>
 
+
+    <select id="requestEmailCheck" resultType="int">
+        select count(*) from memberrequest where email = #{email}
+    </select>
+
+    <select id="requestIdCheck" resultType="int">
+        select count(*) from memberrequest where id = #{id}
+    </select>
+
     <insert id="insertRequestMember">
         insert into memberrequest (requestCode, name, phoneNumber, email, id, password, address, requestDate) VALUES
     (#{requestCode},#{name},#{phoneNumber},#{email},#{id},#{password},#{password},now())
