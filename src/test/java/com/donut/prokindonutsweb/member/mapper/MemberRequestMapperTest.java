@@ -58,4 +58,11 @@ class MemberRequestMapperTest {
         assertNotNull(memberRequestVO);
         log.info(memberRequestVO);
     }
+    @Test
+    @DisplayName("회원요청가입테이블 Email 중복체크 테스트")
+    public void requestEmailCheck(){
+        int emailCheck = mapper.requestEmailCheck("sangwoo_p@gmail.com");
+        assertEquals(emailCheck,1);
+        log.info(emailCheck);
+    }
 }

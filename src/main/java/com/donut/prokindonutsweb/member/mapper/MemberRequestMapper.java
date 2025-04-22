@@ -10,4 +10,5 @@ public interface MemberRequestMapper {
     void deleteRequestMember(String requestCode);
     String requestCode();
     MemberRequestVO selectByMemberRequest(String requestCode);
+    int requestEmailCheck(String email);
 }

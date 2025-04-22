@@ -35,4 +35,9 @@
         select * from memberrequest where requestCode = #{requestCode}
     </select>
 
+
+    <select id="requestEmailCheck" resultType="int">
+        select count(*) from memberrequest where email = #{email}
+    </select>
+
 </mapper>

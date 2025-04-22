@@ -44,4 +44,7 @@
         SELECT COUNT(*) FROM memberaccount WHERE id = #{id}
     </select>
 
+    <select id="memberEmailCheck" resultType="int">
+        select count(*) from memberaccount where email = #{email}
+    </select>
 </mapper>
