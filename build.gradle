@@ -26,6 +26,8 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    testImplementation 'javax.servlet:javax.servlet-api:4.0.1'
+
 
     /**
      * Spring Framework 의 핵심 기능을 프로젝트에 포함시킨다.
@@ -123,9 +125,12 @@ dependencies {
     // json 객체 전달을 위한 설정
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
 
+    // 메일 기능을 사용하기 위한 필수 의존성
+    implementation 'org.springframework:spring-context-support:5.3.30' // JavaMailSenderImpl 포함
+    implementation 'javax.mail:mail:1.4.7' // SMTP 통신 등 메일 핵심 기능
+
     // assertThat 을 사용하기 위한 설정
     testImplementation 'org.assertj:assertj-core:3.24.2'
-
 
 }
 

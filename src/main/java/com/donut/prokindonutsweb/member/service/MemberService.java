@@ -12,4 +12,6 @@ public interface MemberService {
     void deleteMember(List<String> memberList);
     String memberCode(String authorityCode);
     boolean memberIdCheck(String id);
+
+    boolean memberEmailCheck(String email);
 }
