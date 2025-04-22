@@ -54,7 +54,7 @@ public class QhMemberController {
     @GetMapping(value ="/emailCheck",  produces = "text/plain")
     @ResponseBody
     public String checkEmail(@RequestParam("email") String email){
-        return memberService.memberIdCheck(email)? "true" : "false";
+        return memberService.memberEmailCheck(email)? "true" : "false";
     }
 
 
