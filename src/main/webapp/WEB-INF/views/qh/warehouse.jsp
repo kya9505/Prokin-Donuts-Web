@@ -643,6 +643,11 @@
             },
             initComplete: function(settings, json) {
                 fixLengthDropdownStyle();
+                const api = this.api();
+
+                setTimeout(() => {
+                    api.draw(false);
+                }, 0);
             },
             drawCallback: function(settings) {
             }

@@ -27,9 +27,6 @@ public class HomeController {
     @GetMapping("/wm/outbound")
     public void Woutbound(){}
   
-    @GetMapping("/wm/warehouse")
-    public void Wwarehouse(){}
-
    /* @GetMapping("/wm/inbound/request")
     public void Wrequest(){}*/
     @GetMapping("/wm/Dashboard")
