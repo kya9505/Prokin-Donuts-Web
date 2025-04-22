@@ -94,12 +94,12 @@
                             <h3 class="mb-15">Find Password</h3>
                             <p class="text-sm mb-25">
                             </p>
-                            <form action="#">
+                            <form id="findPasswordForm" action="${pageContext.request.contextPath}/home/findPassword" method="post">
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="input-style-1">
                                             <label>ID</label>
-                                            <input type="id" placeholder="ID" />
+                                            <input type="id" placeholder="ID" id="id" name="id" />
                                         </div>
                                     </div>
                                     <div class="col-12">
@@ -107,14 +107,14 @@
                                             <li style="flex: 1;">
                                                 <div class="input-style-1">
                                                     <label>Email</label>
-                                                    <input type="email" placeholder="email" />
+                                                    <input type="email" placeholder="email" id="email" name="email"/>
                                                 </div>
                                             </li>
                                             <li style="margin-left: 12px;">
                                                 <div class="col-4">
-                                                    <a href="#0" class="main-btn primary-btn rounded-full btn-hover">
+                                                    <button id="sendCode" name="sendCode" class="main-btn primary-btn rounded-full btn-hover">
                                                         <span>Send</span><span style="margin-left: 1px;">Code</span>
-                                                    </a>
+                                                    </button>
                                                 </div>
                                             </li>
                                         </ul>
@@ -126,13 +126,13 @@
                                 <div class="col-12">
                                     <div class="input-style-1">
                                         <label>Code : Check your Email</label>
-                                        <input type="text" placeholder="code"/>
+                                        <input type="text" placeholder="code" id="code" name="code"/>
                                     </div>
                                 </div>
                                 <!-- end col -->
                                 <div class="col-12">
                                     <div class="button-group d-flex justify-content-center flex-wrap">
-                                        <button class="main-btn primary-btn btn-hover w-100 text-center">
+                                        <button  type="button" id="findPs-bnt" name="findPassword" class="main-btn primary-btn btn-hover w-100 text-center">
                                             <span>Find</span> <span>Password</span>
                                         </button>
                                     </div>
@@ -152,17 +152,14 @@
                                 <div class="col-12">
 
                                 </div>
-
+                            </form>
                         </div>
                     </div>
                     <!-- end row -->
-                    </form>
 
                 </div>
-            </div>
-        </div>
         <!-- end col -->
-        </div>
+             </div>
         <!-- end row -->
         </div>
     </section>
@@ -202,6 +199,90 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
+<script>
 
+
+    let sendCheck = false;
+
+    $(document).ready(function () {
+
+        // 메일발송 확인
+        $("#sendCode").on("click", function () {
+            const email = $("#email").val().trim();
+            const id = $("#email").val().trim();
+            const regEmail = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+            if (!id) {
+                alert("아이디를 입력하세요.");
+                return;
+            }
+
+            if (!email) {
+                alert("이메일을 입력하세요.");
+                return;
+            }
+            if (!regEmail.test(email)) {
+                alert("올바른 이메일 형식을 입력해주세요.");
+                return;
+            }
+
+            const contextPath = "${pageContext.request.contextPath}";
+            fetch(contextPath + "/home/sendCode?email=" + encodeURIComponent(email))
+                .then(res => res.text())
+                .then(text => {
+                    const isDup = (text === 'true');
+                    if (isDup) {
+                        alert("메일을 발송했습니다.");
+                        sendCheck = true;
+                    } else {
+                        alert("유효하지 않은 이메일입니다. \n 등록되지 않았거나 메일을 발송할 수 없는 이메일입니다.");
+                        sendCheck = false;
+                    }
+                })
+                .catch(() => {
+                    alert(" 오류가 발생했습니다.");
+                    sendCheck = false;
+                });
+        });
+
+        // 비밀번호찾기 → 유효성 검사 후 아이디 조회
+        $("#findPs-bnt").on("click", async function () {
+            const code = $("#code").val().trim();
+            const id = $("#id").val().trim();
+            const email = $("#email").val().trim();
+            const regCode = /^[0-9]{6}$/;
+
+            if (!sendCheck) {
+                alert("이메일로 인증번호를 발급받으세요.");
+                return;
+            }
+
+            if (!regCode.test(code)) {
+                alert("인증번호는 6자리 숫자 입니다.");
+                return;
+
+            }
+
+            const contextPath = "${pageContext.request.contextPath}";
+            try {
+                const res = await fetch(contextPath + "/home/resultPassword?email=" + encodeURIComponent(email) + "&inputCode=" + encodeURIComponent(code) + "&id=" + encodeURIComponent(id));
+                const result = await res.text();
+                const password = result.trim();
+
+                if (result === "IdNotFound") {
+                    alert("아이디가 일치하지 않습니다.");
+                    sendCheck = false;
+                } else if (password && password !== "false") {
+                    alert("찾으시는 비밀번호 : " + password);
+                } else {
+                    alert("유효한 인증번호가 아닙니다. 다시 입력해주세요. \n (발급받은 인증번호는 10분동안만 유효합니다.)");
+                }
+            } catch (error) {
+                alert("서버 요청 중 오류가 발생했습니다.");
+            }
+        });
+    });
+
+</script>
 </body>
 </html>
