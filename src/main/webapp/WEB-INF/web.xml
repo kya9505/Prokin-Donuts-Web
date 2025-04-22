@@ -51,7 +51,7 @@
             <param-value>true</param-value>
         </init-param>
     </filter>
-    <!--    -->
+
     <!--    위에 설정한 encoding 이름의 필터를 appTodo 서블릿에 적용한다. -->
     <!--    즉, 사용자가 appTodo 라는 DispatcherServlet 을 거쳐 보내는 -->
     <!--    모든 요청은 UTF-8 인코딩 필터를 먼저 거친다. -->

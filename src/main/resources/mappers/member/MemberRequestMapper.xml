@@ -40,4 +40,8 @@
         select count(*) from memberrequest where email = #{email}
     </select>
 
+    <insert id="insertRequestMember">
+        insert into memberrequest (requestCode, name, phoneNumber, email, id, password, address, requestDate) VALUES
+    (#{requestCode},#{name},#{phoneNumber},#{email},#{id},#{password},#{password},now())
+     </insert>
 </mapper>

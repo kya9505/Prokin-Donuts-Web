@@ -46,7 +46,7 @@
                 <div class="row align-items-center">
                     <div class="col-md-6">
                         <div class="title">
-                            <h2>재고관리</h2>
+                            <h2>창고관리</h2>
                         </div>
                     </div>
                 </div>
@@ -58,8 +58,8 @@
                 <div class="col-lg-12">
                     <!-- Start card -->
                     <div class="card-style mb-30">
-                        <h6 class="mb-10">재고 목록</h6>
-                        <p class="text-sm mb-20">
+                        <h6 class="mb-10">재고 목록 : ${warehouseName} ( ${warehouseCode} )</h6>
+                        <p class="text-sm mb-20"></p>
 
                             <!-- 원하는 필터(중분류, 소분류) 설정 -->
                         <div id="myCustomFilters" style="display: none;">
@@ -70,8 +70,12 @@
                                 <div >
                                     <div class="select-style-1">
                                         <div class="select-position">
+                                            <!-- 중분류 드롭다운 -->
                                             <select id="midCategory">
                                                 <option value="">중분류</option>
+                                                <c:forEach var="mid" items="${categoryMidList}">
+                                                    <option value="${mid}">${mid}</option>
+                                                </c:forEach>
                                             </select>
                                         </div>
                                     </div>
@@ -81,6 +85,7 @@
                                 <div >
                                     <div class="select-style-1">
                                         <div class="select-position">
+                                            <!-- 소분류 드롭다운 (초기엔 비워둠) -->
                                             <select id="subCategory">
                                                 <option value="">소분류</option>
                                             </select>
@@ -102,7 +107,6 @@
 
                         </div>
 
-                        </p>
                         <div class="table-wrapper table-responsive p-0">
 
 
@@ -111,12 +115,12 @@
 
                                 <!-- colgroup를 통해 열 폭을 강제 지정 -->
                                 <colgroup>
-                                    <col style="width: 20%; background-color: null;" />
-                                    <col style="width: 10%; background-color: null;" />
-                                    <col style="width: 10%; background-color: null;" />
-                                    <col style="width: 15%; background-color: null;" />
-                                    <col style="width: 25%; background-color: null;" />
-                                    <col style="width: 10%; background-color: null;" />
+                                    <col style="width: 20%;" />
+                                    <col style="width: 10%;" />
+                                    <col style="width: 10%;" />
+                                    <col style="width: 15%;" />
+                                    <col style="width: 25%;" />
+                                    <col style="width: 10%;" />
                                 </colgroup>
 
                                 <thead>
@@ -131,6 +135,16 @@
                                 </thead>
 
                                 <tbody>
+                                <c:forEach var="item" items="${inventoryList}">
+                                <tr>
+                                    <td>${item.inventoryCode}</td>
+                                    <td>${item.storedType}</td>
+                                    <td>${item.categoryMid}</td>
+                                    <td>${item.categorySub}</td>
+                                    <td>${item.productName}</td>
+                                    <td>${item.quantity}</td>
+                                </tr>
+                                </c:forEach>
                                 </tbody>
 
                             </table>
@@ -181,315 +195,12 @@
 
 <script>
     $(document).ready(function() {
-        // 1. 더미 데이터 정의 (중분류, 소분류)
-        const dummyMidCategories = [
-            { id: "도넛", name: "도넛" },
-            { id: "베이글", name: "베이글" },
-            { id: "커피", name: "커피" },
-            { id: "티", name: "티" },
-            { id: "머그컵", name: "머그컵" },
-            { id: "텀블러", name: "텀블러" }
-        ];
-        const dummySubCategories = [
-            { id: "프로틴 도넛", name: "프로틴 도넛", midCategory: "도넛" },
-            { id: "글루텐 프리 도넛", name: "글루텐 프리 도넛", midCategory: "도넛" },
-            { id: "저당 도넛", name: "저당 도넛", midCategory: "도넛" },
-            { id: "글루텐프리베이글", name: "글루텐프리베이글", midCategory: "베이글" },
-            { id: "디카페인", name: "디카페인", midCategory: "커피" },
-            { id: "제로음료", name: "제로음료", midCategory: "티" },
-            { id: "프로킨머그컵", name: "프로킨머그컵", midCategory: "머그컵" },
-            { id: "프로킨텀블러", name: "프로킨텀블러", midCategory: "텀블러" }
-        ];
-
-        // 2. 원본 필터 영역에 중분류, 소분류 옵션 채우기
-        var $midSelect = $('#myCustomFilters #midCategory');
-        $.each(dummyMidCategories, function(index, item) {
-            $midSelect.append($('<option>', {
-                value: item.id,
-                text: item.name
-            }));
-        });
-
-        var $subSelect = $('#myCustomFilters #subCategory');
-        $.each(dummySubCategories, function(index, item) {
-            $subSelect.append($('<option>', {
-                value: item.id,
-                text: item.name
-            }));
-        });
-
-        // 3. 소분류 -> 중분류 매핑 객체
-        const mapping = {
-            "프로틴 도넛": "도넛",
-            "글루텐 프리 도넛": "도넛",
-            "저당 도넛": "도넛",
-            "글루텐프리베이글": "베이글",
-            "디카페인": "커피",
-            "제로음료": "티",
-            "프로킨머그컵": "머그컵",
-            "프로킨텀블러": "텀블러"
-        };
-
-        // 4. 이벤트 바인딩: 중분류 선택 시 소분류 리셋, 소분류 선택 시 자동 중분류 선택
-        $('#myCustomFilters #midCategory').on('change', function() {
-            $('#myCustomFilters #subCategory').val('');
-        });
-        $('#myCustomFilters #subCategory').on('change', function() {
-            var selectedSub = $(this).val();
-            if (selectedSub) {
-                var correspondingMid = mapping[selectedSub];
-                if (correspondingMid) {
-                    $('#myCustomFilters #midCategory').val(correspondingMid);
-                }
-            }
-        });
-
-        // 5. DataTable 초기화 (dom 옵션에 사용자 정의 영역 포함)
+        // 1. DataTables 초기화
         var table = $('#datatable').DataTable({
             autoWidth: false,
             columnDefs: [
                 { width: '95px', targets: -1 },  // Actions 열 너비
                 { targets: [0, 1, 2, 3, 4, 5], className: 'text-center' } // JS 속성으로 가운데 정렬
-            ],
-            ajax: function(data, callback, settings) {
-                const dummyData = [
-                    {
-                        "inventoryCode": "GG1-BGL1-20250612",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "글루텐프리베이글",
-                        "quantity": 589,
-                        "storedType": "냉동",
-                        "categoryMid": "베이글",
-                        "categorySub": "글루텐프리베이글"
-                    },
-                    {
-                        "inventoryCode": "GG1-CDC1-20250523",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "디카페인커피",
-                        "quantity": 902,
-                        "storedType": "상온",
-                        "categoryMid": "커피",
-                        "categorySub": "디카페인"
-                    },
-                    {
-                        "inventoryCode": "GG1-DGL1-20250626",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "글루텐프리초코도넛",
-                        "quantity": 169,
-                        "storedType": "냉장",
-                        "categoryMid": "도넛",
-                        "categorySub": "글루텐 프리 도넛"
-                    },
-                    {
-                        "inventoryCode": "GG1-DGL2-20250504",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "글루텐프리딸기도넛",
-                        "quantity": 284,
-                        "storedType": "냉장",
-                        "categoryMid": "도넛",
-                        "categorySub": "글루텐 프리 도넛"
-                    },
-                    {
-                        "inventoryCode": "GG1-DGL2-20250605",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "글루텐프리딸기도넛",
-                        "quantity": 299,
-                        "storedType": "냉장",
-                        "categoryMid": "도넛",
-                        "categorySub": "글루텐 프리 도넛"
-                    },
-                    {
-                        "inventoryCode": "GG1-DGL4-20250617",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "냉동동글루텐프리초코도넛",
-                        "quantity": 134,
-                        "storedType": "냉동",
-                        "categoryMid": "도넛",
-                        "categorySub": "글루텐 프리 도넛"
-                    },
-                    {
-                        "inventoryCode": "GG1-DGL4-20250818",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "냉동동글루텐프리초코도넛",
-                        "quantity": 780,
-                        "storedType": "냉동",
-                        "categoryMid": "도넛",
-                        "categorySub": "글루텐 프리 도넛"
-                    },
-                    {
-                        "inventoryCode": "GG1-DGL5-20250815",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "냉동글루텐프리딸기도넛",
-                        "quantity": 116,
-                        "storedType": "냉동",
-                        "categoryMid": "도넛",
-                        "categorySub": "글루텐 프리 도넛"
-                    },
-                    {
-                        "inventoryCode": "GG1-DGL6-20250928",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "냉동글루텐프리글레이즈드도넛",
-                        "quantity": 797,
-                        "storedType": "냉동",
-                        "categoryMid": "도넛",
-                        "categorySub": "글루텐 프리 도넛"
-                    },
-                    {
-                        "inventoryCode": "GG1-DLW1-20250822",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "저당초코도넛",
-                        "quantity": 199,
-                        "storedType": "냉장",
-                        "categoryMid": "도넛",
-                        "categorySub": "저당 도넛"
-                    },
-                    {
-                        "inventoryCode": "GG1-DLW2-20250629",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "저당딸기도넛",
-                        "quantity": 266,
-                        "storedType": "냉장",
-                        "categoryMid": "도넛",
-                        "categorySub": "저당 도넛"
-                    },
-                    {
-                        "inventoryCode": "GG1-DLW2-20250821",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "저당딸기도넛",
-                        "quantity": 528,
-                        "storedType": "냉장",
-                        "categoryMid": "도넛",
-                        "categorySub": "저당 도넛"
-                    },
-                    {
-                        "inventoryCode": "GG1-DLW4-20250721",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "냉동저당초코도넛",
-                        "quantity": 608,
-                        "storedType": "냉동",
-                        "categoryMid": "도넛",
-                        "categorySub": "저당 도넛"
-                    },
-                    {
-                        "inventoryCode": "GG1-DPN1-20250521",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "프로틴초코도넛",
-                        "quantity": 959,
-                        "storedType": "냉장",
-                        "categoryMid": "도넛",
-                        "categorySub": "프로틴 도넛"
-                    },
-                    {
-                        "inventoryCode": "GG1-DPN2-20250905",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "프로틴딸기도넛",
-                        "quantity": 780,
-                        "storedType": "냉장",
-                        "categoryMid": "도넛",
-                        "categorySub": "프로틴 도넛"
-                    },
-                    {
-                        "inventoryCode": "GG1-DPN2-20250907",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "프로틴딸기도넛",
-                        "quantity": 133,
-                        "storedType": "냉장",
-                        "categoryMid": "도넛",
-                        "categorySub": "프로틴 도넛"
-                    },
-                    {
-                        "inventoryCode": "GG1-DPN3-20250624",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "프로틴글레이즈드도넛",
-                        "quantity": 406,
-                        "storedType": "냉장",
-                        "categoryMid": "도넛",
-                        "categorySub": "프로틴 도넛"
-                    },
-                    {
-                        "inventoryCode": "GG1-DPN6-20250528",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "냉동프로틴글레이즈드도넛",
-                        "quantity": 305,
-                        "storedType": "냉동",
-                        "categoryMid": "도넛",
-                        "categorySub": "프로틴 도넛"
-                    },
-                    {
-                        "inventoryCode": "GG1-DPN6-20250912",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "냉동프로틴글레이즈드도넛",
-                        "quantity": 977,
-                        "storedType": "냉동",
-                        "categoryMid": "도넛",
-                        "categorySub": "프로틴 도넛"
-                    },
-                    {
-                        "inventoryCode": "GG1-DPN6-20250919",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "냉동프로틴글레이즈드도넛",
-                        "quantity": 429,
-                        "storedType": "냉동",
-                        "categoryMid": "도넛",
-                        "categorySub": "프로틴 도넛"
-                    },
-                    {
-                        "inventoryCode": "GG1-MPK1-20250505",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "프로킨머그컵",
-                        "quantity": 623,
-                        "storedType": "상온",
-                        "categoryMid": "머그컵",
-                        "categorySub": "프로킨머그컵"
-                    },
-                    {
-                        "inventoryCode": "GG1-MPK1-20250725",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "프로킨머그컵",
-                        "quantity": 717,
-                        "storedType": "상온",
-                        "categoryMid": "머그컵",
-                        "categorySub": "프로킨머그컵"
-                    },
-                    {
-                        "inventoryCode": "GG1-TPK1-20250616",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "프로킨텀블러",
-                        "quantity": 955,
-                        "storedType": "상온",
-                        "categoryMid": "텀블러",
-                        "categorySub": "프로킨텀블러"
-                    },
-                    {
-                        "inventoryCode": "GG1-TPK1-20250617",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "프로킨텀블러",
-                        "quantity": 595,
-                        "storedType": "상온",
-                        "categoryMid": "텀블러",
-                        "categorySub": "프로킨텀블러"
-                    },
-                    {
-                        "inventoryCode": "GG1-TPK1-20250716",
-                        "warehouseName": "남양주DT센터",
-                        "productName": "프로킨텀블러",
-                        "quantity": 820,
-                        "storedType": "상온",
-                        "categoryMid": "텀블러",
-                        "categorySub": "프로킨텀블러"
-                    }
-                ];
-                Promise.resolve().then(() => {
-                    callback({ data: dummyData });
-                });
-            },
-            columns: [
-                { data: 'inventoryCode', title: '재고코드' },
-                { data: 'storedType', title: '보관타입' },
-                { data: 'categoryMid', title: '중분류' },
-                { data: 'categorySub', title: '소분류' },
-                { data: 'productName', title: '제품명' },
-                { data: 'quantity', title: '재고수량' }
             ],
             paging: true,
             pageLength: 10,
@@ -512,6 +223,11 @@
             },
             initComplete: function(settings, json) {
                 fixLengthDropdownStyle();
+                const api = this.api();
+
+                setTimeout(() => {
+                    api.draw(false);
+                }, 0);
             },
             drawCallback: function(settings) {
             }
@@ -574,55 +290,75 @@
             }
         });
 
-        // (2) 중분류 필터가 바뀔 때 소분류를 초기화하고 테이블 다시 draw
-        $('body').on('change', '#midCategory_clone', function() {
-            $('#subCategory_clone').val('');  // 소분류 리셋
-            table.draw();
-        });
+        // 2. 소분류 비활성화 초기화
+        $('#subCategory_clone').prop('disabled', true);
 
-        // (3) 소분류 필터가 바뀔 때, 소분류 -> 중분류 자동 보정
-        $('body').on('change', '#subCategory_clone', function() {
-            const selectedSub = $(this).val();
-            if (selectedSub) {
-                const correspondingMid = mapping[selectedSub];
-                if (correspondingMid) {
-                    $('#midCategory_clone').val(correspondingMid);
-                }
+        // 3. 중분류 변경 시 → 소분류 초기화 + fetch 요청
+        $("#midCategory_clone").on("change", function() {
+            const midVal = $(this).val();
+            const $sub = $("#subCategory_clone");
+
+            // 3-1. 초기화
+            $sub.empty().append('<option value="">소분류 선택</option>');
+
+            if (!midVal) {
+                $sub.prop("disabled", true);
+                return;
             }
+
+            // 3-2. fetch 요청
+            const contextPath = "${pageContext.request.contextPath}";
+            fetch(`${contextPath}/qh/inventory/check?categoryMid=`+encodeURIComponent(midVal))
+                .then(res => res.json())
+                .then(subList => {
+                    subList.forEach(sub => {
+                        $sub.append(new Option(sub, sub));
+                    });
+                    $sub.prop("disabled", false);
+                    if (typeof table !== "undefined") table.draw();
+                })
+                .catch(() => {
+                    console.warn("Failed to fetch subcategories");
+                    $sub.prop("disabled", true);
+                });
+        });
+
+        // 4. 소분류, 창고, 중분류 선택 시 필터링 동작
+        $('#midCategory_clone, #subCategory_clone').on('change', function () {
             table.draw();
         });
 
-        // (4) 필터 초기화 버튼
-        $('body').on('click', '#resetFilterBtn', function () {
-            $('#midCategory_clone').val('');
-            $('#subCategory_clone').val('');
-            table.draw();
-        });
-
-        // 7. 필터 이벤트: 드롭다운 변경 시 테이블 필터링
-        $('#midCategory, #subCategory, #productNameInput').on('change keyup', function() {
-            table.draw();
-        });
-
-        // 7-1. 필터링 함수도 변경된 ID값을 기준으로 수정
-        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+        // 5. 필터링 로직 정의
+        $.fn.dataTable.ext.search.push(function(settings, data) {
             const selectedMid = $('#midCategory_clone').val();
             const selectedSub = $('#subCategory_clone').val();
 
             const categoryMid = data[2];   // "중분류" 칼럼
             const categorySub = data[3];   // "소분류" 칼럼
 
-            // 2) 중분류 필터
+            // 1) 중분류 필터
             if (selectedMid && selectedMid !== categoryMid) {
                 return false;
             }
-            // 3) 소분류 필터
+            // 2) 소분류 필터
             if (selectedSub && selectedSub !== categorySub) {
                 return false;
             }
 
             // 조건 만족 시 표시
             return true;
+        });
+
+        // 6. 필터 초기화 버튼
+        $('body').on('click', '#resetFilterBtn', function () {
+            $('#midCategory_clone').val('');
+            $('#subCategory_clone').val('');
+            table.draw();
+        });
+
+        // 7. 입력창 변화에 반응
+        $('#productNameInput').on('keyup', function() {
+            table.draw();
         });
 
     });

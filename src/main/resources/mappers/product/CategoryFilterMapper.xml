@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.donut.prokindonutsweb.product.mapper.CategoryFilterMapper">
+
+    <!-- 1) 모든 중분류 목록 (중복 없이) -->
+    <select id="selectCategoryMid" resultType="String">
+        SELECT DISTINCT categoryMid
+        FROM Category
+    </select>
+
+    <!-- 2) 특정 중분류에 대한 소분류 목록 (중복 없이) -->
+    <select id="selectSubCategoryByMid" resultType="String" parameterType="String">
+        SELECT DISTINCT categorySub
+        FROM Category
+        WHERE categoryMid = #{categoryMid}
+    </select>
+
+</mapper>

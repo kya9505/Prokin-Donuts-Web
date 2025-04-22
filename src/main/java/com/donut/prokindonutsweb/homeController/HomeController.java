@@ -14,10 +14,7 @@ public class HomeController {
 
     @GetMapping("/home/login")
     public void login(){}
-
-    @GetMapping("/home/signup")
-    public void signup(){}
-
+  
     @GetMapping("/home/findId")
     public void findId(){}
 
@@ -30,9 +27,6 @@ public class HomeController {
     @GetMapping("/wm/outbound")
     public void Woutbound(){}
   
-    @GetMapping("/wm/warehouse")
-    public void Wwarehouse(){}
-
    /* @GetMapping("/wm/inbound/request")
     public void Wrequest(){}*/
     @GetMapping("/wm/Dashboard")
@@ -40,10 +34,7 @@ public class HomeController {
 
     @GetMapping("/qh/Dashboard")
     public void QDashboard(){}
-
-    @GetMapping("/qh/inventory")
-    public void Qinventory(){}
-
+  
     @GetMapping("/qh/outbound")
     public void Qoutbound(){}
 

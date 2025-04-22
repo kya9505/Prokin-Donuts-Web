@@ -33,6 +33,8 @@ public class MemberRequestDTO {
 
     //requestCode 서비스단에서 로직으로 등록처리
     private String requestCode;
+    
+    //DB 삽입 시 default 값
     private String request;
     private String authorityCode;
     private LocalDate requestDate;

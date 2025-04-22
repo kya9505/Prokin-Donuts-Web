@@ -8,6 +8,5 @@ import java.util.Optional;
 public interface MemberRequestService {
 
     Optional<List<MemberRequestDTO>> findRequestMember();
-    String memberRequestCode();
     void approvalMember(List<String> requestCodeList);
 }

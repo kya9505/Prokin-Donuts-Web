@@ -1,5 +1,6 @@
 package com.donut.prokindonutsweb.member.service;
 
+import com.donut.prokindonutsweb.login.service.SignupService;
 import com.donut.prokindonutsweb.member.dto.MemberRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,6 +24,7 @@ import static org.springframework.test.util.AssertionErrors.assertNotNull;
 class MemberRequestServiceImplTest {
     @Autowired
     private MemberRequestService requestService;
+    private SignupService signupService;
 
     @Test
     @DisplayName("Service 회원가입 요청 조회 테스트")
@@ -30,13 +32,6 @@ class MemberRequestServiceImplTest {
         List<MemberRequestDTO> list = requestService.findRequestMember().get();
         assertNotNull("List 정상 조회 ",list);
         list.forEach(log::info);
-    }
-
-    @Test
-    @DisplayName("Service 회원가입 요청 코드 생성 테스트")
-    void memberRequestCode() {
-        String requestCode = requestService.memberRequestCode();
-        log.info(requestCode);
     }
 
     @Test
