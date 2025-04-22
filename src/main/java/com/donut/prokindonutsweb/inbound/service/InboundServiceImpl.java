@@ -3,6 +3,8 @@ package com.donut.prokindonutsweb.inbound.service;
 import com.donut.prokindonutsweb.inbound.dto.*;
 import com.donut.prokindonutsweb.inbound.mapper.InboundMapper;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 @RequiredArgsConstructor
 public class InboundServiceImpl implements InboundService {
+    private final ModelMapper modelMapper;
 
     private final InboundMapper inboundMapper;
 
@@ -35,37 +38,25 @@ public class InboundServiceImpl implements InboundService {
     }
 
     @Override
-    public void saveInbound(InboundDTO inboundDTO) {
-        InboundVO vo = InboundVO.builder()
-                .inboundCode(inboundDTO.getInboundCode())
-                .inboundDate(inboundDTO.getInboundDate())
-                .inboundStatus(inboundDTO.getInboundStatus())
-                .warehouseCode(inboundDTO.getWarehouseCode())
-                .build();
-        inboundMapper.insertInbound(vo);
-    }
+    @Transactional
+    public void addInbound(InboundDTO inboundDTO, List<InboundDetailDTO> inboundDetailList) {
+        InboundVO inboundVO = modelMapper.map(inboundDTO, InboundVO.class);
+        inboundMapper.insertInbound(inboundVO);
 
-    @Override
-    public void saveInboundDetail(List<InboundDetailDTO> list) {
-        String inboundCode = inboundMapper.selectInboundCode();
+        String inboundCode = inboundDTO.getInboundCode();
 
         AtomicInteger i = new AtomicInteger(1);
-
-        List<InboundDetailVO> inboundDetailVOList = list.stream().map(
-                dto -> {
-                    InboundDetailVO vo = InboundDetailVO.builder()
-                            .inboundDetailCode(inboundCode + "-" + i.getAndIncrement())
-                            .quantity(dto.getQuantity())
-                            .inboundCode(inboundCode)
-                            .productCode(dto.getProductCode())
-                            .sectionCode(getSection(dto.getStoredType()))
-                            .build();
-                    return vo;
-                }
+        List<InboundDetailVO> inboundDetailVOList = inboundDetailList.stream().map(
+                dto -> InboundDetailVO.builder()
+                        .inboundDetailCode(inboundCode + "-" + i.getAndIncrement())
+                        .quantity(dto.getQuantity())
+                        .inboundCode(inboundCode)
+                        .productCode(dto.getProductCode())
+                        .sectionCode(getSection(dto.getStoredType()))
+                        .build()
         ).toList();
 
         inboundMapper.insertInboundDetailList(inboundDetailVOList);
-
     }
 
     private String getSection(String storedType) {

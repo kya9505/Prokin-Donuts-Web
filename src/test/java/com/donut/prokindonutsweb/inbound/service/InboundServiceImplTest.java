@@ -46,7 +46,7 @@ class InboundServiceImplTest {
                 .inboundStatus("입고요청")
                 .warehouseCode("GG1")
                 .build();
-        inboundService.saveInbound(dto);
+        inboundService.saveInboundbefore(dto);
     }
 
     @Test

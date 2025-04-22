@@ -9,9 +9,8 @@ import java.util.Optional;
 public interface InboundService {
     Optional<List<ProductDTO>> findAllProductList();
 
-    void saveInbound(InboundDTO inboundDTO);
+    void addInbound(InboundDTO inboundDTO, List<InboundDetailDTO> inboundDetailDTO);
 
-    void saveInboundDetail(List<InboundDetailDTO> inboundDetailDTO);
 
     String findNextInboundCode();
 

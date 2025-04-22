@@ -50,13 +50,8 @@ public class InboundController {
                 .inboundStatus(InboundStatus.REQUEST.getStatus())
                 .warehouseCode("GG1")
                 .build();
-        inboundService.saveInbound(dto);
-        // 입고상세 저장 (service 단에서 VO 만들어서 반환)
-        inboundService.saveInboundDetail(inboundDetailList);
-
-
-        /*System.out.println(inboundDate);
-        System.out.println(list.toString());*/
+        log.info(InboundStatus.REQUEST.getStatus());
+        inboundService.addInbound(dto, inboundDetailList);
 
         return "redirect:/wm/inbound/request";
     }
