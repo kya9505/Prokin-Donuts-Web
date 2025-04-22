@@ -119,14 +119,14 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public boolean checkProductDuplicate(ProductCheckDTO dto) {
     ProductMainVO vo = modelMapper.map(dto, ProductMainVO.class);
-    return productMapper.checkProductDuplicate(vo);
+    return productMapper.checkProductDuplicate(vo) > 0;
   }
   
   // 카테고리 중복확인 (등록시 사용)
   @Override
   public boolean checkCategoryDuplicate(CategoryCheckDTO dto) {
     CategoryMainVO vo = modelMapper.map(dto, CategoryMainVO.class);
-    return productMapper.checkCategoryDuplicate(vo);
+    return productMapper.checkCategoryDuplicate(vo) > 0;
   }
   
   // 제품 상태 확인

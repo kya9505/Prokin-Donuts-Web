@@ -78,6 +78,7 @@ public class WarehouseController {
     log.info("Controller : qhCheckWarehouseDuplicate called");
     WarehouseCheckDTO dto = new WarehouseCheckDTO();
     dto.setWarehouseName(warehouseName);
+    // 수정일 경우 자기 자신을 제외하고 중복검사
     dto.setWarehouseCode(warehouseCode);  // 수정일 경우만 유효값 전달 그 외 null
     return warehouseService.checkWarehouseDuplicate(dto) ? "true" : "false";
   }

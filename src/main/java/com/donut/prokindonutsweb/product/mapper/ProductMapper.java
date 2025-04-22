@@ -20,8 +20,8 @@ public interface ProductMapper {
   void updateProduct(ProductMainVO productMainVO);
   void deleteProduct(ProductMainVO productMainVO);
   
-  boolean checkCategoryDuplicate(CategoryMainVO categoryMainVO);
-  boolean checkProductDuplicate(ProductMainVO productMainVO);
+  int checkCategoryDuplicate(CategoryMainVO categoryMainVO);
+  int checkProductDuplicate(ProductMainVO productMainVO);
   
   String selectCategoryStatus(@Param("categoryCode") String categoryCode);
   String selectProductStatus(@Param("productCode") String productCode);

@@ -77,26 +77,28 @@
         WHERE productCode = #{productCode}
     </delete>
 
-    <!-- 10) 카테고리 중복 확인 -->
+    <!-- 10) 카테고리 중복 확인 (중복 조건: categoryCode + categoryMid + categorySub) -->
     <select id="checkCategoryDuplicate"
             parameterType="com.donut.prokindonutsweb.product.vo.CategoryMainVO"
-            resultType="boolean">
-        SELECT EXISTS(
-            SELECT 1
-            FROM Category
-            WHERE categoryCode = #{categoryCode}
-        )
+            resultType="int">
+        SELECT COUNT(*)
+        FROM Category
+        WHERE categoryCode = #{categoryCode}
+          AND categoryMid = #{categoryMid}
+          AND categorySub = #{categorySub}
     </select>
 
-    <!-- 11) 제품 중복 확인 -->
+    <!-- 11) 제품 중복 확인 (중복 조건: categoryCode + productName) -->
     <select id="checkProductDuplicate"
             parameterType="com.donut.prokindonutsweb.product.vo.ProductMainVO"
-            resultType="boolean">
-        SELECT EXISTS(
-            SELECT 1
-            FROM Product
-            WHERE productCode = #{productCode}
-        )
+            resultType="int">
+        SELECT COUNT(*)
+        FROM Product
+        WHERE categoryCode = #{categoryCode}
+        AND productName = #{productName}
+        <if test="productCode != null and productCode != ''">
+            AND productCode != #{productCode}
+        </if>
     </select>
 
     <!-- 12) 카테고리 상태 조회 -->
