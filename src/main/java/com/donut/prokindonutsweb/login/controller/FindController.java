@@ -31,20 +31,23 @@ public class FindController {
     //요청이메일로 회원 확인 후 메일 발송
     @GetMapping(value ="/sendCode", produces = "text/plain")
     @ResponseBody
-    public String sendCode(@RequestParam("email") String email , HttpSession session){
-        log.info("[sendCode] 요청 email: {}", email);
-        boolean sendCheck = false;
+    public String sendCode(@RequestParam("email") String email, HttpSession session) {
+        Optional<MemberAccountDTO> optionalMember = findService.findEmail(email);
 
-        Optional<MemberAccountDTO> optionalMember = findService.findId(email);
-
-        if (optionalMember.isPresent()) {
-            MemberAccountDTO member = optionalMember.get();
-            findService.saveCodeToSession(member, member.getEmail(), session);
-            sendCheck = true;
+        if (optionalMember.isEmpty()) {
+            return "notFound"; // 이메일 없음
         }
-
-        return String.valueOf(sendCheck);
+        try {
+            MemberAccountDTO member = optionalMember.get();
+            findService.saveCodeToSession(member, email, session);
+            return "success"; // 메일 정상 발송됨
+        } catch (Exception e) {
+            log.error("메일 전송 실패", e);
+            return "fail"; // 메일 발송 자체 실패
+        }
     }
+
+
 
     /*아이디 찾기
     인증번호,메일 확인 후 아이디 반환*/
@@ -87,8 +90,9 @@ public class FindController {
         if (saveCode == null || saveEmail == null || saveMember == null) {
             return String.valueOf(checkCode);
         }
-        if((saveMember.getId()).equals(id)){
-             return "IdNotFound";
+        //아이디 일치 여부 확인
+        if(!(saveMember.getId()).equals(id)){
+             return "IdCheck";
         }
         //인증번호 유효검증/일지여부 확인/이메일 일치여부 확인
         if (!saveCode.isExpired() && saveCode.matches(inputCode) && saveEmail.equals(email)) {

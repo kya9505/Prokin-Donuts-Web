@@ -94,7 +94,7 @@
                             <h3 class="mb-15">Find Password</h3>
                             <p class="text-sm mb-25">
                             </p>
-                            <form id="findPasswordForm" action="${pageContext.request.contextPath}/home/findPassword" method="post">
+                            <form id="findPasswordForm" action="${pageContext.request.contextPath}/home/findPassword" method="get">
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="input-style-1">
@@ -112,7 +112,7 @@
                                             </li>
                                             <li style="margin-left: 12px;">
                                                 <div class="col-4">
-                                                    <button id="sendCode" name="sendCode" class="main-btn primary-btn rounded-full btn-hover">
+                                                    <button type="button" id="sendCode" name="sendCode" class="main-btn primary-btn rounded-full btn-hover">
                                                         <span>Send</span><span style="margin-left: 1px;">Code</span>
                                                     </button>
                                                 </div>
@@ -209,7 +209,7 @@
         // 메일발송 확인
         $("#sendCode").on("click", function () {
             const email = $("#email").val().trim();
-            const id = $("#email").val().trim();
+            const id = $("#id").val().trim();
             const regEmail = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
             if (!id) {
@@ -230,21 +230,25 @@
             fetch(contextPath + "/home/sendCode?email=" + encodeURIComponent(email))
                 .then(res => res.text())
                 .then(text => {
-                    const isDup = (text === 'true');
-                    if (isDup) {
+                    const result = text.trim();
+                    console.log("메일 응답:", result);
+
+                    if (result === "success") {
                         alert("메일을 발송했습니다.");
                         sendCheck = true;
+                    } else if (result === "notFound") {
+                        alert("입력한 이메일로 등록된 회원이 없습니다.");
+                        sendCheck = false;
                     } else {
-                        alert("유효하지 않은 이메일입니다. \n 등록되지 않았거나 메일을 발송할 수 없는 이메일입니다.");
+                        alert("메일 전송 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
                         sendCheck = false;
                     }
                 })
                 .catch(() => {
-                    alert(" 오류가 발생했습니다.");
+                    alert("서버 오류가 발생했습니다.");
                     sendCheck = false;
                 });
         });
-
         // 비밀번호찾기 → 유효성 검사 후 아이디 조회
         $("#findPs-bnt").on("click", async function () {
             const code = $("#code").val().trim();
@@ -269,9 +273,8 @@
                 const result = await res.text();
                 const password = result.trim();
 
-                if (result === "IdNotFound") {
+                if (result === "IdCheck") {
                     alert("아이디가 일치하지 않습니다.");
-                    sendCheck = false;
                 } else if (password && password !== "false") {
                     alert("찾으시는 비밀번호 : " + password);
                 } else {
