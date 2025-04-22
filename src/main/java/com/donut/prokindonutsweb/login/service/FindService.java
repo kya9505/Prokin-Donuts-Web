@@ -7,8 +7,8 @@ import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 public interface FindService {
-    Optional<MemberAccountDTO> findId(String inputEmail);
-    Optional<MemberAccountDTO> findPassword(String inputId);
+    Optional<MemberAccountDTO> findEmail(String inputEmail);
+    Optional<MemberAccountDTO> findId(String inputId);
     void sendEmail(String toEmail,VerificationCodeDTO code);
     VerificationCodeDTO randomCode();
 

@@ -30,14 +30,18 @@ public class FindIdServiceTest {
 
     @Test
     @DisplayName("이메일로 회원찾기")
-    public void findId() {
-        MemberAccountDTO member = findService.findId("fire123@gmail.com").orElseThrow();
+    public void findEmail() {
+        MemberAccountDTO member = findService.findEmail("fire123@gmail.com").orElseThrow();
         assertNotNull(member);
         log.info(member);
     }
 
     @Test
-    public void findPassword() {
+    @DisplayName("아이디로 회원찾기")
+    public void findId() {
+        MemberAccountDTO member = findService.findId("fire123").orElseThrow();
+        assertNotNull(member);
+        log.info(member);
     }
 
     @Test

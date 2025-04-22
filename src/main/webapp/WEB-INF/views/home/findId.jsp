@@ -216,17 +216,22 @@
             fetch(contextPath + "/home/sendCode?email=" + encodeURIComponent(email))
                 .then(res => res.text())
                 .then(text => {
-                    const isDup = (text === 'true');
-                    if (isDup) {
+                    const result = text.trim();
+                    console.log("메일 응답:", result);
+
+                    if (result === "success") {
                         alert("메일을 발송했습니다.");
                         sendCheck = true;
+                    } else if (result === "notFound") {
+                        alert("입력한 이메일로 등록된 회원이 없습니다.");
+                        sendCheck = false;
                     } else {
-                        alert("이메일과 일치하는 회원이 없습니다.");
+                        alert("메일 전송 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
                         sendCheck = false;
                     }
                 })
                 .catch(() => {
-                    alert(" 오류가 발생했습니다.");
+                    alert("서버 오류가 발생했습니다.");
                     sendCheck = false;
                 });
         });
