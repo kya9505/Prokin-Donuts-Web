@@ -45,11 +45,18 @@ public class QhMemberController {
         return "redirect:list";
     }
 
-    @GetMapping(value ="/check",  produces = "text/plain")
+    @GetMapping(value ="/idCheck",  produces = "text/plain")
     @ResponseBody
     public String checkId(@RequestParam("id") String id){
         return memberService.memberIdCheck(id)? "true" : "false";
     }
+
+    @GetMapping(value ="/emailCheck",  produces = "text/plain")
+    @ResponseBody
+    public String checkEmail(@RequestParam("email") String email){
+        return memberService.memberIdCheck(email)? "true" : "false";
+    }
+
 
 
     @PostMapping("/update")

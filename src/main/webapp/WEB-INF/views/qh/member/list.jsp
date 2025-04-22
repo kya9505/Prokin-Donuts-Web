@@ -498,6 +498,8 @@
 
     // 등록 버튼 클릭 시
         let isIdChecked = false;
+        let isEmailChecked = false;
+
         function resetRegisterForm() {
 
             $('#idCheckForm input[name="id"]').val('');
@@ -530,7 +532,7 @@
             }
 
             const contextPath = "${pageContext.request.contextPath}";
-            fetch(contextPath + "/qh/member/check?id=" + encodeURIComponent(id))
+            fetch(contextPath + "/qh/member/idCheck?id=" + encodeURIComponent(id))
                 .then(function (res) { return res.text(); })  //
                 .then(function (text) {
                     const isDup = (text === 'true');  // 문자열 비교
@@ -548,8 +550,8 @@
         });
 
         // 등록 버튼 클릭 시
-        $('#add-bnt').on('click', function (e) {
-            e.preventDefault(); // 기본 submit 막기
+        $('#add-bnt').on('click', async function (e) {
+            e.preventDefault();
 
             const id = $('#addId').val().trim();
             const authority = $('#authority').val().trim();
@@ -583,6 +585,19 @@
                 return;
             }
 
+            const contextPath = "${pageContext.request.contextPath}";
+            try {
+                const res = await fetch(contextPath + "/qh/member/emailCheck?email=" + encodeURIComponent(email));
+                const text = await res.text();
+                if (text === 'true') {
+                    alert("이미 존재하는 이메일입니다.");
+                    return;
+                }
+            } catch (error) {
+                alert("이메일 중복 확인 중 오류가 발생했습니다.");
+                return;
+            }
+
             if (!id || !authority || !password || !passwordCheck || !name || !email) {
                 alert("필수 항목을 모두 입력해주세요.");
                 return;
@@ -600,6 +615,7 @@
                 console.log('등록 취소');
             }
         });
+
 
 
         // 수정 버튼 클릭 시

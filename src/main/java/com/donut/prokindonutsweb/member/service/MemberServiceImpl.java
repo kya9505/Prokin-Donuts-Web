@@ -63,4 +63,10 @@ public class MemberServiceImpl implements MemberService {
         int count = memberMapper.memberIdCheck(id);
         return count > 0 ;
     }
+
+    @Override
+    public boolean memberEmailCheck(String email){
+        int count = memberMapper.memberEmailCheck(email);
+        return count > 0;
+    }
 }
