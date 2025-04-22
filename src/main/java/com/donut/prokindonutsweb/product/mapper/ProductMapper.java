@@ -23,6 +23,9 @@ public interface ProductMapper {
   boolean checkCategoryDuplicate(CategoryMainVO categoryMainVO);
   boolean checkProductDuplicate(ProductMainVO productMainVO);
   
-  String findCategoryStatus(@Param("categoryCode") String categoryCode);
-  String findProductStatus(@Param("productCode") String productCode);
+  String selectCategoryStatus(@Param("categoryCode") String categoryCode);
+  String selectProductStatus(@Param("productCode") String productCode);
+  
+  String selectCategoryCodeByMidSub(@Param("mid") String mid, @Param("sub") String sub);
+  List<String> selectProductCodesByPrefix(@Param("prefix") String prefix);
 }

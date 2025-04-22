@@ -67,7 +67,7 @@ class ProductMapperTest {
         log.info(dupAfterInsert);
         
         // 3) 삽입된 카테고리의 상태 조회
-        String status = mapper.findCategoryStatus("TST");
+        String status = mapper.selectCategoryStatus("TST");
         // 상태는 "제품등록" 또는 "삭제가능"이어야 함
         assertThat(status).isIn("제품등록", "삭제가능");
         // 카테고리 상태 출력
@@ -131,7 +131,7 @@ class ProductMapperTest {
         log.info("수정된 제품 존재여부: {}", foundUpdated);
         
         // 5) 수정된 제품의 상태 조회 (PST)
-        String pStatus = mapper.findProductStatus("PST");
+        String pStatus = mapper.selectProductStatus("PST");
         assertThat(pStatus).isIn("삭제가능","재고있음","입고진행","발주진행");
         log.info("PST 상태: {}", pStatus);
         
@@ -140,6 +140,28 @@ class ProductMapperTest {
         boolean dupAfterDelete = mapper.checkProductDuplicate(vo);
         assertThat(dupAfterDelete).isFalse();
         log.info("삭제 후 중복여부: {}", dupAfterDelete);
+    }
+    
+    
+    @Test
+    @DisplayName("중분류 + 소분류로 카테고리코드 조회")
+    void testSelectCategoryCodeByMidSub() {
+        String mid = "도넛";
+        String sub = "프로틴 도넛";
+        String code = mapper.selectCategoryCodeByMidSub(mid, sub);
+        
+        assertThat(code).isEqualTo("DPN");
+        log.info("카테고리코드 = {}", code);
+    }
+    
+    @Test
+    @DisplayName("prefix로 시작하는 제품코드들 조회")
+    void testSelectProductCodesByPrefix() {
+        String prefix = "DPN%";
+        List<String> codes = mapper.selectProductCodesByPrefix(prefix);
+        
+        assertThat(codes).isNotEmpty();
+        log.info("조회된 제품코드 목록 = {}", codes);
     }
 
 // ----------------------
@@ -150,7 +172,7 @@ class ProductMapperTest {
     @DisplayName("Category 상태 - 삭제가능")
     void testCategoryStatus_Deletable() {
         // 존재하지 않는 코드
-        String status = mapper.findCategoryStatus("ZZZ");
+        String status = mapper.selectCategoryStatus("ZZZ");
         assertThat(status).isEqualTo("삭제가능");
         log.info("ZZZ 상태: {}", status);
     }
@@ -162,7 +184,7 @@ class ProductMapperTest {
         "DELETE FROM Inventory WHERE productCode IN (SELECT productCode FROM Product WHERE categoryCode = 'CDC')"
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void ttestCategoryStatus_Registered_WithSql() {
-        String status = mapper.findCategoryStatus("CDC");
+        String status = mapper.selectCategoryStatus("CDC");
         assertThat(status).isEqualTo("제품등록");
         log.info("CDC 상태: {}", status);
     }
@@ -175,7 +197,7 @@ class ProductMapperTest {
             "VALUES('TST-INV','GG1','DGL1',10)"
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testCategoryStatus_InStock_WithSql() {
-        String status = mapper.findCategoryStatus("DGL");
+        String status = mapper.selectCategoryStatus("DGL");
         assertThat(status).isEqualTo("재고있음");
         log.info("DGL 상태: {}", status);
     }
@@ -195,7 +217,7 @@ class ProductMapperTest {
             "VALUES('TST-IN','TST-INB','CDC1','GG1-R',5)"
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testCategoryStatus_InboundProgress_WithSql() {
-        String status = mapper.findCategoryStatus("CDC");
+        String status = mapper.selectCategoryStatus("CDC");
         assertThat(status).isEqualTo("입고진행");
         log.info("CDC 상태: {}", status);
     }
@@ -211,7 +233,7 @@ class ProductMapperTest {
             "VALUES('TST-OD','ORD1','TZR1',7)"
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testCategoryStatus_OrderProgress_WithSql() {
-        String status = mapper.findCategoryStatus("TZR");
+        String status = mapper.selectCategoryStatus("TZR");
         assertThat(status).isEqualTo("발주진행");
         log.info("TZR 상태: {}", status);
     }
@@ -225,7 +247,7 @@ class ProductMapperTest {
     @DisplayName("Product 상태 - 삭제가능")
     void testProductStatus_Deletable() {
         // PST는 어떤 테이블에도 없으므로
-        String status = mapper.findProductStatus("PST");
+        String status = mapper.selectProductStatus("PST");
         assertThat(status).isEqualTo("삭제가능");
         log.info("PST 상태: {}", status);
     }
@@ -234,7 +256,7 @@ class ProductMapperTest {
     @DisplayName("Product 상태 - 재고있음")
     void testProductStatus_InStock() {
         // DPN1은 이미 Inventory에 레코드가 있으므로
-        String status = mapper.findProductStatus("DPN1");
+        String status = mapper.selectProductStatus("DPN1");
         assertThat(status).isEqualTo("재고있음");
         log.info("DPN1 상태: {}", status);
     }
@@ -251,7 +273,7 @@ class ProductMapperTest {
             "VALUES('TST-IN','IN11','PST','GG1-R',12)"
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testProductStatus_InboundProgress_WithSql() {
-        String status = mapper.findProductStatus("PST");
+        String status = mapper.selectProductStatus("PST");
         assertThat(status).isEqualTo("입고진행");
         log.info("PST 상태: {}", status);
     }
@@ -270,7 +292,7 @@ class ProductMapperTest {
             "VALUES('TST-OD','TST-ORD','PST',8)"
     }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void testProductStatus_OrderProgress_WithSql() {
-        String status = mapper.findProductStatus("PST");
+        String status = mapper.selectProductStatus("PST");
         assertThat(status).isEqualTo("발주진행");
         log.info("PST 상태: {}", status);
     }

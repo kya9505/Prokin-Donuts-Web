@@ -100,7 +100,7 @@
     </select>
 
     <!-- 12) 카테고리 상태 조회 -->
-    <select id="findCategoryStatus" parameterType="string" resultType="string">
+    <select id="selectCategoryStatus" parameterType="string" resultType="string">
         SELECT CASE
                    WHEN EXISTS (
                        SELECT 1
@@ -135,7 +135,7 @@
     </select>
 
     <!-- 13) 제품 상태 조회 -->
-    <select id="findProductStatus" parameterType="string" resultType="string">
+    <select id="selectProductStatus" parameterType="string" resultType="string">
         SELECT CASE
                    WHEN EXISTS (
                        SELECT 1
@@ -159,6 +159,21 @@
                    ) THEN '발주진행'
                    ELSE '삭제가능'
                    END
+    </select>
+
+    <!-- 14) 중분류 + 소분류로 카테고리코드 조회 -->
+    <select id="selectCategoryCodeByMidSub" resultType="String">
+        SELECT categoryCode
+        FROM Category
+        WHERE categoryMid = #{mid}
+          AND categorySub = #{sub}
+    </select>
+
+    <!-- 15) prefix로 시작하는 제품코드들 조회 -->
+    <select id="selectProductCodesByPrefix" resultType="String">
+        SELECT productCode
+        FROM Product
+        WHERE productCode LIKE #{prefix}
     </select>
 
 </mapper>
