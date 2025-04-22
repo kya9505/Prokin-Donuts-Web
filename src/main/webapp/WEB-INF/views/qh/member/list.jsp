@@ -568,11 +568,6 @@
                 return;
             }
 
-            if (!id || !authority || !password || !passwordCheck || !name || !email) {
-                alert("필수 항목을 모두 입력해주세요.");
-                return;
-            }
-
             if (password !== passwordCheck) {
                 alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
                 return;
@@ -585,6 +580,11 @@
 
             if (!regEmail.test(email)) {
                 alert("올바른 이메일 형식을 입력해주세요.");
+                return;
+            }
+
+            if (!id || !authority || !password || !passwordCheck || !name || !email) {
+                alert("필수 항목을 모두 입력해주세요.");
                 return;
             }
 
