@@ -20,6 +20,8 @@
 
         <package name="com.donut.prokindonutsweb.member.dto"/>
         <package name="com.donut.prokindonutsweb.member.vo"/>
+        <package name="com.donut.prokindonutsweb.login.dto"/>
+        <package name="com.donut.prokindonutsweb.login.vo"/>
         <package name="com.donut.prokindonutsweb.inventory.dto"/>
         <package name="com.donut.prokindonutsweb.inventory.vo"/>
         <package name="com.donut.prokindonutsweb.inbound.dto"/>
