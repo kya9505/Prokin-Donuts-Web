@@ -371,7 +371,6 @@
         const minDate = ``+yyyy+`-`+mm+`-`+dd+``;
 
         console.log('✅ 오늘 날짜 (minDate):', minDate); // 여기서 값 확인
-
         $('#inboundDate').attr('min', minDate);
     });
 
