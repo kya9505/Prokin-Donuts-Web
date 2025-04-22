@@ -566,12 +566,33 @@
 
 
 
+        $('#inboundEditModal').on('shown.bs.modal', function () {
+            const today = new Date();
+            console.log(today);
+
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); // 반드시 +1 필요
+            const dd = String(today.getDate()).padStart(2, '0');      // 0으로 시작되게 패딩
+
+            const minDate = ``+yyyy+`-`+mm+`-`+dd+``;
+
+            console.log('✅ 오늘 날짜 (minDate):', minDate); // 여기서 값 확인
+            $('#inboundDate').attr('min', minDate);
+        });
+
+
         // 수정
         $('body').on('click', '.btn-edit', function () {
             const inboundCode = $(this).data('inbound-code'); // 버튼에서 코드 가져오기
             console.log('✅ 선택된 inboundCode:', inboundCode);
 
             const inboundDate = $(this).data('inbound-date');
+
+            //입고 날짜 선택 안 하면 return
+            if (!inboundDate) {
+                alert('입고 날짜를 선택해주세요.');
+                return;
+            }
 
             // server에서 내려받은 전체 리스트에서 코드로 필터링
             const filteredDetails = inboundDetails.filter(detail => detail.inboundCode === inboundCode);
