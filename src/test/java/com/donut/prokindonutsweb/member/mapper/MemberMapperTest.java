@@ -84,7 +84,7 @@ class MemberMapperTest {
     @Test
     @DisplayName("회원 Id 중복체크 테스트")
     public void memberIdCheck(){
-        int idCheck = mapper.memberIdCheck("ahyun90");
+        int idCheck = mapper.memberIdCheck("100");
         assertEquals(idCheck,1);
         log.info(idCheck);
     }
@@ -92,7 +92,7 @@ class MemberMapperTest {
     @Test
     @DisplayName("회원 Email 중복체크 테스트")
     public void memberEmailCheck(){
-        int emailCheck = mapper.memberEmailCheck("gayoung_fm4@gmail.com");
+        int emailCheck = mapper.memberEmailCheck("test@test.test");
         assertEquals(emailCheck,1);
         log.info(emailCheck);
     }

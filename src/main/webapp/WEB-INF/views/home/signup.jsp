@@ -234,7 +234,7 @@
             }
 
             const contextPath = "${pageContext.request.contextPath}";
-            fetch(contextPath + "/home/check?id=" + encodeURIComponent(id))
+            fetch(contextPath + "/home/idCheck?id=" + encodeURIComponent(id))
                 .then(res => res.text())
                 .then(text => {
                     const isDup = (text === 'true');
@@ -284,7 +284,19 @@
             if (!regEmail.test(email)) {
                 alert("올바른 이메일 형식을 입력해주세요.");
                 return;
+            }
 
+            const contextPath = "${pageContext.request.contextPath}";
+            try {
+                const res = await fetch(contextPath + "/home/emailCheck?email=" + encodeURIComponent(email));
+                const text = await res.text();
+                if (text === 'true') {
+                    alert("이미 존재하는 이메일입니다.");
+                    return;
+                }
+            } catch (error) {
+                alert("이메일 중복 확인 중 오류가 발생했습니다.");
+                return;
             }
 
             if (!id || !password || !passwordCheck || !name || !email) {

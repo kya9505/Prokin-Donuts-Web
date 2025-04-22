@@ -4,6 +4,7 @@ import com.donut.prokindonutsweb.login.service.SignupService;
 import com.donut.prokindonutsweb.member.dto.MemberAccountDTO;
 import com.donut.prokindonutsweb.member.dto.MemberRequestDTO;
 import com.donut.prokindonutsweb.member.mapper.MemberMapper;
+import com.donut.prokindonutsweb.member.service.MemberRequestService;
 import com.donut.prokindonutsweb.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -22,6 +23,7 @@ import javax.validation.Valid;
 public class SignupController {
     private final SignupService signupService;
     private final MemberService memberService;
+    private final MemberRequestService requestService;
 
     @GetMapping("/signup")
     public  void signup(Model model){
@@ -43,10 +45,18 @@ public class SignupController {
         return "redirect:login";
     }
 
-    @GetMapping(value ="/check",  produces = "text/plain")
+    @GetMapping(value ="/idCheck",  produces = "text/plain")
     @ResponseBody
     public String checkId(@RequestParam("id") String id){
-        return memberService.memberIdCheck(id)? "true" : "false";
+        return memberService.memberIdCheck(id)&& requestService.requestIdCheck(id)
+                ? "true" : "false";
+    }
+
+    @GetMapping(value ="/emailCheck",  produces = "text/plain")
+    @ResponseBody
+    public String checkEmail(@RequestParam("email") String email){
+        return memberService.memberEmailCheck(email) && requestService.requestEmailCheck(email)
+                ? "true" : "false";
     }
 
 

@@ -12,4 +12,5 @@ public interface MemberRequestMapper {
     String requestCode();
     MemberRequestVO selectByMemberRequest(String requestCode);
     int requestEmailCheck(String email);
+    int requestIdCheck(String id);
 }

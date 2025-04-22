@@ -3,6 +3,7 @@ package com.donut.prokindonutsweb.member.controller;
 import com.donut.prokindonutsweb.member.dto.MemberAccountDTO;
 import com.donut.prokindonutsweb.member.dto.MemberCodeListForm;
 import com.donut.prokindonutsweb.member.dto.MemberListForm;
+import com.donut.prokindonutsweb.member.service.MemberRequestService;
 import com.donut.prokindonutsweb.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -22,6 +23,7 @@ import java.util.List;
 @RequestMapping("/qh/member")
 public class QhMemberController {
     private final MemberService memberService;
+    private final MemberRequestService requestService;
 
     @GetMapping("/list")
     public void qhGetMemberList(Model model){
@@ -48,13 +50,15 @@ public class QhMemberController {
     @GetMapping(value ="/idCheck",  produces = "text/plain")
     @ResponseBody
     public String checkId(@RequestParam("id") String id){
-        return memberService.memberIdCheck(id)? "true" : "false";
+        return memberService.memberIdCheck(id)&& requestService.requestIdCheck(id)
+                ? "true" : "false";
     }
 
     @GetMapping(value ="/emailCheck",  produces = "text/plain")
     @ResponseBody
     public String checkEmail(@RequestParam("email") String email){
-        return memberService.memberEmailCheck(email)? "true" : "false";
+        return memberService.memberEmailCheck(email) && requestService.requestEmailCheck(email)
+                ? "true" : "false";
     }
 
 

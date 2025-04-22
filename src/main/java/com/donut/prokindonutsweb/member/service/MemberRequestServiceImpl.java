@@ -67,4 +67,15 @@ public class MemberRequestServiceImpl implements MemberRequestService {
             requestMapper.deleteRequestMember(requestCode);
         });
     }
+    @Override
+    public boolean requestIdCheck(String id){
+        int count = requestMapper.requestIdCheck(id);
+        return count > 0;
+    }
+
+    @Override
+    public boolean requestEmailCheck(String email){
+        int count = requestMapper.requestEmailCheck(email);
+        return count > 0;
+    }
 }

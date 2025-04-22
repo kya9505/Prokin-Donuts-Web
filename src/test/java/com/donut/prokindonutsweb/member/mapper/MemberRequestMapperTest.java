@@ -61,6 +61,7 @@ class MemberRequestMapperTest {
 
 
     @Test
+    @DisplayName("회원가입 요청 등록 테스트 ")
     void insertRequestMember() {
         MemberRequestVO memberRequestVO = MemberRequestVO.builder()
                 .id("test")
@@ -77,6 +78,22 @@ class MemberRequestMapperTest {
     @DisplayName("회원요청가입테이블 Email 중복체크 테스트")
     public void requestEmailCheck(){
         int emailCheck = mapper.requestEmailCheck("sangwoo_p@gmail.com");
+        assertEquals(emailCheck,1);
+        log.info(emailCheck);
+    }
+
+    @Test
+    @DisplayName("회원가입 요청 시 Id 중복체크 테스트")
+    public void requestIdCheck(){
+        int idCheck = mapper.requestIdCheck("100");
+        assertEquals(idCheck,1);
+        log.info(idCheck);
+    }
+
+    @Test
+    @DisplayName("회원가입 요청 시 Email 중복체크 테스트")
+    public void memberEmailCheck(){
+        int emailCheck = mapper.requestEmailCheck("test@test.test");
         assertEquals(emailCheck,1);
         log.info(emailCheck);
     }
