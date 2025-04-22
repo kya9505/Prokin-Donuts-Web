@@ -1,5 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<jsp:useBean id="now" class="java.util.Date" />
+<fmt:formatDate var="today" value="${now}" pattern="yyyy-MM-dd" />
+<fmt:formatDate var="formattedInboundDate" value="${inbound.inboundDate}" pattern="yyyy-MM-dd" />
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -123,16 +129,28 @@
                                     <td>
                                         <div class="btu-group-2">
                                             <button class="btn btn-approve text-success" title="입고 승인" id="btnInboundAdd" data-inbound-code="${inbound.inboundCode}"
-                                                    data-inbound-date="${inbound.inboundDate}">
-                                                <i class="lni lni-checkmark-circle"></i>
+                                                    data-inbound-date="${inbound.inboundDate}"
+<%--                                                    현재날짜와 입고날짜가 다르다 or 입고상태가 '승인대기' 상태가 아니다 --> disabled 처리--%>
+                                                    <c:if test="${inbound.inboundDate ne today or inbound.inboundStatus ne '승인대기'}">disabled</c:if>>
+                                                <i class="lni lni-checkmark-circle"
+                                                   style="color: <c:out value='${(inbound.inboundDate eq today and inbound.inboundStatus eq "승인대기") ? "#28a745" : "#cccccc"}'/>;"></i>
                                             </button>
+
                                             <button class="btn btn-edit text-primary-2" data-inbound-code="${inbound.inboundCode}"
-                                                    data-inbound-date="${inbound.inboundDate}">
-                                                <i class="lni lni-pencil"></i>
+                                                    data-inbound-date="${inbound.inboundDate}"
+<%--                                                    입고상태가 '입고요청' 상태가 아니면 수정이 불가능하다.--%>
+                                                <c:if test="${inbound.inboundStatus ne '입고요청'}">disabled</c:if>>
+                                                <i class="lni lni-pencil"
+                                                   style="color: <c:out value='${(inbound.inboundStatus ne "입고요청") ? "#cccccc": "#007bff"}'/>;"></i>
                                             </button>
+
+
                                             <button class="btn btn-delete text-danger"  data-inbound-code="${inbound.inboundCode}"
-                                                    data-inbound-date="${inbound.inboundDate}">
-                                                <i class="lni lni-trash-can"></i>
+                                                    data-inbound-date="${inbound.inboundDate}"
+<%--                                                    입고상태가 '입고요청' 상태가 아니면 취소가 불가능하다--%>
+                                            <c:if test="${inbound.inboundStatus ne '입고요청'}">disabled</c:if>>
+                                                <i class="lni lni-trash-can"
+                                                   style="color: <c:out value='${(inbound.inboundStatus ne "입고요청") ? "#cccccc": "#red"}'/>;"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -317,7 +335,25 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
-
+<style>
+    button:disabled {
+        border: none !important; /* 테두리 제거 */
+        background-color: transparent !important; /* 배경도 필요 시 투명하게 */
+        box-shadow: none !important; /* 그림자도 제거 */
+    }
+    /*button.btn-approve:disabled {
+        border: none !important;
+        background-color: transparent !important;
+    }
+    button.btn-edit:disabled {
+        border: none !important;
+        background-color: transparent !important;
+    }
+    button.btn-delete:disabled {
+        border: none !important;
+        background-color: transparent !important;
+    }*/
+</style>
 <script>
     const inboundDetails = [
         <c:forEach var="detail" items="${inboundDetailList}" varStatus="loop">
