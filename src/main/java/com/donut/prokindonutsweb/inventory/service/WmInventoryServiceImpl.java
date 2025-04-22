@@ -24,4 +24,9 @@ public class WmInventoryServiceImpl implements WmInventoryService {
   public String findWarehouseCodeByMemberCode(String memberCode) {
     return wmInventoryMapper.selectWarehouseCodeByMemberCode(memberCode);
   }
+  
+  @Override
+  public String findWarehouseNameByWarehouseCode(String WarehouseCode) {
+    return wmInventoryMapper.selectWarehouseNameByWarehouseCode(WarehouseCode);
+  }
 }

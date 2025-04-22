@@ -7,4 +7,5 @@ import java.util.List;
 public interface WmInventoryService {
   List<InventorySelectDTO> findInventoryList(String warehouseCode);
   String findWarehouseCodeByMemberCode(String memberCode);
+  String findWarehouseNameByWarehouseCode(String warehouseCode);
 }
