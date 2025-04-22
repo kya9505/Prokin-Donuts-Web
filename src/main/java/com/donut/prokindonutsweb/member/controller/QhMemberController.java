@@ -50,14 +50,14 @@ public class QhMemberController {
     @GetMapping(value ="/idCheck",  produces = "text/plain")
     @ResponseBody
     public String checkId(@RequestParam("id") String id){
-        return memberService.memberIdCheck(id)&& requestService.requestIdCheck(id)
+        return memberService.memberIdCheck(id) || requestService.requestIdCheck(id)
                 ? "true" : "false";
     }
 
     @GetMapping(value ="/emailCheck",  produces = "text/plain")
     @ResponseBody
     public String checkEmail(@RequestParam("email") String email){
-        return memberService.memberEmailCheck(email) && requestService.requestEmailCheck(email)
+        return memberService.memberEmailCheck(email) || requestService.requestEmailCheck(email)
                 ? "true" : "false";
     }
 

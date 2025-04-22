@@ -253,7 +253,7 @@
         });
 
         // Sign Up 버튼 → 유효성 검사 후 submit
-        $("#signup-bnt").on("click", function () {
+        $("#signup-bnt").on("click", async function () {
             const id = $("#id").val().trim();
             const password = $("#password").val().trim();
             const passwordCheck = $("#passwordCheck").val().trim();
@@ -312,16 +312,16 @@
             //signup 클릭 시 confirm
             $('#memberRequestForm').on('click', function (e) {
 
-                const result = confirm('입력하신 정보로 회원가입 요청을 하시겠습니까? ');
-
-                if (result) {
-                    console.log('회원가입 요청');
-                } else {
+                const result = confirm('입력하신 정보로 회원가입 요청을 하시겠습니까?');
+                if (!result) {
                     console.log('회원가입 요청 취소');
+                    return;
                 }
+
+                console.log('회원가입 요청');
+                $("#memberRequestForm").submit();
+
             });
-            // 통과 시 제출
-            $("#memberRequestForm").submit();
         });
     });
 
