@@ -4,7 +4,6 @@ import com.donut.prokindonutsweb.inbound.dto.*;
 import com.donut.prokindonutsweb.inbound.mapper.InboundMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,20 +22,22 @@ public class InboundServiceImpl implements InboundService {
 
     @Override
     public Optional<List<ProductDTO>> findAllProductList() {
-
         // VO -> DTO 변환작업
         List<ProductDTO> list = inboundMapper.selectAllProductList()
                 .stream()
-                .map(vo -> ProductDTO.builder()
-                        .productCode(vo.getProductCode())
-                        .productName(vo.getProductName())
-                        .productPrice(vo.getProductPrice())
-                        .storedType(vo.getStoredType())
-                        .build())
+                .map(vo -> modelMapper.map(vo, ProductDTO.class))
                 .toList();// 또는 collect(Collectors.toList());
         return list.isEmpty() ? Optional.empty() : Optional.of(list);
     }
 
+    /**
+     * 입고 요청 등록
+     * 입고 정보 + 입고 상세 정보
+     * 트랜잭션 처리
+     *
+     * @param '입고정보'
+     * @param '입고    상세 정보'
+     */
     @Override
     @Transactional
     public void addInbound(InboundDTO inboundDTO, List<InboundDetailDTO> inboundDetailList) {
@@ -44,9 +45,14 @@ public class InboundServiceImpl implements InboundService {
         inboundMapper.insertInbound(inboundVO);
 
         String inboundCode = inboundDTO.getInboundCode();
+        List<InboundDetailVO> inboundDetailVOList = getInboundDetailList(inboundDetailList, inboundCode);
 
+        inboundMapper.insertInboundDetailList(inboundDetailVOList);
+    }
+
+    private List<InboundDetailVO> getInboundDetailList(List<InboundDetailDTO> inboundDetailList, String inboundCode) {
         AtomicInteger i = new AtomicInteger(1);
-        List<InboundDetailVO> inboundDetailVOList = inboundDetailList.stream().map(
+        return inboundDetailList.stream().map(
                 dto -> InboundDetailVO.builder()
                         .inboundDetailCode(inboundCode + "-" + i.getAndIncrement())
                         .quantity(dto.getQuantity())
@@ -55,15 +61,10 @@ public class InboundServiceImpl implements InboundService {
                         .sectionCode(getSection(dto.getStoredType()))
                         .build()
         ).toList();
-
-        inboundMapper.insertInboundDetailList(inboundDetailVOList);
     }
 
     private String getSection(String storedType) {
-        // 창코코드 알게 되면 변경 예정
-        if (storedType.equals("냉장")) return "R";
-        else if (storedType.equals("냉동")) return "F";
-        else return "A";
+        return StoredType.fromSectionCode(storedType).getLabel();
     }
 
 
@@ -78,17 +79,9 @@ public class InboundServiceImpl implements InboundService {
     @Override
     public Optional<List<InboundDTO>> findAllInboundList() {
         List<InboundDTO> list = inboundMapper.selectAllInboundList().stream()
-                .filter(vo -> "입고요청".equals(vo.getInboundStatus()) || "승인대기".equals(vo.getInboundStatus()))
-                .map(vo -> {
-                            InboundDTO dto = InboundDTO.builder()
-                                    .inboundCode(vo.getInboundCode())
-                                    .inboundDate(vo.getInboundDate())
-                                    .inboundStatus(vo.getInboundStatus())
-                                    .warehouseCode(vo.getWarehouseCode())
-                                    .build();
-                            return dto;
-                        }
-                ).toList();
+                .filter(vo -> InboundStatus.REQUEST.getStatus().equals(vo.getInboundStatus()) || InboundStatus.APPROVE.getStatus().equals(vo.getInboundStatus()))
+                .map(vo -> modelMapper.map(vo, InboundDTO.class)).
+                toList();
         return list.isEmpty() ? Optional.empty() : Optional.of(list);
     }
 
