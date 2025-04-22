@@ -360,6 +360,20 @@
         $('#addInboundModal').modal('show');
     });
 
+    $('#addInboundModal').on('shown.bs.modal', function () {
+        const today = new Date();
+        console.log(today);
+
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0'); // 반드시 +1 필요
+        const dd = String(today.getDate()).padStart(2, '0');      // 0으로 시작되게 패딩
+
+        const minDate = ``+yyyy+`-`+mm+`-`+dd+``;
+
+        console.log('✅ 오늘 날짜 (minDate):', minDate); // 여기서 값 확인
+
+        $('#inboundDate').attr('min', minDate);
+    });
 
     $('#addInboundModal .btn-primary').on('click', function () {
         // 기존 input 정리
@@ -367,6 +381,16 @@
 
         // 날짜 추가
         const inboundDate = $('#inboundDate').val();
+
+        //입고 날짜 선택 안 하면 return
+        if (!inboundDate) {
+            alert('입고 날짜를 선택해주세요.');
+            return;
+        }
+
+
+
+
         $('<input>').attr({
             type: 'hidden',
             name: 'inboundDate',
@@ -424,7 +448,7 @@
         // form 전송
         $('#inboundForm').submit();
     });
-
+    console.log($('#inboundDate').length); // 1 아니면 문제 있음
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
 

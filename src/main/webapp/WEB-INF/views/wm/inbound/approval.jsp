@@ -183,7 +183,7 @@
                             </div>
                             <div>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                                <button type="submit" class="main-btn primary-btn btn-primary btn-sm">입고 요청 완료</button>
+                                <button type="submit" class="main-btn primary-btn btn-primary btn-sm">입고 완료</button>
                             </div>
                         </div>
                     </div>
@@ -227,7 +227,7 @@
                             </div>
                             <div>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                                <button type="submit" class="main-btn primary-btn btn-primary btn-sm">입고수정 완료</button>
+                                <button type="submit" class="main-btn primary-btn btn-primary btn-sm">입고 수정</button>
                             </div>
                         </div>
                     </div>
@@ -272,7 +272,7 @@
                             </div>
                             <div>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                                <button type="submit" class="main-btn primary-btn btn-primary btn-sm">삭제</button>
+                                <button type="submit" class="main-btn primary-btn btn-primary btn-sm">입고 삭제</button>
                             </div>
                         </div>
                     </div>
