@@ -19,7 +19,7 @@
         <context:component-scan base-package="com.donut.prokindonutsweb.member.controller"/>
         <context:component-scan base-package="com.donut.prokindonutsweb.order.controller"/>
         <context:component-scan base-package="com.donut.prokindonutsweb.outbound.controller"/>
-    <context:component-scan base-package="com.donut.prokindonutsweb.homeController"/>
+    <context:component-scan base-package="com.donut.prokindonutsweb.home"/>
 
     <!--    뷰 리졸버로서, 컨트롤러에서 반환하는 문자열을 이용해 JSP 파일 경로를 매핑한다. -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
