@@ -93,19 +93,19 @@
                             <h3 class="mb-15">LOGIN</h3>
                             <p class="text-sm mb-25">
                             </p>
-                            <form action="#">
+                            <form action="<c:url value='/home/login'/>" method="post">
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="input-style-1">
                                             <label>ID</label>
-                                            <input type="id" placeholder="ID" />
+                                            <input type="id" placeholder="ID" id="id" name="id"/>
                                         </div>
                                     </div>
                                     <!-- end col -->
                                     <div class="col-12">
                                         <div class="input-style-1">
                                             <label>Password</label>
-                                            <input type="password" placeholder="Password" />
+                                            <input type="password" placeholder="Password" id="password" name="password"/>
                                         </div>
                                     </div>
                                     <!-- end col -->
