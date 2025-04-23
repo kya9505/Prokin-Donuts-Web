@@ -12,10 +12,10 @@
         <package name="com.donut.prokindonutsweb.product.vo"/>
         <package name="com.donut.prokindonutsweb.inventory.dto"/>
         <package name="com.donut.prokindonutsweb.inventory.vo"/>
-
+        <package name="com.donut.prokindonutsweb.home.vo"/>
+        <package name="com.donut.prokindonutsweb.home.dto"/>
         <package name="com.donut.prokindonutsweb.member.dto"/>
         <package name="com.donut.prokindonutsweb.member.vo"/>
-
         <package name="com.donut.prokindonutsweb.inbound.dto"/>
         <package name="com.donut.prokindonutsweb.inbound.vo"/>
     </typeAliases>
