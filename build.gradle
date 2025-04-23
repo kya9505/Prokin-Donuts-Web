@@ -129,6 +129,12 @@ dependencies {
     implementation 'org.springframework:spring-context-support:5.3.30' // JavaMailSenderImpl 포함
     implementation 'javax.mail:mail:1.4.7' // SMTP 통신 등 메일 핵심 기능
 
+    //Security
+    //웹보안 처리
+    implementation 'org.springframework.security:spring-security-web:5.6.2'
+    //설정파일 보안처리
+    implementation 'org.springframework.security:spring-security-config:5.6.2'
+
 }
 
 test {
