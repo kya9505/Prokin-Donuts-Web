@@ -4,15 +4,18 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.donut.prokindonutsweb.inbound.mapper.InboundMapper">
 
+<!--    입고를 요청할 때 필요한 제품 리스트를 반환한다-->
     <select id="selectAllProductList" resultType="com.donut.prokindonutsweb.inbound.vo.ProductVO">
         select productCode, productName, productPrice, storedType from product
     </select>
 
+<!--    입고 정보를 저장한다. -->
     <insert id="insertInbound">
         Insert into inbound (inboundCode, inboundDate, inboundStatus, warehouseCode)
         values (#{inboundCode},#{inboundDate},#{inboundStatus}, #{warehouseCode})
     </insert>
 
+<!--    입고상세 정보를 저장한다.-->
     <insert id="insertInboundDetailList" parameterType="java.util.List">
         INSERT INTO inboundDetail ( inboundDetailCode, quantity, inboundCode, productCode, sectionCode )
         VALUES
