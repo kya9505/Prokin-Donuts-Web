@@ -1,6 +1,8 @@
 package com.donut.prokindonutsweb.inbound.service;
 
 import com.donut.prokindonutsweb.inbound.dto.InboundDTO;
+import com.donut.prokindonutsweb.inbound.dto.InboundDetailDTO;
+import com.donut.prokindonutsweb.inbound.dto.InboundDetailVO;
 import com.donut.prokindonutsweb.inbound.dto.InboundUpdateDTO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +39,7 @@ class InboundServiceImplTest {
         log.info(nextInboundCode);
     }
 
-    @Test
+    /*@Test
     @DisplayName("saveInbound 메서드 호출 테스트")
     void saveInbound() {
         InboundDTO dto = InboundDTO.builder()
@@ -47,6 +49,43 @@ class InboundServiceImplTest {
                 .warehouseCode("GG1")
                 .build();
         inboundService.saveInboundbefore(dto);
+    }*/
+
+    @Test
+    @DisplayName("입고 등록 메서드 호출")
+    void addInbound() {
+        String nextInboundCode = inboundService.findNextInboundCode();
+        InboundDTO dto = InboundDTO.builder()
+                .inboundCode(nextInboundCode)
+                .inboundDate(LocalDate.parse("2025-04-30"))
+                .inboundStatus("입고요청")
+                .warehouseCode("GG1")
+                .build();
+
+        InboundDetailDTO dto1 = InboundDetailDTO.builder()
+                .inboundCode(nextInboundCode)
+                .productCode("DPN1")
+                .productName("테스트1")
+                .productPrice(5000)
+                .storedType("GG1-R")
+                .quantity(300)
+                .build();
+
+        InboundDetailDTO dto2 = InboundDetailDTO.builder()
+                .inboundCode(nextInboundCode)
+                .productCode("DPN2")
+                .productName("테스트2")
+                .productPrice(5000)
+                .storedType("GG1-R")
+                .quantity(300)
+                .build();
+
+        List<InboundDetailDTO> list = new ArrayList<>();
+        list.add(dto1);
+        list.add(dto2);
+
+        inboundService.addInbound(dto, list);
+
     }
 
     @Test

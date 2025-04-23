@@ -2,12 +2,15 @@ package com.donut.prokindonutsweb.inbound.controller;
 
 import com.donut.prokindonutsweb.inbound.dto.*;
 import com.donut.prokindonutsweb.inbound.service.InboundService;
+import com.donut.prokindonutsweb.inbound.vo.InventoryVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -42,8 +45,9 @@ public class WmInboundController {
      * @return '입고요청 페이지'
      */
     @PostMapping("/request")
-    public String addInbound(@RequestParam String inboundDate,
-                             @ModelAttribute InboundForm inboundForm) {
+    public String addInbound(@RequestParam String inboundDate, InboundForm inboundForm) {
+        log.info("입고요청 호출");
+
         List<InboundDetailDTO> inboundDetailList = inboundForm.getProductList();
 
         // 입고요청 저장

@@ -1,6 +1,7 @@
 package com.donut.prokindonutsweb.inbound.service;
 
 import com.donut.prokindonutsweb.inbound.dto.*;
+import com.donut.prokindonutsweb.inbound.vo.InventoryVO;
 
 import java.time.LocalDate;
 import java.util.List;

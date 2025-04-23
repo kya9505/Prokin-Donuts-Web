@@ -2,6 +2,8 @@ package com.donut.prokindonutsweb.inbound.service;
 
 import com.donut.prokindonutsweb.inbound.dto.*;
 import com.donut.prokindonutsweb.inbound.mapper.InboundMapper;
+import com.donut.prokindonutsweb.inbound.vo.InboundVO;
+import com.donut.prokindonutsweb.inbound.vo.InventoryVO;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -12,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
