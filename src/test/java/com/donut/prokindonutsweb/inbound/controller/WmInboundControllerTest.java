@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 @ExtendWith(SpringExtension.class)
 @Transactional
 @ContextConfiguration(locations = "file:src/main/webapp/WEB-INF/spring/root-context.xml")
-class InboundControllerTest {
+class WmInboundControllerTest {
     @Autowired
-    private InboundController inboundController;
+    private WmInboundController wmInboundController;
 
     @Test
     void wmApproveInbound() {

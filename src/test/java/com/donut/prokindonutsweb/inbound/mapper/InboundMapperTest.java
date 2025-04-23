@@ -3,8 +3,8 @@ package com.donut.prokindonutsweb.inbound.mapper;
 
 import com.donut.prokindonutsweb.inbound.dto.InboundDetailVO;
 import com.donut.prokindonutsweb.inbound.dto.InboundUpdateDTO;
-import com.donut.prokindonutsweb.inbound.dto.InboundVO;
-import com.donut.prokindonutsweb.inbound.dto.InventoryVO;
+import com.donut.prokindonutsweb.inbound.vo.InboundVO;
+import com.donut.prokindonutsweb.inbound.vo.InventoryVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

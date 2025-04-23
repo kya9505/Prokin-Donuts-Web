@@ -1,6 +1,8 @@
 package com.donut.prokindonutsweb.inbound.service;
 
 import com.donut.prokindonutsweb.inbound.dto.InboundDTO;
+import com.donut.prokindonutsweb.inbound.dto.InboundDetailDTO;
+import com.donut.prokindonutsweb.inbound.dto.InboundDetailVO;
 import com.donut.prokindonutsweb.inbound.dto.InboundUpdateDTO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +26,7 @@ class InboundServiceImplTest {
     @Test
     @DisplayName("findAllProductList service 호출(VO->DTO)")
     void findAllProductList() {
-        inboundService.findAllProductList()
+        inboundService.findProductList()
                 .stream()
                 .flatMap(List::stream)
                 .forEach(dto -> log.info("DTO: {}", dto));
@@ -37,7 +39,7 @@ class InboundServiceImplTest {
         log.info(nextInboundCode);
     }
 
-    @Test
+    /*@Test
     @DisplayName("saveInbound 메서드 호출 테스트")
     void saveInbound() {
         InboundDTO dto = InboundDTO.builder()
@@ -46,19 +48,56 @@ class InboundServiceImplTest {
                 .inboundStatus("입고요청")
                 .warehouseCode("GG1")
                 .build();
-        inboundService.saveInbound(dto);
+        inboundService.saveInboundbefore(dto);
+    }*/
+
+    @Test
+    @DisplayName("입고 등록 메서드 호출")
+    void addInbound() {
+        String nextInboundCode = inboundService.findNextInboundCode();
+        InboundDTO dto = InboundDTO.builder()
+                .inboundCode(nextInboundCode)
+                .inboundDate(LocalDate.parse("2025-04-30"))
+                .inboundStatus("입고요청")
+                .warehouseCode("GG1")
+                .build();
+
+        InboundDetailDTO dto1 = InboundDetailDTO.builder()
+                .inboundCode(nextInboundCode)
+                .productCode("DPN1")
+                .productName("테스트1")
+                .productPrice(5000)
+                .storedType("GG1-R")
+                .quantity(300)
+                .build();
+
+        InboundDetailDTO dto2 = InboundDetailDTO.builder()
+                .inboundCode(nextInboundCode)
+                .productCode("DPN2")
+                .productName("테스트2")
+                .productPrice(5000)
+                .storedType("GG1-R")
+                .quantity(300)
+                .build();
+
+        List<InboundDetailDTO> list = new ArrayList<>();
+        list.add(dto1);
+        list.add(dto2);
+
+        inboundService.addInbound(dto, list);
+
     }
 
     @Test
     @DisplayName("(입고요청, 승인대기) 상태 입고목록만 반환하는 기능")
     void findAllInboundList() {
-        inboundService.findAllInboundList().stream().forEach(System.out::println);
+        inboundService.findInboundList().stream().forEach(System.out::println);
     }
 
     @Test
     @DisplayName("입고 상세 목록 반환")
     void findAllInboundDetailList() {
-        inboundService.findAllInboundDetailList().stream().forEach(System.out::println);
+        inboundService.findInboundDetailList().stream().forEach(System.out::println);
     }
 
     @Test
@@ -103,7 +142,7 @@ class InboundServiceImplTest {
     @Test
     @DisplayName("입고현황 목록 반환")
     void findAllInboundStatusList() {
-        inboundService.findAllInboundStatusList().ifPresent(System.out::println);
+        inboundService.findInboundStatusList().ifPresent(System.out::println);
     }
 
 }

@@ -1,6 +1,10 @@
 package com.donut.prokindonutsweb.inbound.mapper;
 
 import com.donut.prokindonutsweb.inbound.dto.*;
+import com.donut.prokindonutsweb.inbound.vo.InboundStatusVO;
+import com.donut.prokindonutsweb.inbound.vo.InboundVO;
+import com.donut.prokindonutsweb.inbound.vo.InventoryVO;
+import com.donut.prokindonutsweb.inbound.vo.ProductVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDate;
