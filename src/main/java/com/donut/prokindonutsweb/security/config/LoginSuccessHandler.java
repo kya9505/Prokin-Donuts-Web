@@ -21,8 +21,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             String redirectUrl ="/";
         //권한 별 메인 화면 으로 이동
             if(authorities.stream().anyMatch(a->a.getAuthority().equals("QH"))) redirectUrl = "/qh/Dashboard";
-            else if (authorities.stream().anyMatch(a->a.getAuthority().equals("WM"))) redirectUrl ="wm/Dashboard";
-            else if (authorities.stream().anyMatch(a->a.getAuthority().equals("FM"))) redirectUrl ="fm/order";
+            else if (authorities.stream().anyMatch(a->a.getAuthority().equals("WM"))) redirectUrl ="/wm/Dashboard";
+            else if (authorities.stream().anyMatch(a->a.getAuthority().equals("FM"))) redirectUrl ="/fm/order";
 
             response.sendRedirect(redirectUrl);
 
