@@ -1,6 +1,7 @@
 package com.donut.prokindonutsweb.product.controller;
 
 import com.donut.prokindonutsweb.product.dto.*;
+import com.donut.prokindonutsweb.product.service.CategoryFilterService;
 import com.donut.prokindonutsweb.product.service.ProductService;
 import com.donut.prokindonutsweb.warehouse.dto.WarehouseCheckDTO;
 import com.donut.prokindonutsweb.warehouse.dto.WarehouseDTO;
@@ -19,6 +20,7 @@ import java.util.List;
 public class ProductController {
   
   private final ProductService productService;
+  private final CategoryFilterService categoryFilterService;
   
   // 제품 및 카테고리 목록 조회
   @GetMapping
@@ -27,6 +29,7 @@ public class ProductController {
     
     List<CategorySelectDTO> categoryList = productService.findCategoryList();
     List<ProductSelectDTO> productList = productService.findProductList();
+    List<String> categoryMidList = categoryFilterService.findCategoryMidList();
     
     for (CategorySelectDTO dto : categoryList) {
       String status = productService.findCategoryStatus(dto.getCategoryCode());
@@ -34,13 +37,14 @@ public class ProductController {
       dto.setCategoryStatus(status != null ? status : "삭제가능");
     }
     for (ProductSelectDTO dto : productList) {
-      String status = productService.findCategoryStatus(dto.getProductStatus());
+      String status = productService.findProductStatus(dto.getProductCode());
       // null 이면 삭제 가능 상태로 간주
       dto.setProductStatus(status != null ? status : "삭제가능");
     }
     
     model.addAttribute("categoryList",categoryList);
     model.addAttribute("productList",productList);
+    model.addAttribute("categoryMidList", categoryMidList);
   }
   
   /// //////////////////////////////////////////////////////

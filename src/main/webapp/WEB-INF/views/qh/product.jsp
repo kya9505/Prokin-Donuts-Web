@@ -71,12 +71,17 @@
                         <div class="text-sm mb-20" id="myCustomFilters_mainCategoryUp" style="display: none;">
 
                             <div class="d-flex flex-wrap gap-2">
+
                                 <!-- 중분류 -->
                                 <div >
                                     <div class="select-style-1">
                                         <div class="select-position">
+                                            <!-- 중분류 드롭다운 -->
                                             <select id="mainCategoryUp">
                                                 <option value="">중분류</option>
+                                                <c:forEach var="mid" items="${categoryMidList}">
+                                                    <option value="${mid}">${mid}</option>
+                                                </c:forEach>
                                             </select>
                                         </div>
                                     </div>
@@ -91,8 +96,8 @@
 
                                 <!-- 오른쪽: 등록/수정/삭제 -->
                                 <div class="btu-group-1 ms-auto gap-2 mb-20">
-                                    <button class="main-btn warning-btn-outline square-btn btn-hover btn-sm btn-xs" id="btnProductAdd_mainCategoryUp">등록</button>
-                                    <button class="main-btn warning-btn-outline square-btn btn-hover btn-sm btn-xs" id="btnProductDelete_mainCategoryUp">삭제</button>
+                                    <button class="main-btn warning-btn-outline square-btn btn-hover btn-sm btn-xs" id="btnProductAdd_mainCategoryUp">카테고리 등록</button>
+                                    <button class="main-btn warning-btn-outline square-btn btn-hover btn-sm btn-xs" id="btnProductDelete_mainCategoryUp">카테고리 삭제</button>
                                 </div>
                             </div>
 
@@ -118,11 +123,22 @@
                                     <th>카테고리코드</th>
                                     <th>중분류명</th>
                                     <th>소분류명</th>
-                                    <th></th>
                                 </tr>
                                 </thead>
 
                                 <tbody class="category-tbody">
+                                <c:forEach var="item" items="${categoryList}">
+                                    <tr
+                                            data-category-code="${item.categoryCode}"
+                                            data-category-mid="${item.categoryMid}"
+                                            data-category-sub="${item.categorySub}"
+                                            data-category-status="${item.categoryStatus}">
+                                        <td><input type="checkbox" class="row-checkbox" /></td>
+                                        <td>${item.categoryCode}</td>
+                                        <td>${item.categoryMid}</td>
+                                        <td>${item.categorySub}</td>
+                                    </tr>
+                                </c:forEach>
                                 </tbody>
 
                             </table>
@@ -142,7 +158,7 @@
                         <h6 class="mb-10">제품 목록</h6>
                         <p class="text-sm mb-20"></p>
 
-                            <!-- 원하는 필터(중분류, 소분류) 설정 -->
+                        <!-- 원하는 필터(중분류, 소분류) 설정 -->
                         <div id="myCustomFilters" style="display: none;">
 
                             <div class="d-flex flex-wrap gap-2">
@@ -150,8 +166,12 @@
                                 <div >
                                     <div class="select-style-1">
                                         <div class="select-position">
+                                            <!-- 중분류 드롭다운 -->
                                             <select id="midCategory">
                                                 <option value="">중분류</option>
+                                                <c:forEach var="mid" items="${categoryMidList}">
+                                                    <option value="${mid}">${mid}</option>
+                                                </c:forEach>
                                             </select>
                                         </div>
                                     </div>
@@ -161,6 +181,7 @@
                                 <div >
                                     <div class="select-style-1">
                                         <div class="select-position">
+                                            <!-- 소분류 드롭다운 (초기엔 비워둠) -->
                                             <select id="subCategory">
                                                 <option value="">소분류</option>
                                             </select>
@@ -177,9 +198,9 @@
 
                                 <!-- 오른쪽: 등록/수정/삭제 -->
                                 <div class="btu-group-1 ms-auto gap-2 mb-20">
-                                    <button class="main-btn warning-btn-outline square-btn btn-hover btn-sm btn-xs" id="btnProductAdd">등록</button>
-                                    <button class="main-btn warning-btn-outline square-btn btn-hover btn-sm btn-xs" id="btnProductEdit">수정</button>
-                                    <button class="main-btn warning-btn-outline square-btn btn-hover btn-sm btn-xs" id="btnProductDelete">삭제</button>
+                                    <button class="main-btn warning-btn-outline square-btn btn-hover btn-sm btn-xs" id="btnProductAdd">제품 등록</button>
+                                    <button class="main-btn warning-btn-outline square-btn btn-hover btn-sm btn-xs" id="btnProductEdit">제품 수정</button>
+                                    <button class="main-btn warning-btn-outline square-btn btn-hover btn-sm btn-xs" id="btnProductDelete">제품 삭제</button>
                                 </div>
                             </div>
 
@@ -213,6 +234,24 @@
                                 </thead>
 
                                 <tbody>
+                                <c:forEach var="item" items="${productList}">
+                                    <tr
+                                            data-product-code="${item.productCode}"
+                                            data-product-mid="${item.categoryMid}"
+                                            data-product-sub="${item.categorySub}"
+                                            data-product-type="${item.storedType}"
+                                            data-product-name="${item.productName}"
+                                            data-product-price="${item.productPrice}"
+                                            data-product-status="${item.productStatus}">
+                                        <td><input type="checkbox" class="row-checkbox"></td>
+                                        <td>${item.productCode}</td>
+                                        <td>${item.categoryMid}</td>
+                                        <td>${item.categorySub}</td>
+                                        <td>${item.storedType}</td>
+                                        <td>${item.productName}</td>
+                                        <td>${item.productPrice}</td>
+                                    </tr>
+                                </c:forEach>
                                 </tbody>
 
                             </table>
@@ -263,11 +302,11 @@
             <div class="modal-body">
                 <p class="text-danger fw-normal mb-3">(*)는 필수 입력 항목입니다.</p>
 
-                <form id="registerCategoryForm">
+                <form id="registerCategoryForm" action="${pageContext.request.contextPath}/qh/product/category/add" method="post">
 
                     <!-- 카테고리 코드 -->
                     <div class="mb-3">
-                        <label class="form-label">
+                        <label for="registerCategoryCode" class="form-label">
                             카테고리코드 (*)
                             <i
                                     class="mdi mdi-help-circle text-primary"
@@ -282,7 +321,8 @@
                         <input
                                 type="text"
                                 class="form-control"
-                                id="registerCategoryId"
+                                id="registerCategoryCode"
+                                name="registerCategoryCode"
                                 placeholder="예: DPN"
                                 maxlength="3"
                         />
@@ -290,13 +330,14 @@
 
                     <!-- 중분류명 -->
                     <div class="mb-3">
-                        <label class="form-label">
+                        <label for="registerCategoryMid_subCategoryUp" class="form-label">
                             중분류명 (*)
                         </label>
                         <input
                                 type="text"
                                 class="form-control"
                                 id="registerCategoryMid_subCategoryUp"
+                                name="registerCategoryMid_subCategoryUp"
                                 placeholder="예: 도넛"
                                 maxlength="10"
                         />
@@ -304,13 +345,14 @@
 
                     <!-- 소분류명 -->
                     <div class="mb-3">
-                        <label class="form-label">
+                        <label for="registerCategorySub_subCategoryUp" class="form-label">
                             소분류명 (*)
                         </label>
                         <input
                                 type="text"
                                 class="form-control"
                                 id="registerCategorySub_subCategoryUp"
+                                name="registerCategorySub_subCategoryUp"
                                 placeholder="예: 글루텐 프리 도넛"
                                 maxlength="20"
                         />
@@ -326,7 +368,8 @@
                         </button>
                         <button
                                 type="submit"
-                                class="main-btn primary-btn btn-hover btn-sm">
+                                class="main-btn primary-btn btn-hover btn-sm"
+                                id="registerCategorySubBtn">
                             등록
                         </button>
                     </div>
@@ -341,18 +384,24 @@
 <div class="modal fade" id="productDeleteModal_mainCategoryUp" tabindex="-1" aria-labelledby="productDeleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
+
+            <!-- 모달 헤더 -->
             <div class="modal-header">
                 <h3 class="modal-title" id="productDeleteModalLabel_mainCategoryUp">카테고리 삭제</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
+            <!-- 모달 바디 -->
             <div class="modal-body">
-                <h5>선택한 카테고리를 정말 삭제하시겠습니까?</h5><br>
-                <ul id="deleteProductList_mainCategoryUp" class="list-group mb-3">
-                    <!-- 선택된 제품명 목록 삽입 -->
-                </ul>
-                <div class="d-flex justify-content-end gap-2">
-                    <button type="button" class="main-btn primary-btn btn-hover text-center" id="confirmDelete_mainCategoryUp">삭제</button>
-                </div>
+                <form id="warehouseDeleteForm" action="${pageContext.request.contextPath}/qh/warehouse/delete" method="post">
+                    <h5>선택한 카테고리를 정말 삭제하시겠습니까?</h5><br>
+                    <ul id="deleteProductList_mainCategoryUp" class="list-group mb-3">
+                        <!-- 선택된 제품명 목록 삽입 -->
+                    </ul>
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="submit" class="main-btn primary-btn btn-hover text-center" id="confirmDelete_mainCategoryUp">삭제</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -372,14 +421,16 @@
             <!-- 모달 바디 -->
             <div class="modal-body">
                 <p class="text-danger fw-normal mb-3">(*)는 필수 입력 항목입니다.</p>
-                <form id="registerProductForm">
-
+                <form id="registerProductForm" action="${pageContext.request.contextPath}/qh/product/add" method="post">
                     <!-- 1. 중분류 드롭박스 -->
                     <div class="mb-3">
                         <label for="registerCategoryMid" class="form-label">중분류 (*)</label>
+
                         <select class="form-select" id="registerCategoryMid" required>
-                            <option value="">중분류 선택</option>
-                            <!-- JavaScript에서 동적으로 옵션 추가 -->
+                            <option value="">중분류</option>
+                            <c:forEach var="mid" items="${categoryMidList}">
+                                <option value="${mid}">${mid}</option>
+                            </c:forEach>
                         </select>
                     </div>
 
@@ -405,7 +456,7 @@
                                     style="cursor: pointer;">
                             </i></label>
                         <div class="d-flex gap-2">
-                            <input type="text" class="form-control" id="registerProductName" placeholder="예: 프로틴초코" maxlength="10" required>
+                            <input type="text" class="form-control" id="registerProductName" name="registerProductName" placeholder="예: 프로틴초코" maxlength="10" required>
 
                             <button type="button" class="main-btn primary-btn btn-hover btn-smaller" id="checkProductNameDuplicate">중복 확인</button>
                         </div>
@@ -415,7 +466,7 @@
                     <div class="mb-3">
                         <label for="registerProductPrice" class="form-label">제공단가 (*)</label>
                         <div class="input-group">
-                            <input type="text" class="form-control" id="registerProductPrice" placeholder="예: 5000" required>
+                            <input type="text" class="form-control" id="registerProductPrice" name="registerProductPrice" placeholder="예: 5000" required>
                             <span class="input-group-text">원</span>
                         </div>
                     </div>
@@ -423,7 +474,7 @@
                     <!-- 5. 보관타입 드롭박스 -->
                     <div class="mb-3">
                         <label for="registerStoredType" class="form-label">보관타입 (*)</label>
-                        <select class="form-select" id="registerStoredType" required>
+                        <select class="form-select" name="registerStoredType" id="registerStoredType" required>
                             <option value="">선택하세요</option>
                             <option value="냉장">냉장</option>
                             <option value="냉동">냉동</option>
@@ -433,7 +484,8 @@
 
                     <!-- 제출 버튼 -->
                     <div class="d-flex justify-content-end">
-                        <button type="submit" class="main-btn primary-btn btn-hover text-center">등록</button>
+                        <button type="submit" class="main-btn primary-btn btn-hover text-center"
+                                id="btnProductRegisterSubmit">등록</button>
                     </div>
 
                 </form>
@@ -446,6 +498,7 @@
 <div class="modal fade" id="productEditModal" tabindex="-1" aria-labelledby="productEditModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
+
             <div class="modal-header">
                 <h5 class="modal-title">제품 수정</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -453,34 +506,38 @@
 
             <div class="modal-body">
                 <p class="text-danger mb-2">(*)는 필수 입력 항목입니다.</p>
-                <table class="table text-center align-middle" id="editProductTable">
-                    <thead>
-                    <tr>
-                        <th>제품코드</th>
-                        <th>중분류*</th>
-                        <th>소분류*</th>
-                        <th>제품명*
-                            <i
-                                    class="mdi mdi-help-circle text-primary wide-tooltip tooltip-inner"
-                                    data-bs-toggle="tooltip"
-                                    data-bs-placement="right"
-                                    data-bs-html="true"
-                                    title="냉장 또는 냉동 보관 제품의 경우,<br>제품명 앞에 보관타입을 명시해 주세요.<br>예: 냉동초코프로틴도넛"
-                                    style="cursor: pointer; margin-left: 5px;">
-                            </i>
-                        </th>
-                        <th>제공단가*</th>
-                        <th>보관타입*</th>
-                        <th>중복확인</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                <form id="productEditForm" action="${pageContext.request.contextPath}/qh/product/update" method="post">
+                    <table class="table text-center align-middle" id="editProductTable">
+                        <thead>
+                        <tr>
+                            <th>제품코드</th>
+                            <th>중분류*</th>
+                            <th>소분류*</th>
+                            <th>제품명*
+                                <i
+                                        class="mdi mdi-help-circle text-primary wide-tooltip tooltip-inner"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="right"
+                                        data-bs-html="true"
+                                        title="냉장 또는 냉동 보관 제품의 경우,<br>제품명 앞에 보관타입을 명시해 주세요.<br>예: 냉동초코프로틴도넛"
+                                        style="cursor: pointer; margin-left: 5px;">
+                                </i>
+                            </th>
+                            <th>제공단가*</th>
+                            <th>보관타입*</th>
+                            <th>중복확인</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- 체크한 값을 여기로 뿌릴 예정 (JS) -->
+                        </tbody>
+                    </table>
 
-                <div class="d-flex justify-content-end">
-                    <button type="button" class="main-btn primary-btn btn-hover text-center" id="btnProductEditSubmit">수정</button>
-                </div>
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="main-btn primary-btn btn-hover text-center" id="btnProductEditSubmit">수정</button>
+                    </div>
+                </form>
+
             </div>
         </div>
     </div>
@@ -490,22 +547,28 @@
 <div class="modal fade" id="productDeleteModal" tabindex="-1" aria-labelledby="productDeleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
+
             <div class="modal-header">
                 <h3 class="modal-title" id="productDeleteModalLabel">제품 삭제</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
             <div class="modal-body">
                 <!-- 안내 메시지 -->
                 <h5>선택한 제품을 정말 삭제하시겠습니까?</h5><br>
-                <!-- 선택된 제품 목록 (상태 배지는 모두 회색 bg-secondary로 표시) -->
-                <ul id="deleteProductList" class="list-group mb-3">
-                    <!-- 동적으로 목록 항목이 추가됩니다 -->
-                </ul>
-                <!-- 삭제 확인 버튼 (취소 버튼은 없음) -->
-                <div class="d-flex justify-content-end">
-                    <button type="button" class="main-btn primary-btn btn-hover text-center" id="confirmDelete">삭제</button>
-                </div>
+
+                <form id="productDeleteForm" action="${pageContext.request.contextPath}/qh/product/delete" method="post">
+                    <!-- 선택된 제품 목록 (상태 배지는 모두 회색 bg-secondary로 표시) -->
+                    <ul id="deleteProductList" class="list-group mb-3">
+                        <!-- 동적으로 목록 항목이 추가됩니다 -->
+                    </ul>
+                    <!-- 삭제 확인 버튼 (취소 버튼은 없음) -->
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="main-btn primary-btn btn-hover text-center" id="btnProductDeletSubmit">삭제</button>
+                    </div>
+                </form>
             </div>
+
         </div>
     </div>
 </div>
@@ -539,24 +602,40 @@
 <!-- 카테고리 설정 시작 -->
 <script>
     $(document).ready(function() {
-        // 1. 더미 데이터 정의 (중분류)
-        const dummyMainCategoriesUp = [
-            { id: "도넛", name: "도넛" },
-            { id: "베이글", name: "베이글" },
-            { id: "커피", name: "커피" },
-            { id: "티", name: "티" },
-            { id: "머그컵", name: "머그컵" },
-            { id: "텀블러", name: "텀블러" }
-        ];
+        /**
+         * 중분류 선택 시 서버에서 소분류 목록을 가져와 연결해주는 공통 함수
+         */
+        function initLinkedDropdown(midSelector, subSelector, url) {
+            const $mid = $(midSelector);
+            const $sub = $(subSelector);
 
-        // 2. 원본 필터 영역에 중분류 옵션 채우기
-        var $midSelect = $('#myCustomFilters_mainCategoryUp #mainCategoryUp');
-        $.each(dummyMainCategoriesUp, function(index, item) {
-            $midSelect.append($('<option>', {
-                value: item.id,
-                text: item.name
-            }));
-        });
+            // 초기엔 비활성화
+            $sub.prop('disabled', true);
+
+            // 중분류가 변경되면
+            $mid.on('change', function () {
+                const midVal = $mid.val();
+                $sub.empty().append('<option value="">소분류 선택</option>');
+                if (!midVal) {
+                    $sub.prop('disabled', true);
+                    return;
+                }
+
+                // 안전한 URL 문자열 연결
+                fetch(url + '?categoryMid=' + encodeURIComponent(midVal))
+                    .then(function(res) { return res.json(); })
+                    .then(function(subList) {
+                        subList.forEach(function(sub) {
+                            $sub.append(new Option(sub, sub));
+                        });
+                        $sub.prop('disabled', false);
+                    })
+                    .catch(function() {
+                        console.warn("Fetch 실패");
+                        $sub.prop('disabled', true);
+                    });
+            });
+        }
 
         // DataTable 초기화 시 dom 옵션에서 필터 영역을 위한 container를 별도로 지정
         var categoryTable = $('#datatable_mainCategoryUp').DataTable({
@@ -565,38 +644,6 @@
             columnDefs: [
                 { width: '95px', targets: -1 },
                 { targets: [1, 2, 3], className: 'text-center' }
-            ],
-            ajax: function(data, callback, settings) {
-                console.log('ajax called', settings.nTable.id); // 로그 추가해서 확인
-                // settings.nTable.id 검사를 통해 해당 테이블에만 적용
-                if (settings.nTable.id !== 'datatable_mainCategoryUp') return true;
-                const dummyMainCategorieData = [
-                    { "categoryId": "DPN", "categoryMid": "도넛", "categorySub": "프로틴도넛" },
-                    { "categoryId": "DGL", "categoryMid": "도넛", "categorySub": "글루텐프리도넛" },
-                    { "categoryId": "DLW", "categoryMid": "도넛", "categorySub": "저당도넛" },
-                    { "categoryId": "BGL", "categoryMid": "베이글", "categorySub": "글루텐프리베이글" },
-                    { "categoryId": "CDC", "categoryMid": "커피", "categorySub": "디카페인" },
-                    { "categoryId": "TZR", "categoryMid": "티", "categorySub": "제로음료" },
-                    { "categoryId": "MPK", "categoryMid": "머그컵", "categorySub": "프로킨머그컵" },
-                    { "categoryId": "TPK", "categoryMid": "텀블러", "categorySub": "프로킨텀블러" }
-                ];
-                Promise.resolve().then(() => {
-                    callback({ data: dummyMainCategorieData });
-                });
-            },
-            columns: [
-                { // 체크박스
-                    data: null,
-                    orderable: false,
-                    searchable: false,
-                    render: function(data, type, row, meta) {
-                        return '<input type="checkbox" class="row-checkbox">';
-                    }
-                },
-                { data: 'categoryId', title: '제품코드' },
-                { data: 'categoryMid', title: '중분류명' },
-                { data: 'categorySub', title: '소분류명' },
-                { defaultContent: "", title: "" }
             ],
             paging: true,
             pageLength: 5,
@@ -934,53 +981,6 @@
 
 <script>
     $(document).ready(function() {
-        // 1. 더미 데이터 정의 (중분류, 소분류)
-        const dummyMidCategories = [
-            {id: "도넛", name: "도넛"},
-            {id: "베이글", name: "베이글"},
-            {id: "커피", name: "커피"},
-            {id: "티", name: "티"},
-            {id: "머그컵", name: "머그컵"},
-            {id: "텀블러", name: "텀블러"}
-        ];
-        const dummySubCategories = [
-            {id: "프로틴 도넛", name: "프로틴 도넛", midCategory: "도넛"},
-            {id: "글루텐 프리 도넛", name: "글루텐 프리 도넛", midCategory: "도넛"},
-            {id: "저당 도넛", name: "저당 도넛", midCategory: "도넛"},
-            {id: "글루텐프리베이글", name: "글루텐프리베이글", midCategory: "베이글"},
-            {id: "디카페인", name: "디카페인", midCategory: "커피"},
-            {id: "제로음료", name: "제로음료", midCategory: "티"},
-            {id: "프로킨머그컵", name: "프로킨머그컵", midCategory: "머그컵"},
-            {id: "프로킨텀블러", name: "프로킨텀블러", midCategory: "텀블러"}
-        ];
-
-        // 2. 원본 필터 영역에 중분류, 소분류 옵션 채우기
-        var $midSelect = $('#myCustomFilters #midCategory');
-        $.each(dummyMidCategories, function (index, item) {
-            $midSelect.append($('<option>', {
-                value: item.id,
-                text: item.name
-            }));
-        });
-        var $subSelect = $('#myCustomFilters #subCategory');
-        $.each(dummySubCategories, function (index, item) {
-            $subSelect.append($('<option>', {
-                value: item.id,
-                text: item.name
-            }));
-        });
-
-        // 3. 소분류 -> 중분류 매핑 객체
-        const mapping = {
-            "프로틴 도넛": "도넛",
-            "글루텐 프리 도넛": "도넛",
-            "저당 도넛": "도넛",
-            "글루텐프리베이글": "베이글",
-            "디카페인": "커피",
-            "제로음료": "티",
-            "프로킨머그컵": "머그컵",
-            "프로킨텀블러": "텀블러"
-        };
 
         // 4. 이벤트 바인딩: 중분류 선택 시 소분류 리셋, 소분류 선택 시 자동 중분류 선택
         $('#myCustomFilters #midCategory').on('change', function() {
@@ -1005,55 +1005,6 @@
             columnDefs: [
                 { width: '95px', targets: -1 },  // Actions 열 너비
                 { targets: [1, 2, 3, 4, 5, 6], className: 'text-center' } // JS 속성으로 가운데 정렬
-            ],
-            ajax: function(data, callback, settings) {
-                console.log('ajax called', settings.nTable.id); // 로그 추가해서 확인
-                if (settings.nTable.id !== 'datatable') return true;
-                // 전역 더미 데이터 (제품 목록)
-                const dummyData = [
-                    { productId: "DPN1", categoryMid: "도넛", categorySub: "프로틴 도넛", StoredType: "냉장", productName: "프로틴초코도넛", productPrice: "5,000원", status: "재고있음" },
-                    { productId: "DPN2", categoryMid: "도넛", categorySub: "프로틴 도넛", StoredType: "냉장", productName: "프로틴딸기도넛", productPrice: "5,000원", status: "삭제가능" },
-                    { productId: "DPN3", categoryMid: "도넛", categorySub: "프로틴 도넛", StoredType: "냉장", productName: "프로틴글레이즈드도넛", productPrice: "5,000원", status: "입고진행" },
-                    { productId: "DPN4", categoryMid: "도넛", categorySub: "프로틴 도넛", StoredType: "냉동", productName: "냉동프로틴초코도넛", productPrice: "4,000원", status: "발주진행" },
-                    { productId: "DPN5", categoryMid: "도넛", categorySub: "프로틴 도넛", StoredType: "냉동", productName: "냉동프로틴딸기도넛", productPrice: "4,000원", status: "재고있음" },
-                    { productId: "DPN6", categoryMid: "도넛", categorySub: "프로틴 도넛", StoredType: "냉동", productName: "냉동프로틴글레이즈드도넛", productPrice: "4,000원", status: "재고있음" },
-                    { productId: "DGL1", categoryMid: "도넛", categorySub: "글루텐 프리 도넛", StoredType: "냉장", productName: "글루텐프리초코도넛", productPrice: "5,000원", status: "재고있음" },
-                    { productId: "DGL2", categoryMid: "도넛", categorySub: "글루텐 프리 도넛", StoredType: "냉장", productName: "글루텐프리딸기도넛", productPrice: "5,000원", status: "출고진행" },
-                    { productId: "DGL3", categoryMid: "도넛", categorySub: "글루텐 프리 도넛", StoredType: "냉장", productName: "글루텐프리글레이즈드도넛", productPrice: "5,000원", status: "출고진행" },
-                    { productId: "DGL4", categoryMid: "도넛", categorySub: "글루텐 프리 도넛", StoredType: "냉동", productName: "냉동동글루텐프리초코도넛", productPrice: "4,000원", status: "출고진행" },
-                    { productId: "DGL5", categoryMid: "도넛", categorySub: "글루텐 프리 도넛", StoredType: "냉동", productName: "냉동글루텐프리딸기도넛", productPrice: "4,000원", status: "재고있음" },
-                    { productId: "DGL6", categoryMid: "도넛", categorySub: "글루텐 프리 도넛", StoredType: "냉동", productName: "냉동글루텐프리글레이즈드도넛", productPrice: "4,000원", status: "재고있음" },
-                    { productId: "DLW1", categoryMid: "도넛", categorySub: "저당 도넛", StoredType: "냉장", productName: "저당초코도넛", productPrice: "5,000원", status: "삭제가능" },
-                    { productId: "DLW2", categoryMid: "도넛", categorySub: "저당 도넛", StoredType: "냉장", productName: "저당딸기도넛", productPrice: "5,000원", status: "삭제가능" },
-                    { productId: "DLW3", categoryMid: "도넛", categorySub: "저당 도넛", StoredType: "냉장", productName: "저당글레이즈드도넛", productPrice: "5,000원", status: "삭제가능" },
-                    { productId: "DLW4", categoryMid: "도넛", categorySub: "저당 도넛", StoredType: "냉동", productName: "냉동저당초코도넛", productPrice: "4,000원", status: "삭제가능" },
-                    { productId: "DLW5", categoryMid: "도넛", categorySub: "저당 도넛", StoredType: "냉동", productName: "냉동저당딸기도넛", productPrice: "4,000원", status: "삭제가능" },
-                    { productId: "DLW6", categoryMid: "도넛", categorySub: "저당 도넛", StoredType: "냉동", productName: "냉동저당글레이즈드도넛", productPrice: "4,000원", status: "재고있음" },
-                    { productId: "BGL1", categoryMid: "베이글", categorySub: "글루텐프리베이글", StoredType: "냉동", productName: "글루텐프리베이글", productPrice: "5,000원", status: "입고진행" },
-                    { productId: "CDC1", categoryMid: "커피", categorySub: "디카페인", StoredType: "상온", productName: "디카페인커피", productPrice: "5,000원", status: "출고진행" },
-                    { productId: "TZR1", categoryMid: "티", categorySub: "제로음료", StoredType: "상온", productName: "제로아이스티", productPrice: "4,000원", status: "재고있음" },
-                    { productId: "MPK1", categoryMid: "머그컵", categorySub: "프로킨머그컵", StoredType: "상온", productName: "프로킨머그컵", productPrice: "8,000원", status: "입고진행" },
-                    { productId: "TPK1", categoryMid: "텀블러", categorySub: "프로킨텀블러", StoredType: "상온", productName: "프로킨텀블러", productPrice: "100,000원", status: "입고진행" }
-                ];
-                Promise.resolve().then(() => {
-                    callback({ data: dummyData });
-                });
-            },
-            columns: [
-                { // 체크박스 컬럼
-                    data: null,
-                    orderable: false,
-                    searchable: false,
-                    render: function(data, type, row, meta) {
-                        return '<input type="checkbox" class="row-checkbox">';
-                    }
-                },
-                { data: 'productId', title: '제품코드' },
-                { data: 'categoryMid', title: '중분류' },
-                { data: 'categorySub', title: '소분류' },
-                { data: 'StoredType', title: '보관타입' },
-                { data: 'productName', title: '제품명' },
-                { data: 'productPrice', title: '제품단가' }
             ],
             paging: true,
             pageLength: 10,
@@ -1149,22 +1100,19 @@
             }
         });
 
-        // 6-1. 이벤트 위임 방식으로 변경된 ID에 새롭게 바인딩 (body를 통해 실제 필터에 작동하게!)
-        $('body').on('change', '#midCategory_clone', function() {
-            $('#subCategory_clone').val('');
-            table.draw();
-        });
+        // 필터 영역: 서버 연동하여 소분류 동적 로드
+        initLinkedDropdown(
+            '#midCategory_clone',
+            '#subCategory_clone',
+            '${pageContext.request.contextPath}/category/check'
+        );
 
-        $('body').on('change', '#subCategory_clone', function() {
-            const selectedSub = $(this).val();
-            if (selectedSub) {
-                const correspondingMid = mapping[selectedSub];
-                if (correspondingMid) {
-                    $('#midCategory_clone').val(correspondingMid);
-                }
-            }
-            table.draw();
-        });
+        // 등록 모달: 중분류→소분류 연동
+        initLinkedDropdown(
+            '#registerCategoryMid',
+            '#registerCategorySub',
+            '${pageContext.request.contextPath}/category/check'
+        );
 
         $('body').on('click', '#resetFilterBtn', function () {
             $('#midCategory_clone').val('');
@@ -1210,35 +1158,6 @@
         table.on('draw', function() {
             $('#select-all').prop('checked', false);
         });
-
-        // 드롭다운 채우기 함수
-        function populateMidCategories() {
-            const $midSelect = $('#registerCategoryMid');
-            $midSelect.empty().append('<option value="">중분류 선택</option>');
-            dummyMidCategories.forEach(function(item) {
-                $midSelect.append('<option value="' + item.id + '">' + item.name + '</option>');
-            });
-        }
-        function populateSubCategories(selectedMid) {
-            const $subSelect = $('#registerCategorySub');
-
-            if (!selectedMid) {
-                $subSelect.prop('disabled', true)
-                    .empty()
-                    .append('<option value="">소분류 선택</option>');
-                return;
-            }
-
-            $subSelect.prop('disabled', false)
-                .empty()
-                .append('<option value="">소분류 선택</option>');
-
-            dummySubCategories.forEach(function (item) {
-                if (item.midCategory == selectedMid) {
-                    $subSelect.append('<option value="' + item.id + '">' + item.name + '</option>');
-                }
-            });
-        }
 
         // 유효성 검사 함수
         function validateProductInputs() {
@@ -1331,15 +1250,6 @@
         // 모달 열기 버튼 이벤트 (단순히 모달을 여는 역할만)
         $(document).on('click', '#btnProductAdd_clone', function() {
             $('#productAddModal').modal('show');
-        });
-
-        // 제품 수정 모달 클릭 시
-        const dummySubCategoriesByMid = {};
-        dummySubCategories.forEach(item => {
-            if (!dummySubCategoriesByMid[item.midCategory]) {
-                dummySubCategoriesByMid[item.midCategory] = [];
-            }
-            dummySubCategoriesByMid[item.midCategory].push(item.name);
         });
 
         function validateEditRow($row) {

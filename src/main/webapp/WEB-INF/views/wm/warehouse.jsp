@@ -352,7 +352,7 @@
         // 6. 필터 초기화 버튼
         $('body').on('click', '#resetFilterBtn', function () {
             $('#midCategory_clone').val('');
-            $('#subCategory_clone').val('');
+            $('#subCategory_clone').prop('disabled', true);
             table.draw();
         });
 
