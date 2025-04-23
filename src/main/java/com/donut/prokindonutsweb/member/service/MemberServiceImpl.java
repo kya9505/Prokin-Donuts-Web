@@ -1,5 +1,6 @@
 package com.donut.prokindonutsweb.member.service;
 
+import com.donut.prokindonutsweb.home.mapper.FindIdMapper;
 import com.donut.prokindonutsweb.member.dto.MemberAccountDTO;
 import com.donut.prokindonutsweb.member.mapper.MemberMapper;
 import com.donut.prokindonutsweb.member.vo.MemberAccountVO;
@@ -17,6 +18,7 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService {
     private final ModelMapper modelMapper;
     private final MemberMapper memberMapper;
+    private final FindIdMapper findMapper;
 
     /*
     * memberaccount table의 member를 조회하는 메서드
@@ -69,4 +71,17 @@ public class MemberServiceImpl implements MemberService {
         int count = memberMapper.memberEmailCheck(email);
         return count > 0;
     }
+
+    @Override
+    public void updateByMember(String id, MemberAccountDTO dto){
+        MemberAccountVO memberAccountVO = modelMapper.map(dto,MemberAccountVO.class);
+        memberMapper.updateMember(memberAccountVO);
+    }
+
+    @Override
+    public void deleteByMember(String id){
+        List<String> memberList = List.of(id);
+        memberMapper.deleteMember(memberList);
+    }
+
 }
