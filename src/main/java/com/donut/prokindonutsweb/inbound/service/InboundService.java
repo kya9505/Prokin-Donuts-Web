@@ -1,23 +1,23 @@
 package com.donut.prokindonutsweb.inbound.service;
 
 import com.donut.prokindonutsweb.inbound.dto.*;
+import com.donut.prokindonutsweb.inbound.vo.InventoryVO;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 public interface InboundService {
-    Optional<List<ProductDTO>> findAllProductList();
+    Optional<List<ProductDTO>> findProductList();
 
-    void saveInbound(InboundDTO inboundDTO);
+    void addInbound(InboundDTO inboundDTO, List<InboundDetailDTO> inboundDetailDTO);
 
-    void saveInboundDetail(List<InboundDetailDTO> inboundDetailDTO);
 
     String findNextInboundCode();
 
-    Optional<List<InboundDTO>> findAllInboundList();
+    List<InboundDTO> findInboundList();
 
-    Optional<List<InboundDetailDTO>> findAllInboundDetailList();
+    List<InboundDetailDTO> findInboundDetailList();
 
     void approveInbound(String inboundCode);
 
@@ -29,9 +29,9 @@ public interface InboundService {
 
     void deleteInbound(String inboundCode);
 
-    Optional<List<InboundStatusDTO>> findAllInboundStatusList();
+    Optional<List<InboundStatusDTO>> findInboundStatusList();
 
-    void qhUpdateInboundStatus(String inboundCode);
+    void updateInboundStatus(String inboundCode);
 
-    Optional<List<InboundDTO>> findAllQhInboundList();
+    Optional<List<InboundDTO>> findQhInboundList();
 }

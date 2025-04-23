@@ -4,15 +4,18 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.donut.prokindonutsweb.inbound.mapper.InboundMapper">
 
-    <select id="selectAllProductList" resultType="com.donut.prokindonutsweb.inbound.dto.ProductVO">
+<!--    입고를 요청할 때 필요한 제품 리스트를 반환한다-->
+    <select id="selectAllProductList" resultType="com.donut.prokindonutsweb.inbound.vo.ProductVO">
         select productCode, productName, productPrice, storedType from product
     </select>
 
+<!--    입고 정보를 저장한다. -->
     <insert id="insertInbound">
         Insert into inbound (inboundCode, inboundDate, inboundStatus, warehouseCode)
         values (#{inboundCode},#{inboundDate},#{inboundStatus}, #{warehouseCode})
     </insert>
 
+<!--    입고상세 정보를 저장한다.-->
     <insert id="insertInboundDetailList" parameterType="java.util.List">
         INSERT INTO inboundDetail ( inboundDetailCode, quantity, inboundCode, productCode, sectionCode )
         VALUES
@@ -34,7 +37,7 @@
 <!--    창고관리자 - 입고관리-->
 
 <!--    입고목록 반환-->
-    <select id="selectAllInboundList" resultType="com.donut.prokindonutsweb.inbound.dto.InboundVO">
+    <select id="selectAllInboundList" resultType="com.donut.prokindonutsweb.inbound.vo.InboundVO">
         select inboundCode, inboundDate, inboundStatus, warehouseCode from Inbound
     </select>
 
@@ -60,7 +63,7 @@
     </update>
 
 <!--    입고 완료시 재고에 반영(트리거를 직접 구현)-->
-    <insert id="updateInventory" parameterType="com.donut.prokindonutsweb.inbound.dto.InventoryVO">
+    <insert id="updateInventory" parameterType="com.donut.prokindonutsweb.inbound.vo.InventoryVO">
         Insert into inventory (inventoryCode, quantity, productCode, warehouseCode)
         values (#{inventoryCode}, #{quantity}, #{productCode}, #{warehouseCode})
         on DUPLICATE KEY update quantity = quantity + #{quantity}
@@ -96,7 +99,7 @@
 <!--    창고관리자 입고 현황-->
 
 <!--    입고현황 목록 반환-->
-    <select id="selectAllInboundStatusList" resultType="com.donut.prokindonutsweb.inbound.dto.InboundStatusVO">
+    <select id="selectAllInboundStatusList" resultType="com.donut.prokindonutsweb.inbound.vo.InboundStatusVO">
         select i.inboundCode, p.productCode, p.productName, p.productPrice, i.inboundDate, i.inboundStatus, d.sectionCode, d.quantity
         from inbound i, inboundDetail d, product p
         where i.inboundCode = d.inboundCode and p.productCode = d.productCode
@@ -106,26 +109,4 @@
     <update id="updateQhInboundStatus">
         update inbound set inboundStatus = "승인대기" where inboundCode = #{inboundCode}
     </update>
-
-
-
-
-
-    <sql id="search">
-        <if test="(types != null and keyword != null)">
-            <foreach collection="types" item="type" open=" and ( " separator="OR" close=")">
-                <choose>
-                    <when test='type.equals("T")'>
-                        title like concat('%',#{keyword},'%')
-                    </when>
-                    <when test='type.equals("C")'>
-                        content like concat('%',#{keyword},'%')
-                    </when>
-                    <when test='type.equals("W")'>
-                        writer like concat('%',#{keyword},'%')
-                    </when>
-                </choose>
-            </foreach>
-        </if>
-    </sql>
 </mapper>

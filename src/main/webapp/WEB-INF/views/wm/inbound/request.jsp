@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
-
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -114,6 +114,11 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
+                                <%--<c:if test="${not empty errorMessage}">
+                                    <div class="alert alert-danger mt-3">
+                                            ${errorMessage}
+                                    </div>
+                                </c:if>--%>
                                 <p>수량과 입고 날짜를 선택하고 입고요청 완료 버튼을 클릭하세요.</p>
                                 <table class="table" id="selectedProductsTable">
                                     <thead>
@@ -188,14 +193,16 @@
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
 
+
+
 <script>
     //ID가 datatable인 테이블을 DataTables로 초기화하고 반환된 객체를 table 변수에 저장.
     var table = $('#datatable').DataTable({
         autoWidth: false,
         columnDefs: [
-            { targets: 0, orderable: false, searchable: false }, // 체크박스 컬럼
+            {targets: 0, orderable: false, searchable: false}, // 체크박스 컬럼
             // { targets: [0, 1, 2, 3], className: 'text-center' }
-            { targets: [1, 2, 3, 4], className: 'text-center' }
+            {targets: [1, 2, 3, 4], className: 'text-center'}
             // { targets: [1, 2, 3, 4, 6, 7], className: 'text-center' }
         ],
         order: [[1, 'asc']],
@@ -204,14 +211,14 @@
                 data: null,
                 orderable: false,
                 searchable: false,
-                render: function(data, type, row, meta) {
+                render: function (data, type, row, meta) {
                     return '<input type="checkbox" class="row-checkbox">';
                 }
             },
-            { data: 'productCode', title: '제품코드' },
-            { data: 'productName', title: '제품명' },
-            { data: 'productPrice', title: '제품단가' },
-            { data: 'storedType', title: '보관타입' },
+            {data: 'productCode', title: '제품코드'},
+            {data: 'productName', title: '제품명'},
+            {data: 'productPrice', title: '제품단가'},
+            {data: 'storedType', title: '보관타입'},
         ],
         paging: true,
         pageLength: 10,
@@ -233,12 +240,12 @@
             }
         },
         // 초기에 체크박스에서 정렬 화살표 지우기
-        initComplete: function(settings, json) {
+        initComplete: function (settings, json) {
             $('#datatable thead th').eq(0).removeClass('sorting sorting_asc sorting_desc');
             fixLengthDropdownStyle();
         },
         // 새로고침 후 체크박스에서 정렬 화살표 지우기 (유지)
-        drawCallback: function(settings) {
+        drawCallback: function (settings) {
             $('#datatable thead th').eq(0).removeClass('sorting sorting_asc sorting_desc');
         }
     });
@@ -296,27 +303,27 @@
     $('div.myFilterArea').html($clone.html());
 
     // select 태그 감싸는 구조 적용
-    $('.dataTables_length select').each(function() {
+    $('.dataTables_length select').each(function () {
         const $select = $(this);
         if (!$select.parent().hasClass('select-position')) {
             $select.wrap('<div class="col-lg-2"><div class="select-style-1"><div class="select-position"></div></div></div>');
         }
     });
     // 8. "Select All" 체크박스 이벤트 및 페이지 변경 시 초기화 등은 그대로 유지
-    $('#select-all').on('click', function() {
-        const rows = table.rows({ page: 'current' }).nodes();
+    $('#select-all').on('click', function () {
+        const rows = table.rows({page: 'current'}).nodes();
         $('input.row-checkbox', rows).prop('checked', this.checked);
     });
-    $('#datatable tbody').on('change', 'input.row-checkbox', function() {
-        if(!this.checked) {
+    $('#datatable tbody').on('change', 'input.row-checkbox', function () {
+        if (!this.checked) {
             const el = $('#select-all').get(0);
-            if(el && el.checked) {
+            if (el && el.checked) {
                 el.checked = false;
             }
         }
     });
 
-    table.on('draw', function() {
+    table.on('draw', function () {
         $('#select-all').prop('checked', false);
     });
 
@@ -345,11 +352,11 @@
         selectedData.forEach((item, index) => {
             const rowHtml = `
         <tr>
-          <td> `+(index + 1)+`</td>
-          <td>`+item.productCode+`</td>
-          <td>`+item.productName+`</td>
-          <td>`+item.productPrice+`</td>
-          <td>`+item.storedType+`</td>
+          <td> ` + (index + 1) + `</td>
+          <td>` + item.productCode + `</td>
+          <td>` + item.productName + `</td>
+          <td>` + item.productPrice + `</td>
+          <td>` + item.storedType + `</td>
           <td><input type="number" class="form-control quantity-input" min="100" value="100" step="100" style="width: 80px;"></td>
         </tr>
       `;
@@ -360,13 +367,34 @@
         $('#addInboundModal').modal('show');
     });
 
+    $('#addInboundModal').on('shown.bs.modal', function () {
+        const today = new Date();
+        console.log(today);
+
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0'); // 반드시 +1 필요
+        const dd = String(today.getDate()).padStart(2, '0');      // 0으로 시작되게 패딩
+
+        const minDate = `` + yyyy + `-` + mm + `-` + dd + ``;
+
+        console.log('✅ 오늘 날짜 (minDate):', minDate); // 여기서 값 확인
+        $('#inboundDate').attr('min', minDate);
+
+    });
+
+
 
     $('#addInboundModal .btn-primary').on('click', function () {
         // 기존 input 정리
         $('#inboundForm input.dynamic-field').remove();
-
         // 날짜 추가
         const inboundDate = $('#inboundDate').val();
+        //입고 날짜 선택 안 하면 return
+        if (!inboundDate) {
+            alert('입고 날짜를 선택해주세요.');
+            return;
+        }
+
         $('<input>').attr({
             type: 'hidden',
             name: 'inboundDate',
@@ -378,6 +406,12 @@
         $('#selectedProductsTable tbody tr').each(function (i) {
             const $tds = $(this).find('td');
             const quantity = $(this).find('.quantity-input').val();
+
+            if (!quantity || isNaN(quantity)) {
+                alert('수량은 숫자만 입력 가능합니다.');
+                invalid = true;
+                return false;
+            }
 
             const productCode = $tds.eq(1).text().trim();
             const productName = $tds.eq(2).text().trim();
@@ -424,12 +458,16 @@
         // form 전송
         $('#inboundForm').submit();
     });
-
+    console.log($('#inboundDate').length); // 1 아니면 문제 있음
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
 
 
 </script>
-
+<c:if test="${not empty successMessage}">
+    <script>
+        alert('${successMessage}');
+    </script>
+</c:if>
 </body>
 </html>

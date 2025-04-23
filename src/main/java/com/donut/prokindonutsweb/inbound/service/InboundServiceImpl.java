@@ -2,7 +2,10 @@ package com.donut.prokindonutsweb.inbound.service;
 
 import com.donut.prokindonutsweb.inbound.dto.*;
 import com.donut.prokindonutsweb.inbound.mapper.InboundMapper;
+import com.donut.prokindonutsweb.inbound.vo.InboundVO;
+import com.donut.prokindonutsweb.inbound.vo.InventoryVO;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,67 +18,61 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 @RequiredArgsConstructor
 public class InboundServiceImpl implements InboundService {
+    private final ModelMapper modelMapper;
 
     private final InboundMapper inboundMapper;
 
     @Override
-    public Optional<List<ProductDTO>> findAllProductList() {
-
+    public Optional<List<ProductDTO>> findProductList() {
         // VO -> DTO 변환작업
         List<ProductDTO> list = inboundMapper.selectAllProductList()
                 .stream()
-                .map(vo -> ProductDTO.builder()
-                        .productCode(vo.getProductCode())
-                        .productName(vo.getProductName())
-                        .productPrice(vo.getProductPrice())
-                        .storedType(vo.getStoredType())
-                        .build())
+                .map(vo -> modelMapper.map(vo, ProductDTO.class))
                 .toList();// 또는 collect(Collectors.toList());
         return list.isEmpty() ? Optional.empty() : Optional.of(list);
     }
 
+    /**
+     * 입고 요청 등록
+     * 입고 정보 + 입고 상세 정보
+     * 트랜잭션 처리
+     *
+     * @param '입고정보'
+     * @param '입고    상세 정보'
+     */
     @Override
-    public void saveInbound(InboundDTO inboundDTO) {
-        InboundVO vo = InboundVO.builder()
-                .inboundCode(inboundDTO.getInboundCode())
-                .inboundDate(inboundDTO.getInboundDate())
-                .inboundStatus(inboundDTO.getInboundStatus())
-                .warehouseCode(inboundDTO.getWarehouseCode())
-                .build();
-        inboundMapper.insertInbound(vo);
-    }
+    @Transactional
+    public void addInbound(InboundDTO inboundDTO, List<InboundDetailDTO> inboundDetailList) {
+        InboundVO inboundVO = modelMapper.map(inboundDTO, InboundVO.class);
+        inboundMapper.insertInbound(inboundVO);
 
-    @Override
-    public void saveInboundDetail(List<InboundDetailDTO> list) {
-        String inboundCode = inboundMapper.selectInboundCode();
-
-        AtomicInteger i = new AtomicInteger(1);
-
-        List<InboundDetailVO> inboundDetailVOList = list.stream().map(
-                dto -> {
-                    InboundDetailVO vo = InboundDetailVO.builder()
-                            .inboundDetailCode(inboundCode + "-" + i.getAndIncrement())
-                            .quantity(dto.getQuantity())
-                            .inboundCode(inboundCode)
-                            .productCode(dto.getProductCode())
-                            .sectionCode(getSection(dto.getStoredType()))
-                            .build();
-                    return vo;
-                }
-        ).toList();
+        String inboundCode = inboundDTO.getInboundCode();
+        List<InboundDetailVO> inboundDetailVOList = getInboundDetailList(inboundDetailList, inboundCode);
 
         inboundMapper.insertInboundDetailList(inboundDetailVOList);
+    }
 
+    private List<InboundDetailVO> getInboundDetailList(List<InboundDetailDTO> inboundDetailList, String inboundCode) {
+        AtomicInteger i = new AtomicInteger(1);
+        return inboundDetailList.stream().map(
+                dto -> InboundDetailVO.builder()
+                        .inboundDetailCode(inboundCode + "-" + i.getAndIncrement())
+                        .quantity(dto.getQuantity())
+                        .inboundCode(inboundCode)
+                        .productCode(dto.getProductCode())
+                        .sectionCode(getSection(dto.getStoredType()))
+                        .build()
+        ).toList();
     }
 
     private String getSection(String storedType) {
-        // 창코코드 알게 되면 변경 예정
-        if (storedType.equals("냉장")) return "R";
-        else if (storedType.equals("냉동")) return "F";
-        else return "A";
+        return StoredType.fromSectionCode(storedType).getLabel();
     }
 
-
+    /**
+     * 입고 코드 자동 생성기
+     * @return '입고코드'
+     */
     @Override
     public String findNextInboundCode() {
         String inboundCode = inboundMapper.selectInboundCode();
@@ -85,40 +82,30 @@ public class InboundServiceImpl implements InboundService {
 
     //    입고관리 페이지에는 (입고요청, 승인대기) 상태 입고목록만 보여진다.
     @Override
-    public Optional<List<InboundDTO>> findAllInboundList() {
+    public List<InboundDTO> findInboundList() {
         List<InboundDTO> list = inboundMapper.selectAllInboundList().stream()
-                .filter(vo -> "입고요청".equals(vo.getInboundStatus()) || "승인대기".equals(vo.getInboundStatus()))
-                .map(vo -> {
-                            InboundDTO dto = InboundDTO.builder()
-                                    .inboundCode(vo.getInboundCode())
-                                    .inboundDate(vo.getInboundDate())
-                                    .inboundStatus(vo.getInboundStatus())
-                                    .warehouseCode(vo.getWarehouseCode())
-                                    .build();
-                            return dto;
-                        }
-                ).toList();
-        return list.isEmpty() ? Optional.empty() : Optional.of(list);
+                .filter(vo -> InboundStatus.REQUEST.getStatus().equals(vo.getInboundStatus())
+                        || InboundStatus.APPROVE.getStatus().equals(vo.getInboundStatus()))
+                .map(vo -> modelMapper.map(vo, InboundDTO.class)).
+                toList();
+        return list;
     }
 
     // 입고상세 목록 변환 작업
     @Override
-    public Optional<List<InboundDetailDTO>> findAllInboundDetailList() {
+    public List<InboundDetailDTO> findInboundDetailList() {
         List<InboundDetailDTO> list = inboundMapper.selectAllInboundDetailList()
                 .stream()
-                .map(vo -> {
-                            InboundDetailDTO dto = InboundDetailDTO.builder()
-                                    .inboundCode(vo.getInboundCode())
-                                    .productCode(vo.getProductCode())
-                                    .productName(inboundMapper.selectProductName(vo.getProductCode()))
-                                    .productPrice(inboundMapper.selectProductPrice(vo.getProductCode()))
-                                    .storedType(getStoredType(vo.getSectionCode()))
-                                    .quantity(vo.getQuantity())
-                                    .build();
-                            return dto;
-                        }
+                .map(vo -> InboundDetailDTO.builder()
+                                .inboundCode(vo.getInboundCode())
+                                .productCode(vo.getProductCode())
+                                .productName(inboundMapper.selectProductName(vo.getProductCode()))
+                                .productPrice(inboundMapper.selectProductPrice(vo.getProductCode()))
+                                .storedType(getStoredType(vo.getSectionCode()))
+                                .quantity(vo.getQuantity())
+                                .build()
                 ).toList();
-        return list.isEmpty() ? Optional.empty() : Optional.of(list);
+        return list;
     }
 
     private String getStoredType(String sectionCode) {
@@ -128,6 +115,7 @@ public class InboundServiceImpl implements InboundService {
         else return "상온";
     }
 
+    // 입고 상태를 변경한다 (-> 입고완료)
     @Override
     public void approveInbound(String inboundCode) {
         inboundMapper.approveInbound(inboundCode);
@@ -149,9 +137,7 @@ public class InboundServiceImpl implements InboundService {
         String inboundCode = list.get(0).getInboundCode();
         inboundMapper.updateInboundDate(inboundDate, inboundCode);
 
-        list.stream().forEach(
-                inboundMapper::updateInbound
-        );
+        list.forEach(inboundMapper::updateInbound);
     }
 
 
@@ -161,46 +147,27 @@ public class InboundServiceImpl implements InboundService {
     }
 
     @Override
-    public Optional<List<InboundStatusDTO>> findAllInboundStatusList() {
+    public Optional<List<InboundStatusDTO>> findInboundStatusList() {
         List<InboundStatusDTO> list = inboundMapper.selectAllInboundStatusList()
                 .stream()
-                .map(vo -> {
-                    InboundStatusDTO dto = InboundStatusDTO.builder()
-                            .inboundCode(vo.getInboundCode())
-                            .productCode(vo.getProductCode())
-                            .productName(vo.getProductName())
-                            .productPrice(vo.getProductPrice())
-                            .inboundDate(vo.getInboundDate())
-                            .inboundStatus(vo.getInboundStatus())
-                            .sectionCode(vo.getSectionCode())
-                            .quantity(vo.getQuantity())
-                            .build();
-                    return dto;
-                }).toList();
+                .map(vo -> modelMapper.map(vo, InboundStatusDTO.class))
+                .toList();
         return list.isEmpty() ? Optional.empty() : Optional.of(list);
     }
 
     @Override
-    public void qhUpdateInboundStatus(String inboundCode) {
+    public void updateInboundStatus(String inboundCode) {
         inboundMapper.updateQhInboundStatus(inboundCode);
     }
 
 
     //    본사관리자 페이지에는 (입고요청) 상태 입고목록만 보여진다.
     @Override
-    public Optional<List<InboundDTO>> findAllQhInboundList() {
+    public Optional<List<InboundDTO>> findQhInboundList() {
         List<InboundDTO> list = inboundMapper.selectAllInboundList().stream()
-                .filter(vo -> "입고요청".equals(vo.getInboundStatus()))
-                .map(vo -> {
-                            InboundDTO dto = InboundDTO.builder()
-                                    .inboundCode(vo.getInboundCode())
-                                    .inboundDate(vo.getInboundDate())
-                                    .inboundStatus(vo.getInboundStatus())
-                                    .warehouseCode(vo.getWarehouseCode())
-                                    .build();
-                            return dto;
-                        }
-                ).toList();
+                .filter(vo -> InboundStatus.REQUEST.getStatus().equals(vo.getInboundStatus()))
+                .map(vo -> modelMapper.map(vo, InboundDTO.class))
+                .toList();
         return list.isEmpty() ? Optional.empty() : Optional.of(list);
     }
 
