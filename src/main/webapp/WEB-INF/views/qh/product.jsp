@@ -393,7 +393,7 @@
 
             <!-- 모달 바디 -->
             <div class="modal-body">
-                <form id="warehouseDeleteForm" action="${pageContext.request.contextPath}/qh/warehouse/delete" method="post">
+                <form id="warehouseDeleteForm" action="${pageContext.request.contextPath}/qh/product/delete" method="post">
                     <h5>선택한 카테고리를 정말 삭제하시겠습니까?</h5><br>
                     <ul id="deleteProductList_mainCategoryUp" class="list-group mb-3">
                         <!-- 선택된 제품명 목록 삽입 -->
@@ -670,6 +670,11 @@
                 $('#datatable_mainCategoryUp thead th').eq(0).removeClass('sorting sorting_asc sorting_desc');
                 $('#datatable_mainCategoryUp thead th').eq(4).removeClass('sorting sorting_asc sorting_desc');
                 fixLengthDropdownStyle_category();
+                const api = this.api();
+
+                setTimeout(() => {
+                    api.draw(false);
+                }, 0);
 
                 // 필터 이벤트는 복제한 요소에 바인딩
                 // (이벤트는 아래 부분에서 복제한 후 다시 바인딩할 예정)
@@ -956,21 +961,28 @@
             $select.val(selectedValue);
         }
 
-        // 'Select All' 체크박스 이벤트
+        // 1) 'Select All' 클릭 시 현재 페이지의 row-checkbox만 토글
         $('#select-all_mainCategoryUp').on('click', function() {
+            // categoryTable은 DataTable 인스턴스여야 합니다
             const rows = categoryTable.rows({ page: 'current' }).nodes();
             $('input.row-checkbox', rows).prop('checked', this.checked);
         });
+
+        // 2) 개별 row 체크박스 언체크 시 전체 체크박스도 언체크
         $('#datatable_mainCategoryUp tbody').on('change', 'input.row-checkbox', function() {
             if (!this.checked) {
-                const el = $('#select-all_mainCategoryUp').get(0);
-                if (el && el.checked) {
-                    el.checked = false;
-                }
+                $('#select-all_mainCategoryUp').prop('checked', false);
             }
         });
-        categoryTable.on('draw', function() {
+
+        // 페이지 이동 시 전체 체크박스 & 현재 페이지 row-checkbox 모두 초기화
+        $('#datatable_mainCategoryUp').on('page.dt', function() {
+            // 1) 헤더 전체선택 체크박스 언체크
             $('#select-all_mainCategoryUp').prop('checked', false);
+
+            // 2) 현재 페이지 row-checkbox 언체크
+            const rows = categoryTable.rows({ page: 'current' }).nodes();
+            $('input.row-checkbox', rows).prop('checked', false);
         });
     });
 
@@ -999,6 +1011,7 @@
         let currentSelectedProducts = [];
 
         // 5. DataTable 초기화 (dom 옵션에 사용자 정의 영역 포함)
+        /** @type {DataTables.Api} */
         var table = $('#datatable').DataTable({
             autoWidth: false,
             order: [[1, 'asc']],
@@ -1030,6 +1043,11 @@
                 if (settings.nTable.id !== 'datatable') return true;
                 $('#datatable_wrapper thead th').eq(0).removeClass('sorting sorting_asc sorting_desc');
                 fixLengthDropdownStyle();
+                const api = this.api();
+
+                setTimeout(() => {
+                    api.draw(false);
+                }, 0);
                 // 이후 중분류, 소분류 이벤트도 이 영역 내의 요소에 바인딩
             },
             // 새로고침 후 체크박스에서 정렬 화살표 지우기 (유지)
@@ -1080,17 +1098,58 @@
             $('#datatable_wrapper .dataTables_paginate .paginate_button').removeClass().addClass('main-btn deactive-btn-outline square-btn btn-hover mt-1 pt-2 pb-2 pl-15 pr-15');
         });
 
-        // 6. 사용자 정의 필터 영역에 원본 필터를 복제하여 주입
+        // 원본 <div id="myCustomFilters"> 를 복제해서 datatable dom에 붙이고
         var $clone = $('#myCustomFilters').clone(true);
-        // 복제 후 삽입 시, ID 제거 필수!
-        $clone.find('#midCategory').attr('id', 'midCategory_clone');
-        $clone.find('#subCategory').attr('id', 'subCategory_clone');
+        $clone.find('#midCategory').attr('id','midCategory_clone');
+        $clone.find('#subCategory').attr('id','subCategory_clone');
 
+        // 불필요한 버튼 아이디도 바꿔 주고…
         $clone.find('#btnProductAdd').attr('id', 'btnProductAdd_clone');
         $clone.find('#btnProductEdit').attr('id', 'btnProductEdit_clone');
         $clone.find('#btnProductDelete').attr('id', 'btnProductDelete_clone');
         $clone.find('#btnProductAdd, #btnProductEdit, #btnProductDelete').remove();
         $('div.myFilterArea').html($clone.html());
+
+        // 그리고 body(혹은 document)에 delegated 이벤트로 바인딩
+        $('body').on('change', '#midCategory_clone', function(){
+            table.draw();
+        });
+        $('body').on('change', '#subCategory_clone', function(){
+            table.draw();
+        });
+
+        // ① 전체 체크박스 누르면 현재 페이지의 row-checkbox 만 토글
+        $('#select-all').on('click', function(){
+            var rows = table.rows({ page: 'current' }).nodes();
+            $('input.row-checkbox', rows).prop('checked', this.checked);
+        });
+        // ② 개별 해제 시 전체박스도 해제
+        $('#datatable tbody').on('change','input.row-checkbox',function(){
+            if (!this.checked) {
+                $('#select-all').prop('checked',false);
+            }
+        });
+        // DataTable 초기화 이후에 추가
+        $('#datatable').on('page.dt', function() {
+            // 1) 헤더 전체선택 체크박스 초기화
+            $('#select-all').prop('checked', false);
+
+            // 2) 현재 페이지의 row-checkbox 모두 초기화
+            const rows = table.rows({ page: 'current' }).nodes();
+            $('input.row-checkbox', rows).prop('checked', false);
+        });
+
+        $('#midCategory_clone').on('change', function () {
+            const midVal = $(this).val();
+            $('#subCategory_clone').empty().append('<option value="">소분류 선택</option>');
+            if (!midVal) return;
+
+            fetch('${pageContext.request.contextPath}/category/check?categoryMid=' + encodeURIComponent(midVal))
+                .then(res => res.json())
+                .then(subList => {
+                    subList.forEach(sub => $('#subCategory_clone').append(new Option(sub, sub)));
+                });
+        });
 
         // select 태그 감싸는 구조 적용
         $('.dataTables_length select').each(function() {
@@ -1120,9 +1179,11 @@
             table.draw();
         });
 
-        // 7. 필터 이벤트: 드롭다운 변경 시 테이블 필터링
-        $('#midCategory, #subCategory, #productNameInput').on('change keyup', function() {
-            table.draw();
+        $('#midCategory_clone, #subCategory_clone').on('change', function() {
+            table
+                .column(2).search($('#midCategory_clone').val())
+                .column(3).search($('#subCategory_clone').val())
+                .draw();
         });
 
         // 7-1. 필터링 함수도 변경된 ID값을 기준으로 수정
@@ -1141,18 +1202,22 @@
             return true;
         });
 
-        // 8. "Select All" 체크박스 이벤트 및 페이지 변경 시 초기화 등은 그대로 유지
-        $('#select-all').on('click', function() {
-            const rows = table.rows({ page: 'current' }).nodes();
-            $('input.row-checkbox', rows).prop('checked', this.checked);
+        // "Select All" 체크박스 클릭 시 해당 페이지의 모든 row-checkbox 토글
+        $(document).on('click', '#select-all', function () {
+            const isChecked = this.checked;
+            $('#datatable tbody').find('input.row-checkbox').prop('checked', isChecked);
         });
-        $('#datatable tbody').on('change', 'input.row-checkbox', function() {
-            if(!this.checked) {
-                const el = $('#select-all').get(0);
-                if(el && el.checked) {
-                    el.checked = false;
-                }
+
+        // 개별 row-checkbox 를 언체크하면 전체 체크박스도 언체크
+        $(document).on('change', '#datatable tbody input.row-checkbox', function () {
+            if (!this.checked) {
+                $('#select-all').prop('checked', false);
             }
+        });
+
+        // 페이지 변경(draw) 될 때마다 전체 체크박스 초기화
+        $('#datatable').on('draw.dt', function () {
+            $('#select-all').prop('checked', false);
         });
 
         table.on('draw', function() {
