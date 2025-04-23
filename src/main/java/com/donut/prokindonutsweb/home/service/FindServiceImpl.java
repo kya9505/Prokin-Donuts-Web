@@ -1,18 +1,16 @@
-package com.donut.prokindonutsweb.login.service;
+package com.donut.prokindonutsweb.home.service;
 
-import com.donut.prokindonutsweb.login.dto.VerificationCodeDTO;
-import com.donut.prokindonutsweb.login.mapper.FindIdMapper;
+import com.donut.prokindonutsweb.home.dto.VerificationCodeDTO;
+import com.donut.prokindonutsweb.home.mapper.FindIdMapper;
 import com.donut.prokindonutsweb.member.dto.MemberAccountDTO;
 import com.donut.prokindonutsweb.member.vo.MemberAccountVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
 
 import javax.mail.MessagingException;
