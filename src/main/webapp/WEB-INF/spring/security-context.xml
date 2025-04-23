@@ -1,0 +1,62 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/security
+               http://www.springframework.org/schema/security/spring-security.xsd
+               http://www.springframework.org/schema/beans
+               http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+<!--bean 등록-->
+    <beans:bean id="LoginSuccessHandler"
+                class="com.donut.prokindonutsweb.security.config.LoginSuccessHandler" />
+
+
+
+<!--security 필터를 거치지 않을 경로 설정(로그인 없이 접근 가능한 경로)-->
+    <http pattern="/home/login" security="none" />
+    <http pattern="/home/signup" security="none" />
+    <http pattern="/home/findId" security="none" />
+    <http pattern="/home/findPassword" security="none" />
+    <http pattern="/home/idCheck" security="none" />
+    <http pattern="/home/emailCheck" security="none" />
+    <http pattern="/home/resultId" security="none" />
+    <http pattern="/home/resultPassword" security="none" />
+    <http pattern="/resources/**" security="none" />
+    <http auto-config="true" use-expressions="true">
+
+
+        <!--csrf 비활성화-->
+        <csrf disabled="true" />
+        <!--권한 부족 시 보여줄 페이지(임시 login 페이지 지정)-->
+        <access-denied-handler error-page="/home/login" />
+        <!-- 모든 경로는 로그인한 사용자만 접근 가능 -->
+        <intercept-url pattern="/*/**" access="isAuthenticated()" />
+
+        <!-- 로그인 설정 -->
+        <!-- 로그인 페이지
+             로그인 실패 시 경로
+             로그인 성공 시 호출될 핸들러(권한별 메인화명 경로 지정)
+             jsp의 id,password name지정(defult 값 username ,password)
+        -->
+        <form-login login-page="/home/login"
+                    authentication-failure-url="/home/login"
+                    authentication-success-handler-ref="LoginSuccessHandler"
+                    username-parameter="id"
+                    password-parameter="password"/>
+
+        <!-- 로그아웃 설정 -->
+        <!-- 로그아웃 페이지(버튼에 맵핑할 경로)
+             로그아웃 성공 시 이동할 페이지-->
+        <logout logout-url="/home/logout"
+                logout-success-url="/home/login" />
+
+    </http>
+
+    <!-- AuthenticationManager 및 Provider 설정
+        - userDetailsServiceImpl: UserDetailsService 구현체
+        - Spring Security는 이를 내부적으로 DaoAuthenticationProvider로 감싸 자동 처리 -->
+    <authentication-manager>
+        <authentication-provider user-service-ref="userDetailsServiceImpl"/>
+    </authentication-manager>
+
+</beans:beans>
