@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/wm/inbound")
-public class InboundController {
+public class WmInboundController {
 
     private final InboundService inboundService;
 
@@ -122,7 +123,7 @@ public class InboundController {
     // 입고현황
 
     @GetMapping("/status")
-    public void wmGetAllInboundStatus(Model model) {
+    public void getInboundStatusList(Model model) {
         List<InboundStatusDTO> inboundStatusList = inboundService.findInboundStatusList().get();
         model.addAttribute("inboundStatusList", inboundStatusList);
     }

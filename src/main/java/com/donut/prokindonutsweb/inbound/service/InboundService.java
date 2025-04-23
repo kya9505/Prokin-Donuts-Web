@@ -30,7 +30,7 @@ public interface InboundService {
 
     Optional<List<InboundStatusDTO>> findInboundStatusList();
 
-    void qhUpdateInboundStatus(String inboundCode);
+    void updateInboundStatus(String inboundCode);
 
-    Optional<List<InboundDTO>> findAllQhInboundList();
+    Optional<List<InboundDTO>> findQhInboundList();
 }

@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 @RequiredArgsConstructor
 public class InboundServiceImpl implements InboundService {
@@ -94,17 +96,14 @@ public class InboundServiceImpl implements InboundService {
     public List<InboundDetailDTO> findInboundDetailList() {
         List<InboundDetailDTO> list = inboundMapper.selectAllInboundDetailList()
                 .stream()
-                .map(vo -> {
-                            InboundDetailDTO dto = InboundDetailDTO.builder()
-                                    .inboundCode(vo.getInboundCode())
-                                    .productCode(vo.getProductCode())
-                                    .productName(inboundMapper.selectProductName(vo.getProductCode()))
-                                    .productPrice(inboundMapper.selectProductPrice(vo.getProductCode()))
-                                    .storedType(getStoredType(vo.getSectionCode()))
-                                    .quantity(vo.getQuantity())
-                                    .build();
-                            return dto;
-                        }
+                .map(vo -> InboundDetailDTO.builder()
+                                .inboundCode(vo.getInboundCode())
+                                .productCode(vo.getProductCode())
+                                .productName(inboundMapper.selectProductName(vo.getProductCode()))
+                                .productPrice(inboundMapper.selectProductPrice(vo.getProductCode()))
+                                .storedType(getStoredType(vo.getSectionCode()))
+                                .quantity(vo.getQuantity())
+                                .build()
                 ).toList();
         return list;
     }
@@ -151,43 +150,24 @@ public class InboundServiceImpl implements InboundService {
     public Optional<List<InboundStatusDTO>> findInboundStatusList() {
         List<InboundStatusDTO> list = inboundMapper.selectAllInboundStatusList()
                 .stream()
-                .map(vo -> {
-                    InboundStatusDTO dto = InboundStatusDTO.builder()
-                            .inboundCode(vo.getInboundCode())
-                            .productCode(vo.getProductCode())
-                            .productName(vo.getProductName())
-                            .productPrice(vo.getProductPrice())
-                            .inboundDate(vo.getInboundDate())
-                            .inboundStatus(vo.getInboundStatus())
-                            .sectionCode(vo.getSectionCode())
-                            .quantity(vo.getQuantity())
-                            .build();
-                    return dto;
-                }).toList();
+                .map(vo -> modelMapper.map(vo, InboundStatusDTO.class))
+                .toList();
         return list.isEmpty() ? Optional.empty() : Optional.of(list);
     }
 
     @Override
-    public void qhUpdateInboundStatus(String inboundCode) {
+    public void updateInboundStatus(String inboundCode) {
         inboundMapper.updateQhInboundStatus(inboundCode);
     }
 
 
     //    본사관리자 페이지에는 (입고요청) 상태 입고목록만 보여진다.
     @Override
-    public Optional<List<InboundDTO>> findAllQhInboundList() {
+    public Optional<List<InboundDTO>> findQhInboundList() {
         List<InboundDTO> list = inboundMapper.selectAllInboundList().stream()
-                .filter(vo -> "입고요청".equals(vo.getInboundStatus()))
-                .map(vo -> {
-                            InboundDTO dto = InboundDTO.builder()
-                                    .inboundCode(vo.getInboundCode())
-                                    .inboundDate(vo.getInboundDate())
-                                    .inboundStatus(vo.getInboundStatus())
-                                    .warehouseCode(vo.getWarehouseCode())
-                                    .build();
-                            return dto;
-                        }
-                ).toList();
+                .filter(vo -> InboundStatus.REQUEST.getStatus().equals(vo.getInboundStatus()))
+                .map(vo -> modelMapper.map(vo, InboundDTO.class))
+                .toList();
         return list.isEmpty() ? Optional.empty() : Optional.of(list);
     }
 
