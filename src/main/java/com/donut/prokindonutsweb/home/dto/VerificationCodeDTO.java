@@ -1,4 +1,4 @@
-package com.donut.prokindonutsweb.login.dto;
+package com.donut.prokindonutsweb.home.dto;
 
 import lombok.*;
 

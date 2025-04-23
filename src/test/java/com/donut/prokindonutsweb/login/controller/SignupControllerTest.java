@@ -1,6 +1,6 @@
 package com.donut.prokindonutsweb.login.controller;
 
-import com.donut.prokindonutsweb.member.dto.MemberAccountDTO;
+import com.donut.prokindonutsweb.home.controller.SignupController;
 import com.donut.prokindonutsweb.member.dto.MemberRequestDTO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +14,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
-import static org.junit.jupiter.api.Assertions.*;
 @Log4j2
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = "file:src/main/webapp/WEB-INF/spring/root-context.xml")
