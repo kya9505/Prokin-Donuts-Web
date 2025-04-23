@@ -188,7 +188,7 @@
                 </div>
             </div>
         </form>
-
+cx 
 
         <!-- 입고 삭제 모달 ! -->
         <form id="inboundDeleteForm" method="post" action="/wm/inbound/cancel" accept-charset="UTF-8">
