@@ -167,7 +167,7 @@
                                     <div class="select-style-1">
                                         <div class="select-position">
                                             <!-- 중분류 드롭다운 -->
-                                            <select id="midCategory">
+                                            <select id="midCategory" name="midCategory">
                                                 <option value="">중분류</option>
                                                 <c:forEach var="mid" items="${categoryMidList}">
                                                     <option value="${mid}">${mid}</option>
@@ -182,7 +182,7 @@
                                     <div class="select-style-1">
                                         <div class="select-position">
                                             <!-- 소분류 드롭다운 (초기엔 비워둠) -->
-                                            <select id="subCategory">
+                                            <select id="subCategory" name="subCategory">
                                                 <option value="">소분류</option>
                                             </select>
                                         </div>
@@ -191,7 +191,7 @@
 
                                 <!-- 필터 초기화 -->
                                 <div class="mb-20">
-                                    <button class="main-btn warning-btn-outline square-btn btn-hover btn-sm btn-xs" id="resetFilterBtn" style="height:auto; min-height:auto;">
+                                    <button class="main-btn warning-btn-outline square-btn btn-hover btn-sm btn-xs" id="resetFilterBtn22" style="height:auto; min-height:auto;">
                                         필터 초기화
                                     </button>
                                 </div>
@@ -426,7 +426,7 @@
                     <div class="mb-3">
                         <label for="registerCategoryMid" class="form-label">중분류 (*)</label>
 
-                        <select class="form-select" id="registerCategoryMid" required>
+                        <select class="form-select" id="registerCategoryMid" name="registerCategoryMid" required>
                             <option value="">중분류</option>
                             <c:forEach var="mid" items="${categoryMidList}">
                                 <option value="${mid}">${mid}</option>
@@ -437,7 +437,7 @@
                     <!-- 2. 소분류 드롭박스 -->
                     <div class="mb-3">
                         <label for="registerCategorySub" class="form-label">소분류 (*)</label>
-                        <select class="form-select" id="registerCategorySub" disabled>
+                        <select class="form-select" id="registerCategorySub" name="registerCategorySub" disabled>
                             <option value="">소분류 선택</option>
                             <!-- JavaScript에서 동적으로 옵션 추가 -->
                         </select>
@@ -683,18 +683,6 @@
                 $('#datatable_mainCategoryUp thead th').eq(0).removeClass('sorting sorting_asc sorting_desc');
                 $('#datatable_mainCategoryUp thead th').eq(4).removeClass('sorting sorting_asc sorting_desc');
             }
-        });
-
-        // 전역 필터 함수 (해당 테이블에만 적용)
-        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-            if (settings.nTable.id !== 'datatable_mainCategoryUp') return true;
-            const selectedMid = $('#mainCategoryUp_clone').val();
-            // 컬럼 순서는 0: checkbox, 1: 제품코드, 2: 중분류명, 3: 소분류명
-            const categoryMid = data[2];
-            if (selectedMid && selectedMid !== categoryMid) {
-                return false;
-            }
-            return true;
         });
 
         // 필터 영역 복제 및 재설정
@@ -1057,30 +1045,16 @@
             }
         });
 
-        // ① 전역 필터 함수: 선택값과 행의 값을 비교
-        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-            // datatable 아이디가 맞는 경우에만 실행
+        // ① 전역 필터 함수: 중분류/소분류 필터링
+        $.fn.dataTable.ext.search.push(function(settings, data) {
             if (settings.nTable.id !== 'datatable') return true;
-
-            var selectedMid = $('#midCategory_clone').val();
-            var selectedSub = $('#subCategory_clone').val();
-            var rowMid = data[2] ? data[2].trim() : '';
-            var rowSub = data[3] ? data[3].trim() : '';
-
-            // 중분류 필터
-            if (selectedMid && rowMid !== selectedMid) {
-                return false;
-            }
-            // 소분류 필터
-            if (selectedSub && rowSub !== selectedSub) {
-                return false;
-            }
+            const m = $('#midCategory_clone').val().trim();
+            const s = $('#subCategory_clone').val().trim();
+            const rowMid = (data[2] || '').trim();
+            const rowSub = (data[3] || '').trim();
+            if (m && rowMid  !== m) return false;
+            if (s && rowSub  !== s) return false;
             return true;
-        });
-
-        // ② 드롭다운 change 시 redraw
-        $(document).on('change', '#midCategory_clone, #subCategory_clone', function() {
-            table.draw();
         });
 
         function fixLengthDropdownStyle() {
@@ -1130,18 +1104,32 @@
         $clone.find('#subCategory').attr('id','subCategory_clone');
 
         // 불필요한 버튼 아이디도 바꿔 주고…
+        $clone.find('#resetFilterBtn22').attr('id', 'resetFilterBtn22_clone');
         $clone.find('#btnProductAdd').attr('id', 'btnProductAdd_clone');
         $clone.find('#btnProductEdit').attr('id', 'btnProductEdit_clone');
         $clone.find('#btnProductDelete').attr('id', 'btnProductDelete_clone');
         $clone.find('#btnProductAdd, #btnProductEdit, #btnProductDelete').remove();
         $('div.myFilterArea').html($clone.html());
 
-        // 그리고 body(혹은 document)에 delegated 이벤트로 바인딩
-        $('body').on('change', '#midCategory_clone', function(){
-            table.draw();
+        // 2) Reset 버튼 클릭 시
+        $(document).on('click', '#resetFilterBtn22_clone', function() {
+            // 중분류 클리어
+            $('#midCategory_clone').val('');
+            // 소분류 옵션 완전 초기화 + 비활성화
+            $('#subCategory_clone')
+                .empty()
+                .append('<option value="">소분류</option>')
+                .prop('disabled', true);
+            // 필터 검색어 제거 후 redraw
+            table
+                .column(2).search('')
+                .column(3).search('')
+                .draw();
         });
-        $('body').on('change', '#subCategory_clone', function(){
-            table.draw();
+
+        // 3) 소분류 선택 시
+        $(document).on('change', '#subCategory_clone', function() {
+            table.column(3).search(this.value).draw();
         });
 
         // ① 전체 체크박스 누르면 현재 페이지의 row-checkbox 만 토글
@@ -1155,6 +1143,7 @@
                 $('#select-all').prop('checked',false);
             }
         });
+
         // DataTable 초기화 이후에 추가
         $('#datatable').on('page.dt', function() {
             // 1) 헤더 전체선택 체크박스 초기화
@@ -1165,15 +1154,30 @@
             $('input.row-checkbox', rows).prop('checked', false);
         });
 
-        $('#midCategory_clone').on('change', function () {
-            const midVal = $(this).val();
-            $('#subCategory_clone').empty().append('<option value="">소분류 선택</option>');
-            if (!midVal) return;
+        // 중분류 선택 시 소분류 초기화 & 필터링 적용
+        $(document).on('change', '#midCategory_clone', function() {
+            const midVal = $(this).val().trim();
 
+            // 1) DataTable에 미리 등록된 전역 필터(중분류/소분류) 적용
+            $('#datatable').DataTable().draw();
+
+            // 2) 소분류 드롭다운 초기화
+            const $sub = $('#subCategory_clone')
+                .empty()
+                .append('<option value="">소분류 선택</option>');
+
+            // 3) 중분류가 비어 있으면 소분류 비활성화 후 종료
+            if (!midVal) {
+                $sub.prop('disabled', true);
+                return;
+            }
+
+            // 4) 중분류가 선택되었으면 AJAX로 소분류 불러와 활성화
             fetch('${pageContext.request.contextPath}/category/check?categoryMid=' + encodeURIComponent(midVal))
                 .then(res => res.json())
                 .then(subList => {
-                    subList.forEach(sub => $('#subCategory_clone').append(new Option(sub, sub)));
+                    subList.forEach(sub => $sub.append(new Option(sub, sub)));
+                    $sub.prop('disabled', false);
                 });
         });
 
@@ -1185,13 +1189,6 @@
             }
         });
 
-        // 필터 영역: 서버 연동하여 소분류 동적 로드
-        initLinkedDropdown(
-            '#midCategory_clone',
-            '#subCategory_clone',
-            '${pageContext.request.contextPath}/category/check'
-        );
-
         // 등록 모달: 중분류→소분류 연동
         initLinkedDropdown(
             '#registerCategoryMid',
@@ -1199,18 +1196,18 @@
             '${pageContext.request.contextPath}/category/check'
         );
 
-        $('body').on('click', '#resetFilterBtn', function () {
-            $('#midCategory_clone').val('');
-            $('#subCategory_clone').val('');
-            table.draw();
-        });
-
-        $('#midCategory_clone, #subCategory_clone').on('change', function() {
-            table
-                .column(2).search($('#midCategory_clone').val())
-                .column(3).search($('#subCategory_clone').val())
-                .draw();
-        });
+        // $('body').on('click', '#resetFilterBtn22', function () {
+        //     $('#midCategory_clone').val('');
+        //     $('#subCategory_clone').val('');
+        //     table.draw();
+        // });
+        //
+        // $('#midCategory_clone, #subCategory_clone').on('change', function() {
+        //     table
+        //         .column(2).search($('#midCategory_clone').val())
+        //         .column(3).search($('#subCategory_clone').val())
+        //         .draw();
+        // });
 
         // "Select All" 체크박스 클릭 시 해당 페이지의 모든 row-checkbox 토글
         $(document).on('click', '#select-all', function () {
