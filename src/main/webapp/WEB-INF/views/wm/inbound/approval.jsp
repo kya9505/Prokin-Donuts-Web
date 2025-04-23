@@ -355,13 +355,13 @@
 
 
     $(document).ready(function() {
-        // 1. 더미 데이터 정의 (소재지)
+        // 1. 더미 데이터 정의 (입고상태)
         const dummyInboundCategories = [
             { "id": "입고요청", "name": "입고요청" },
             { "id": "승인대기", "name": "승인대기" },
         ];
 
-        // 2. 원본 필터 영역에 소재지 옵션 채우기
+        // 2. 원본 필터 영역에 입고상태 옵션 채우기
         var $midSelect = $('#myCustomFilters #InboundCategories');
         $.each(dummyInboundCategories, function(index, item) {
             $midSelect.append($('<option>', {
@@ -616,9 +616,6 @@
             const modal = new bootstrap.Modal(document.getElementById('inboundEditModal'));
             modal.show();
         });
-
-
-
 
 
 
