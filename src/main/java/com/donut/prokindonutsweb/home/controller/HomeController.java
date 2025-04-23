@@ -7,6 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
 
 
+    // 루트 요청 시 "/home/login"으로 리다이렉트
+    @GetMapping("/")
+    public String redirectToLogin() {
+        return "redirect:/home/login";
+    }
+
     @GetMapping("/fm/order")
     public void Forder(){}
 
@@ -15,9 +21,10 @@ public class HomeController {
   
    /* @GetMapping("/wm/inbound/request")
     public void Wrequest(){}*/
-    @GetMapping("/wm/Dashboard")
-    public void WDashboard(){}
-
+   @GetMapping("/wm/Dashboard")
+   public String WDashboard() {
+       return "wm/Dashboard";
+   }
     @GetMapping("/qh/Dashboard")
     public void QDashboard(){}
   
