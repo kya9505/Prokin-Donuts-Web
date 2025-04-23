@@ -45,7 +45,7 @@ public class WmInboundController {
      * @return '입고요청 페이지'
      */
     @PostMapping("/request")
-    public String addInbound(@RequestParam String inboundDate, InboundForm inboundForm) {
+    public String addInbound(@RequestParam String inboundDate, InboundForm inboundForm, RedirectAttributes redirectAttributes) {
         log.info("입고요청 호출");
 
         List<InboundDetailDTO> inboundDetailList = inboundForm.getProductList();
@@ -60,7 +60,7 @@ public class WmInboundController {
                 .build();
         log.info(InboundStatus.REQUEST.getStatus());
         inboundService.addInbound(dto, inboundDetailList);
-
+        redirectAttributes.addFlashAttribute("successMessage", "입고 요청이 완료되었습니다!");
         return "redirect:/wm/inbound/request";
     }
 
@@ -81,7 +81,7 @@ public class WmInboundController {
      * @return
      */
     @PostMapping("/approve")
-    public String approveInbound(@RequestParam String inboundCode) {
+    public String approveInbound(@RequestParam String inboundCode, RedirectAttributes redirectAttributes) {
         // 입고 상태 ( -> 입고완료!)
         inboundService.approveInbound(inboundCode);
 
@@ -100,6 +100,8 @@ public class WmInboundController {
                 }
         );
 
+        redirectAttributes.addFlashAttribute("approveSuccessMessage", "입고가 완료되었습니다.");
+
         return "redirect:/wm/inbound/approval";
     }
 
@@ -107,10 +109,12 @@ public class WmInboundController {
     @PostMapping("/edit")
     public String updateInbound(
             @ModelAttribute InboundUpdateWrapperDTO wrapper,
-            @RequestParam("inboundDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inboundDate
+            @RequestParam("inboundDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inboundDate,
+            RedirectAttributes redirectAttributes
     ) {
         List<InboundUpdateDTO> list = wrapper.getItems();
         inboundService.updateInbound(list, inboundDate);
+        redirectAttributes.addFlashAttribute("editSuccessMessage", "입고 수정이 완료되었습니다.");
 
         return "redirect:/wm/inbound/approval";
     }
@@ -118,9 +122,9 @@ public class WmInboundController {
 
 
     @PostMapping("/cancel")
-    public String deleteInbound(@RequestParam String inboundCode) {
+    public String deleteInbound(@RequestParam String inboundCode, RedirectAttributes redirectAttributes) {
         inboundService.deleteInbound(inboundCode);
-
+        redirectAttributes.addFlashAttribute("deleteSuccessMessage", "입고 취소가 완료되었습니다");
         return "redirect:/wm/inbound/approval";
     }
 

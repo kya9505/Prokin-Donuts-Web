@@ -464,6 +464,10 @@
 
 
 </script>
-
+<c:if test="${not empty successMessage}">
+    <script>
+        alert('${successMessage}');
+    </script>
+</c:if>
 </body>
 </html>

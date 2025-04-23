@@ -670,5 +670,27 @@
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
 
 </script>
+
+<%--입고승인 완료 알림창--%>
+<c:if test="${not empty approveSuccessMessage}">
+    <script>
+        alert('${approveSuccessMessage}');
+    </script>
+</c:if>
+
+<%--입고수정 완료 알림창--%>
+<c:if test="${not empty editSuccessMessage}">
+    <script>
+        alert('${editSuccessMessage}');
+    </script>
+</c:if>
+
+<%--입고취소 완료 알림창--%>
+<c:if test="${not empty deleteSuccessMessage}">
+    <script>
+        alert('${deleteSuccessMessage}');
+    </script>
+</c:if>
+
 </body>
 </html>
