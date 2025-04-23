@@ -45,8 +45,19 @@ public class WmInboundController {
      * @return '입고요청 페이지'
      */
     @PostMapping("/request")
-    public String addInbound(@RequestParam String inboundDate, InboundForm inboundForm, RedirectAttributes redirectAttributes) {
+    public String addInbound(@RequestParam String inboundDate, InboundForm inboundForm,
+                             RedirectAttributes redirectAttributes,
+                             BindingResult bindingResult) {
         log.info("입고요청 호출");
+        if(bindingResult.hasErrors()) {
+            String error = bindingResult.getAllErrors().get(0).getDefaultMessage();
+            redirectAttributes.addFlashAttribute("errorMessage", error);
+            redirectAttributes.addFlashAttribute("InboundForm", inboundForm);
+            redirectAttributes.addFlashAttribute("showModal", true);
+
+            return "redirect:wm/inbound/request";
+
+        }
 
         List<InboundDetailDTO> inboundDetailList = inboundForm.getProductList();
 
