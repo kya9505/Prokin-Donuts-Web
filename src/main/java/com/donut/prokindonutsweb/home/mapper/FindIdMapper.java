@@ -1,4 +1,4 @@
-package com.donut.prokindonutsweb.login.mapper;
+package com.donut.prokindonutsweb.home.mapper;
 
 import com.donut.prokindonutsweb.member.vo.MemberAccountVO;
 

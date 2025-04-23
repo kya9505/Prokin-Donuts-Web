@@ -1,5 +1,6 @@
 package com.donut.prokindonutsweb.login.mapper;
 
+import com.donut.prokindonutsweb.home.mapper.FindIdMapper;
 import com.donut.prokindonutsweb.member.vo.MemberAccountVO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;

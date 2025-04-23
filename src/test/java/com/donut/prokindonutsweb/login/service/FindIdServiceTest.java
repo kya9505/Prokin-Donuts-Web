@@ -1,16 +1,14 @@
 package com.donut.prokindonutsweb.login.service;
 
-import com.donut.prokindonutsweb.login.dto.VerificationCodeDTO;
-import com.donut.prokindonutsweb.login.mapper.FindIdMapper;
+import com.donut.prokindonutsweb.home.dto.VerificationCodeDTO;
+import com.donut.prokindonutsweb.home.service.FindService;
 import com.donut.prokindonutsweb.member.dto.MemberAccountDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;

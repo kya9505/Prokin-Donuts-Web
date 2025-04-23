@@ -1,17 +1,14 @@
-package com.donut.prokindonutsweb.login.controller;
+package com.donut.prokindonutsweb.home.controller;
 
-import com.donut.prokindonutsweb.login.dto.VerificationCodeDTO;
-import com.donut.prokindonutsweb.login.service.FindService;
+import com.donut.prokindonutsweb.home.dto.VerificationCodeDTO;
+import com.donut.prokindonutsweb.home.service.FindService;
 import com.donut.prokindonutsweb.member.dto.MemberAccountDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Controller
