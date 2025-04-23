@@ -25,7 +25,7 @@ public class QhInboundController {
     // 본사관리자 입고현황
     @GetMapping("/status")
     public void qhGetAllInboundStatus(Model model) {
-        List<InboundStatusDTO> inboundStatusList = inboundService.findAllInboundStatusList().get();
+        List<InboundStatusDTO> inboundStatusList = inboundService.findInboundStatusList().get();
         model.addAttribute("inboundStatusList", inboundStatusList);
     }
 
@@ -33,7 +33,7 @@ public class QhInboundController {
     @GetMapping("/request")
     public void qhGetAllInboundList(Model model) {
         List<InboundDTO> inboundList = inboundService.findAllQhInboundList().get();
-        List<InboundDetailDTO> inboundDetailList = inboundService.findAllInboundDetailList().get();
+        List<InboundDetailDTO> inboundDetailList = inboundService.findInboundDetailList().get();
         model.addAttribute("inboundList", inboundList);
         model.addAttribute("inboundDetailList", inboundDetailList);
     }

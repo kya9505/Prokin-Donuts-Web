@@ -21,16 +21,19 @@ public class InboundController {
     private final InboundService inboundService;
 
     /**
+     * O
      * 입고 할 수 있는 제품 정보 리스트를 반환한다.
      * @param '제품리스트'
      */
     @GetMapping("/request")
     public void getProductList(Model model) {
-        List<ProductDTO> productList = inboundService.findAllProductList().orElseThrow();
+        List<ProductDTO> productList = inboundService.findProductList().orElseThrow();
         model.addAttribute("product", productList);
     }
 
     /**
+     * X 로그인 한 사용자 정보를 통해 창고 코드 입력하는 기능 구현 필요
+     *
      * 입고 요청 정보를 저장한다.
      * 입고 정보 + 입고 상세 정보
      * @param '입고 날짜'
@@ -48,7 +51,7 @@ public class InboundController {
                 .inboundCode(inboundCode)
                 .inboundDate(LocalDate.parse((inboundDate)))
                 .inboundStatus(InboundStatus.REQUEST.getStatus())
-                .warehouseCode("GG1")
+                .warehouseCode("GG1")   // 로그인 한 사용자 정보 가져와서 창고 코드 입력!
                 .build();
         log.info(InboundStatus.REQUEST.getStatus());
         inboundService.addInbound(dto, inboundDetailList);
@@ -58,23 +61,29 @@ public class InboundController {
 
 //    창고관리자 - 입고관리 페이지
     @GetMapping("/approval")
-    public void wmGetAllInboundList(Model model) {
-        List<InboundDTO> inboundList = inboundService.findAllInboundList().get();
-        List<InboundDetailDTO> inboundDetailList = inboundService.findAllInboundDetailList().get();
+    public void getInboundList(Model model) {
+        List<InboundDTO> inboundList = inboundService.findInboundList();
+        List<InboundDetailDTO> inboundDetailList = inboundService.findInboundDetailList();
         model.addAttribute("inboundList", inboundList);
         model.addAttribute("inboundDetailList", inboundDetailList);
     }
 
-
+    /**
+     * 입고를 승인한다!
+     * 입고상태 변경 (-> 입고완료)
+     * 재고에 반영
+     * @param inboundCode
+     * @return
+     */
     @PostMapping("/approve")
-    public String wmApproveInbound(@RequestParam String inboundCode) {
-        log.info(inboundCode);
+    public String approveInbound(@RequestParam String inboundCode) {
         // 입고 상태 ( -> 입고완료!)
         inboundService.approveInbound(inboundCode);
 
         // 입고상세 목록 재고에 반영
         List<InventoryDTO> inventoryList = inboundService.findInboundDetailList(inboundCode).get();
-        inventoryList.stream().forEach(
+
+        inventoryList.forEach(
                 dto -> {
                     InventoryVO vo = InventoryVO.builder()
                             .inventoryCode(dto.getWarehouseCode()+"-"+dto.getProductCode())
@@ -114,7 +123,7 @@ public class InboundController {
 
     @GetMapping("/status")
     public void wmGetAllInboundStatus(Model model) {
-        List<InboundStatusDTO> inboundStatusList = inboundService.findAllInboundStatusList().get();
+        List<InboundStatusDTO> inboundStatusList = inboundService.findInboundStatusList().get();
         model.addAttribute("inboundStatusList", inboundStatusList);
     }
 }

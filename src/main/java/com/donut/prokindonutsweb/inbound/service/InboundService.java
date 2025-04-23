@@ -7,16 +7,16 @@ import java.util.List;
 import java.util.Optional;
 
 public interface InboundService {
-    Optional<List<ProductDTO>> findAllProductList();
+    Optional<List<ProductDTO>> findProductList();
 
     void addInbound(InboundDTO inboundDTO, List<InboundDetailDTO> inboundDetailDTO);
 
 
     String findNextInboundCode();
 
-    Optional<List<InboundDTO>> findAllInboundList();
+    List<InboundDTO> findInboundList();
 
-    Optional<List<InboundDetailDTO>> findAllInboundDetailList();
+    List<InboundDetailDTO> findInboundDetailList();
 
     void approveInbound(String inboundCode);
 
@@ -28,7 +28,7 @@ public interface InboundService {
 
     void deleteInbound(String inboundCode);
 
-    Optional<List<InboundStatusDTO>> findAllInboundStatusList();
+    Optional<List<InboundStatusDTO>> findInboundStatusList();
 
     void qhUpdateInboundStatus(String inboundCode);
 

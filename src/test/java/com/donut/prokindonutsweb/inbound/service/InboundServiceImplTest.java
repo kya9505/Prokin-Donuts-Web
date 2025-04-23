@@ -24,7 +24,7 @@ class InboundServiceImplTest {
     @Test
     @DisplayName("findAllProductList service 호출(VO->DTO)")
     void findAllProductList() {
-        inboundService.findAllProductList()
+        inboundService.findProductList()
                 .stream()
                 .flatMap(List::stream)
                 .forEach(dto -> log.info("DTO: {}", dto));
@@ -52,13 +52,13 @@ class InboundServiceImplTest {
     @Test
     @DisplayName("(입고요청, 승인대기) 상태 입고목록만 반환하는 기능")
     void findAllInboundList() {
-        inboundService.findAllInboundList().stream().forEach(System.out::println);
+        inboundService.findInboundList().stream().forEach(System.out::println);
     }
 
     @Test
     @DisplayName("입고 상세 목록 반환")
     void findAllInboundDetailList() {
-        inboundService.findAllInboundDetailList().stream().forEach(System.out::println);
+        inboundService.findInboundDetailList().stream().forEach(System.out::println);
     }
 
     @Test
@@ -103,7 +103,7 @@ class InboundServiceImplTest {
     @Test
     @DisplayName("입고현황 목록 반환")
     void findAllInboundStatusList() {
-        inboundService.findAllInboundStatusList().ifPresent(System.out::println);
+        inboundService.findInboundStatusList().ifPresent(System.out::println);
     }
 
 }

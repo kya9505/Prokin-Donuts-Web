@@ -21,7 +21,7 @@ public class InboundServiceImpl implements InboundService {
     private final InboundMapper inboundMapper;
 
     @Override
-    public Optional<List<ProductDTO>> findAllProductList() {
+    public Optional<List<ProductDTO>> findProductList() {
         // VO -> DTO 변환작업
         List<ProductDTO> list = inboundMapper.selectAllProductList()
                 .stream()
@@ -67,7 +67,10 @@ public class InboundServiceImpl implements InboundService {
         return StoredType.fromSectionCode(storedType).getLabel();
     }
 
-
+    /**
+     * 입고 코드 자동 생성기
+     * @return '입고코드'
+     */
     @Override
     public String findNextInboundCode() {
         String inboundCode = inboundMapper.selectInboundCode();
@@ -77,17 +80,18 @@ public class InboundServiceImpl implements InboundService {
 
     //    입고관리 페이지에는 (입고요청, 승인대기) 상태 입고목록만 보여진다.
     @Override
-    public Optional<List<InboundDTO>> findAllInboundList() {
+    public List<InboundDTO> findInboundList() {
         List<InboundDTO> list = inboundMapper.selectAllInboundList().stream()
-                .filter(vo -> InboundStatus.REQUEST.getStatus().equals(vo.getInboundStatus()) || InboundStatus.APPROVE.getStatus().equals(vo.getInboundStatus()))
+                .filter(vo -> InboundStatus.REQUEST.getStatus().equals(vo.getInboundStatus())
+                        || InboundStatus.APPROVE.getStatus().equals(vo.getInboundStatus()))
                 .map(vo -> modelMapper.map(vo, InboundDTO.class)).
                 toList();
-        return list.isEmpty() ? Optional.empty() : Optional.of(list);
+        return list;
     }
 
     // 입고상세 목록 변환 작업
     @Override
-    public Optional<List<InboundDetailDTO>> findAllInboundDetailList() {
+    public List<InboundDetailDTO> findInboundDetailList() {
         List<InboundDetailDTO> list = inboundMapper.selectAllInboundDetailList()
                 .stream()
                 .map(vo -> {
@@ -102,7 +106,7 @@ public class InboundServiceImpl implements InboundService {
                             return dto;
                         }
                 ).toList();
-        return list.isEmpty() ? Optional.empty() : Optional.of(list);
+        return list;
     }
 
     private String getStoredType(String sectionCode) {
@@ -112,6 +116,7 @@ public class InboundServiceImpl implements InboundService {
         else return "상온";
     }
 
+    // 입고 상태를 변경한다 (-> 입고완료)
     @Override
     public void approveInbound(String inboundCode) {
         inboundMapper.approveInbound(inboundCode);
@@ -133,9 +138,7 @@ public class InboundServiceImpl implements InboundService {
         String inboundCode = list.get(0).getInboundCode();
         inboundMapper.updateInboundDate(inboundDate, inboundCode);
 
-        list.stream().forEach(
-                inboundMapper::updateInbound
-        );
+        list.forEach(inboundMapper::updateInbound);
     }
 
 
@@ -145,7 +148,7 @@ public class InboundServiceImpl implements InboundService {
     }
 
     @Override
-    public Optional<List<InboundStatusDTO>> findAllInboundStatusList() {
+    public Optional<List<InboundStatusDTO>> findInboundStatusList() {
         List<InboundStatusDTO> list = inboundMapper.selectAllInboundStatusList()
                 .stream()
                 .map(vo -> {
