@@ -1,6 +1,6 @@
 package com.donut.prokindonutsweb.member.service;
 
-import com.donut.prokindonutsweb.login.service.SignupService;
+import com.donut.prokindonutsweb.home.service.SignupService;
 import com.donut.prokindonutsweb.member.dto.MemberRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.util.AssertionErrors.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertNotNull;
 
 @Log4j2
