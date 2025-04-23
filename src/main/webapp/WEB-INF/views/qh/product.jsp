@@ -322,7 +322,7 @@
                                 type="text"
                                 class="form-control"
                                 id="registerCategoryCode"
-                                name="registerCategoryCode"
+                                name="categoryCode"
                                 placeholder="예: DPN"
                                 maxlength="3"
                         />
@@ -337,7 +337,7 @@
                                 type="text"
                                 class="form-control"
                                 id="registerCategoryMid_subCategoryUp"
-                                name="registerCategoryMid_subCategoryUp"
+                                name="categoryMid"
                                 placeholder="예: 도넛"
                                 maxlength="10"
                         />
@@ -352,7 +352,7 @@
                                 type="text"
                                 class="form-control"
                                 id="registerCategorySub_subCategoryUp"
-                                name="registerCategorySub_subCategoryUp"
+                                name="categorySub"
                                 placeholder="예: 글루텐 프리 도넛"
                                 maxlength="20"
                         />
@@ -393,7 +393,7 @@
 
             <!-- 모달 바디 -->
             <div class="modal-body">
-                <form id="warehouseDeleteForm" action="${pageContext.request.contextPath}/qh/product/delete" method="post">
+                <form id="warehouseDeleteForm" action="${pageContext.request.contextPath}/qh/product/category/delete" method="post">
                     <h5>선택한 카테고리를 정말 삭제하시겠습니까?</h5><br>
                     <ul id="deleteProductList_mainCategoryUp" class="list-group mb-3">
                         <!-- 선택된 제품명 목록 삽입 -->
@@ -426,7 +426,7 @@
                     <div class="mb-3">
                         <label for="registerCategoryMid" class="form-label">중분류 (*)</label>
 
-                        <select class="form-select" id="registerCategoryMid" name="registerCategoryMid" required>
+                        <select class="form-select" id="registerCategoryMid" name="categoryMid" required>
                             <option value="">중분류</option>
                             <c:forEach var="mid" items="${categoryMidList}">
                                 <option value="${mid}">${mid}</option>
@@ -437,7 +437,7 @@
                     <!-- 2. 소분류 드롭박스 -->
                     <div class="mb-3">
                         <label for="registerCategorySub" class="form-label">소분류 (*)</label>
-                        <select class="form-select" id="registerCategorySub" name="registerCategorySub" disabled>
+                        <select class="form-select" id="registerCategorySub" name="categorySub" disabled>
                             <option value="">소분류 선택</option>
                             <!-- JavaScript에서 동적으로 옵션 추가 -->
                         </select>
@@ -456,7 +456,7 @@
                                     style="cursor: pointer;">
                             </i></label>
                         <div class="d-flex gap-2">
-                            <input type="text" class="form-control" id="registerProductName" name="registerProductName" placeholder="예: 프로틴초코" maxlength="10" required>
+                            <input type="text" class="form-control" id="registerProductName" name="productName" placeholder="예: 프로틴초코" maxlength="10" required>
 
                             <button type="button" class="main-btn primary-btn btn-hover btn-smaller" id="checkProductNameDuplicate">중복 확인</button>
                         </div>
@@ -466,7 +466,7 @@
                     <div class="mb-3">
                         <label for="registerProductPrice" class="form-label">제공단가 (*)</label>
                         <div class="input-group">
-                            <input type="text" class="form-control" id="registerProductPrice" name="registerProductPrice" placeholder="예: 5000" required>
+                            <input type="text" class="form-control" id="registerProductPrice" name="productPrice" placeholder="예: 5000" required>
                             <span class="input-group-text">원</span>
                         </div>
                     </div>
@@ -474,7 +474,7 @@
                     <!-- 5. 보관타입 드롭박스 -->
                     <div class="mb-3">
                         <label for="registerStoredType" class="form-label">보관타입 (*)</label>
-                        <select class="form-select" name="registerStoredType" id="registerStoredType" required>
+                        <select class="form-select" name="storedType" id="registerStoredType" required>
                             <option value="">선택하세요</option>
                             <option value="냉장">냉장</option>
                             <option value="냉동">냉동</option>
@@ -602,48 +602,14 @@
 <!-- 카테고리 설정 시작 -->
 <script>
     $(document).ready(function() {
-        /**
-         * 중분류 선택 시 서버에서 소분류 목록을 가져와 연결해주는 공통 함수
-         */
-        function initLinkedDropdown(midSelector, subSelector, url) {
-            const $mid = $(midSelector);
-            const $sub = $(subSelector);
-
-            // 초기엔 비활성화
-            $sub.prop('disabled', true);
-
-            // 중분류가 변경되면
-            $mid.on('change', function () {
-                const midVal = $mid.val();
-                $sub.empty().append('<option value="">소분류 선택</option>');
-                if (!midVal) {
-                    $sub.prop('disabled', true);
-                    return;
-                }
-
-                // 안전한 URL 문자열 연결
-                fetch(url + '?categoryMid=' + encodeURIComponent(midVal))
-                    .then(function(res) { return res.json(); })
-                    .then(function(subList) {
-                        subList.forEach(function(sub) {
-                            $sub.append(new Option(sub, sub));
-                        });
-                        $sub.prop('disabled', false);
-                    })
-                    .catch(function() {
-                        console.warn("Fetch 실패");
-                        $sub.prop('disabled', true);
-                    });
-            });
-        }
-
         // DataTable 초기화 시 dom 옵션에서 필터 영역을 위한 container를 별도로 지정
         var categoryTable = $('#datatable_mainCategoryUp').DataTable({
             autoWidth: false,
             order: [[1, 'asc']],
             columnDefs: [
                 { width: '95px', targets: -1 },
-                { targets: [1, 2, 3], className: 'text-center' }
+                { targets: [1, 2, 3], className: 'text-center' },
+                { targets: [0], orderable: false }
             ],
             paging: true,
             pageLength: 5,
@@ -667,7 +633,6 @@
             },
             initComplete: function(settings, json) {
                 // 헤더 체크박스 정렬 아이콘 제거
-                $('#datatable_mainCategoryUp thead th').eq(0).removeClass('sorting sorting_asc sorting_desc');
                 $('#datatable_mainCategoryUp thead th').eq(4).removeClass('sorting sorting_asc sorting_desc');
                 fixLengthDropdownStyle_category();
                 const api = this.api();
@@ -680,10 +645,45 @@
                 // (이벤트는 아래 부분에서 복제한 후 다시 바인딩할 예정)
             },
             drawCallback: function(settings) {
-                $('#datatable_mainCategoryUp thead th').eq(0).removeClass('sorting sorting_asc sorting_desc');
                 $('#datatable_mainCategoryUp thead th').eq(4).removeClass('sorting sorting_asc sorting_desc');
             }
         });
+
+        ///////////////////////////////////////////////////////
+
+        // 전체 선택 체크박스 클릭 시 (현재 페이지 기준)
+        $(document).off('change', '#select-all_mainCategoryUp').on('change', '#select-all_mainCategoryUp', function (e) {
+            e.preventDefault();      // 🔒 기본 동작 방지
+            e.stopPropagation();     // 🔒 이벤트 버블링 방지
+
+            const isChecked = $(this).prop('checked');
+            console.log('[전체선택] 상태:', isChecked);
+
+            const rows = categoryTable.rows({ page: 'current' }).nodes();
+            $('input.row-checkbox', rows).prop('checked', isChecked);
+        });
+
+        // 개별 체크 해제 시 전체 선택 해제
+        $('#datatable_mainCategoryUp tbody').off('change', 'input.row-checkbox').on('change', 'input.row-checkbox', function () {
+            const $selectAll = $('#select-all_mainCategoryUp');
+            const rows = categoryTable.rows({ page: 'current' }).nodes();
+            const total = $('input.row-checkbox', rows).length;
+            const checked = $('input.row-checkbox:checked', rows).length;
+
+            $selectAll.prop('checked', total > 0 && total === checked);
+        });
+
+        // 페이지 이동 시 전체선택 체크박스 초기화
+        categoryTable.on('draw.dt', function () {
+            // 1. 전체선택 체크박스 해제
+            $('#select-all_mainCategoryUp').prop('checked', false);
+
+            // 2. 현재 페이지의 체크박스 모두 해제
+            const rows = categoryTable.rows({ page: 'current' }).nodes();
+            $('input.row-checkbox', rows).prop('checked', false);
+        });
+
+        ///////////////////////////////////////////////////////
 
         // 필터 영역 복제 및 재설정
         var $origFilter = $('#myCustomFilters_mainCategoryUp'); // 원본: display:none
@@ -719,203 +719,188 @@
             $('#datatable_mainCategoryUp_wrapper .dataTables_paginate .paginate_button').removeClass().addClass('main-btn deactive-btn-outline square-btn btn-hover mt-1 pt-2 pb-2 pl-15 pr-15');
         });
 
-        // 버튼 이벤트
-        // 중복 체크 상태 전역 변수
-        let isCategoryDuplicateChecked = false;
+        ////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////
+        // 카테고리 등록
 
-        // 카테고리 등록 버튼 클릭 시
-        // 중복 체크 버튼 이벤트 (한 번만 바인딩)
-        $('#checkCategoryDuplicate').on('click', function () {
-            const id = $('#registerCategoryForm #registerCategoryId').val().trim();
-            const mid = $('#registerCategoryForm #registerCategoryMid_subCategoryUp').val().trim();
-            const sub = $('#registerCategoryForm #registerCategorySub_subCategoryUp').val().trim();
+        $(function() {
+            // 컨텍스트 경로
+            var contextPath = '${pageContext.request.contextPath}';
 
-            // 정규식 유효성 검사
-            const regId = /^[A-Z]{3}$/;
-            const regMidSub = /^[A-Za-z0-9가-힣 ]{1,20}$/;
+            // 중복 체크 플래그
+            var isCategoryDuplicateChecked = false;
 
-            if (!id || !mid || !sub) {
-                alert('모든 항목을 입력해주세요.');
-                return;
-            }
-            if (!regId.test(id)) {
-                alert('카테고리 코드는 알파벳 대문자 3자리여야 합니다.');
-                return;
-            }
-            if (!regMidSub.test(mid)) {
-                alert('중분류명은 한글, 영문, 숫자, 공백 포함 최대 10자입니다.');
-                return;
-            }
-            if (!regMidSub.test(sub)) {
-                alert('소분류명은 한글, 영문, 숫자, 공백 포함 최대 10자입니다.');
-                return;
-            }
+            // 1) 중복 체크 버튼 클릭
+            $('#checkCategoryDuplicate').on('click', function() {
+                var code = $('#registerCategoryCode').val().trim();
+                var mid  = $('#registerCategoryMid_subCategoryUp').val().trim();
+                var sub  = $('#registerCategorySub_subCategoryUp').val().trim();
 
-            // 더미 데이터 (기존에 등록된 카테고리들)
-            const dummyExistingIds = ['DPN', 'DGL', 'DLW', 'BGL', 'CDC', 'TZR', 'MPK', 'TPK'];
-            const dummyExistingPairs = [
-                { mid: '도넛', sub: '프로틴도넛' },
-                { mid: '도넛', sub: '글루텐프리도넛' },
-                { mid: '도넛', sub: '저당도넛' },
-                { mid: '베이글', sub: '글루텐프리베이글' },
-                { mid: '커피', sub: '디카페인' },
-                { mid: '티', sub: '제로음료' },
-                { mid: '머그컵', sub: '프로킨머그컵' },
-                { mid: '텀블러', sub: '프로킨텀블러' }
-            ];
-
-            if (!id || !mid || !sub) {
-                alert('모든 항목을 입력해주세요.');
-                return;
-            }
-
-            // 1. ID 중복 체크
-            if (dummyExistingIds.includes(id)) {
-                alert('이미 존재하는 카테고리 코드입니다.');
-                isCategoryDuplicateChecked = false;
-                return;
-            }
-
-            // 2. (중분류, 소분류) 조합 중복 체크
-            const isPairDuplicate = dummyExistingPairs.some(pair => pair.mid == mid && pair.sub == sub);
-            if (isPairDuplicate) {
-                alert(`이미 등록된 중분류/소분류 조합입니다.\n[${mid} - ${sub}]`);
-                isCategoryDuplicateChecked = false;
-                return;
-            }
-
-            // 통과
-            alert('사용 가능한 카테고리입니다.');
-            isCategoryDuplicateChecked = true;
-        });
-
-        // 입력 값 변경되면 중복 체크 상태 초기화
-        $('#registerCategoryId, #registerCategoryMid_subCategoryUp, #registerCategorySub_subCategoryUp').on('input', function () {
-            isCategoryDuplicateChecked = false;
-        });
-
-        // 모달 열기 버튼
-        $('body').on('click', '#btnProductAdd_mainCategoryUp_clone', function () {
-            $('#categoryAddModal').modal('show');
-        });
-
-        // 등록 폼 제출 이벤트 (한 번만 바인딩)
-        $('#registerCategoryForm').on('submit', function (e) {
-            e.preventDefault();
-
-            const id = $('#registerCategoryForm #registerCategoryId').val().trim();
-            const mid = $('#registerCategoryForm #registerCategoryMid_subCategoryUp').val().trim();
-            const sub = $('#registerCategoryForm #registerCategorySub_subCategoryUp').val().trim();
-
-            if (!id || !mid || !sub) {
-                alert('모든 항목을 입력해주세요.');
-                return;
-            }
-
-            if (!isCategoryDuplicateChecked) {
-                alert('중복 체크를 먼저 진행해주세요.');
-                return;
-            }
-
-            // 등록 성공 처리 (AJAX로 대체 가능)
-            alert('카테고리가 성공적으로 등록되었습니다.');
-
-            this.reset(); // 폼 초기화
-            isCategoryDuplicateChecked = false;
-            $('#categoryAddModal').modal('hide');
-        });
-
-        // 삭제 버튼 클릭 시
-        $('body').on('click', '#btnProductDelete_mainCategoryUp_clone', function () {
-            var selectedData = [];
-            categoryTable.rows({ page: 'current' }).nodes().each(function(row) {
-                if ($(row).find('.row-checkbox').prop('checked')) {
-                    selectedData.push(categoryTable.row(row).data());
+                // 빈값 검사
+                if (!code || !mid || !sub) {
+                    alert('모든 항목을 입력해주세요.');
+                    return;
                 }
-            });
-            if (selectedData.length == 0) {
-                alert('삭제할 항목을 선택하세요.');
-                return;
-            }
-
-            // 상태 매핑
-            const statusMap = {
-                DPN: { text: '재고있음',   canDelete: false },
-                DGL: { text: '입고진행',   canDelete: false },
-                DLW: { text: '삭제가능',   canDelete: true },
-                BGL: { text: '출고진행',   canDelete: false },
-                CDC: { text: '제품있음',   canDelete: false },
-                TZR: { text: '발주진행',   canDelete: false  },
-                MPK: { text: '삭제가능',   canDelete: true  },
-                TPK: { text: '삭제가능',   canDelete: true  }
-            };
-
-            var $deleteList = $('#deleteProductList_mainCategoryUp');
-            $deleteList.empty();
-
-            // "모두 삭제 가능"인지 판별
-            let allDeletable = true;
-
-            selectedData.forEach(function(item) {
-                // categoryId -> 상태 가져오기
-                const catId = item.categoryId;
-                const statusObj = statusMap[catId] || { text: '삭제가능', canDelete: true };
-
-                // 배지 색상: 삭제 가능(초록), 불가능(빨강)
-                const badgeColor = statusObj.canDelete ? 'bg-success' : 'bg-danger';
-                const statusBadge = `<span class="badge bg-secondary">${statusObj.text}</span>`;
-
-                // 하나라도 false 있으면 전체 삭제 불가로 간주
-                if (!statusObj.canDelete) {
-                    allDeletable = false;
+                // 형식 검사
+                var regCode   = /^[A-Z]{3}$/;
+                var regMidSub = /^[A-Za-z0-9가-힣 ]{1,20}$/;
+                if (!regCode.test(code)) {
+                    alert('카테고리 코드는 알파벳 대문자 3자리여야 합니다.');
+                    return;
+                }
+                if (!regMidSub.test(mid)) {
+                    alert('중분류명은 한글, 영문, 숫자, 공백 포함 최대 20자입니다.');
+                    return;
+                }
+                if (!regMidSub.test(sub)) {
+                    alert('소분류명은 한글, 영문, 숫자, 공백 포함 최대 20자입니다.');
+                    return;
                 }
 
-                // 리스트 표시
-                $deleteList.append(`
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                ${item.categoryMid} - ${item.categorySub}
-                ${statusBadge}
-              </li>
-            `);
+                // 실제 중복 확인 API 호출 ('' + 로 연결)
+                fetch(contextPath
+                    + '/qh/product/category/check'
+                    + '?categoryCode=' + encodeURIComponent(code)
+                    + '&middleName='   + encodeURIComponent(mid)
+                    + '&smallName='    + encodeURIComponent(sub))
+                    .then(function(res) { return res.text(); })
+                    .then(function(result) {
+                        if (result === 'true') {
+                            alert('이미 존재하는 카테고리입니다.');
+                            isCategoryDuplicateChecked = false;
+                        } else {
+                            alert('사용 가능한 카테고리입니다.');
+                            isCategoryDuplicateChecked = true;
+                        }
+                    })
+                    .catch(function() {
+                        alert('중복 확인에 실패했습니다. 네트워크를 확인하세요.');
+                        isCategoryDuplicateChecked = false;
+                    });
             });
 
-            // 안내문 & 버튼 문구 설정
-            if (allDeletable) {
-                // 1) 전부다 삭제 가능
-                // 안내문
-                $('#productDeleteModal_mainCategoryUp .modal-body > h5')
-                    .text('선택한 카테고리를 정말 삭제하시겠습니까?');
-                // 버튼
-                $('#confirmDelete_mainCategoryUp').text('삭제');
-            } else {
-                // 2) 전부 혹은 일부 불가능
-                // 안내문
-                $('#productDeleteModal_mainCategoryUp .modal-body > h5')
-                    .text('선택한 카테고리 중 삭제할 수 없는 항목이 포함되어 있습니다.');
-                // 버튼
-                $('#confirmDelete_mainCategoryUp').text('삭제가능 품목만 삭제');
-            }
+            // 2) 입력값 변경 시 플래그 리셋
+            $('#registerCategoryCode, #registerCategoryMid_subCategoryUp, #registerCategorySub_subCategoryUp')
+                .on('input', function() { isCategoryDuplicateChecked = false; });
 
-            // 모달 표시
-            $('#productDeleteModal_mainCategoryUp').modal('show');
+            // 3) 모달 열기 버튼
+            $('body').on('click', '#btnProductAdd_mainCategoryUp_clone', function() {
+                $('#categoryAddModal').modal('show');
+            });
+
+            // 4) 폼 제출 시 유효성 및 중복 체크 확인
+            $('#registerCategoryForm').on('submit', function() {
+                var code = $('#registerCategoryCode').val().trim();
+                var mid  = $('#registerCategoryMid_subCategoryUp').val().trim();
+                var sub  = $('#registerCategorySub_subCategoryUp').val().trim();
+
+                if (!code || !mid || !sub) {
+                    alert('모든 항목을 입력해주세요.');
+                    return false;  // 전송 막기
+                }
+                if (!isCategoryDuplicateChecked) {
+                    alert('중복 체크를 먼저 진행해주세요.');
+                    return false;  // 전송 막기
+                }
+                // 통과 시 true 반환 → form action으로 POST
+                return true;
+            });
         });
 
-        // 모달 내부의 삭제버튼 클릭 시
-        $('#confirmDelete_mainCategoryUp').on('click', function() {
-            const btnText = $(this).text();
+        ////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////
 
-            if (btnText == '삭제가능 품목만 삭제') {
-                // (예시) 삭제 가능한 항목만 필터링해서 AJAX로 보낸다
-                // 이 로직을 구현해주면 "삭제가능"한 카테고리만 삭제 처리
-                alert('삭제 가능한 카테고리만 삭제했습니다!');
-            } else {
-                // (예시) 전체 삭제
-                alert('모두 삭제되었습니다!');
-            }
+        $(function () {
+            var deleteCandidates = [];
 
-            $('#productDeleteModal_mainCategoryUp').modal('hide');
-            // 필요 시: DataTable 업데이트 로직
+            // 1) 삭제 버튼 클릭 → 체크된 행 수집 & 모달 띄우기
+            $('body').on('click', '#btnProductDelete_mainCategoryUp_clone', function () {
+                deleteCandidates = [];
+
+                categoryTable.rows({ page: 'current' }).nodes().each(function (row) {
+                    var $tr = $(row);
+                    if ($tr.find('.row-checkbox').prop('checked')) {
+                        deleteCandidates.push({
+                            code: $tr.data('category-code'),
+                            mid: $tr.data('category-mid'),
+                            sub: $tr.data('category-sub'),
+                            status: $tr.data('category-status') || '' // 안전하게 처리
+                        });
+                    }
+                });
+
+                if (!deleteCandidates.length) {
+                    alert('삭제할 항목을 선택하세요.');
+                    return;
+                }
+
+                var allDeletable = true;
+                var $deleteList = $('#deleteProductList_mainCategoryUp').empty();
+
+                deleteCandidates.forEach(function (item) {
+                    var canDelete = item.status.trim() === '삭제가능';
+                    if (!canDelete) allDeletable = false;
+
+                    var badgeClass = canDelete ? 'bg-success' : 'bg-danger';
+                    var badge = '<span class="badge ' + badgeClass + '">' + item.status + '</span>';
+
+                    $deleteList.append(
+                        '<li class="list-group-item d-flex justify-content-between align-items-center">' +
+                        item.mid + ' - ' + item.sub + badge +
+                        '</li>'
+                    );
+                });
+
+                if (allDeletable) {
+                    $('#productDeleteModal_mainCategoryUp .modal-body h5')
+                        .text('선택한 카테고리를 정말 삭제하시겠습니까?');
+                    $('#confirmDelete_mainCategoryUp').text('삭제');
+                } else {
+                    $('#productDeleteModal_mainCategoryUp .modal-body h5')
+                        .text('선택한 카테고리 중 삭제할 수 없는 항목이 포함되어 있습니다.');
+                    $('#confirmDelete_mainCategoryUp').text('삭제가능 품목만 삭제');
+                }
+
+                $('#productDeleteModal_mainCategoryUp').modal('show');
+            });
+
+            // 2) 모달 확인 버튼 클릭 → 실제 삭제 POST
+            $('#confirmDelete_mainCategoryUp').on('click', function () {
+                var toDelete = [];
+                var btnText = $(this).text();
+
+                deleteCandidates.forEach(function (item) {
+                    var canDelete = item.status.trim() === '삭제가능';
+                    if (btnText === '삭제') {
+                        toDelete.push(item.code);
+                    } else if (canDelete) {
+                        toDelete.push(item.code);
+                    }
+                });
+
+                if (!toDelete.length) {
+                    alert('삭제할 수 있는 항목이 없습니다.');
+                    $('#productDeleteModal_mainCategoryUp').modal('hide');
+                    return;
+                }
+
+                var $form = $('#warehouseDeleteForm')
+                    .attr('action', pageContext.request.contextPath + '/qh/product/category/delete')
+                    .empty();
+
+                toDelete.forEach(function (code) {
+                    $form.append('<input type="hidden" name="categoryCodes" value="' + code + '"/>');
+                });
+
+                $form.submit();
+            });
         });
+
+        ////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////
 
         // DataTable length dropdown custom 스타일 함수 (카테고리용)
         function fixLengthDropdownStyle_category() {
@@ -948,30 +933,6 @@
 
             $select.val(selectedValue);
         }
-
-        // 1) 'Select All' 클릭 시 현재 페이지의 row-checkbox만 토글
-        $('#select-all_mainCategoryUp').on('click', function() {
-            // categoryTable은 DataTable 인스턴스여야 합니다
-            const rows = categoryTable.rows({ page: 'current' }).nodes();
-            $('input.row-checkbox', rows).prop('checked', this.checked);
-        });
-
-        // 2) 개별 row 체크박스 언체크 시 전체 체크박스도 언체크
-        $('#datatable_mainCategoryUp tbody').on('change', 'input.row-checkbox', function() {
-            if (!this.checked) {
-                $('#select-all_mainCategoryUp').prop('checked', false);
-            }
-        });
-
-        // 페이지 이동 시 전체 체크박스 & 현재 페이지 row-checkbox 모두 초기화
-        $('#datatable_mainCategoryUp').on('page.dt', function() {
-            // 1) 헤더 전체선택 체크박스 언체크
-            $('#select-all_mainCategoryUp').prop('checked', false);
-
-            // 2) 현재 페이지 row-checkbox 언체크
-            const rows = categoryTable.rows({ page: 'current' }).nodes();
-            $('input.row-checkbox', rows).prop('checked', false);
-        });
     });
 
 </script>
@@ -1005,7 +966,8 @@
             order: [[1, 'asc']],
             columnDefs: [
                 { width: '95px', targets: -1 },  // Actions 열 너비
-                { targets: [1, 2, 3, 4, 5, 6], className: 'text-center' } // JS 속성으로 가운데 정렬
+                { targets: [1, 2, 3, 4, 5, 6], className: 'text-center' }, // JS 속성으로 가운데 정렬
+                { targets: [0], orderable: false }
             ],
             paging: true,
             pageLength: 10,
@@ -1028,8 +990,6 @@
             },
             // 초기에 체크박스에서 정렬 화살표 지우기
             initComplete: function(settings, json) {
-                if (settings.nTable.id !== 'datatable') return true;
-                $('#datatable_wrapper thead th').eq(0).removeClass('sorting sorting_asc sorting_desc');
                 fixLengthDropdownStyle();
                 const api = this.api();
 
@@ -1040,10 +1000,42 @@
             },
             // 새로고침 후 체크박스에서 정렬 화살표 지우기 (유지)
             drawCallback: function(settings) {
-                if (settings.nTable.id !== 'datatable') return true;
-                $('#datatable_wrapper thead th').eq(0).removeClass('sorting sorting_asc sorting_desc');
             }
         });
+
+        ///////////////////////////////////////////////////////
+
+        // ✅ 전체 선택 체크박스 클릭 시 (현재 페이지 기준)
+        $(document).off('change', '#select-all').on('change', '#select-all', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const isChecked = $(this).prop('checked');
+            console.log('[제품 전체선택] 상태:', isChecked);
+
+            const rows = table.rows({ page: 'current' }).nodes();
+            $('input.row-checkbox', rows).prop('checked', isChecked);
+        });
+
+        // ✅ 개별 체크 해제 시 전체 선택 해제
+        $('#datatable_product tbody').off('change', 'input.row-checkbox').on('change', 'input.row-checkbox', function () {
+            const $selectAll = $('#select-all');
+            const rows = table.rows({ page: 'current' }).nodes();
+            const total = $('input.row-checkbox', rows).length;
+            const checked = $('input.row-checkbox:checked', rows).length;
+
+            $selectAll.prop('checked', total > 0 && total === checked);
+        });
+
+        // ✅ 페이지 이동 시 전체선택 체크박스 초기화
+        table.on('draw.dt', function () {
+            $('#select-all').prop('checked', false);
+
+            const rows = table.rows({ page: 'current' }).nodes();
+            $('input.row-checkbox', rows).prop('checked', false);
+        });
+
+        ///////////////////////////////////////////////////////
 
         // ① 전역 필터 함수: 중분류/소분류 필터링
         $.fn.dataTable.ext.search.push(function(settings, data) {
@@ -1132,28 +1124,6 @@
             table.column(3).search(this.value).draw();
         });
 
-        // ① 전체 체크박스 누르면 현재 페이지의 row-checkbox 만 토글
-        $('#select-all').on('click', function(){
-            var rows = table.rows({ page: 'current' }).nodes();
-            $('input.row-checkbox', rows).prop('checked', this.checked);
-        });
-        // ② 개별 해제 시 전체박스도 해제
-        $('#datatable tbody').on('change','input.row-checkbox',function(){
-            if (!this.checked) {
-                $('#select-all').prop('checked',false);
-            }
-        });
-
-        // DataTable 초기화 이후에 추가
-        $('#datatable').on('page.dt', function() {
-            // 1) 헤더 전체선택 체크박스 초기화
-            $('#select-all').prop('checked', false);
-
-            // 2) 현재 페이지의 row-checkbox 모두 초기화
-            const rows = table.rows({ page: 'current' }).nodes();
-            $('input.row-checkbox', rows).prop('checked', false);
-        });
-
         // 중분류 선택 시 소분류 초기화 & 필터링 적용
         $(document).on('change', '#midCategory_clone', function() {
             const midVal = $(this).val().trim();
@@ -1187,48 +1157,6 @@
             if (!$select.parent().hasClass('select-position')) {
                 $select.wrap('<div class="col-lg-2"><div class="select-style-1"><div class="select-position"></div></div></div>');
             }
-        });
-
-        // 등록 모달: 중분류→소분류 연동
-        initLinkedDropdown(
-            '#registerCategoryMid',
-            '#registerCategorySub',
-            '${pageContext.request.contextPath}/category/check'
-        );
-
-        // $('body').on('click', '#resetFilterBtn22', function () {
-        //     $('#midCategory_clone').val('');
-        //     $('#subCategory_clone').val('');
-        //     table.draw();
-        // });
-        //
-        // $('#midCategory_clone, #subCategory_clone').on('change', function() {
-        //     table
-        //         .column(2).search($('#midCategory_clone').val())
-        //         .column(3).search($('#subCategory_clone').val())
-        //         .draw();
-        // });
-
-        // "Select All" 체크박스 클릭 시 해당 페이지의 모든 row-checkbox 토글
-        $(document).on('click', '#select-all', function () {
-            const isChecked = this.checked;
-            $('#datatable tbody').find('input.row-checkbox').prop('checked', isChecked);
-        });
-
-        // 개별 row-checkbox 를 언체크하면 전체 체크박스도 언체크
-        $(document).on('change', '#datatable tbody input.row-checkbox', function () {
-            if (!this.checked) {
-                $('#select-all').prop('checked', false);
-            }
-        });
-
-        // 페이지 변경(draw) 될 때마다 전체 체크박스 초기화
-        $('#datatable').on('draw.dt', function () {
-            $('#select-all').prop('checked', false);
-        });
-
-        table.on('draw', function() {
-            $('#select-all').prop('checked', false);
         });
 
         // 유효성 검사 함수
@@ -1539,8 +1467,6 @@
             $('#productDeleteModal').modal('hide');
             // 필요 시 DataTable 업데이트 등의 추가 처리
         });
-
-
 
     });
 </script>
