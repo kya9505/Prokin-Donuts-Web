@@ -106,26 +106,4 @@
     <update id="updateQhInboundStatus">
         update inbound set inboundStatus = "승인대기" where inboundCode = #{inboundCode}
     </update>
-
-
-
-
-
-    <sql id="search">
-        <if test="(types != null and keyword != null)">
-            <foreach collection="types" item="type" open=" and ( " separator="OR" close=")">
-                <choose>
-                    <when test='type.equals("T")'>
-                        title like concat('%',#{keyword},'%')
-                    </when>
-                    <when test='type.equals("C")'>
-                        content like concat('%',#{keyword},'%')
-                    </when>
-                    <when test='type.equals("W")'>
-                        writer like concat('%',#{keyword},'%')
-                    </when>
-                </choose>
-            </foreach>
-        </if>
-    </sql>
 </mapper>

@@ -219,9 +219,6 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
                         </div>
                         <div class="modal-body">
-                            <%--                        서버에 inboundCode 전송--%>
-<%--                            <input type="hidden" id="modalInboundCode" name="inboundCode">--%>
-
                             <table class="table" id="selectedProductsTable">
                                 <thead>
                                 <tr>
@@ -341,18 +338,6 @@
         background-color: transparent !important; /* 배경도 필요 시 투명하게 */
         box-shadow: none !important; /* 그림자도 제거 */
     }
-    /*button.btn-approve:disabled {
-        border: none !important;
-        background-color: transparent !important;
-    }
-    button.btn-edit:disabled {
-        border: none !important;
-        background-color: transparent !important;
-    }
-    button.btn-delete:disabled {
-        border: none !important;
-        background-color: transparent !important;
-    }*/
 </style>
 <script>
     const inboundDetails = [
@@ -373,9 +358,7 @@
         // 1. 더미 데이터 정의 (소재지)
         const dummyInboundCategories = [
             { "id": "입고요청", "name": "입고요청" },
-            { "id": "입고승인", "name": "입고승인" },
-            { "id": "입고완료", "name": "입고완료" },
-
+            { "id": "승인대기", "name": "승인대기" },
         ];
 
         // 2. 원본 필터 영역에 소재지 옵션 채우기
@@ -639,7 +622,6 @@
 
 
 
-
         //삭제
 
         $('body').on('click', '.btn-delete', function () {
@@ -682,11 +664,6 @@
             const modal = new bootstrap.Modal(document.getElementById('inboundDeleteModal'));
             modal.show();
         });
-
-
-
-
-
     });
 
     //mypageData
