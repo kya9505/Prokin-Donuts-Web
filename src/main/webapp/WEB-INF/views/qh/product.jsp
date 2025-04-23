@@ -1057,6 +1057,32 @@
             }
         });
 
+        // ① 전역 필터 함수: 선택값과 행의 값을 비교
+        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+            // datatable 아이디가 맞는 경우에만 실행
+            if (settings.nTable.id !== 'datatable') return true;
+
+            var selectedMid = $('#midCategory_clone').val();
+            var selectedSub = $('#subCategory_clone').val();
+            var rowMid = data[2] ? data[2].trim() : '';
+            var rowSub = data[3] ? data[3].trim() : '';
+
+            // 중분류 필터
+            if (selectedMid && rowMid !== selectedMid) {
+                return false;
+            }
+            // 소분류 필터
+            if (selectedSub && rowSub !== selectedSub) {
+                return false;
+            }
+            return true;
+        });
+
+        // ② 드롭다운 change 시 redraw
+        $(document).on('change', '#midCategory_clone, #subCategory_clone', function() {
+            table.draw();
+        });
+
         function fixLengthDropdownStyle() {
             const $length = $('#datatable_wrapper .dataTables_length');
             const $select = $length.find('select');
@@ -1184,22 +1210,6 @@
                 .column(2).search($('#midCategory_clone').val())
                 .column(3).search($('#subCategory_clone').val())
                 .draw();
-        });
-
-        // 7-1. 필터링 함수도 변경된 ID값을 기준으로 수정
-        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-            if (settings.nTable.id !== 'datatable') return true;
-            const selectedMid = $('#midCategory_clone').val();
-            const selectedSub = $('#subCategory_clone').val();
-            const categoryMid = data[2];
-            const categorySub = data[3];
-
-            if ((selectedMid && selectedMid !== categoryMid) ||
-                (selectedSub && selectedSub !== categorySub)) {
-                return false;
-            }
-
-            return true;
         });
 
         // "Select All" 체크박스 클릭 시 해당 페이지의 모든 row-checkbox 토글
