@@ -1,5 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<jsp:useBean id="now" class="java.util.Date" />
+<fmt:formatDate var="today" value="${now}" pattern="yyyy-MM-dd" />
+<fmt:formatDate var="formattedInboundDate" value="${inbound.inboundDate}" pattern="yyyy-MM-dd" />
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -123,16 +129,28 @@
                                     <td>
                                         <div class="btu-group-2">
                                             <button class="btn btn-approve text-success" title="입고 승인" id="btnInboundAdd" data-inbound-code="${inbound.inboundCode}"
-                                                    data-inbound-date="${inbound.inboundDate}">
-                                                <i class="lni lni-checkmark-circle"></i>
+                                                    data-inbound-date="${inbound.inboundDate}"
+<%--                                                    현재날짜와 입고날짜가 다르다 or 입고상태가 '승인대기' 상태가 아니다 --> disabled 처리--%>
+                                                    <c:if test="${inbound.inboundDate ne today or inbound.inboundStatus ne '승인대기'}">disabled</c:if>>
+                                                <i class="lni lni-checkmark-circle"
+                                                   style="color: <c:out value='${(inbound.inboundDate eq today and inbound.inboundStatus eq "승인대기") ? "#28a745" : "#cccccc"}'/>;"></i>
                                             </button>
+
                                             <button class="btn btn-edit text-primary-2" data-inbound-code="${inbound.inboundCode}"
-                                                    data-inbound-date="${inbound.inboundDate}">
-                                                <i class="lni lni-pencil"></i>
+                                                    data-inbound-date="${inbound.inboundDate}"
+<%--                                                    입고상태가 '입고요청' 상태가 아니면 수정이 불가능하다.--%>
+                                                <c:if test="${inbound.inboundStatus ne '입고요청'}">disabled</c:if>>
+                                                <i class="lni lni-pencil"
+                                                   style="color: <c:out value='${(inbound.inboundStatus ne "입고요청") ? "#cccccc": "#007bff"}'/>;"></i>
                                             </button>
+
+
                                             <button class="btn btn-delete text-danger"  data-inbound-code="${inbound.inboundCode}"
-                                                    data-inbound-date="${inbound.inboundDate}">
-                                                <i class="lni lni-trash-can"></i>
+                                                    data-inbound-date="${inbound.inboundDate}"
+<%--                                                    입고상태가 '입고요청' 상태가 아니면 취소가 불가능하다--%>
+                                            <c:if test="${inbound.inboundStatus ne '입고요청'}">disabled</c:if>>
+                                                <i class="lni lni-trash-can"
+                                                   style="color: <c:out value='${(inbound.inboundStatus ne "입고요청") ? "#cccccc": "#red"}'/>;"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -183,7 +201,7 @@
                             </div>
                             <div>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                                <button type="submit" class="main-btn primary-btn btn-primary btn-sm">입고 요청 완료</button>
+                                <button type="submit" class="main-btn primary-btn btn-primary btn-sm">입고 완료</button>
                             </div>
                         </div>
                     </div>
@@ -201,9 +219,6 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
                         </div>
                         <div class="modal-body">
-                            <%--                        서버에 inboundCode 전송--%>
-<%--                            <input type="hidden" id="modalInboundCode" name="inboundCode">--%>
-
                             <table class="table" id="selectedProductsTable">
                                 <thead>
                                 <tr>
@@ -227,7 +242,7 @@
                             </div>
                             <div>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                                <button type="submit" class="main-btn primary-btn btn-primary btn-sm">입고수정 완료</button>
+                                <button type="submit" class="main-btn primary-btn btn-primary btn-sm">입고 수정</button>
                             </div>
                         </div>
                     </div>
@@ -272,7 +287,7 @@
                             </div>
                             <div>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                                <button type="submit" class="main-btn primary-btn btn-primary btn-sm">삭제</button>
+                                <button type="submit" class="main-btn primary-btn btn-primary btn-sm">입고 삭제</button>
                             </div>
                         </div>
                     </div>
@@ -317,7 +332,13 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
-
+<style>
+    button:disabled {
+        border: none !important; /* 테두리 제거 */
+        background-color: transparent !important; /* 배경도 필요 시 투명하게 */
+        box-shadow: none !important; /* 그림자도 제거 */
+    }
+</style>
 <script>
     const inboundDetails = [
         <c:forEach var="detail" items="${inboundDetailList}" varStatus="loop">
@@ -334,15 +355,13 @@
 
 
     $(document).ready(function() {
-        // 1. 더미 데이터 정의 (소재지)
+        // 1. 더미 데이터 정의 (입고상태)
         const dummyInboundCategories = [
             { "id": "입고요청", "name": "입고요청" },
-            { "id": "입고승인", "name": "입고승인" },
-            { "id": "입고완료", "name": "입고완료" },
-
+            { "id": "승인대기", "name": "승인대기" },
         ];
 
-        // 2. 원본 필터 영역에 소재지 옵션 채우기
+        // 2. 원본 필터 영역에 입고상태 옵션 채우기
         var $midSelect = $('#myCustomFilters #InboundCategories');
         $.each(dummyInboundCategories, function(index, item) {
             $midSelect.append($('<option>', {
@@ -530,12 +549,33 @@
 
 
 
+        $('#inboundEditModal').on('shown.bs.modal', function () {
+            const today = new Date();
+            console.log(today);
+
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); // 반드시 +1 필요
+            const dd = String(today.getDate()).padStart(2, '0');      // 0으로 시작되게 패딩
+
+            const minDate = ``+yyyy+`-`+mm+`-`+dd+``;
+
+            console.log('✅ 오늘 날짜 (minDate):', minDate); // 여기서 값 확인
+            $('#inboundDate').attr('min', minDate);
+        });
+
+
         // 수정
         $('body').on('click', '.btn-edit', function () {
             const inboundCode = $(this).data('inbound-code'); // 버튼에서 코드 가져오기
             console.log('✅ 선택된 inboundCode:', inboundCode);
 
             const inboundDate = $(this).data('inbound-date');
+
+            //입고 날짜 선택 안 하면 return
+            if (!inboundDate) {
+                alert('입고 날짜를 선택해주세요.');
+                return;
+            }
 
             // server에서 내려받은 전체 리스트에서 코드로 필터링
             const filteredDetails = inboundDetails.filter(detail => detail.inboundCode === inboundCode);
@@ -576,10 +616,6 @@
             const modal = new bootstrap.Modal(document.getElementById('inboundEditModal'));
             modal.show();
         });
-
-
-
-
 
 
 
@@ -625,16 +661,38 @@
             const modal = new bootstrap.Modal(document.getElementById('inboundDeleteModal'));
             modal.show();
         });
-
-
-
-
-
     });
 
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
 
 </script>
+
+<%--입고승인 완료 알림창--%>
+<c:if test="${not empty approveSuccessMessage}">
+    <script>
+        alert('${approveSuccessMessage}');
+    </script>
+</c:if>
+
+<%--입고수정 완료 알림창--%>
+<c:if test="${not empty editSuccessMessage}">
+    <script>
+        alert('${editSuccessMessage}');
+    </script>
+</c:if>
+
+<%--입고취소 완료 알림창--%>
+<c:if test="${not empty deleteSuccessMessage}">
+    <script>
+        alert('${deleteSuccessMessage}');
+    </script>
+</c:if>
+
+<c:if test="${not empty errorMessage}">
+    <script>
+        alert('${errorMessage}');
+    </script>
+</c:if>
 </body>
 </html>

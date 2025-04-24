@@ -3,6 +3,8 @@ package com.donut.prokindonutsweb.inbound.controller;
 import com.donut.prokindonutsweb.inbound.dto.InboundDTO;
 import com.donut.prokindonutsweb.inbound.dto.InboundDetailDTO;
 import com.donut.prokindonutsweb.inbound.dto.InboundStatusDTO;
+import com.donut.prokindonutsweb.inbound.exception.ErrorType;
+import com.donut.prokindonutsweb.inbound.exception.UserException;
 import com.donut.prokindonutsweb.inbound.service.InboundService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,24 +26,30 @@ public class QhInboundController {
     private final InboundService inboundService;
     // 본사관리자 입고현황
     @GetMapping("/status")
-    public void qhGetAllInboundStatus(Model model) {
-        List<InboundStatusDTO> inboundStatusList = inboundService.findAllInboundStatusList().get();
+    public void getInboundStatus(Model model) {
+        List<InboundStatusDTO> inboundStatusList = inboundService.findInboundStatusList()
+                        .orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_INBOUND_STATUS_QA));
         model.addAttribute("inboundStatusList", inboundStatusList);
     }
 
     // 본사관리자 입고요청에 대한 승인 페이지 (입고관리)
+    /*
+        모든 창고의 입고요청을 보여준다.
+     */
     @GetMapping("/request")
-    public void qhGetAllInboundList(Model model) {
-        List<InboundDTO> inboundList = inboundService.findAllQhInboundList().get();
-        List<InboundDetailDTO> inboundDetailList = inboundService.findAllInboundDetailList().get();
+    public void getInboundList(Model model) {
+        List<InboundDTO> inboundList = inboundService.findQhInboundList()
+                .orElseThrow(()-> new UserException(ErrorType.NOT_FOUND_INBOUND_REQUEST));
+        List<InboundDetailDTO> inboundDetailList = inboundService.findInboundDetailList();
         model.addAttribute("inboundList", inboundList);
         model.addAttribute("inboundDetailList", inboundDetailList);
+        //return "qh/inbound/request";
     }
 
     // 입고요청에 대한 승인 완료 (본사관리자)
     @PostMapping("/request/approve")
-    public String qhApproveInbound(@RequestParam String inboundCode) {
-        inboundService.qhUpdateInboundStatus(inboundCode);
+    public String approveInbound(@RequestParam String inboundCode) {
+        inboundService.updateInboundStatus(inboundCode);
         return "redirect:/qh/inbound/request";
     }
 
