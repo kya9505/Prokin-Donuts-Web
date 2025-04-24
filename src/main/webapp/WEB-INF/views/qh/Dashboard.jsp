@@ -1,5 +1,7 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,7 +36,7 @@
 <!-- ======== main-wrapper start =========== -->
 <main class="main-wrapper">
     <!-- ========== header start ========== -->
-    <%@include file="/WEB-INF/views/includes/header/qhHeader.jsp"%>
+    <%@include file="/WEB-INF/views/includes/header/LoginMemberHeader.jsp"%>
     <!-- ========== header end ========== -->
     <!-- 마이페이지 모달 -->
     <%@ include file="/WEB-INF/views/includes/mypage/mypage.jsp" %>

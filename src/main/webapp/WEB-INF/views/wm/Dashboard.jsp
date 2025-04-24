@@ -1,5 +1,6 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,7 +34,7 @@
 <!-- ======== main-wrapper start =========== -->
 <main class="main-wrapper">
     <!-- ========== header start ========== -->
-    <%@include file="/WEB-INF/views/includes/header/wmHeader.jsp"%>
+    <%@include file="/WEB-INF/views/includes/header/LoginMemberHeader.jsp"%>
     <!-- ========== header end ========== -->
     <!-- Modal HTML Start -->
     <%@ include file="/WEB-INF/views/includes/mypage/mypage.jsp" %>
@@ -192,6 +193,7 @@
 <!-- ======== main-wrapper end =========== -->
 
 <!-- ========= All Javascript files linkup ======== -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="<c:url value='/resources/js/Chart.min.js'/>"></script>
 <script src="<c:url value='/resources/js/dynamic-pie-chart.js'/>"></script>
 <script src="<c:url value='/resources/js/moment.min.js'/>"></script>
@@ -201,7 +203,6 @@
 <script src="<c:url value='/resources/js/polyfill.js'/>"></script>
 <script src="<c:url value='/resources/js/main.js'/>"></script>
 <!-- datatable을 위해 필요함 -->
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
 
