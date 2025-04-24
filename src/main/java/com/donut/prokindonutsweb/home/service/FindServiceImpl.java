@@ -56,7 +56,7 @@ public class FindServiceImpl implements FindService {
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
         helper.setTo(email);
-        helper.setSubject("ProkinDonuts 아이디/비밀번호 찾기 인증번호입니다.");
+        helper.setSubject("ProkinDonuts 인증번호입니다.");
         helper.setFrom("prokindonuts@gmail.com");
         helper.setText(buildHtml(code.getCode()), true);
 
@@ -87,7 +87,7 @@ public class FindServiceImpl implements FindService {
         """ + authCode + """
                 </p>
                 <p><br>인증번호는 10분간 유효합니다.<br><br>시간이 지나면 다시 요청해 주세요.</p>
-                <div style="font-size:12px; color:#999; margin-top:30px;">본 메일은 발신전용입니다. 고객센터를 이용해 주세요.</div>
+                <div style="font-size:12px; color:#999; margin-top:30px;">본 메일은 발신전용입니다.<br>본 인증번호를 요청하지 않으셨다면 고객센터를 이용해 주세요.</div>
             </div>
         </body>
         </html>
