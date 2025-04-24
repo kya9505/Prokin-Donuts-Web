@@ -1,11 +1,14 @@
 package com.donut.prokindonutsweb.security.dto;
 
+import com.donut.prokindonutsweb.member.dto.MemberAccountDTO;
 import com.donut.prokindonutsweb.member.vo.MemberAccountVO;
 import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -14,10 +17,13 @@ public class CustomUserDetails implements UserDetails {
 
     private final MemberAccountVO member;
 
-    //입력받은 아이디와 일치하는 객체
-    public CustomUserDetails(MemberAccountVO member) {
-        this.member = member;
+    public MemberAccountVO getUser() {
+        return member;
     }
+    public MemberAccountVO getMember() {
+        return member;
+    }
+    //입력받은 아이디와 일치하는 객체
 
     //찾은 객체의 권한을 리스트로 반환
     @Override
