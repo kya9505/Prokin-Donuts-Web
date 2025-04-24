@@ -35,7 +35,7 @@
 <main class="main-wrapper">
 
     <!-- ========== header start ========== -->
-    <%@include file="/WEB-INF/views/includes/header/qhHeader.jsp"%>
+    <%@include file="/WEB-INF/views/includes/header/LoginMemberHeader.jsp"%>
     <!-- ========== header end ========== -->
 
     <!-- 마이페이지 모달 -->
