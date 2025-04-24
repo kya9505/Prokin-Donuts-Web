@@ -1,4 +1,4 @@
-package com.donut.prokindonutsweb.homeController;
+package com.donut.prokindonutsweb.home.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
