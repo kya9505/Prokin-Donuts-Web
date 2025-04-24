@@ -129,6 +129,9 @@ dependencies {
     implementation 'org.springframework:spring-context-support:5.3.30' // JavaMailSenderImpl 포함
     implementation 'javax.mail:mail:1.4.7' // SMTP 통신 등 메일 핵심 기능
 
+    // assertThat 을 사용하기 위한 설정
+    testImplementation 'org.assertj:assertj-core:3.24.2'
+
 }
 
 test {

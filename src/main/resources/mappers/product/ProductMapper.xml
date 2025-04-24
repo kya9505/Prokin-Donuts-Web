@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.donut.prokindonutsweb.product.mapper.ProductMapper">
+
+    <!-- 1) 카테고리용 DTO 매핑 -->
+    <resultMap id="CategoryMap" type="com.donut.prokindonutsweb.product.dto.CategorySelectDTO">
+        <result property="categoryCode" column="categoryCode"/>
+        <result property="categoryMid"   column="categoryMid"/>
+        <result property="categorySub"   column="categorySub"/>
+    </resultMap>
+
+    <!-- 2) 전체 카테고리 조회 -->
+    <select id="selectCategoryList" resultMap="CategoryMap">
+        SELECT categoryCode, categoryMid, categorySub
+        FROM Category
+    </select>
+
+    <!-- 3) 카테고리 등록 -->
+    <insert id="insertCategory" parameterType="com.donut.prokindonutsweb.product.vo.CategoryMainVO">
+        INSERT INTO Category (categoryCode, categoryMid, categorySub)
+        VALUES (#{categoryCode}, #{categoryMid}, #{categorySub})
+    </insert>
+
+    <!-- 4) 카테고리 일괄 삭제 -->
+    <delete id="deleteCategoriesByCodes" parameterType="list">
+        DELETE FROM Category WHERE categoryCode IN
+        <foreach item="code" collection="list" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+    </delete>
+
+    <!-- 5) 제품용 DTO 매핑 -->
+    <resultMap id="ProductMap" type="com.donut.prokindonutsweb.product.dto.ProductSelectDTO">
+        <result property="productCode"  column="productCode"/>
+        <result property="productName"  column="productName"/>
+        <result property="productPrice" column="productPrice"/>
+        <result property="categoryCode" column="categoryCode"/>
+        <result property="categoryMid"  column="categoryMid"/>
+        <result property="categorySub"  column="categorySub"/>
+        <result property="storedType"   column="storedType"/>
+    </resultMap>
+
+    <!-- 6) 전체 제품 조회 -->
+    <select id="selectProductList" resultMap="ProductMap">
+        SELECT p.productCode,
+               p.productName,
+               p.productPrice,
+               c.categoryMid,
+               c.categorySub,
+               p.storedType
+        FROM Product p
+                 JOIN Category c
+                      ON p.categoryCode = c.categoryCode
+    </select>
+
+    <!-- 7) 제품 등록 -->
+    <insert id="insertProduct" parameterType="com.donut.prokindonutsweb.product.vo.ProductMainVO">
+        INSERT INTO Product
+            (productCode, productName, productPrice, categoryCode, storedType)
+        VALUES
+            (#{productCode}, #{productName}, #{productPrice}, #{categoryCode}, #{storedType})
+    </insert>
+
+    <!-- 8) 제품 일괄 수정 -->
+    <update id="updateProduct" parameterType="list">
+        UPDATE Product
+        SET
+        productName = CASE productCode
+        <foreach collection="list" item="item">
+            WHEN #{item.productCode} THEN #{item.productName}
+        </foreach>
+        ELSE productName
+        END,
+
+        productPrice = CASE productCode
+        <foreach collection="list" item="item">
+            WHEN #{item.productCode} THEN #{item.productPrice}
+        </foreach>
+        ELSE productPrice
+        END,
+
+        categoryCode = CASE productCode
+        <foreach collection="list" item="item">
+            WHEN #{item.productCode} THEN #{item.categoryCode}
+        </foreach>
+        ELSE categoryCode
+        END,
+
+        storedType = CASE productCode
+        <foreach collection="list" item="item">
+            WHEN #{item.productCode} THEN #{item.storedType}
+        </foreach>
+        ELSE storedType
+        END
+
+        WHERE productCode IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item.productCode}
+        </foreach>
+    </update>
+
+    <!-- 9) 제품 일괄 삭제 -->
+    <delete id="deleteProductsByCodes" parameterType="list">
+        DELETE FROM Product WHERE productCode IN
+        <foreach item="code" collection="list" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+    </delete>
+
+    <!-- 10) 코드 + 중분류/소분류 유니크 동시에 확인 -->
+    <select id="checkCategoryCodeDuplicate" parameterType="map" resultType="boolean">
+        SELECT
+            CASE
+                WHEN EXISTS (SELECT 1 FROM Category WHERE categoryCode = #{categoryCode})
+                    OR EXISTS (SELECT 1 FROM Category WHERE categoryMid = #{categoryMid} AND categorySub = #{categorySub})
+                    THEN TRUE
+                ELSE FALSE
+                END
+    </select>
+
+    <!-- 11) 제품 중복 확인 (중복 조건: categoryCode + productName) -->
+    <select id="checkProductDuplicate"
+            parameterType="com.donut.prokindonutsweb.product.vo.ProductMainVO"
+            resultType="int">
+        SELECT COUNT(*) FROM Product
+        WHERE categoryCode = #{categoryCode} AND productName = #{productName}
+        <if test="productCode != null and productCode != ''">
+            AND productCode != #{productCode}
+        </if>
+    </select>
+
+    <!-- 12) 카테고리 상태 조회 -->
+    <select id="selectCategoryStatus" parameterType="string" resultType="string">
+        SELECT CASE
+                   WHEN EXISTS (
+                       SELECT 1
+                       FROM Inventory inv
+                                JOIN Product prod ON inv.productCode = prod.productCode
+                       WHERE prod.categoryCode = #{categoryCode}
+                         AND inv.quantity > 0
+                   ) THEN '재고있음'
+                   WHEN EXISTS (
+                       SELECT 1
+                       FROM InboundDetail d
+                                JOIN Inbound i ON d.inboundCode = i.inboundCode
+                                JOIN Product prod ON d.productCode = prod.productCode
+                       WHERE prod.categoryCode = #{categoryCode}
+                         AND i.inboundStatus IN ('입고진행','승인대기')
+                   ) THEN '입고진행'
+                   WHEN EXISTS (
+                       SELECT 1
+                       FROM OrderDetail od
+                                JOIN `Order` o ON od.orderCode = o.orderCode
+                                JOIN Product prod ON od.productCode = prod.productCode
+                       WHERE prod.categoryCode = #{categoryCode}
+                         AND o.orderStatus IN ('발주진행','승인대기')
+                   ) THEN '발주진행'
+                   WHEN EXISTS (
+                       SELECT 1
+                       FROM Product prod
+                       WHERE prod.categoryCode = #{categoryCode}
+                   ) THEN '제품등록'
+                   ELSE '삭제가능'
+                   END
+    </select>
+
+    <!-- 13) 제품 상태 조회 -->
+    <select id="selectProductStatus" parameterType="string" resultType="string">
+        SELECT CASE
+                   WHEN EXISTS (
+                       SELECT 1
+                       FROM Inventory
+                       WHERE productCode = #{productCode}
+                         AND quantity > 0
+                   ) THEN '재고있음'
+                   WHEN EXISTS (
+                       SELECT 1
+                       FROM InboundDetail d
+                                JOIN Inbound i ON d.inboundCode = i.inboundCode
+                       WHERE d.productCode = #{productCode}
+                         AND i.inboundStatus IN ('입고진행','승인대기')
+                   ) THEN '입고진행'
+                   WHEN EXISTS (
+                       SELECT 1
+                       FROM OrderDetail od
+                                JOIN `Order` o ON od.orderCode = o.orderCode
+                       WHERE od.productCode = #{productCode}
+                         AND o.orderStatus IN ('발주진행','승인대기')
+                   ) THEN '발주진행'
+                   ELSE '삭제가능'
+                   END
+    </select>
+
+    <!-- 14) 중분류 + 소분류로 카테고리코드 조회 -->
+    <select id="selectCategoryCodeByMidSub" resultType="String">
+        SELECT categoryCode
+        FROM Category
+        WHERE categoryMid = #{mid}
+          AND categorySub = #{sub}
+    </select>
+
+    <!-- 15) prefix로 시작하는 제품코드들 조회 -->
+    <select id="selectProductCodesByPrefix" resultType="String">
+        SELECT productCode
+        FROM Product
+        WHERE productCode LIKE #{prefix}
+    </select>
+
+</mapper>

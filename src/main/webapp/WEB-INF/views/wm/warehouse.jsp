@@ -308,7 +308,7 @@
 
             // 3-2. fetch 요청
             const contextPath = "${pageContext.request.contextPath}";
-            fetch(`${contextPath}/qh/inventory/check?categoryMid=`+encodeURIComponent(midVal))
+            fetch(`${contextPath}/category/check?categoryMid=`+encodeURIComponent(midVal))
                 .then(res => res.json())
                 .then(subList => {
                     subList.forEach(sub => {
@@ -352,7 +352,7 @@
         // 6. 필터 초기화 버튼
         $('body').on('click', '#resetFilterBtn', function () {
             $('#midCategory_clone').val('');
-            $('#subCategory_clone').val('');
+            $('#subCategory_clone').prop('disabled', true);
             table.draw();
         });
 
