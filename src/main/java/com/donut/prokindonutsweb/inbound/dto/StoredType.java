@@ -5,7 +5,7 @@ import lombok.Getter;
 public enum StoredType {
     REFRIGERATED("냉장", 'R'),
     FROZEN("냉동", 'F'),
-    ROOM_TEMPERATURE("상온", ' '); // 기본값
+    ROOM_TEMPERATURE("상온", 'A'); // 기본값
 
     private final String label;
     private final char codeSuffix;

@@ -47,26 +47,31 @@ public class InboundServiceImpl implements InboundService {
         inboundMapper.insertInbound(inboundVO);
 
         String inboundCode = inboundDTO.getInboundCode();
-        List<InboundDetailVO> inboundDetailVOList = getInboundDetailList(inboundDetailList, inboundCode);
+        List<InboundDetailVO> inboundDetailVOList = getInboundDetailList(inboundDetailList, inboundDTO);
 
         inboundMapper.insertInboundDetailList(inboundDetailVOList);
     }
 
-    private List<InboundDetailVO> getInboundDetailList(List<InboundDetailDTO> inboundDetailList, String inboundCode) {
+    private List<InboundDetailVO> getInboundDetailList(List<InboundDetailDTO> inboundDetailList, InboundDTO inboundDTO) {
         AtomicInteger i = new AtomicInteger(1);
+        String inboundCode = inboundDTO.getInboundCode();
+        String warehouseCode = inboundDTO.getWarehouseCode();
+
         return inboundDetailList.stream().map(
                 dto -> InboundDetailVO.builder()
                         .inboundDetailCode(inboundCode + "-" + i.getAndIncrement())
                         .quantity(dto.getQuantity())
                         .inboundCode(inboundCode)
                         .productCode(dto.getProductCode())
-                        .sectionCode(getSection(dto.getStoredType()))
+                        .sectionCode(warehouseCode + "-" + getSection(dto.getStoredType()))
                         .build()
         ).toList();
     }
 
     private String getSection(String storedType) {
-        return StoredType.fromSectionCode(storedType).getLabel();
+        if(storedType.equals("냉동")) return "F";
+        else if(storedType.equals("냉장")) return "R";
+        else return "A";
     }
 
     /**
