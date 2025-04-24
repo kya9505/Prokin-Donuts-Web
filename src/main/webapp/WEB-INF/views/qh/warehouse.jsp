@@ -64,9 +64,11 @@
                     <!-- Start card -->
 
                     <!-- 지도 API 띄울 공간 -->
-                    <div class="card-style mb-30">
-                        <h6 class="mb-10">창고 위치</h6>
-                        <div id="map" style="width:100%;height:715px;"></div>
+                    <div class="card-style mb-30 map-wrapper" style="height: max(600px, calc(100vh - 200px)); display: flex; flex-direction: column;">
+                        <h6 class="mb-10" style="">창고 위치</h6>
+                        <div style="flex: 1; overflow: hidden;">
+                            <div id="map" style="width: 100%; height: 100%;"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -101,7 +103,7 @@
 
                                 <!-- 오른쪽: 등록/수정/삭제 -->
                                 <div class="btu-group-1 ms-auto gap-2 mb-20">
-                                    <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="btnWarehouseAdd">등록</button>
+                                    <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="btnWarehouseAdd">창고 등록</button>
                                 </div>
                             </div>
 
@@ -115,13 +117,13 @@
 
                                 <!-- colgroup를 통해 열 폭을 강제 지정 -->
                                 <colgroup>
-                                    <col style="width: 10%;" />
-                                    <col style="width: 18%;" />
-                                    <col style="width: 14%;" />
-                                    <col style="width: 13%;" />
-                                    <col style="width: 10%;" />
+                                    <col style="width: 12%;" />
                                     <col style="width: 20%;" />
+                                    <col style="width: 24%;" />
                                     <col style="width: 10%;" />
+                                    <col style="width: 10%;" />
+                                    <col style="width: 12%;" />
+                                    <col style="width: 12%;" />
                                 </colgroup>
 
                                 <thead>
@@ -133,6 +135,8 @@
                                     <th>담당자</th>
                                     <th>담당자 이메일</th>
                                     <th>수정 | 취소</th> <!-- 수정/삭제 열 -->
+                                    <th style="display: none;"></th>
+                                    <th style="display: none;"></th>
                                 </tr>
                                 </thead>
 
@@ -169,8 +173,6 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
-                                        <td style="display: none;">${w.status}</td>
-                                        <td style="display: none;">${w.memberCode}</td>
                                         <td>
                                             <div class="btn-group-2">
                                                 <button class="btn btn-edit text-primary-2" data-code="${w.warehouseCode}">
@@ -181,6 +183,8 @@
                                                 </button>
                                             </div>
                                         </td>
+                                        <td style="display: none;">${w.status}</td>
+                                        <td style="display: none;">${w.memberCode}</td>
                                 </c:forEach>
                                 </tbody>
 
@@ -293,7 +297,7 @@
                                                 name="capacityLimit"
                                                 placeholder="한도를 입력하세요"
                                         />
-                                        <span class="input-group-text">m제곱</span>
+                                        <span class="input-group-text">㎡</span>
                                     </div>
                                 </div>
 
