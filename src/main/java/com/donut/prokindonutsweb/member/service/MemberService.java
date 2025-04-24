@@ -14,7 +14,7 @@ public interface MemberService {
     boolean memberIdCheck(String id);
 
     boolean memberEmailCheck(String email);
-    void updateByMember(String id, MemberAccountDTO dto);
+    void updateByMember(MemberAccountDTO dto);
     void deleteByMember(String id);
 
 }
