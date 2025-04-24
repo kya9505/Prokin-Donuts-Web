@@ -10,6 +10,5 @@ import java.util.List;
 
 @Data
 public class InboundForm {
-    @NotEmpty(message = "제품을 선택해 주세요")
-    private List<@Valid InboundDetailDTO> productList;
+    private List<InboundDetailDTO> productList;
 }

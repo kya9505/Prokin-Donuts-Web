@@ -328,7 +328,7 @@
 
             // 3-2. fetch 요청
             const contextPath = "${pageContext.request.contextPath}";
-            fetch(`${contextPath}/qh/inventory/check?categoryMid=`+encodeURIComponent(midVal))
+            fetch(`${contextPath}/category/check?categoryMid=`+encodeURIComponent(midVal))
                 .then(res => res.json())
                 .then(subList => {
                     subList.forEach(sub => {
@@ -379,7 +379,7 @@
         $('body').on('click', '#resetFilterBtn', function () {
             $('#warehouseCategory_clone').val('');
             $('#midCategory_clone').val('');
-            $('#subCategory_clone').val('');
+            $('#subCategory_clone').prop('disabled', true);
             table.draw();
         });
 

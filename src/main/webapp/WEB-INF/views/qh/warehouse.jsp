@@ -387,6 +387,7 @@
                             <h3 class="modal-title" id="warehouseDeleteModalLabel">창고 삭제</h3>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
+
                         <!-- 모달 바디 -->
                         <div class="modal-body">
 

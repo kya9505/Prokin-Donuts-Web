@@ -138,6 +138,9 @@ dependencies {
     implementation 'org.springframework.security:spring-security-taglibs:5.1.5.RELEASE'
 
 
+    // assertThat 을 사용하기 위한 설정
+    testImplementation 'org.assertj:assertj-core:3.24.2'
+
 }
 
 test {
