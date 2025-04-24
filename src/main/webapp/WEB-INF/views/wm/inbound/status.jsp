@@ -288,6 +288,10 @@
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
 
 </script>
-
+<c:if test="${not empty errorMessage}">
+    <script>
+        alert('${errorMessage}');
+    </script>
+</c:if>
 </body>
 </html>

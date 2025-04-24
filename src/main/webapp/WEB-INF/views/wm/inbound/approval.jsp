@@ -689,5 +689,10 @@
     </script>
 </c:if>
 
+<c:if test="${not empty errorMessage}">
+    <script>
+        alert('${errorMessage}');
+    </script>
+</c:if>
 </body>
 </html>

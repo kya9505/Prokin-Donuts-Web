@@ -1,8 +1,6 @@
 package com.donut.prokindonutsweb.inbound.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 public enum ErrorType {
