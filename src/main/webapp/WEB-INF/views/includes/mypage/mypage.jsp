@@ -45,7 +45,10 @@
 
                 <!-- 탈퇴 폼 -->
                 <form id="secessionForm" action="<c:url value='/mypage/delete'/>" method="post">
-                    <button type="submit" class="text-link"    id="bntMypageSecession">탈퇴</button>
+                    <div class="text-center">
+
+                    <button type="button" class= "btn btn-link p-0 text-link" id="bntMypageSecession">탈퇴</button>
+                    </div>
                 </form>
             </div>
     </div>
