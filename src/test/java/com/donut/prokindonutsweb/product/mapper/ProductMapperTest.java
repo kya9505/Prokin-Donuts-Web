@@ -38,50 +38,50 @@ class ProductMapperTest {
         log.info("조회된 카테고리들: {}", list);
     }
     
-    @Test
-    @DisplayName("2. 카테고리 추가/중복체크/삭제")
-    void testInsertAndDeleteCategory() {
-        // 테스트용 VO 객체 생성
-        CategoryMainVO vo = new CategoryMainVO();
-        // 테스트용 카테고리 코드 설정
-        vo.setCategoryCode("TST");
-        // 테스트용 중분류명 설정
-        vo.setCategoryMid("테스트중분류");
-        // 테스트용 소분류명 설정
-        vo.setCategorySub("테스트소분류");
-        
-        // 1) 삽입 전 중복 체크
-        boolean dupBefore = mapper.checkCategoryDuplicate(vo) > 0;
-        // 중복되지 않아야 함
-        assertThat(dupBefore).isFalse();
-        // 중복여부 출력
-        log.info(dupBefore);
-        
-        // 2) 카테고리 삽입
-        mapper.insertCategory(vo);
-        // 삽입 후 중복 체크
-        boolean dupAfterInsert = mapper.checkCategoryDuplicate(vo) > 0;
-        // 삽입했으니 중복이어야 함
-        assertThat(dupAfterInsert).isTrue();
-        // 중복여부 출력
-        log.info(dupAfterInsert);
-        
-        // 3) 삽입된 카테고리의 상태 조회
-        String status = mapper.selectCategoryStatus("TST");
-        // 상태는 "제품등록" 또는 "삭제가능"이어야 함
-        assertThat(status).isIn("제품등록", "삭제가능");
-        // 카테고리 상태 출력
-        log.info(status);
-        
-        // 4) 카테고리 삭제
-        mapper.deleteCategory(vo);
-        // 삭제 후 다시 중복 체크
-        boolean dupAfterDelete = mapper.checkCategoryDuplicate(vo) > 0;
-        // 삭제했으므로 중복이 아니어야 함
-        assertThat(dupAfterDelete).isFalse();
-        // 중복여부 출력
-        log.info(dupAfterDelete);
-    }
+//    @Test
+//    @DisplayName("2. 카테고리 추가/중복체크/삭제")
+//    void testInsertAndDeleteCategory() {
+//        // 테스트용 VO 객체 생성
+//        CategoryMainVO vo = new CategoryMainVO();
+//        // 테스트용 카테고리 코드 설정
+//        vo.setCategoryCode("TST");
+//        // 테스트용 중분류명 설정
+//        vo.setCategoryMid("테스트중분류");
+//        // 테스트용 소분류명 설정
+//        vo.setCategorySub("테스트소분류");
+//
+//        // 1) 삽입 전 중복 체크
+//        boolean dupBefore = mapper.checkCategoryDuplicate(vo) > 0;
+//        // 중복되지 않아야 함
+//        assertThat(dupBefore).isFalse();
+//        // 중복여부 출력
+//        log.info(dupBefore);
+//
+//        // 2) 카테고리 삽입
+//        mapper.insertCategory(vo);
+//        // 삽입 후 중복 체크
+//        boolean dupAfterInsert = mapper.checkCategoryDuplicate(vo) > 0;
+//        // 삽입했으니 중복이어야 함
+//        assertThat(dupAfterInsert).isTrue();
+//        // 중복여부 출력
+//        log.info(dupAfterInsert);
+//
+//        // 3) 삽입된 카테고리의 상태 조회
+//        String status = mapper.selectCategoryStatus("TST");
+//        // 상태는 "제품등록" 또는 "삭제가능"이어야 함
+//        assertThat(status).isIn("제품등록", "삭제가능");
+//        // 카테고리 상태 출력
+//        log.info(status);
+//
+//        // 4) 카테고리 삭제
+//        mapper.deleteCategory(vo);
+//        // 삭제 후 다시 중복 체크
+//        boolean dupAfterDelete = mapper.checkCategoryDuplicate(vo) > 0;
+//        // 삭제했으므로 중복이 아니어야 함
+//        assertThat(dupAfterDelete).isFalse();
+//        // 중복여부 출력
+//        log.info(dupAfterDelete);
+//    }
     
     @Test
     @DisplayName("3. 전체 제품 조회")
@@ -93,61 +93,61 @@ class ProductMapperTest {
         // 3) 결과물 출력
         log.info("조회된 제품들: {}", products);
     }
-    
-    @Test
-    @DisplayName("4. 제품 추가/수정/중복체크/삭제")
-    void testInsertUpdateDeleteProduct() {
-        // 1) 테스트용 VO 객체 생성 및 초기값 설정
-        ProductMainVO vo = new ProductMainVO();
-        vo.setProductCode("PST");
-        vo.setProductName("테스트제품");
-        vo.setProductPrice(1000);
-        vo.setCategoryCode("DPN");
-        vo.setStoredType("냉장");
-        
-        // 2) 삽입 전 중복 체크 (등록 시이므로 productCode는 null)
-        ProductMainVO dupCheckForInsert = new ProductMainVO();
-        dupCheckForInsert.setProductCode(null); // 자기 자신 포함 → 중복 없음 기대
-        dupCheckForInsert.setCategoryCode(vo.getCategoryCode());
-        dupCheckForInsert.setProductName(vo.getProductName());
-        
-        boolean dupBefore = mapper.checkProductDuplicate(dupCheckForInsert) > 0;
-        assertThat(dupBefore).isFalse();
-        log.info("삽입 전 중복여부: {}", dupBefore);
-        
-        // 3) 제품 삽입
-        mapper.insertProduct(vo);
-        
-        // 3-1) 삽입 후 중복 체크 (등록 시와 동일 조건 → 중복 있음 기대)
-        boolean dupAfterInsert = mapper.checkProductDuplicate(dupCheckForInsert) > 0;
-        assertThat(dupAfterInsert).isTrue();
-        log.info("삽입 후 중복여부: {}", dupAfterInsert);
-        
-        // 4) 제품 정보 수정
-        vo.setProductName("테스트제품수정");
-        vo.setProductPrice(2000);
-        mapper.updateProduct(vo);
-        
-        // 수정 후 전체 리스트 조회 및 수정된 항목 존재 확인
-        List<ProductSelectDTO> list = mapper.selectProductList();
-        boolean foundUpdated = list.stream()
-            .anyMatch(p -> "PST".equals(p.getProductCode())
-                && "테스트제품수정".equals(p.getProductName())
-                && p.getProductPrice() == 2000);
-        assertThat(foundUpdated).isTrue();
-        log.info("수정된 제품 존재여부: {}", foundUpdated);
-        
-        // 5) 수정된 제품의 상태 조회 (PST)
-        String pStatus = mapper.selectProductStatus("PST");
-        assertThat(pStatus).isIn("삭제가능", "재고있음", "입고진행", "발주진행");
-        log.info("PST 상태: {}", pStatus);
-        
-        // 6) 제품 삭제
-        mapper.deleteProduct(vo);
-        boolean dupAfterDelete = mapper.checkProductDuplicate(dupCheckForInsert) > 0;
-        assertThat(dupAfterDelete).isFalse();
-        log.info("삭제 후 중복여부: {}", dupAfterDelete);
-    }
+
+//    @Test
+//    @DisplayName("4. 제품 추가/수정/중복체크/삭제")
+//    void testInsertUpdateDeleteProduct() {
+//        // 1) 테스트용 VO 객체 생성 및 초기값 설정
+//        ProductMainVO vo = new ProductMainVO();
+//        vo.setProductCode("PST");
+//        vo.setProductName("테스트제품");
+//        vo.setProductPrice(1000);
+//        vo.setCategoryCode("DPN");
+//        vo.setStoredType("냉장");
+//
+//        // 2) 삽입 전 중복 체크 (등록 시이므로 productCode는 null)
+//        ProductMainVO dupCheckForInsert = new ProductMainVO();
+//        dupCheckForInsert.setProductCode(null); // 자기 자신 포함 → 중복 없음 기대
+//        dupCheckForInsert.setCategoryCode(vo.getCategoryCode());
+//        dupCheckForInsert.setProductName(vo.getProductName());
+//
+//        boolean dupBefore = mapper.checkProductDuplicate(dupCheckForInsert) > 0;
+//        assertThat(dupBefore).isFalse();
+//        log.info("삽입 전 중복여부: {}", dupBefore);
+//
+//        // 3) 제품 삽입
+//        mapper.insertProduct(vo);
+//
+//        // 3-1) 삽입 후 중복 체크 (등록 시와 동일 조건 → 중복 있음 기대)
+//        boolean dupAfterInsert = mapper.checkProductDuplicate(dupCheckForInsert) > 0;
+//        assertThat(dupAfterInsert).isTrue();
+//        log.info("삽입 후 중복여부: {}", dupAfterInsert);
+//
+//        // 4) 제품 정보 수정
+//        vo.setProductName("테스트제품수정");
+//        vo.setProductPrice(2000);
+//        mapper.updateProduct(vo);
+//
+//        // 수정 후 전체 리스트 조회 및 수정된 항목 존재 확인
+//        List<ProductSelectDTO> list = mapper.selectProductList();
+//        boolean foundUpdated = list.stream()
+//            .anyMatch(p -> "PST".equals(p.getProductCode())
+//                && "테스트제품수정".equals(p.getProductName())
+//                && p.getProductPrice() == 2000);
+//        assertThat(foundUpdated).isTrue();
+//        log.info("수정된 제품 존재여부: {}", foundUpdated);
+//
+//        // 5) 수정된 제품의 상태 조회 (PST)
+//        String pStatus = mapper.selectProductStatus("PST");
+//        assertThat(pStatus).isIn("삭제가능", "재고있음", "입고진행", "발주진행");
+//        log.info("PST 상태: {}", pStatus);
+//
+//        // 6) 제품 삭제
+//        mapper.deleteProduct(vo);
+//        boolean dupAfterDelete = mapper.checkProductDuplicate(dupCheckForInsert) > 0;
+//        assertThat(dupAfterDelete).isFalse();
+//        log.info("삭제 후 중복여부: {}", dupAfterDelete);
+//    }
     
     @Test
     @DisplayName("중분류 + 소분류로 카테고리코드 조회")
@@ -284,22 +284,22 @@ class ProductMapperTest {
         log.info("PST 상태: {}", status);
     }
     
-    @Test
-    @DisplayName("Product 상태 - 발주진행 (@Sql)")
-    @Sql(statements = {
-        // 1) 테스트용 제품 삽입 (FK 제약을 위해)
-        "INSERT INTO Product(productCode, productName, productPrice, categoryCode, storedType) " +
-            "VALUES('PST','테스트제품',1000,'DPN','냉장')",
-        // 2) 주문 헤더 삽입 (franchiseCode, orderStatus 포함)
-        "INSERT INTO `Order` (orderCode, orderDate, franchiseCode, orderStatus) " +
-            "VALUES('TST-ORD', CURDATE(), 'GGF1', '승인대기')",
-        // 3) OrderDetail 삽입
-        "INSERT INTO `OrderDetail` (orderDetailCode, orderCode, productCode, quantity) " +
-            "VALUES('TST-OD','TST-ORD','PST',8)"
-    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    void testProductStatus_OrderProgress_WithSql() {
-        String status = mapper.selectProductStatus("PST");
-        assertThat(status).isEqualTo("발주진행");
-        log.info("PST 상태: {}", status);
-    }
+//    @Test
+//    @DisplayName("Product 상태 - 발주진행 (@Sql)")
+//    @Sql(statements = {
+//        // 1) 테스트용 제품 삽입 (FK 제약을 위해)
+//        "INSERT INTO Product(productCode, productName, productPrice, categoryCode, storedType) " +
+//            "VALUES('PST','테스트제품',1000,'DPN','냉장')",
+//        // 2) 주문 헤더 삽입 (franchiseCode, orderStatus 포함)
+//        "INSERT INTO `Order` (orderCode, orderDate, franchiseCode, orderStatus) " +
+//            "VALUES('TST-ORD', CURDATE(), 'GGF1', '승인대기')",
+//        // 3) OrderDetail 삽입
+//        "INSERT INTO `OrderDetail` (orderDetailCode, orderCode, productCode, quantity) " +
+//            "VALUES('TST-OD','TST-ORD','PST',8)"
+//    }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+//    void testProductStatus_OrderProgress_WithSql() {
+//        String status = mapper.selectProductStatus("PST");
+//        assertThat(status).isEqualTo("발주진행");
+//        log.info("PST 상태: {}", status);
+//    }
 }

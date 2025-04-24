@@ -23,10 +23,12 @@
         VALUES (#{categoryCode}, #{categoryMid}, #{categorySub})
     </insert>
 
-    <!-- 4) 카테고리 삭제 -->
-    <delete id="deleteCategory" parameterType="com.donut.prokindonutsweb.product.vo.CategoryMainVO">
-        DELETE FROM Category
-        WHERE categoryCode = #{categoryCode}
+    <!-- 4) 카테고리 일괄 삭제 -->
+    <delete id="deleteCategoriesByCodes" parameterType="list">
+        DELETE FROM Category WHERE categoryCode IN
+        <foreach item="code" collection="list" open="(" separator="," close=")">
+            #{code}
+        </foreach>
     </delete>
 
     <!-- 5) 제품용 DTO 매핑 -->
@@ -61,41 +63,53 @@
             (#{productCode}, #{productName}, #{productPrice}, #{categoryCode}, #{storedType})
     </insert>
 
-    <!-- 8) 제품 수정 -->
-    <update id="updateProduct" parameterType="com.donut.prokindonutsweb.product.vo.ProductMainVO">
+    <!-- 8) 제품 일괄 수정 -->
+    <update id="updateProduct" parameterType="list">
         UPDATE Product
-        SET productName  = #{productName},
-            productPrice = #{productPrice},
-            categoryCode = #{categoryCode},
-            storedType   = #{storedType}
-        WHERE productCode  = #{productCode}
+        SET
+        productName = CASE productCode
+        <foreach collection="list" item="item">
+            WHEN #{item.productCode} THEN #{item.productName}
+        </foreach>
+        ELSE productName
+        END,
+        productPrice = CASE productCode
+        <foreach collection="list" item="item">
+            WHEN #{item.productCode} THEN #{item.productPrice}
+        </foreach>
+        ELSE productPrice
+        END
+        WHERE productCode IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item.productCode}
+        </foreach>
     </update>
 
-    <!-- 9) 제품 삭제 -->
-    <delete id="deleteProduct" parameterType="com.donut.prokindonutsweb.product.vo.ProductMainVO">
-        DELETE FROM Product
-        WHERE productCode = #{productCode}
+    <!-- 9) 제품 일괄 삭제 -->
+    <delete id="deleteProductsByCodes" parameterType="list">
+        DELETE FROM Product WHERE productCode IN
+        <foreach item="code" collection="list" open="(" separator="," close=")">
+            #{code}
+        </foreach>
     </delete>
 
-    <!-- 10) 카테고리 중복 확인 (중복 조건: categoryCode + categoryMid + categorySub) -->
-    <select id="checkCategoryDuplicate"
-            parameterType="com.donut.prokindonutsweb.product.vo.CategoryMainVO"
-            resultType="int">
-        SELECT COUNT(*)
-        FROM Category
-        WHERE categoryCode = #{categoryCode}
-          AND categoryMid = #{categoryMid}
-          AND categorySub = #{categorySub}
+    <!-- 10) 코드 + 중분류/소분류 유니크 동시에 확인 -->
+    <select id="checkCategoryCodeDuplicate" parameterType="map" resultType="boolean">
+        SELECT
+            CASE
+                WHEN EXISTS (SELECT 1 FROM Category WHERE categoryCode = #{categoryCode})
+                    OR EXISTS (SELECT 1 FROM Category WHERE categoryMid = #{categoryMid} AND categorySub = #{categorySub})
+                    THEN TRUE
+                ELSE FALSE
+                END
     </select>
 
     <!-- 11) 제품 중복 확인 (중복 조건: categoryCode + productName) -->
     <select id="checkProductDuplicate"
             parameterType="com.donut.prokindonutsweb.product.vo.ProductMainVO"
             resultType="int">
-        SELECT COUNT(*)
-        FROM Product
-        WHERE categoryCode = #{categoryCode}
-        AND productName = #{productName}
+        SELECT COUNT(*) FROM Product
+        WHERE categoryCode = #{categoryCode} AND productName = #{productName}
         <if test="productCode != null and productCode != ''">
             AND productCode != #{productCode}
         </if>

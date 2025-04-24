@@ -7,18 +7,18 @@ import com.donut.prokindonutsweb.product.vo.ProductMainVO;
 import java.util.List;
 
 public interface ProductService {
+  // 🔹 카테고리
   List<CategorySelectDTO> findCategoryList();
   void saveCategory(CategoryInsertDTO categoryInsertDTO);
-  void deleteCategory(CategoryDeleteDTO categoryDeleteDTO);
+  void deleteCategories(List<String> categoryCodeList); // ✅ 일괄 삭제로 변경
+  boolean checkCategoryDuplicate(CategoryCheckDTO categoryCheckDTO);
+  String findCategoryStatus(String categoryCode);
   
+  // 🔹 제품
   List<ProductSelectDTO> findProductList();
   void saveProduct(ProductInsertDTO productInsertDTO);
-  void updateProduct(ProductInsertDTO productInsertDTO);
-  void deleteProduct(ProductDeleteDTO productDeleteDTO);
-  
+  void updateProducts(List<ProductInsertDTO> productInsertDTOList); // ✅ 일괄 수정으로 변경
+  void deleteProducts(List<String> productCodeList);                // ✅ 일괄 삭제로 변경
   boolean checkProductDuplicate(ProductCheckDTO productCheckDTO);
-  boolean checkCategoryDuplicate(CategoryCheckDTO categoryCheckDTO);
-  
   String findProductStatus(String productCode);
-  String findCategoryStatus(String categoryCode);
 }

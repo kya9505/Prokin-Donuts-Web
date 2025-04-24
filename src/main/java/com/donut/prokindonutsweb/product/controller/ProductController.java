@@ -25,7 +25,7 @@ public class ProductController {
   // 제품 및 카테고리 목록 조회
   @GetMapping
   public void qhGetWarehouseList(Model model) {
-    log.info("조회 - 제품 및 카테고리 목록을 요청합니다.");
+    log.info("GET - 제품 및 카테고리 목록 요청");
     
     List<CategorySelectDTO> categoryList = productService.findCategoryList();
     List<ProductSelectDTO> productList = productService.findProductList();
@@ -33,108 +33,93 @@ public class ProductController {
     
     for (CategorySelectDTO dto : categoryList) {
       String status = productService.findCategoryStatus(dto.getCategoryCode());
-      // null 이면 삭제 가능 상태로 간주
       dto.setCategoryStatus(status != null ? status : "삭제가능");
     }
+    
     for (ProductSelectDTO dto : productList) {
       String status = productService.findProductStatus(dto.getProductCode());
-      // null 이면 삭제 가능 상태로 간주
       dto.setProductStatus(status != null ? status : "삭제가능");
     }
     
-    model.addAttribute("categoryList",categoryList);
-    model.addAttribute("productList",productList);
+    model.addAttribute("categoryList", categoryList);
+    model.addAttribute("productList", productList);
     model.addAttribute("categoryMidList", categoryMidList);
+    log.info("Model에 데이터 추가 완료");
   }
-  
-  /// //////////////////////////////////////////////////////
-  /// //////////////////////////////////////////////////////
-  /// //////////////////////////////////////////////////////
   
   // 카테고리 등록
   @PostMapping("/category/add")
   public String qhAddCategory(CategoryInsertDTO categoryDTO) {
-    log.info("등록 - 새로운 카테고리를 등록합니다: {}", categoryDTO);
-    
+    log.info("POST - 카테고리 등록 요청: {}", categoryDTO);
     productService.saveCategory(categoryDTO);
     return "redirect:/qh/product";
   }
   
-  // 카테고리 삭제
+  // 카테고리 일괄 삭제
   @PostMapping("/category/delete")
-  public String qhDeleteCategory(CategoryDeleteDTO categoryDTO) {
-    log.info("삭제 - 카테고리를 삭제합니다: {}", categoryDTO);
-    
-    productService.deleteCategory(categoryDTO);
+  public String qhDeleteCategories(@RequestParam("categoryCodes") List<String> categoryCodes) {
+    log.info("POST - 카테고리 일괄 삭제 요청: {}", categoryCodes);
+    productService.deleteCategories(categoryCodes);
     return "redirect:/qh/product";
   }
-  
-  /// //////////////////////////////////////////////////////
-  /// //////////////////////////////////////////////////////
-  /// //////////////////////////////////////////////////////
   
   // 제품 등록
   @PostMapping("/add")
   public String qhAddProduct(ProductInsertDTO productDTO) {
-    log.info("등록 - 새로운 제품을 등록합니다: {}", productDTO);
-    
+    log.info("POST - 제품 등록 요청: {}", productDTO);
     productService.saveProduct(productDTO);
     return "redirect:/qh/product";
   }
   
-  // 제품 수정
+  // 제품 일괄 수정
   @PostMapping("/update")
-  public String qhUpdateProduct(ProductInsertDTO productDTO) {
-    log.info("수정 - 제품을 수정합니다: {}", productDTO);
-    
-    productService.updateProduct(productDTO);
+  public String qhUpdateProducts(@ModelAttribute("productList") List<ProductInsertDTO> productDTOList) {
+    log.info("POST - 제품 일괄 수정 요청: {}", productDTOList);
+    productService.updateProducts(productDTOList);
     return "redirect:/qh/product";
   }
   
-  // 제품 삭제
+  // 제품 일괄 삭제
   @PostMapping("/delete")
-  public String qhDeleteProduct(ProductDeleteDTO productDTO) {
-    log.info("삭제 - 제품을 삭제합니다: {}", productDTO);
-    
-    productService.deleteProduct(productDTO);
+  public String qhDeleteProducts(@RequestParam("productCodes") List<String> productCodes) {
+    log.info("POST - 제품 일괄 삭제 요청: {}", productCodes);
+    productService.deleteProducts(productCodes);
     return "redirect:/qh/product";
   }
   
-  /// //////////////////////////////////////////////////////
-  /// //////////////////////////////////////////////////////
-  /// //////////////////////////////////////////////////////
-  
-  // 카테고리 중복 확인 (카테고리 코드, 중분류명, 소분류명)
+  // 카테고리 중복 확인
   @GetMapping("/category/check")
   @ResponseBody
-  public String qhCheckCategoryDuplicate(
-      @RequestParam String categoryCode,
-      @RequestParam String middleName,
-      @RequestParam String smallName) {
-    log.info("중복 확인 - 카테고리 코드: {}, 중분류명: {}, 소분류명: {}", categoryCode, middleName, smallName);
+  public String qhCheckCategoryDuplicate(@RequestParam String categoryCode,
+                                         @RequestParam String middleName,
+                                         @RequestParam String smallName) {
+    log.info("GET - 카테고리 중복 확인 요청: code={}, mid={}, sub={}", categoryCode, middleName, smallName);
     
     CategoryCheckDTO dto = new CategoryCheckDTO();
     dto.setCategoryCode(categoryCode);
     dto.setCategoryMid(middleName);
     dto.setCategorySub(smallName);
-    return productService.checkCategoryDuplicate(dto) ? "true" : "false";
+    
+    boolean isDuplicate = productService.checkCategoryDuplicate(dto);
+    log.info("중복 결과: {}", isDuplicate);
+    return isDuplicate ? "true" : "false";
   }
   
-  // 제품 중복 확인 (카테고리 코드와 제품명)
+  // 제품 중복 확인
   @GetMapping("/check")
   @ResponseBody
-  public String qhCheckProductDuplicate(
-      @RequestParam String categoryCode,
-      @RequestParam String productName,
-      @RequestParam(value = "productCode", required = false) String productCode) {
-    log.info("중복 확인 - 카테고리 코드: {}, 제품명: {}, 제품코드: {}", categoryCode, productName, productCode);
+  public String qhCheckProductDuplicate(@RequestParam String categoryCode,
+                                        @RequestParam String productName,
+                                        @RequestParam(value = "productCode", required = false) String productCode) {
+    log.info("GET - 제품 중복 확인 요청: categoryCode={}, productName={}, productCode={}", categoryCode, productName, productCode);
     
     ProductCheckDTO dto = new ProductCheckDTO();
     dto.setCategoryCode(categoryCode);
     dto.setProductName(productName);
-    // 수정일 경우 자기 자신을 제외하고 중복검사
-    dto.setProductCode(productCode);  // 수정일 경우만 유효값 전달 그 외 null
-    return productService.checkProductDuplicate(dto) ? "true" : "false";
+    dto.setProductCode(productCode);
+    
+    boolean isDuplicate = productService.checkProductDuplicate(dto);
+    log.info("중복 결과: {}", isDuplicate);
+    return isDuplicate ? "true" : "false";
   }
-  
 }

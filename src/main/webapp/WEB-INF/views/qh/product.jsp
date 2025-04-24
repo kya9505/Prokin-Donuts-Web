@@ -705,9 +705,19 @@
         }
         $('.myCustomFilters_mainCategoryUp_area').html($cloneFilter.html());
 
+        // 카테고리 테이블: 중분류 정확 일치 필터
+        $.fn.dataTable.ext.search.push(function(settings, data) {
+            if (settings.nTable.id !== 'datatable_mainCategoryUp') return true;
+            const selectedMid = $('#mainCategoryUp_clone').val().trim();
+            const rowMid = (data[2] || '').trim(); // 중분류 컬럼은 인덱스 2
+
+            if (selectedMid && rowMid !== selectedMid) return false;
+            return true;
+        });
+
         // 필터 이벤트 바인딩 (복제된 요소 기준)
         $('#mainCategoryUp_clone').on('change', function() {
-            categoryTable.column(2).search(this.value).draw();
+            categoryTable.draw();
         });
 
         $('#resetFilterBtn_mainCategoryUp_clone').on('click', function() {
@@ -886,9 +896,7 @@
                     return;
                 }
 
-                var $form = $('#warehouseDeleteForm')
-                    .attr('action', pageContext.request.contextPath + '/qh/product/category/delete')
-                    .empty();
+                var $form = $('#warehouseDeleteForm').empty();
 
                 toDelete.forEach(function (code) {
                     $form.append('<input type="hidden" name="categoryCodes" value="' + code + '"/>');

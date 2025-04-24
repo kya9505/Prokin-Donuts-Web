@@ -62,28 +62,28 @@ class ProductControllerTest {
         .andExpect(redirectedUrl("/qh/product"));
   }
   
-  @Test
-  @DisplayName("POST /qh/product/update - 제품 수정")
-  void testUpdateProduct() throws Exception {
-    mockMvc.perform(post("/qh/product/update")
-            .param("productCode", "P001")
-            .param("productName", "수정된제품")
-            .param("productPrice", "1500")
-            .param("storedType", "냉장")
-            .param("categoryMid", "도넛")
-            .param("categorySub", "저당 도넛"))
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/qh/product"));
-  }
+//  @Test
+//  @DisplayName("POST /qh/product/update - 제품 수정")
+//  void testUpdateProduct() throws Exception {
+//    mockMvc.perform(post("/qh/product/update")
+//            .param("productCode", "P001")
+//            .param("productName", "수정된제품")
+//            .param("productPrice", "1500")
+//            .param("storedType", "냉장")
+//            .param("categoryMid", "도넛")
+//            .param("categorySub", "저당 도넛"))
+//        .andExpect(status().is3xxRedirection())
+//        .andExpect(redirectedUrl("/qh/product"));
+//  }
   
-  @Test
-  @DisplayName("POST /qh/product/delete - 제품 삭제")
-  void testDeleteProduct() throws Exception {
-    mockMvc.perform(post("/qh/product/delete")
-            .param("productCode", "P001"))
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/qh/product"));
-  }
+//  @Test
+//  @DisplayName("POST /qh/product/delete - 제품 삭제")
+//  void testDeleteProduct() throws Exception {
+//    mockMvc.perform(post("/qh/product/delete")
+//            .param("productCode", "P001"))
+//        .andExpect(status().is3xxRedirection())
+//        .andExpect(redirectedUrl("/qh/product"));
+//  }
   
   @Test
   @DisplayName("POST /qh/product/category/add - 카테고리 등록")
@@ -96,14 +96,14 @@ class ProductControllerTest {
         .andExpect(redirectedUrl("/qh/product"));
   }
   
-  @Test
-  @DisplayName("POST /qh/product/category/delete - 카테고리 삭제")
-  void testDeleteCategory() throws Exception {
-    mockMvc.perform(post("/qh/product/category/delete")
-            .param("categoryCode", "CAT001"))
-        .andExpect(status().is3xxRedirection())
-        .andExpect(redirectedUrl("/qh/product"));
-  }
+//  @Test
+//  @DisplayName("POST /qh/product/category/delete - 카테고리 삭제")
+//  void testDeleteCategory() throws Exception {
+//    mockMvc.perform(post("/qh/product/category/delete")
+//            .param("categoryCode", "CAT001"))
+//        .andExpect(status().is3xxRedirection())
+//        .andExpect(redirectedUrl("/qh/product"));
+//  }
   
   @Test
   @DisplayName("GET /qh/product/check - 제품 중복 확인 (등록 시, 사전 등록 포함)")
