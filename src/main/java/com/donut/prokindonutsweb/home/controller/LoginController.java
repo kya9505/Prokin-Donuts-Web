@@ -33,8 +33,7 @@ public class LoginController {
 
 
     @GetMapping("/home/login")
-    public String login(){
-        return "/home/login";
+    public void login(){
     }
 
     @PostMapping("/home/logout")
