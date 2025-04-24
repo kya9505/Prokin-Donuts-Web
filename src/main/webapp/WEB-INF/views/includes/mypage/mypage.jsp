@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+
 <!-- 마이페이지 모달 -->
 <div class="modal fade" id="mypageModal" tabindex="-1" aria-labelledby="mypageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">

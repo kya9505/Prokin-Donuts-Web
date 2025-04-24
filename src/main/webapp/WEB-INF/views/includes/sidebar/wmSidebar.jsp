@@ -1,5 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
+\
 
 <aside class="sidebar-nav-wrapper">
     <div class="navbar-logo">
