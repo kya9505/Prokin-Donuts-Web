@@ -31,7 +31,6 @@ public class MyPageController {
     //마이페이지
     @GetMapping("/")
     public String myPage(@AuthenticationPrincipal CustomUserDetails user, Model model) {
-        log.info(user);
         model.addAttribute("user", user);
         return "/";
     }
@@ -47,17 +46,12 @@ public class MyPageController {
 
     // 탈퇴
     @PostMapping("/delete")
-    public String secession(
-            @AuthenticationPrincipal CustomUserDetails user,
-            HttpSession session
-    ) {
+    public String secession( @AuthenticationPrincipal CustomUserDetails user, HttpSession session) {
         memberService.deleteByMember(user.getUsername());
         //세션 무효화
         session.invalidate();
-
         // 인증정보 제거
         SecurityContextHolder.clearContext();
-
         return "redirect:/home/login";  // 탈퇴 후 이동할 페이지
     }
 }
