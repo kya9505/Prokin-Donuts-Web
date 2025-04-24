@@ -22,8 +22,7 @@ public class HomeController {
    /* @GetMapping("/wm/inbound/request")
     public void Wrequest(){}*/
    @GetMapping("/wm/Dashboard")
-   public String WDashboard() {
-       return "wm/Dashboard";
+   public void WDashboard() {
    }
     @GetMapping("/qh/Dashboard")
     public void QDashboard(){}
