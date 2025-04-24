@@ -17,6 +17,10 @@
         <package name="com.donut.prokindonutsweb.franchise.vo"/>
         <package name="com.donut.prokindonutsweb.warehouse.dto"/>
         <package name="com.donut.prokindonutsweb.warehouse.vo"/>
+        <package name="com.donut.prokindonutsweb.product.dto"/>
+        <package name="com.donut.prokindonutsweb.product.vo"/>
+        <package name="com.donut.prokindonutsweb.inventory.dto"/>
+        <package name="com.donut.prokindonutsweb.inventory.vo"/>
 
         <package name="com.donut.prokindonutsweb.member.dto"/>
         <package name="com.donut.prokindonutsweb.member.vo"/>

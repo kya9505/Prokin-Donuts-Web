@@ -15,7 +15,7 @@
     <select id="selectSubCategoryByMid" resultType="String" parameterType="String">
         SELECT DISTINCT categorySub
         FROM Category
-        WHERE categoryMid = #{categoryMid}
+        WHERE BINARY categoryMid = #{categoryMid}
     </select>
 
 </mapper>

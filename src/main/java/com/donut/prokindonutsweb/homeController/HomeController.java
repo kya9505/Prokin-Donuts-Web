@@ -32,7 +32,4 @@ public class HomeController {
     @GetMapping("/qh/outbound")
     public void Qoutbound(){}
 
-    @GetMapping("/qh/product")
-    public void Qproduct(){}
-
 }

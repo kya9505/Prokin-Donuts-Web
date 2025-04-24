@@ -1,15 +1,13 @@
-package com.donut.prokindonutsweb.product.dto;
+package com.donut.prokindonutsweb.product.vo;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CategoryCheckDTO {
+@ToString
+public class CategoryMainVO {
   private String categoryCode; // 카테고리 코드
   private String categoryMid;  // 중분류명
   private String categorySub;  // 소분류명
