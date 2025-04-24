@@ -621,6 +621,7 @@
             columnDefs: [
                 { width: '95px', targets: -1 },  // Actions 열 너비
                 { targets: [0, 1, 2, 3, 4, 5, 6, 8], className: 'text-center' } // JS 속성으로 가운데 정렬
+
             ],
             order: [[0, 'asc']],
             paging: true,
