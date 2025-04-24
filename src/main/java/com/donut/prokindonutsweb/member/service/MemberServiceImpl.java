@@ -73,7 +73,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void updateByMember(String id, MemberAccountDTO dto){
+    public void updateByMember(MemberAccountDTO dto){
         MemberAccountVO memberAccountVO = modelMapper.map(dto,MemberAccountVO.class);
         memberMapper.updateMember(memberAccountVO);
     }
