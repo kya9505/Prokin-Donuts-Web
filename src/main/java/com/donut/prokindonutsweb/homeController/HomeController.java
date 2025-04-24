@@ -15,14 +15,8 @@ public class HomeController {
     @GetMapping("/home/login")
     public void login(){}
 
-    @GetMapping("/fm/order")
-    public void Forder(){}
-
     @GetMapping("/wm/outbound")
     public void Woutbound(){}
-  
-   /* @GetMapping("/wm/inbound/request")
-    public void Wrequest(){}*/
     @GetMapping("/wm/Dashboard")
     public void WDashboard(){}
 
