@@ -564,7 +564,7 @@
                     </ul>
                     <!-- 삭제 확인 버튼 (취소 버튼은 없음) -->
                     <div class="d-flex justify-content-end">
-                        <button type="submit" class="main-btn primary-btn btn-hover text-center" id="btnProductDeletSubmit">삭제</button>
+                        <button type="button" class="main-btn primary-btn btn-hover text-center" id="btnProductDeletSubmit">삭제</button>
                     </div>
                 </form>
             </div>
@@ -972,9 +972,6 @@
             }
         });
 
-        // 전역 변수: 제품 삭제 모달에서 선택된 제품 데이터를 저장
-        let currentSelectedProducts = [];
-
         // 5. DataTable 초기화 (dom 옵션에 사용자 정의 영역 포함)
         /** @type {DataTables.Api} */
         var table = $('#datatable').DataTable({
@@ -1180,7 +1177,7 @@
         ///////////////////////////////////////////////////////////////////////////
         const ctx = '${pageContext.request.contextPath}';
 
-        // 🔹 중복확인용 입력만 따로 검사
+        // 중복확인용 입력만 따로 검사
         function validateDuplicateCheckInputs() {
             const mid = $('#registerCategoryMid').val().trim();
             const sub = $('#registerCategorySub').val().trim();
@@ -1192,7 +1189,7 @@
             return null;
         }
 
-        // 🔹 전체 입력 유효성 검사 (등록용)
+        // 전체 입력 유효성 검사 (등록용)
         function validateProductInputs() {
             const mid = $('#registerCategoryMid').val().trim();
             const sub = $('#registerCategorySub').val().trim();
@@ -1215,12 +1212,12 @@
 
         let isProductNameDuplicateChecked = false;
 
-        // 🔸 입력값 변경 시 중복확인 플래그 초기화
+        // 입력값 변경 시 중복확인 플래그 초기화
         $('#registerCategoryMid, #registerCategorySub, #registerProductName').on('input change', function () {
             isProductNameDuplicateChecked = false;
         });
 
-        // 🔸 모달 열릴 때 초기화
+        // 모달 열릴 때 초기화
         $('#productAddModal').on('shown.bs.modal', function () {
             $('#registerCategoryMid').val('');
             $('#registerCategorySub')
@@ -1233,7 +1230,7 @@
             isProductNameDuplicateChecked = false;
         });
 
-        // 🔸 중분류 선택 시 소분류 불러오기
+        // 중분류 선택 시 소분류 불러오기
         function populateSubCategories(midVal) {
             const $sub = $('#registerCategorySub');
             $sub.empty().append('<option value="">소분류 선택</option>');
@@ -1262,7 +1259,7 @@
             populateSubCategories(selectedMid);
         });
 
-        // 🔸 중복확인 버튼 클릭 시
+        // 중복확인 버튼 클릭 시
         $('#checkProductNameDuplicate').on('click', function () {
             const errorMsg = validateDuplicateCheckInputs();
             if (errorMsg) {
@@ -1293,7 +1290,7 @@
                 });
         });
 
-        // 🔸 등록 버튼 클릭 시
+        // 등록 버튼 클릭 시
         $('#registerProductForm').on('submit', function (e) {
             e.preventDefault();
 
@@ -1311,7 +1308,7 @@
             this.submit(); // 실제 form 전송
         });
 
-        // 🔸 모달 열기 버튼
+        // 모달 열기 버튼
         $(document).on('click', '#btnProductAdd_clone', function () {
             $('#productAddModal').modal('show');
         });
@@ -1326,7 +1323,7 @@
             const name = $row.find('.name-input').val().trim();
             const price = $row.find('.price-input').val().trim();
             const stored = $row.find('.stored-select').val();
-            const isChecked = $row.data('duplicateChecked') == true;
+            const isChecked = $row.data('duplicateChecked') === true;
 
             if (!mid || !sub || !name || !price || !stored) {
                 return '모든 항목은 필수 입력입니다.';
@@ -1461,81 +1458,82 @@
             $('#productEditModal').modal('hide');
         });
 
-        // 제품 삭제 모달 열기 이벤트
-        $('#btnProductDelete_clone').click(function() {
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
-            // 체크박스가 선택된 행만 가져오기
-            var selectedData = [];
-            table.rows({ page: 'current' }).nodes().each(function(row) {
-                if ($(row).find('.row-checkbox').prop('checked')) {
-                    selectedData.push(table.row(row).data());
+        let deleteProductCandidates = [];
+
+        $('#btnProductDelete_clone').on('click', function () {
+            deleteProductCandidates.length = 0;
+            deleteProductCandidates = [];
+            $('#deleteProductList').empty(); // 💥 이거 반드시 있어야 함!
+
+            let allDeletable = true;
+
+            table.rows({ page: 'current' }).nodes().each(function (row) {
+                const $tr = $(row);
+                if ($tr.find('.row-checkbox').prop('checked')) {
+                    deleteProductCandidates.push({
+                        code: $tr.data('product-code'),
+                        name: $tr.data('product-name'),
+                        status: $tr.data('product-status') || '삭제가능'
+                    });
                 }
             });
 
-            if (selectedData.length == 0) {
+            if (deleteProductCandidates.length === 0) {
                 alert('삭제할 제품을 선택하세요.');
                 return;
             }
 
-            // 전역 변수에 선택된 데이터 할당
-            currentSelectedProducts = selectedData;
+            deleteProductCandidates.forEach(function (item) {
+                const canDelete = (item.status || '').trim() === '삭제가능';
+                if (!canDelete) allDeletable = false;
 
-            // 제품 상태 매핑 (모든 배지는 회색)
-            const productStatusMap = {
-                "재고있음": { text: "재고있음", canDelete: false },
-                "입고진행": { text: "입고진행", canDelete: false },
-                "발주진행": { text: "발주진행", canDelete: false },
-                "출고진행": { text: "출고진행", canDelete: false },
-                "삭제가능": { text: "삭제가능", canDelete: true }
-            };
+                const badgeClass = canDelete ? 'bg-success' : 'bg-danger';
+                const badge = '<span class="badge ' + badgeClass + '">' + item.status + '</span>';
 
-            // 삭제 목록 초기화
-            $('#deleteProductList').empty();
-
-            let allDeletable = true;
-            currentSelectedProducts.forEach(function(item) {
-                const prodStatus = item.status || "삭제가능";
-                const statusObj = productStatusMap[prodStatus] || { text: prodStatus, canDelete: true };
-                const statusBadge = `<span class="badge bg-secondary">${statusObj.text}</span>`;
-
-                if (!statusObj.canDelete) {
-                    allDeletable = false;
-                }
-
-                $('#deleteProductList').append(`
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                ${item.productName}
-                ${item.productId}
-                ${statusBadge}
-              </li>
-            `);
+                $('#deleteProductList').append(
+                    '<li class="list-group-item d-flex justify-content-between align-items-center">'
+                    + item.name + badge + '</li>'
+                );
             });
 
-            // 안내문 및 삭제 버튼 텍스트를 설정 (모달 내부 안내문은 <p> 태그로 감싸져 있어야 함)
-            if (allDeletable) {
-                $('#productDeleteModal .modal-body > h5').text('선택한 제품을 정말 삭제하시겠습니까?');
-                $('#confirmDelete').text('삭제');
-            } else {
-                $('#productDeleteModal .modal-body > h5').text('선택한 제품 중 삭제할 수 없는 항목이 포함되어 있습니다.');
-                $('#confirmDelete').text('삭제가능 품목만 삭제');
-            }
+            // 안내문 + 버튼 텍스트 분기
+            $('#productDeleteModal .modal-body h5').text(
+                allDeletable
+                    ? '선택한 제품을 정말 삭제하시겠습니까?'
+                    : '선택한 제품 중 삭제할 수 없는 항목이 포함되어 있습니다.'
+            );
+            $('#btnProductDeletSubmit').text(allDeletable ? '삭제' : '삭제가능 품목만 삭제');
 
             $('#productDeleteModal').modal('show');
         });
 
-        // 제품 삭제 모달의 삭제 버튼 클릭 이벤트 (중복 바인딩 방지를 위해 off() 후 on() 사용)
-        $('#confirmDelete').off('click').on('click', function() {
+// 삭제 확인 버튼 클릭
+        $('#btnProductDeletSubmit').off('click').on('click', function (e) {
+            e.preventDefault();
+
             const btnText = $(this).text();
-            if (btnText == '삭제가능 품목만 삭제') {
-                alert('삭제 가능한 제품만 삭제했습니다!');
-            } else {
-                alert('선택한 제품을 모두 삭제했습니다!');
+            const $form = $('#productDeleteForm');
+            $form.find('input[type="hidden"]').remove(); // ❗ 안내문 날리지 말고 input만 지움
+
+            deleteProductCandidates.forEach(function (item) {
+                const canDelete = item.status === '삭제가능';
+                if (btnText === '삭제' || (btnText === '삭제가능 품목만 삭제' && canDelete)) {
+                    $form.append('<input type="hidden" name="productCodes" value="' + item.code + '">');
+                }
+            });
+
+            if ($form.find('input').length === 0) {
+                alert('삭제 가능한 제품이 없습니다.');
+                $('#productDeleteModal').modal('hide');
+                return;
             }
 
-            $('#productDeleteModal').modal('hide');
-            // 필요 시 DataTable 업데이트 등의 추가 처리
+            $form.submit(); // 서버 전송
         });
-
     });
 </script>
 
