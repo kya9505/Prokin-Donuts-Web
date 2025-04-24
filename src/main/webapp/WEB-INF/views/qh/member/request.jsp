@@ -182,7 +182,9 @@
         autoWidth: false,
         columnDefs: [
             { width: '95px', targets: -1 },  // Actions 열 너비
-            { targets: [1, 2, 3, 4, 6, 7], className: 'text-center' } // JS 속성으로 가운데 정렬
+            { targets: [1, 2, 3, 4, 5, 6, 7], className: 'text-center' }, // JS 속성으로 가운데 정렬
+            {targets: 0, orderable: false, searchable: false} // 체크박스 컬럼
+
         ],
         order: [[1, 'asc']],
         paging: true,

@@ -386,8 +386,11 @@
         var table = $('#datatable').DataTable({
         autoWidth: false,
         columnDefs: [
+            { width: '95px', targets: -1 },  // Actions 열 너비
+
             {targets: 0, orderable: false, searchable: false}, // 체크박스 컬럼
-            {targets: [1, 2, 3, 4, 6, 7], className: 'text-center'}
+            {targets: [1, 2, 3, 4,5, 6, 7], className: 'text-center'}
+
         ],
         order: [[1, 'asc']],
         paging: true,
