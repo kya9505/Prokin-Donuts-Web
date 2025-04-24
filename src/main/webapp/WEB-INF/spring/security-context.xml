@@ -17,6 +17,7 @@
 <!--security 필터를 거치지 않을 경로 설정(로그인 없이 접근 가능한 경로)-->
     <http pattern="/home/signup" security="none" />
     <http pattern="/home/findId" security="none" />
+    <http pattern="/home/sendCode" security="none" />
     <http pattern="/home/findPassword" security="none" />
     <http pattern="/home/idCheck" security="none" />
     <http pattern="/home/emailCheck" security="none" />
