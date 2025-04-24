@@ -452,7 +452,7 @@
                                     data-bs-placement="right"
                                     data-bs-html="true"
                                     data-bs-custom-class="wide-tooltip"
-                                    title="냉장 또는 냉동 보관 제품의 경우,<br>제품명 앞에 보관타입을 명시해 주세요.<br>예: 냉동초코프로틴도넛"
+                                    title="냉동 보관 제품의 경우,<br>제품명 앞에 보관타입을 명시해 주세요.<br>예: 냉동초코프로틴도넛"
                                     style="cursor: pointer;">
                             </i></label>
                         <div class="d-flex gap-2">
@@ -507,6 +507,7 @@
             <div class="modal-body">
                 <p class="text-danger mb-2">(*)는 필수 입력 항목입니다.</p>
                 <form id="productEditForm" action="${pageContext.request.contextPath}/qh/product/update" method="post">
+                    <div id="editProductContainer">
                     <table class="table text-center align-middle" id="editProductTable">
                         <thead>
                         <tr>
@@ -519,7 +520,7 @@
                                         data-bs-toggle="tooltip"
                                         data-bs-placement="right"
                                         data-bs-html="true"
-                                        title="냉장 또는 냉동 보관 제품의 경우,<br>제품명 앞에 보관타입을 명시해 주세요.<br>예: 냉동초코프로틴도넛"
+                                        title="냉동 보관 제품의 경우,<br>제품명 앞에 보관타입을 명시해 주세요.<br>예: 냉동초코프로틴도넛"
                                         style="cursor: pointer; margin-left: 5px;">
                                 </i>
                             </th>
@@ -532,6 +533,7 @@
                         <!-- 체크한 값을 여기로 뿌릴 예정 (JS) -->
                         </tbody>
                     </table>
+                    </div>
 
                     <div class="d-flex justify-content-end">
                         <button type="submit" class="main-btn primary-btn btn-hover text-center" id="btnProductEditSubmit">수정</button>
@@ -1175,218 +1177,18 @@
         ///////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////
-        const ctx = '${pageContext.request.contextPath}';
 
-        // 중복확인용 입력만 따로 검사
-        function validateDuplicateCheckInputs() {
-            const mid = $('#registerCategoryMid').val().trim();
-            const sub = $('#registerCategorySub').val().trim();
-            const name = $('#registerProductName').val().trim();
+        window.categoryMidList = [
+            <c:forEach var="mid" items="${categoryMidList}" varStatus="vs">
+            "${mid}"<c:if test="${!vs.last}">,</c:if>
+            </c:forEach>
+        ];
 
-            if (!mid || !sub || !name) return "중분류, 소분류, 제품명을 모두 입력해주세요.";
-            const nameRegex = /^[A-Za-z가-힣]{1,10}$/;
-            if (!nameRegex.test(name)) return "제품명은 한글/영문 10자 이하만 가능합니다.";
-            return null;
-        }
-
-        // 전체 입력 유효성 검사 (등록용)
-        function validateProductInputs() {
-            const mid = $('#registerCategoryMid').val().trim();
-            const sub = $('#registerCategorySub').val().trim();
-            const productName = $('#registerProductName').val().trim();
-            const productPrice = $('#registerProductPrice').val().trim();
-            const storedType = $('#registerStoredType').val();
-
-            if (!mid || !sub || !productName || !productPrice || !storedType) {
-                return "모든 항목은 필수 입력입니다.";
-            }
-            const nameRegex = /^[A-Za-z가-힣]{1,10}$/;
-            if (!nameRegex.test(productName)) {
-                return "제품명은 한글과 영문만 가능하며 최대 10자까지 입력 가능합니다.";
-            }
-            if (isNaN(productPrice)) {
-                return "제공단가는 숫자만 입력 가능합니다.";
-            }
-            return null;
-        }
-
-        let isProductNameDuplicateChecked = false;
-
-        // 입력값 변경 시 중복확인 플래그 초기화
-        $('#registerCategoryMid, #registerCategorySub, #registerProductName').on('input change', function () {
-            isProductNameDuplicateChecked = false;
-        });
-
-        // 모달 열릴 때 초기화
-        $('#productAddModal').on('shown.bs.modal', function () {
-            $('#registerCategoryMid').val('');
-            $('#registerCategorySub')
-                .empty()
-                .append('<option value="">소분류 선택</option>')
-                .prop('disabled', true);
-            $('#registerProductName').val('');
-            $('#registerProductPrice').val('');
-            $('#registerStoredType').val('');
-            isProductNameDuplicateChecked = false;
-        });
-
-        // 중분류 선택 시 소분류 불러오기
-        function populateSubCategories(midVal) {
-            const $sub = $('#registerCategorySub');
-            $sub.empty().append('<option value="">소분류 선택</option>');
-
-            if (!midVal) {
-                $sub.prop('disabled', true);
-                return;
-            }
-
-            fetch(ctx + '/category/check?categoryMid=' + encodeURIComponent(midVal))
-                .then(res => res.json())
-                .then(subList => {
-                    subList.forEach(sub => {
-                        $sub.append(new Option(sub, sub));
-                    });
-                    $sub.prop('disabled', false);
-                })
-                .catch(() => {
-                    console.warn("소분류 로드 실패");
-                    $sub.prop('disabled', true);
-                });
-        }
-
-        $(document).on('change', '#registerCategoryMid', function () {
-            const selectedMid = $(this).val();
-            populateSubCategories(selectedMid);
-        });
-
-        // 중복확인 버튼 클릭 시
-        $('#checkProductNameDuplicate').on('click', function () {
-            const errorMsg = validateDuplicateCheckInputs();
-            if (errorMsg) {
-                alert(errorMsg);
-                return;
-            }
-
-            const mid = $('#registerCategoryMid').val().trim();
-            const sub = $('#registerCategorySub').val().trim();
-            const productName = $('#registerProductName').val().trim();
-
-            fetch(ctx + '/qh/product/check?categoryMid=' + encodeURIComponent(mid)
-                + '&categorySub=' + encodeURIComponent(sub)
-                + '&productName=' + encodeURIComponent(productName))
-                .then(res => res.text())
-                .then(result => {
-                    if (result === 'true') {
-                        alert("이미 등록된 제품입니다.");
-                        isProductNameDuplicateChecked = false;
-                    } else {
-                        alert("사용 가능한 제품명입니다.");
-                        isProductNameDuplicateChecked = true;
-                    }
-                })
-                .catch(() => {
-                    alert("중복 확인에 실패했습니다.");
-                    isProductNameDuplicateChecked = false;
-                });
-        });
-
-        // 등록 버튼 클릭 시
-        $('#registerProductForm').on('submit', function (e) {
-            e.preventDefault();
-
-            const errorMsg = validateProductInputs();
-            if (errorMsg) {
-                alert(errorMsg);
-                return;
-            }
-
-            if (!isProductNameDuplicateChecked) {
-                alert("제품명 중복 확인을 먼저 진행해주세요.");
-                return;
-            }
-
-            this.submit(); // 실제 form 전송
-        });
-
-        // 모달 열기 버튼
-        $(document).on('click', '#btnProductAdd_clone', function () {
-            $('#productAddModal').modal('show');
-        });
-
-        ///////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////////
-
-        function validateEditRow($row) {
-            const mid = $row.find('.mid-select').val();
-            const sub = $row.find('.sub-select').val();
-            const name = $row.find('.name-input').val().trim();
-            const price = $row.find('.price-input').val().trim();
-            const stored = $row.find('.stored-select').val();
-            const isChecked = $row.data('duplicateChecked') === true;
-
-            if (!mid || !sub || !name || !price || !stored) {
-                return '모든 항목은 필수 입력입니다.';
-            }
-            const nameRegex = /^[A-Za-z가-힣]{1,15}$/;
-            if (!nameRegex.test(name)) {
-                return '제품명은 한글과 영문만 가능하며 최대 15자까지 입력 가능합니다.';
-            }
-            if (isNaN(price)) {
-                return '제공단가는 숫자만 입력 가능합니다.';
-            }
-            if (!isChecked) {
-                return '중복 확인을 먼저 해주세요.';
-            }
-            return null;
-        }
-
-        function createEditRow(rowData) {
-            const options = function(arr, selected) {
-                return arr.map(function(v) {
-                    var val = (typeof v === 'string') ? v : (v.id || '');
-                    var text = (typeof v === 'string') ? v : (v.name || '');
-                    var selectedAttr = (val.trim() === (selected || '').trim()) ? ' selected' : '';
-                    return '<option value="' + val + '"' + selectedAttr + '>' + text + '</option>';
-                }).join('');
-            };
-
-            var mids = Object.keys(dummySubCategoriesByMid);
-            var subs = dummySubCategoriesByMid[rowData.categoryMid] || [];
-
-            return (
-                '<tr data-duplicate-checked="false">' +
-                '<td><span class="form-control form-control-sm text-muted bg-light">' + rowData.productId + '</span></td>' +
-                '<td>' +
-                '<select class="form-select form-select-sm required-field mid-select">' +
-                '<option value="">중분류 선택</option>' +
-                options(mids, rowData.categoryMid) +
-                '</select>' +
-                '</td>' +
-                '<td>' +
-                '<select class="form-select form-select-sm required-field sub-select">' +
-                '<option value="">소분류 선택</option>' +
-                options(subs, rowData.categorySub) +
-                '</select>' +
-                '</td>' +
-                '<td><input type="text" class="form-control form-control-sm required-field name-input" maxlength="10" value="' + (rowData.productName || '') + '"></td>' +
-                '<td><input type="text" class="form-control form-control-sm required-field price-input" value="' + (rowData.productPrice || '') + '"></td>' +
-                '<td>' +
-                '<select class="form-select form-select-sm required-field stored-select">' +
-                '<option value="">선택</option>' +
-                '<option value="냉장"' + (rowData.StoredType == '냉장' ? ' selected' : '') + '>냉장</option>' +
-                '<option value="냉동"' + (rowData.StoredType == '냉동' ? ' selected' : '') + '>냉동</option>' +
-                '<option value="상온"' + (rowData.StoredType == '상온' ? ' selected' : '') + '>상온</option>' +
-                '</select>' +
-                '</td>' +
-                '<td><button type="button" class="main-btn primary-btn btn-hover btn-smaller btnCheckDuplicate">중복확인</button></td>' +
-                '</tr>'
-            );
-        }
-
+        // ✅ 수정 버튼 클릭 시 모달 열기
         $(document).on('click', '#btnProductEdit_clone', function () {
-            const $checked = $('#datatable tbody input.row-checkbox:checked');
-            if ($checked.length == 0) {
+            const $checked = $('#datatable').find('input.row-checkbox:checked');
+
+            if ($checked.length === 0) {
                 alert('수정할 제품을 선택해주세요.');
                 return;
             }
@@ -1395,68 +1197,192 @@
             const $tbody = $('#editProductTable tbody');
             $tbody.empty();
 
-            $checked.each(function () {
+            $checked.each(function (i) {
                 const $row = $(this).closest('tr');
-                const rowData = table.row($row).data();
-                if (rowData) {
-                    $tbody.append(createEditRow(rowData));
-                }
+                const rowData = {
+                    productCode: $row.data('product-code'),
+                    categoryMid: $row.data('product-mid'),
+                    categorySub: $row.data('product-sub'),
+                    storedType: $row.data('product-type'),
+                    productName: $row.data('product-name'),
+                    productPrice: $row.data('product-price')
+                };
+                $tbody.append(createEditRow(rowData, i));
             });
 
             $('#productEditModal').modal('show');
-        });
 
-        $(document).on('change', '.mid-select', function () {
-            const selectedMid = $(this).val();
-            const $tr = $(this).closest('tr');
-            const $subSelect = $tr.find('.sub-select');
-            const subs = dummySubCategoriesByMid[selectedMid] || [];
+            // 수정 모달 열기 직후: 중분류가 선택된 행에 대해 소분류 자동 호출
+            $('#editProductTable tbody tr').each(function () {
+                const $row = $(this);
+                const mid = $row.find('.mid-select').val();
+                const $sub = $row.find('.sub-select');
+                const ctx = '${pageContext.request.contextPath}';
 
-            if (selectedMid == '') {
-                $subSelect.prop('disabled', true);
-            } else {
-                $subSelect.prop('disabled', false);
-            }
+                if (!mid) return;
 
-            $subSelect.empty().append('<option value="">소분류 선택</option>');
-            subs.forEach(sub => {
-                $subSelect.append(`<option value="${sub}">${sub}</option>`);
+                fetch(ctx + '/category/check?categoryMid=' + encodeURIComponent(mid))
+                    .then(res => res.json())
+                    .then(subList => {
+                        $sub.empty().append('<option value="">소분류 선택</option>');
+                        const initSub = $row.data('initial-sub');
+                        subList.forEach(sub => {
+                            const option = $('<option></option>').val(sub).text(sub);
+                            if (sub === initSub) option.attr('selected', 'selected');
+                            $sub.append(option);
+                        });
+                        $sub.prop('disabled', false);
+                    })
+                    .catch(() => {
+                        $sub.empty().append('<option value="">소분류 선택</option>').prop('disabled', true);
+                    });
             });
         });
 
+// ✅ 수정 행 생성 함수 (중분류 드롭다운 + 비동기 소분류)
+        function createEditRow(rowData, index) {
+            const ctx = '${pageContext.request.contextPath}';
+            const midOptions = categoryMidList.map(mid => {
+                return '<option value="' + mid + '"' + (mid === rowData.categoryMid ? ' selected' : '') + '>' + mid + '</option>';
+            }).join('');
+
+            return (
+                '<tr data-duplicate-checked="false" data-initial-mid="' + rowData.categoryMid + '" data-initial-sub="' + rowData.categorySub + '">' +
+                '<td><input type="hidden" name="productList[' + index + '].productCode" value="' + rowData.productCode + '" />' +
+                '<span class="form-control form-control-sm text-muted bg-light">' + rowData.productCode + '</span></td>' +
+
+                '<td><select class="form-select form-select-sm required-field mid-select" name="productList[' + index + '].categoryMid">' +
+                '<option value="">중분류 선택</option>' + midOptions +
+                '</select></td>' +
+
+                '<td><select class="form-select form-select-sm required-field sub-select" name="productList[' + index + '].categorySub">' +
+                '<option value="">소분류 선택</option>' +
+                '</select></td>' +
+
+                '<td><input type="text" class="form-control form-control-sm required-field name-input" ' +
+                'name="productList[' + index + '].productName" maxlength="10" value="' + (rowData.productName || '') + '"></td>' +
+
+                '<td><input type="text" class="form-control form-control-sm required-field price-input" ' +
+                'name="productList[' + index + '].productPrice" value="' + (rowData.productPrice || '') + '"></td>' +
+
+                '<td><select class="form-select form-select-sm required-field stored-select" name="productList[' + index + '].storedType">' +
+                '<option value="">선택</option>' +
+                '<option value="냉장"' + (rowData.storedType === '냉장' ? ' selected' : '') + '>냉장</option>' +
+                '<option value="냉동"' + (rowData.storedType === '냉동' ? ' selected' : '') + '>냉동</option>' +
+                '<option value="상온"' + (rowData.storedType === '상온' ? ' selected' : '') + '>상온</option>' +
+                '</select></td>' +
+
+                '<td><button type="button" class="main-btn primary-btn btn-hover btn-smaller btnCheckDuplicate">중복확인</button></td>' +
+                '</tr>'
+            );
+        }
+
+// ✅ 중분류 변경 시 소분류 비동기로 불러오기
+        $(document).on('change', '.mid-select', function () {
+            const $row = $(this).closest('tr');
+            const selectedMid = $(this).val();
+            const $sub = $row.find('.sub-select');
+            const ctx = '${pageContext.request.contextPath}';
+
+            $sub.empty().append('<option value="">소분류 선택</option>');
+            if (!selectedMid) {
+                $sub.prop('disabled', true);
+                return;
+            }
+
+            fetch(ctx + '/category/check?categoryMid=' + encodeURIComponent(selectedMid))
+                .then(res => res.json())
+                .then(subList => {
+                    subList.forEach(sub => {
+                        $sub.append(new Option(sub, sub));
+                    });
+                    $sub.prop('disabled', false);
+
+                    const initMid = $row.data('initial-mid');
+                    const initSub = $row.data('initial-sub');
+                    if (initMid === selectedMid) {
+                        $sub.val(initSub);
+                    }
+                })
+                .catch(() => {
+                    console.warn('소분류 불러오기 실패');
+                    $sub.prop('disabled', true);
+                });
+        });
+
+// ✅ 중복확인 버튼 클릭
         $(document).on('click', '.btnCheckDuplicate', function () {
+            console.log("중복확인 버튼 클릭됨");
+
             const $tr = $(this).closest('tr');
+            const mid = $tr.find('.mid-select').val();
+            const sub = $tr.find('.sub-select').val();
+            const name = $tr.find('.name-input').val().trim();
+            const code = $tr.find('input[name$=".productCode"]').val(); // name="productList[0].productCode"
+
+            const ctx = '${pageContext.request.contextPath}';
+
+            // 유효성 검사 먼저
             const error = validateEditRow($tr);
             if (error && error !== '중복 확인을 먼저 해주세요.') {
                 alert(error);
                 return;
             }
-            alert('사용 가능한 제품명입니다.');
-            $tr.data('duplicateChecked', true);
+
+            // 서버로 중복 체크 요청
+            fetch(ctx + '/qh/product/check?categoryMid=' + encodeURIComponent(mid) +
+                '&categorySub=' + encodeURIComponent(sub) +
+                '&productName=' + encodeURIComponent(name) +
+                '&productCode=' + encodeURIComponent(code))
+                .then(res => res.text())
+                .then(isDuplicate => {
+                    if (isDuplicate === "true") {
+                        alert("이미 존재하는 제품입니다.");
+                        $tr.data('duplicateChecked', false);
+                    } else {
+                        alert("사용 가능한 제품명입니다.");
+                        $tr.data('duplicateChecked', true);
+                    }
+                })
+                .catch(err => {
+                    console.error("중복 확인 중 오류 발생:", err);
+                    alert("중복 확인 실패");
+                    $tr.data('duplicateChecked', false);
+                });
         });
 
+        // ✅ 제출 전 유효성 검사
         $(document).on('click', '#btnProductEditSubmit', function () {
             const $rows = $('#editProductTable tbody tr');
-
             for (let i = 0; i < $rows.length; i++) {
                 const $row = $($rows[i]);
                 const error = validateEditRow($row);
                 if (error) {
-                    const productName = $row.find('.name-input').val().trim() || `(행 ${i + 1})`;
-
-                    // 중복 확인 안 한 경우에만 구체적인 피드백
-                    if (error == '중복 확인을 먼저 해주세요.') {
-                        alert(`"${productName}" 제품의 중복 확인을 먼저 해주세요.`);
-                    } else {
-                        alert(`"${productName}" 항목 오류: ${error}`);
-                    }
+                    const name = $row.find('.name-input').val().trim();
+                    alert('[' + name + '] ' + error);
                     return;
                 }
             }
-
             alert('제품이 성공적으로 수정되었습니다.');
             $('#productEditModal').modal('hide');
         });
+
+// ✅ 검증 함수
+        function validateEditRow($row) {
+            const mid = $row.find('.mid-select').val();
+            const sub = $row.find('.sub-select').val();
+            const name = $row.find('.name-input').val().trim();
+            const price = $row.find('.price-input').val().trim();
+            const stored = $row.find('.stored-select').val();
+            const isChecked = $row.data('duplicateChecked') === true;
+
+            if (!mid || !sub || !name || !price || !stored) return '모든 항목은 필수입니다.';
+            const nameRegex = /^[A-Za-z가-힣]{1,15}$/;
+            if (!nameRegex.test(name)) return '제품명 형식 오류';
+            if (isNaN(price)) return '가격은 숫자만 입력';
+            if (!isChecked) return '중복 확인을 먼저 해주세요.';
+            return null;
+        }
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -1467,7 +1393,7 @@
         $('#btnProductDelete_clone').on('click', function () {
             deleteProductCandidates.length = 0;
             deleteProductCandidates = [];
-            $('#deleteProductList').empty(); // 💥 이거 반드시 있어야 함!
+            $('#deleteProductList').empty();
 
             let allDeletable = true;
 

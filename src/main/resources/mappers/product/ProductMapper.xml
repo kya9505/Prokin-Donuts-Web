@@ -73,12 +73,28 @@
         </foreach>
         ELSE productName
         END,
+
         productPrice = CASE productCode
         <foreach collection="list" item="item">
             WHEN #{item.productCode} THEN #{item.productPrice}
         </foreach>
         ELSE productPrice
+        END,
+
+        categoryCode = CASE productCode
+        <foreach collection="list" item="item">
+            WHEN #{item.productCode} THEN #{item.categoryCode}
+        </foreach>
+        ELSE categoryCode
+        END,
+
+        storedType = CASE productCode
+        <foreach collection="list" item="item">
+            WHEN #{item.productCode} THEN #{item.storedType}
+        </foreach>
+        ELSE storedType
         END
+
         WHERE productCode IN
         <foreach collection="list" item="item" open="(" separator="," close=")">
             #{item.productCode}

@@ -24,7 +24,7 @@ public interface ProductMapper {
   // Product 관련
   List<ProductSelectDTO> selectProductList();
   void insertProduct(ProductMainVO productMainVO);
-  void updateProduct(@Param("list") List<ProductMainVO> productList); // 일괄 수정
+  int updateProduct(@Param("list") List<ProductMainVO> productList); // 일괄 수정
   void deleteProductsByCodes(@Param("list") List<String> productCodes); // 일괄 삭제
   int checkProductDuplicate(ProductMainVO productMainVO);
   String selectProductStatus(@Param("productCode") String productCode);

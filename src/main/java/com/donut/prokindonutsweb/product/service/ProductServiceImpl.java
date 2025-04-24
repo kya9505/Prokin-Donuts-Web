@@ -89,7 +89,8 @@ public class ProductServiceImpl implements ProductService {
       return vo;
     }).toList();
     
-    productMapper.updateProduct(voList);
+    int updatedCount = productMapper.updateProduct(voList);
+    log.info("✅ 실제 수정된 건수: {}", updatedCount);
     log.info("제품 일괄 수정 완료: {}", voList);
   }
   

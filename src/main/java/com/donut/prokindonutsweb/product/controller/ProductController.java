@@ -73,9 +73,13 @@ public class ProductController {
   
   // 제품 일괄 수정
   @PostMapping("/update")
-  public String qhUpdateProducts(@ModelAttribute("productList") List<ProductInsertDTO> productDTOList) {
-    log.info("POST - 제품 일괄 수정 요청: {}", productDTOList);
-    productService.updateProducts(productDTOList);
+  public String qhUpdateProducts(@ModelAttribute ProductListWrapper wrapper) {
+    List<ProductInsertDTO> list = wrapper.getProductList();
+    log.info("✅ 수정 요청 리스트 크기: {}", list.size());
+    for (ProductInsertDTO dto : list) {
+      log.info("🔧 수정 요청: {}", dto);
+    }
+    productService.updateProducts(wrapper.getProductList());
     return "redirect:/qh/product";
   }
   
