@@ -816,6 +816,14 @@
                 // 통과 시 true 반환 → form action으로 POST
                 return true;
             });
+
+            $('#categoryAddModal').on('shown.bs.modal', function () {
+                $('#registerCategoryCode').val('');
+                $('#registerCategoryMid_subCategoryUp').val('');
+                $('#registerCategorySub_subCategoryUp').val('');
+                isCategoryDuplicateChecked = false;
+            });
+
         });
 
         ////////////////////////////////////////////////////////////////
@@ -1167,7 +1175,24 @@
             }
         });
 
-        // 유효성 검사 함수
+        ///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+        const ctx = '${pageContext.request.contextPath}';
+
+        // 🔹 중복확인용 입력만 따로 검사
+        function validateDuplicateCheckInputs() {
+            const mid = $('#registerCategoryMid').val().trim();
+            const sub = $('#registerCategorySub').val().trim();
+            const name = $('#registerProductName').val().trim();
+
+            if (!mid || !sub || !name) return "중분류, 소분류, 제품명을 모두 입력해주세요.";
+            const nameRegex = /^[A-Za-z가-힣]{1,10}$/;
+            if (!nameRegex.test(name)) return "제품명은 한글/영문 10자 이하만 가능합니다.";
+            return null;
+        }
+
+        // 🔹 전체 입력 유효성 검사 (등록용)
         function validateProductInputs() {
             const mid = $('#registerCategoryMid').val().trim();
             const sub = $('#registerCategorySub').val().trim();
@@ -1188,77 +1213,112 @@
             return null;
         }
 
-        var isProductNameDuplicateChecked = false;
+        let isProductNameDuplicateChecked = false;
 
-        // 입력값 변경 시 중복 체크 플래그 초기화
-        $('#registerCategoryMid, #registerCategorySub, #registerProductName').on('input change', function() {
+        // 🔸 입력값 변경 시 중복확인 플래그 초기화
+        $('#registerCategoryMid, #registerCategorySub, #registerProductName').on('input change', function () {
             isProductNameDuplicateChecked = false;
         });
 
-        // 모달이 열릴 때마다 드롭다운 초기화
-        $('#productAddModal').on('shown.bs.modal', function() {
-            populateMidCategories();
-            $('#registerCategorySub').empty().append('<option value="">소분류 선택</option>');
+        // 🔸 모달 열릴 때 초기화
+        $('#productAddModal').on('shown.bs.modal', function () {
+            $('#registerCategoryMid').val('');
+            $('#registerCategorySub')
+                .empty()
+                .append('<option value="">소분류 선택</option>')
+                .prop('disabled', true);
+            $('#registerProductName').val('');
+            $('#registerProductPrice').val('');
+            $('#registerStoredType').val('');
             isProductNameDuplicateChecked = false;
         });
 
-        // 중분류 선택 시 소분류 업데이트
-        $(document).on('change', '#registerCategoryMid', function() {
-            var selectedMid = $(this).val();
+        // 🔸 중분류 선택 시 소분류 불러오기
+        function populateSubCategories(midVal) {
+            const $sub = $('#registerCategorySub');
+            $sub.empty().append('<option value="">소분류 선택</option>');
+
+            if (!midVal) {
+                $sub.prop('disabled', true);
+                return;
+            }
+
+            fetch(ctx + '/category/check?categoryMid=' + encodeURIComponent(midVal))
+                .then(res => res.json())
+                .then(subList => {
+                    subList.forEach(sub => {
+                        $sub.append(new Option(sub, sub));
+                    });
+                    $sub.prop('disabled', false);
+                })
+                .catch(() => {
+                    console.warn("소분류 로드 실패");
+                    $sub.prop('disabled', true);
+                });
+        }
+
+        $(document).on('change', '#registerCategoryMid', function () {
+            const selectedMid = $(this).val();
             populateSubCategories(selectedMid);
         });
 
-        // 제품 중복 확인 버튼 이벤트
-        $('#checkProductNameDuplicate').on('click', function() {
-            const errorMsg = validateProductInputs();
+        // 🔸 중복확인 버튼 클릭 시
+        $('#checkProductNameDuplicate').on('click', function () {
+            const errorMsg = validateDuplicateCheckInputs();
             if (errorMsg) {
                 alert(errorMsg);
                 return;
             }
-            // 예시: 더미 등록된 제품 배열
-            const registeredProducts = [
-                { mid: "도넛", sub: "프로틴도넛", productName: "프로틴초코" },
-                { mid: "도넛", sub: "글루텐프리도넛", productName: "클래식" }
-            ];
+
             const mid = $('#registerCategoryMid').val().trim();
             const sub = $('#registerCategorySub').val().trim();
             const productName = $('#registerProductName').val().trim();
 
-            const isDuplicate = registeredProducts.some(function(prod) {
-                return prod.mid == mid && prod.sub == sub && prod.productName == productName;
-            });
-
-            if (isDuplicate) {
-                alert("이미 등록된 제품입니다.");
-                isProductNameDuplicateChecked = false;
-            } else {
-                alert("사용 가능한 제품명입니다.");
-                isProductNameDuplicateChecked = true;
-            }
+            fetch(ctx + '/qh/product/check?categoryMid=' + encodeURIComponent(mid)
+                + '&categorySub=' + encodeURIComponent(sub)
+                + '&productName=' + encodeURIComponent(productName))
+                .then(res => res.text())
+                .then(result => {
+                    if (result === 'true') {
+                        alert("이미 등록된 제품입니다.");
+                        isProductNameDuplicateChecked = false;
+                    } else {
+                        alert("사용 가능한 제품명입니다.");
+                        isProductNameDuplicateChecked = true;
+                    }
+                })
+                .catch(() => {
+                    alert("중복 확인에 실패했습니다.");
+                    isProductNameDuplicateChecked = false;
+                });
         });
 
-        // 제품 등록 폼 제출 이벤트
-        $('#registerProductForm').on('submit', function(e) {
+        // 🔸 등록 버튼 클릭 시
+        $('#registerProductForm').on('submit', function (e) {
             e.preventDefault();
+
             const errorMsg = validateProductInputs();
             if (errorMsg) {
                 alert(errorMsg);
                 return;
             }
+
             if (!isProductNameDuplicateChecked) {
                 alert("제품명 중복 확인을 먼저 진행해주세요.");
                 return;
             }
-            alert("제품이 등록되었습니다.");
-            this.reset();
-            isProductNameDuplicateChecked = false;
-            $('#productAddModal').modal('hide');
+
+            this.submit(); // 실제 form 전송
         });
 
-        // 모달 열기 버튼 이벤트 (단순히 모달을 여는 역할만)
-        $(document).on('click', '#btnProductAdd_clone', function() {
+        // 🔸 모달 열기 버튼
+        $(document).on('click', '#btnProductAdd_clone', function () {
             $('#productAddModal').modal('show');
         });
+
+        ///////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////
 
         function validateEditRow($row) {
             const mid = $row.find('.mid-select').val();

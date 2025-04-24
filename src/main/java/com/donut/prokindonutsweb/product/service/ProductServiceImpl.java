@@ -104,8 +104,13 @@ public class ProductServiceImpl implements ProductService {
   // 제품 중복체크
   @Override
   public boolean checkProductDuplicate(ProductCheckDTO dto) {
+    String newCategoryCode = generateCategoryCodeByMidSub(dto.getCategoryMid(), dto.getCategorySub());
+    log.info("제품 중복확인용 카테고리코드 생성: {}", newCategoryCode);
+    dto.setCategoryCode(newCategoryCode);
+    
     ProductMainVO vo = modelMapper.map(dto, ProductMainVO.class);
     boolean isDuplicate = productMapper.checkProductDuplicate(vo) > 0;
+    
     log.info("제품 중복체크 결과 [{}]: {}", vo.getProductName(), isDuplicate);
     return isDuplicate;
   }

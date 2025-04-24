@@ -108,15 +108,16 @@ public class ProductController {
   // 제품 중복 확인
   @GetMapping("/check")
   @ResponseBody
-  public String qhCheckProductDuplicate(@RequestParam String categoryCode,
+  public String qhCheckProductDuplicate(@RequestParam String categoryMid, @RequestParam String categorySub,
                                         @RequestParam String productName,
                                         @RequestParam(value = "productCode", required = false) String productCode) {
-    log.info("GET - 제품 중복 확인 요청: categoryCode={}, productName={}, productCode={}", categoryCode, productName, productCode);
+    log.info("GET - 제품 중복 확인 요청: categoryMid={}, categorySub={}, productName={}, productCode={}", categoryMid, categorySub, productName, productCode);
     
     ProductCheckDTO dto = new ProductCheckDTO();
-    dto.setCategoryCode(categoryCode);
+    dto.setCategoryMid(categoryMid);
+    dto.setCategorySub(categorySub); // 조합해서 카테고리 코드 만들어야함
     dto.setProductName(productName);
-    dto.setProductCode(productCode);
+    dto.setProductCode(productCode); // 등록은 NULL 수정은 수정대상
     
     boolean isDuplicate = productService.checkProductDuplicate(dto);
     log.info("중복 결과: {}", isDuplicate);
