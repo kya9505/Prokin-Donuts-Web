@@ -3,6 +3,8 @@ package com.donut.prokindonutsweb.inbound.controller;
 import com.donut.prokindonutsweb.inbound.dto.InboundDTO;
 import com.donut.prokindonutsweb.inbound.dto.InboundDetailDTO;
 import com.donut.prokindonutsweb.inbound.dto.InboundStatusDTO;
+import com.donut.prokindonutsweb.inbound.exception.ErrorType;
+import com.donut.prokindonutsweb.inbound.exception.UserException;
 import com.donut.prokindonutsweb.inbound.service.InboundService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +27,8 @@ public class QhInboundController {
     // 본사관리자 입고현황
     @GetMapping("/status")
     public void getInboundStatus(Model model) {
-        List<InboundStatusDTO> inboundStatusList = inboundService.findInboundStatusList().get();
+        List<InboundStatusDTO> inboundStatusList = inboundService.findInboundStatusList()
+                        .orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_INBOUND_STATUS_QA));
         model.addAttribute("inboundStatusList", inboundStatusList);
     }
 
@@ -35,10 +38,12 @@ public class QhInboundController {
      */
     @GetMapping("/request")
     public void getInboundList(Model model) {
-        List<InboundDTO> inboundList = inboundService.findQhInboundList().get();
+        List<InboundDTO> inboundList = inboundService.findQhInboundList()
+                .orElseThrow(()-> new UserException(ErrorType.NOT_FOUND_INBOUND_REQUEST));
         List<InboundDetailDTO> inboundDetailList = inboundService.findInboundDetailList();
         model.addAttribute("inboundList", inboundList);
         model.addAttribute("inboundDetailList", inboundDetailList);
+        //return "qh/inbound/request";
     }
 
     // 입고요청에 대한 승인 완료 (본사관리자)

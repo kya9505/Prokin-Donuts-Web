@@ -67,7 +67,7 @@ class InboundServiceImplTest {
                 .productCode("DPN1")
                 .productName("테스트1")
                 .productPrice(5000)
-                .storedType("GG1-R")
+                .storedType("냉동")
                 .quantity(300)
                 .build();
 
@@ -76,7 +76,7 @@ class InboundServiceImplTest {
                 .productCode("DPN2")
                 .productName("테스트2")
                 .productPrice(5000)
-                .storedType("GG1-R")
+                .storedType("냉장")
                 .quantity(300)
                 .build();
 

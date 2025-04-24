@@ -1,6 +1,8 @@
 package com.donut.prokindonutsweb.inbound.controller;
 
 import com.donut.prokindonutsweb.inbound.dto.*;
+import com.donut.prokindonutsweb.inbound.exception.ErrorType;
+import com.donut.prokindonutsweb.inbound.exception.UserException;
 import com.donut.prokindonutsweb.inbound.service.InboundService;
 import com.donut.prokindonutsweb.inbound.vo.InventoryVO;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +14,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -27,11 +28,13 @@ public class WmInboundController {
     /**
      * O
      * 입고 할 수 있는 제품 정보 리스트를 반환한다.
+     * [제품 리스트가 존재 하지 않으면 예외 발생]
      * @param '제품리스트'
      */
     @GetMapping("/request")
     public void getProductList(Model model) {
-        List<ProductDTO> productList = inboundService.findProductList().orElseThrow();
+        List<ProductDTO> productList = inboundService.findProductList()
+                .orElseThrow(() -> new UserException(ErrorType.PRODUCT_NOT_FOUND));
         model.addAttribute("product", productList);
     }
 
@@ -45,8 +48,18 @@ public class WmInboundController {
      * @return '입고요청 페이지'
      */
     @PostMapping("/request")
-    public String addInbound(@RequestParam String inboundDate, InboundForm inboundForm, RedirectAttributes redirectAttributes) {
+    public String addInbound(@RequestParam String inboundDate, InboundForm inboundForm,
+                             RedirectAttributes redirectAttributes,
+                             BindingResult bindingResult) {
         log.info("입고요청 호출");
+        if(bindingResult.hasErrors()) {
+            String error = bindingResult.getAllErrors().get(0).getDefaultMessage();
+            redirectAttributes.addFlashAttribute("errorMessage", error);
+            redirectAttributes.addFlashAttribute("InboundForm", inboundForm);
+            redirectAttributes.addFlashAttribute("showModal", true);
+
+            return "redirect:wm/inbound/request";
+        }
 
         List<InboundDetailDTO> inboundDetailList = inboundForm.getProductList();
 
@@ -86,7 +99,9 @@ public class WmInboundController {
         inboundService.approveInbound(inboundCode);
 
         // 입고상세 목록 재고에 반영
-        List<InventoryDTO> inventoryList = inboundService.findInboundDetailList(inboundCode).get();
+
+        List<InventoryDTO> inventoryList = inboundService.findInboundDetailList(inboundCode)
+                .orElseThrow(()->new UserException(ErrorType.NOT_FOUND_INBOUND_DETAIL));
 
         inventoryList.forEach(
                 dto -> {
@@ -110,8 +125,8 @@ public class WmInboundController {
     public String updateInbound(
             @ModelAttribute InboundUpdateWrapperDTO wrapper,
             @RequestParam("inboundDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate inboundDate,
-            RedirectAttributes redirectAttributes
-    ) {
+            RedirectAttributes redirectAttributes)
+    {
         List<InboundUpdateDTO> list = wrapper.getItems();
         inboundService.updateInbound(list, inboundDate);
         redirectAttributes.addFlashAttribute("editSuccessMessage", "입고 수정이 완료되었습니다.");
@@ -132,7 +147,8 @@ public class WmInboundController {
 
     @GetMapping("/status")
     public void getInboundStatusList(Model model) {
-        List<InboundStatusDTO> inboundStatusList = inboundService.findInboundStatusList().get();
+        List<InboundStatusDTO> inboundStatusList = inboundService.findInboundStatusList()
+                        .orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_INBOUND_STATUS));
         model.addAttribute("inboundStatusList", inboundStatusList);
     }
 }

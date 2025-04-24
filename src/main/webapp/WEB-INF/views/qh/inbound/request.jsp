@@ -188,7 +188,7 @@
                 </div>
             </div>
         </form>
-cx
+
 
         <!-- 입고 삭제 모달 ! -->
         <form id="inboundDeleteForm" method="post" action="/wm/inbound/cancel" accept-charset="UTF-8">
@@ -533,5 +533,13 @@ cx
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
 
 </script>
+
+<c:if test="${not empty errorMessage}">
+    <script>
+        alert('${errorMessage}');
+    </script>
+</c:if>
+
+
 </body>
 </html>

@@ -357,7 +357,7 @@
           <td>` + item.productName + `</td>
           <td>` + item.productPrice + `</td>
           <td>` + item.storedType + `</td>
-          <td><input type="number" class="form-control quantity-input" min="100" value="100" step="100" style="width: 80px;"></td>
+          <td><input type="number" class="form-control quantity-input"   min="100" value="100" step="100" style="width: 80px;"></td>
         </tr>
       `;
             $tableBody.append(rowHtml);
@@ -385,6 +385,7 @@
 
 
     $('#addInboundModal .btn-primary').on('click', function () {
+        let invalid = false;
         // 기존 input 정리
         $('#inboundForm input.dynamic-field').remove();
         // 날짜 추가
@@ -404,11 +405,12 @@
 
         // 제품 목록 반복
         $('#selectedProductsTable tbody tr').each(function (i) {
+
             const $tds = $(this).find('td');
             const quantity = $(this).find('.quantity-input').val();
 
-            if (!quantity || isNaN(quantity)) {
-                alert('수량은 숫자만 입력 가능합니다.');
+            if (!/^\d+$/.test(quantity)) {
+                alert("수량은 자연수만 입력해주세요.");
                 invalid = true;
                 return false;
             }
@@ -455,6 +457,9 @@
             }).appendTo('#inboundForm');
         });
 
+        if (invalid) {
+            return;
+        }
         // form 전송
         $('#inboundForm').submit();
     });
@@ -467,6 +472,20 @@
 <c:if test="${not empty successMessage}">
     <script>
         alert('${successMessage}');
+    </script>
+</c:if>
+
+<c:if test="${not empty errorMessage}">
+    <script>
+        alert('${errorMessage}');
+    </script>
+</c:if>
+
+<c:if test="${showModal}">
+    <script>
+        $(document).ready(function () {
+            $('#addInboundModal').modal('show'); // ❗ 등록 실패 후 모달 유지
+        });
     </script>
 </c:if>
 </body>
