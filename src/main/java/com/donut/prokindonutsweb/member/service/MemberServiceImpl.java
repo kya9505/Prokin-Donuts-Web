@@ -61,15 +61,13 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public boolean memberIdCheck(String id) {
-        int count = memberMapper.memberIdCheck(id);
-        return count > 0 ;
+    public int memberIdCheck(String id) {
+        return memberMapper.memberIdCheck(id);
     }
 
     @Override
-    public boolean memberEmailCheck(String email){
-        int count = memberMapper.memberEmailCheck(email);
-        return count > 0;
+    public int memberEmailCheck(String email){
+        return memberMapper.memberEmailCheck(email);
     }
 
     @Override

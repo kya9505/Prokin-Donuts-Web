@@ -68,14 +68,12 @@ public class MemberRequestServiceImpl implements MemberRequestService {
         });
     }
     @Override
-    public boolean requestIdCheck(String id){
-        int count = requestMapper.requestIdCheck(id);
-        return count > 0;
+    public int requestIdCheck(String id){
+        return requestMapper.requestIdCheck(id);
     }
 
     @Override
-    public boolean requestEmailCheck(String email){
-        int count = requestMapper.requestEmailCheck(email);
-        return count > 0;
+    public int requestEmailCheck(String email){
+        return requestMapper.requestEmailCheck(email);
     }
 }
