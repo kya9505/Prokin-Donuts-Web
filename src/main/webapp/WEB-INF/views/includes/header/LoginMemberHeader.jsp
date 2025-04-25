@@ -44,6 +44,7 @@
                                             <c:choose>
                                                 <c:when test="${member.authorityCode == 'QH'}">QH Admin</c:when>
                                                 <c:when test="${member.authorityCode == 'WM'}">WM Admin</c:when>
+                                                <c:when test="${member.authorityCode == 'FM'}">WM Admin</c:when>
                                                 <c:otherwise>User</c:otherwise>
                                             </c:choose>
                                         </p>
