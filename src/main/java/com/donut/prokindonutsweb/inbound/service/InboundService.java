@@ -13,9 +13,11 @@ public interface InboundService {
     void addInbound(InboundDTO inboundDTO, List<InboundDetailDTO> inboundDetailDTO);
 
 
+    String getWarehouseCode(String memberCode);
+
     String findNextInboundCode();
 
-    List<InboundDTO> findInboundList();
+    List<InboundDTO> findInboundList(String warehouseCode);
 
     List<InboundDetailDTO> findInboundDetailList();
 
@@ -28,6 +30,8 @@ public interface InboundService {
     void updateInbound(List<InboundUpdateDTO> list, LocalDate inboundDate);
 
     void deleteInbound(String inboundCode);
+
+    Optional<List<InboundStatusDTO>> findWMInboundStatusList(String warehouseCode);
 
     Optional<List<InboundStatusDTO>> findInboundStatusList();
 
