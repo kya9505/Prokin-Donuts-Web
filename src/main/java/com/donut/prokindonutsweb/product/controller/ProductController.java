@@ -24,7 +24,7 @@ public class ProductController {
   
   // 제품 및 카테고리 목록 조회
   @GetMapping
-  public void qhGetWarehouseList(Model model) {
+  public void qhGetProductPage(Model model) {
     log.info("GET - 제품 및 카테고리 목록 요청");
     
     List<CategorySelectDTO> categoryList = productService.findCategoryList();
