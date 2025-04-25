@@ -499,7 +499,7 @@
             if (lat && lng) {
                 var pos = new kakao.maps.LatLng(lat, lng);
                 map.setLevel(3);
-                setTimeout(function() { map.setCenter(pos); }, 100);
+                setTimeout(function() { map.panTo(pos); }, 100);
             }
         };
 
@@ -554,7 +554,7 @@
                             row.scrollIntoView({ behavior: 'smooth', block: 'center' });
                             // 지도 확대·이동
                             map.setLevel(3);
-                            setTimeout(function() { map.setCenter(pos); }, 100);
+                            setTimeout(function() { map.panTo(pos); }, 100);
                         });
 
                         // 3) 클릭박스 오버레이 (60×60) → highlightWarehouse 호출
