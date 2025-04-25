@@ -521,7 +521,23 @@
                     const pos = new kakao.maps.LatLng(lat, lng);
 
                     // 마커 & 레이블
-                    new kakao.maps.Marker({ map, position: pos });
+                    const marker = new kakao.maps.Marker({
+                        map,
+                        position: pos
+                    })
+                    marker.warehouseName = row.dataset.warehouseName;
+                    kakao.maps.event.addListener(marker, 'click', () => {
+                        rows.forEach(r => r.style.color = ''); // 초기화
+
+                        const match = rows.find(r =>
+                            r.dataset.warehouseName === marker.warehouseName
+                        );
+                        if (match) {
+                            match.style.color = '#FF9D32';
+                            match.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    });
+
                     new kakao.maps.CustomOverlay({
                         map,
                         position: pos,
