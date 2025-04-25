@@ -45,7 +45,7 @@ public class MyPageController {
     // 탈퇴
     @PostMapping("/delete")
     public String secession( @AuthenticationPrincipal CustomUserDetails user, HttpSession session) {
-        memberService.deleteByMember(user.getUsername());
+        memberService.deleteByMember(user.getId());
         //세션 무효화
         session.invalidate();
         // 인증정보 제거
