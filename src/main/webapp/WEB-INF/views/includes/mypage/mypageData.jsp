@@ -44,13 +44,4 @@ return;
             }
         });
 
-        // world map 초기화
-        const mapEl = document.getElementById('world-map');
-        if (mapEl) {
-            new jvm.WorldMap({
-                container: mapEl,
-                map: 'world_mill',
-                // …옵션
-            });
-        }
     });
