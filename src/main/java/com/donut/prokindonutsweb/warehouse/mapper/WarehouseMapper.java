@@ -2,6 +2,7 @@ package com.donut.prokindonutsweb.warehouse.mapper;
 
 import com.donut.prokindonutsweb.member.vo.MemberAccountVO;
 import com.donut.prokindonutsweb.warehouse.dto.WarehouseDTO;
+import com.donut.prokindonutsweb.warehouse.vo.SectionVO;
 import com.donut.prokindonutsweb.warehouse.vo.WarehouseVO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -11,6 +12,7 @@ import java.util.List;
 public interface WarehouseMapper {
   List<WarehouseDTO> selectWarehouseList();
   void insertWarehouse(WarehouseVO warehouse);
+  void insertSection(SectionVO sectionVO);
   void updateWarehouse(WarehouseVO warehouse);
   void deleteWarehouse(WarehouseVO warehouse);
   List<MemberAccountVO> selectUnAccountWMList();

@@ -28,6 +28,14 @@
             (#{warehouseCode}, #{warehouseName}, #{capacityLimit}, #{address}, #{memberCode})
     </insert>
 
+    <!-- 2-1) 섹션 등록 -->
+    <insert id="insertSection" parameterType="SectionVO">
+        INSERT INTO Section
+            (sectionCode, warehouseCode, storageCapacity, storedType, temperature)
+        VALUES
+            (#{sectionCode}, #{warehouseCode}, #{storageCapacity}, #{storedType}, #{temperature})
+    </insert>
+
     <!-- 3) 창고 수정 -->
     <update id="updateWarehouse" parameterType="WarehouseVO">
         UPDATE Warehouse

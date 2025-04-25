@@ -6,6 +6,7 @@ import com.donut.prokindonutsweb.warehouse.dto.WarehouseDeleteDTO;
 import com.donut.prokindonutsweb.warehouse.dto.WarehouseUpdateDTO;
 import com.donut.prokindonutsweb.warehouse.mapper.WarehouseMapper;
 import com.donut.prokindonutsweb.member.vo.MemberAccountVO;
+import com.donut.prokindonutsweb.warehouse.vo.SectionVO;
 import com.donut.prokindonutsweb.warehouse.vo.WarehouseVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -74,6 +75,7 @@ public class WarehouseServiceImpl implements WarehouseService {
   }
   
   @Override
+  @Transactional
   public void saveWarehouse(WarehouseDTO warehouseDTO) {
     log.info("Service : saveWarehouse called");
     
@@ -83,6 +85,40 @@ public class WarehouseServiceImpl implements WarehouseService {
     
     WarehouseVO warehouseVO = modelMapper.map(warehouseDTO, WarehouseVO.class);
     warehouseMapper.insertWarehouse(warehouseVO);
+    
+    // 섹션 insert 기본 값 세팅
+    String code = warehouseVO.getWarehouseCode();
+    int total = warehouseVO.getCapacityLimit();
+    
+    // 3. 섹션 3개 생성
+    SectionVO refrigerated = SectionVO.builder()
+        .sectionCode(code + "-R")
+        .warehouseCode(code)
+        .storageCapacity((int) (total * 0.6))
+        .storedType("냉장")
+        .temperature(4)
+        .build();
+    
+    SectionVO frozen = SectionVO.builder()
+        .sectionCode(code + "-F")
+        .warehouseCode(code)
+        .storageCapacity((int) (total * 0.2))
+        .storedType("냉동")
+        .temperature(-20)
+        .build();
+    
+    SectionVO ambient = SectionVO.builder()
+        .sectionCode(code + "-A")
+        .warehouseCode(code)
+        .storageCapacity((int) (total * 0.2))
+        .storedType("상온")
+        .temperature(27)
+        .build();
+    
+    // 4. 섹션 등록
+    warehouseMapper.insertSection(refrigerated);
+    warehouseMapper.insertSection(frozen);
+    warehouseMapper.insertSection(ambient);
   }
   
   @Override
