@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @ToString
 public class MemberRequestVO {
     private String requestCode;
+    private String authorityCode;
     private String name;
     private String phoneNumber;
     private String email;
@@ -18,7 +19,6 @@ public class MemberRequestVO {
     private String password;
     private String address;
     private String request;
-    private String authorityCode;
     private LocalDate requestDate;
 
 }
