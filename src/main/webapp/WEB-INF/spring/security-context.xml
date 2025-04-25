@@ -33,6 +33,10 @@
         <intercept-url pattern="/home/resultPassword" access="permitAll"/>
         <intercept-url pattern="/resources/**"        access="permitAll"/>
 
+        <!-- 3) 권한별 접근 제어 -->
+        <intercept-url pattern="/qh/**"  access="hasAuthority('QH')"/>
+        <intercept-url pattern="/wm/**" access="hasAuthority('WM')"/>
+        <intercept-url pattern="/fm/**" access="hasAuthority('FM')"/>
 
         <!-- 3) 그 외 모든 요청은 인증 필요 -->
         <intercept-url pattern="/**" access="isAuthenticated()"/>

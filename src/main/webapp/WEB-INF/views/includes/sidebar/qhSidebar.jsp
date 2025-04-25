@@ -88,15 +88,15 @@
                 </ul>
             </li>
 
-            <li class="nav-item nav-outbound">
-                <a href="<c:url value='/qh/outbound'/>">
-                    <span class="icon">
-                        <i width="20" height="20" viewBox="0 0 20 20"
-                           fill="none" class="lni lni-delivery"></i>
-                    </span>
-                    <span class="text">출고관리</span>
-                </a>
-            </li>
+<%--            <li class="nav-item nav-outbound">--%>
+<%--                <a href="<c:url value='/qh/outbound'/>">--%>
+<%--                    <span class="icon">--%>
+<%--                        <i width="20" height="20" viewBox="0 0 20 20"--%>
+<%--                           fill="none" class="lni lni-delivery"></i>--%>
+<%--                    </span>--%>
+<%--                    <span class="text">출고관리</span>--%>
+<%--                </a>--%>
+<%--            </li>--%>
         </ul>
     </nav>
 </aside>
