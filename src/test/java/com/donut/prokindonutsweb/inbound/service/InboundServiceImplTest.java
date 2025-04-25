@@ -89,15 +89,23 @@ class InboundServiceImplTest {
     }
 
     @Test
+    @DisplayName("멤버코드 -> 창고코드 반환 서비스")
+    void getWarehouseCode() {
+        String warehouseCode = inboundService.getWarehouseCode("WM1");
+        log.info(warehouseCode);
+    }
+
+
+    @Test
     @DisplayName("(입고요청, 승인대기) 상태 입고목록만 반환하는 기능")
     void findAllInboundList() {
-        inboundService.findInboundList().stream().forEach(System.out::println);
+        inboundService.findInboundList("WM1").forEach(System.out::println);
     }
 
     @Test
     @DisplayName("입고 상세 목록 반환")
     void findAllInboundDetailList() {
-        inboundService.findInboundDetailList().stream().forEach(System.out::println);
+        inboundService.findInboundDetailList().forEach(System.out::println);
     }
 
     @Test

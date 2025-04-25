@@ -69,6 +69,13 @@ class InboundMapperTest {
     }
 
     @Test
+    @DisplayName("멤버코드 -> 창고 코드 반환")
+    void selectWarehouseCode() {
+        String warehouseCode = inboundMapper.selectWarehouseCode("WM1");
+        log.info(warehouseCode);
+    }
+
+    @Test
     @DisplayName("다음 입고 코드 반환 테스트")
     void selectInboundCode() {
         String s = inboundMapper.selectInboundCode();

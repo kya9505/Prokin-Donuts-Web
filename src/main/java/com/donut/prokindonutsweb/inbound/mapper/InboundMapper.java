@@ -16,6 +16,8 @@ public interface InboundMapper {
     // 입고 상세 정보
     void insertInboundDetailList(@Param("list") List<InboundDetailVO> list);
 
+    String selectWarehouseCode(String memberCode);
+
     String selectInboundCode();
 
 

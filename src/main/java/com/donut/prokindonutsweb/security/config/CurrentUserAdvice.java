@@ -1,4 +1,4 @@
-package com.donut.prokindonutsweb.config;
+package com.donut.prokindonutsweb.security.config;
 
 import com.donut.prokindonutsweb.member.vo.MemberAccountVO;
 import com.donut.prokindonutsweb.security.dto.CustomUserDetails;
@@ -19,7 +19,7 @@ public class CurrentUserAdvice {
     //jsp에서 'member'로 attribute
     @ModelAttribute("member")
     public MemberAccountVO currentUser(@AuthenticationPrincipal CustomUserDetails user) {
-        return user.getMember();
+        return (user != null) ? user.getMember() : null;
     }
 }
 

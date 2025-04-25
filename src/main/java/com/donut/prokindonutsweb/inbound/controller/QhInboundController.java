@@ -24,13 +24,6 @@ import java.util.List;
 public class QhInboundController {
 
     private final InboundService inboundService;
-    // 본사관리자 입고현황
-    @GetMapping("/status")
-    public void getInboundStatus(Model model) {
-        List<InboundStatusDTO> inboundStatusList = inboundService.findInboundStatusList()
-                        .orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_INBOUND_STATUS_QA));
-        model.addAttribute("inboundStatusList", inboundStatusList);
-    }
 
     // 본사관리자 입고요청에 대한 승인 페이지 (입고관리)
     /*
@@ -53,5 +46,12 @@ public class QhInboundController {
         return "redirect:/qh/inbound/request";
     }
 
+    // 본사관리자 입고현황
+    @GetMapping("/status")
+    public void getInboundStatus(Model model) {
+        List<InboundStatusDTO> inboundStatusList = inboundService.findInboundStatusList()
+                .orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_INBOUND_STATUS_QA));
+        model.addAttribute("inboundStatusList", inboundStatusList);
+    }
 
 }

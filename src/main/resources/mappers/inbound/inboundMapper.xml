@@ -30,6 +30,12 @@
         </foreach>
     </insert>
 
+<!--    창고코드를 가져온다.-->
+    <select id="selectWarehouseCode" resultType="String">
+        select warehouseCode From warehouse where memberCode = #{memberCode}
+    </select>
+
+
     <select id="selectInboundCode" resultType="String">
         Select inboundCode From Inbound Order by CAST(substring(inboundCode, 3) AS UNSIGNED) DESC LIMIT 1
     </select>

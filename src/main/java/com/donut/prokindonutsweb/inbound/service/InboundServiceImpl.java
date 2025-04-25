@@ -52,6 +52,11 @@ public class InboundServiceImpl implements InboundService {
         inboundMapper.insertInboundDetailList(inboundDetailVOList);
     }
 
+    @Override
+    public String getWarehouseCode(String memberCode) {
+        return inboundMapper.selectWarehouseCode(memberCode);
+    }
+
     private List<InboundDetailVO> getInboundDetailList(List<InboundDetailDTO> inboundDetailList, InboundDTO inboundDTO) {
         AtomicInteger i = new AtomicInteger(1);
         String inboundCode = inboundDTO.getInboundCode();
@@ -87,10 +92,11 @@ public class InboundServiceImpl implements InboundService {
 
     //    입고관리 페이지에는 (입고요청, 승인대기) 상태 입고목록만 보여진다.
     @Override
-    public List<InboundDTO> findInboundList() {
+    public List<InboundDTO> findInboundList(String warehouseCode) {
         List<InboundDTO> list = inboundMapper.selectAllInboundList().stream()
                 .filter(vo -> InboundStatus.REQUEST.getStatus().equals(vo.getInboundStatus())
-                        || InboundStatus.APPROVE.getStatus().equals(vo.getInboundStatus()))
+                        || InboundStatus.APPROVE.getStatus().equals(vo.getInboundStatus())
+                && vo.getWarehouseCode().equals(warehouseCode))
                 .map(vo -> modelMapper.map(vo, InboundDTO.class)).
                 toList();
         return list;
@@ -152,6 +158,15 @@ public class InboundServiceImpl implements InboundService {
     }
 
     @Override
+    public Optional<List<InboundStatusDTO>> findWMInboundStatusList(String warehouseCode) {
+        List<InboundStatusDTO> list = inboundMapper.selectAllInboundStatusList()
+                .stream()
+                .filter(vo->vo.getSectionCode().split("-")[0].equals(warehouseCode))
+                .map(vo -> modelMapper.map(vo, InboundStatusDTO.class))
+                .toList();
+        return list.isEmpty() ? Optional.empty() : Optional.of(list);
+    }
+
     public Optional<List<InboundStatusDTO>> findInboundStatusList() {
         List<InboundStatusDTO> list = inboundMapper.selectAllInboundStatusList()
                 .stream()
