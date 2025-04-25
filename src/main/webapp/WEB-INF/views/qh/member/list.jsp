@@ -416,6 +416,11 @@
         initComplete: function (settings, json) {
             $('#datatable thead th').eq(0).removeClass('sorting sorting_asc sorting_desc');
             fixLengthDropdownStyle();
+            const api = this.api();
+
+            setTimeout(() => {
+                api.draw(false);
+            }, 0);
         },
         // 새로고침 후 체크박스에서 정렬 화살표 지우기 (유지)
         drawCallback: function (settings) {
