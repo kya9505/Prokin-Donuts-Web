@@ -5,9 +5,11 @@ import com.donut.prokindonutsweb.inbound.exception.ErrorType;
 import com.donut.prokindonutsweb.inbound.exception.UserException;
 import com.donut.prokindonutsweb.inbound.service.InboundService;
 import com.donut.prokindonutsweb.inbound.vo.InventoryVO;
+import com.donut.prokindonutsweb.security.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,7 +34,8 @@ public class WmInboundController {
      * @param '제품리스트'
      */
     @GetMapping("/request")
-    public void getProductList(Model model) {
+    public void getProductList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
+        log.info(String.valueOf(user));
         List<ProductDTO> productList = inboundService.findProductList()
                 .orElseThrow(() -> new UserException(ErrorType.PRODUCT_NOT_FOUND));
         model.addAttribute("product", productList);
@@ -49,9 +52,16 @@ public class WmInboundController {
      */
     @PostMapping("/request")
     public String addInbound(@RequestParam String inboundDate, InboundForm inboundForm,
+                             @AuthenticationPrincipal CustomUserDetails user,
                              RedirectAttributes redirectAttributes,
                              BindingResult bindingResult) {
+        log.info(String.valueOf(user));
         log.info("입고요청 호출");
+        String memberCode = user.getMemberCode();
+        String warehouseCode = inboundService.getWarehouseCode(memberCode);
+        log.info(memberCode);
+        log.info(warehouseCode);
+
         if(bindingResult.hasErrors()) {
             String error = bindingResult.getAllErrors().get(0).getDefaultMessage();
             redirectAttributes.addFlashAttribute("errorMessage", error);
@@ -69,7 +79,7 @@ public class WmInboundController {
                 .inboundCode(inboundCode)
                 .inboundDate(LocalDate.parse((inboundDate)))
                 .inboundStatus(InboundStatus.REQUEST.getStatus())
-                .warehouseCode("GG1")   // 로그인 한 사용자 정보 가져와서 창고 코드 입력!
+                .warehouseCode(warehouseCode)   // 로그인 한 사용자 정보 가져와서 창고 코드 입력!
                 .build();
         log.info(InboundStatus.REQUEST.getStatus());
         inboundService.addInbound(dto, inboundDetailList);
@@ -79,11 +89,18 @@ public class WmInboundController {
 
 //    창고관리자 - 입고관리 페이지
     @GetMapping("/approval")
-    public void getInboundList(Model model) {
-        List<InboundDTO> inboundList = inboundService.findInboundList();
+    public void getInboundList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
+       /* log.debug("현재 사용자 정보: {}", user.getMemberCode());
+
+        String memberCode = user.getMemberCode();
+        String warehouseCode = inboundService.getWarehouseCode(memberCode);
+        log.info(memberCode);
+        log.info(warehouseCode);
+
+        List<InboundDTO> inboundList = inboundService.findInboundList(warehouseCode);
         List<InboundDetailDTO> inboundDetailList = inboundService.findInboundDetailList();
         model.addAttribute("inboundList", inboundList);
-        model.addAttribute("inboundDetailList", inboundDetailList);
+        model.addAttribute("inboundDetailList", inboundDetailList);*/
     }
 
     /**
@@ -146,8 +163,12 @@ public class WmInboundController {
     // 입고현황
 
     @GetMapping("/status")
-    public void getInboundStatusList(Model model) {
-        List<InboundStatusDTO> inboundStatusList = inboundService.findInboundStatusList()
+    public void getInboundStatusList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
+
+        String memberCode = user.getMemberCode();
+        String warehouseCode = inboundService.getWarehouseCode(memberCode);
+
+        List<InboundStatusDTO> inboundStatusList = inboundService.findWMInboundStatusList(warehouseCode)
                         .orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_INBOUND_STATUS));
         model.addAttribute("inboundStatusList", inboundStatusList);
     }
