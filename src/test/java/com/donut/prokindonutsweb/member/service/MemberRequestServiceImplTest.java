@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.util.AssertionErrors.assertNotNull;
 
@@ -45,16 +46,16 @@ class MemberRequestServiceImplTest {
     @Test
     @DisplayName("Service 회원가입 요청테이블 아이디 중복 테스트")
     public void requestIdCheck(){
-        boolean idCheck = requestService.requestIdCheck("100");
-        assertTrue(idCheck);
+        int idCheck = requestService.requestIdCheck("100");
+
         log.info(idCheck);
     }
 
     @Test
     @DisplayName("Service 회원가입 요청테이블 이메일  중복 테스트")
     public void requestEmailCheck(){
-        boolean emailCheck = requestService.requestEmailCheck("test@test.test");
-        assertTrue(emailCheck);
+        int emailCheck = requestService.requestEmailCheck("test@test.test");
+        assertEquals(emailCheck,1);
         log.info(emailCheck);
     }
 }

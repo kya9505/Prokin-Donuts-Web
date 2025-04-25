@@ -2,7 +2,7 @@
 
 <aside class="sidebar-nav-wrapper">
     <div class="navbar-logo">
-        <a href="<c:url value='wm/Dashboard'/>">
+        <a href="<c:url value='/wm/Dashboard'/>">
             <img src="<c:url value='/resources/images/logo/menu_logo.png'/>" alt="logo" />
         </a>
     </div>

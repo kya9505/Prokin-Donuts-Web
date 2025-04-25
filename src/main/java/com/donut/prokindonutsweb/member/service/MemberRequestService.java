@@ -10,7 +10,7 @@ public interface MemberRequestService {
     Optional<List<MemberRequestDTO>> findRequestMember();
     void approvalMember(List<String> requestCodeList);
 
-    boolean requestIdCheck(String id);
+    int requestIdCheck(String id);
 
-    boolean requestEmailCheck(String email);
+    int requestEmailCheck(String email);
 }
