@@ -17,9 +17,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        // 로그인한 객체를 세션에 저장
-        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-        request.getSession().setAttribute("member", principal.getMember());
+
 
         //Authentication에서 권한 목록(Authorities) 가져오기 (UserDetails가 권한을 List로 관리)
             Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();

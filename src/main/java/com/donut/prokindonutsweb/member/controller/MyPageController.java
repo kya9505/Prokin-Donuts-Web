@@ -37,9 +37,7 @@ public class MyPageController {
 
     // 수정
     @PostMapping("/update")
-    public String update(
-            @ModelAttribute MemberAccountDTO formData
-    ) {
+    public String update(@ModelAttribute MemberAccountDTO formData) {
         memberService.updateByMember(formData);
         return "redirect:/mypage";
     }
