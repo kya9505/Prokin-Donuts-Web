@@ -23,14 +23,14 @@
         <intercept-url pattern="/home/login?error"  access="permitAll"/>
 
         <!-- 2) 나머지 공개 경로 -->
-        <intercept-url pattern="/home/signup"         access="permitAll"/>
-        <intercept-url pattern="/home/findId"         access="permitAll"/>
-        <intercept-url pattern="/home/sendCode"       access="permitAll"/>
-        <intercept-url pattern="/home/findPassword"   access="permitAll"/>
-        <intercept-url pattern="/home/idCheck"        access="permitAll"/>
-        <intercept-url pattern="/home/emailCheck"     access="permitAll"/>
-        <intercept-url pattern="/home/resultId"       access="permitAll"/>
-        <intercept-url pattern="/home/resultPassword" access="permitAll"/>
+        <intercept-url pattern="/home/signup"         access="isAnonymous"/>
+        <intercept-url pattern="/home/findId"         access="isAnonymous"/>
+        <intercept-url pattern="/home/sendCode"       access="isAnonymous"/>
+        <intercept-url pattern="/home/findPassword"   access="isAnonymous"/>
+        <intercept-url pattern="/home/idCheck"        access="isAnonymous"/>
+        <intercept-url pattern="/home/emailCheck"     access="isAnonymous"/>
+        <intercept-url pattern="/home/resultId"       access="isAnonymous"/>
+        <intercept-url pattern="/home/resultPassword" access="isAnonymous"/>
         <intercept-url pattern="/resources/**"        access="permitAll"/>
 
         <!-- 3) 권한별 접근 제어 -->
