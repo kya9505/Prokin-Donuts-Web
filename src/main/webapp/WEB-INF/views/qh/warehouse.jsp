@@ -695,6 +695,7 @@
             },
             initComplete: function(settings, json) {
                 fixLengthDropdownStyle();
+
                 const api = this.api();
 
                 setTimeout(() => {
