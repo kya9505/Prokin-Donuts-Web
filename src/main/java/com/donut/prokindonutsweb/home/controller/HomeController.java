@@ -1,8 +1,11 @@
 package com.donut.prokindonutsweb.home.controller;
 
+import com.donut.prokindonutsweb.security.dto.CustomUserDetails;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-
+@Log4j2
 @Controller
 public class HomeController {
 
@@ -12,6 +15,7 @@ public class HomeController {
         return "redirect:/home/login";
     }
 
+    //개발 안된 페이지
     @GetMapping("/wm/outbound")
     public void Woutbound(){}
 
@@ -19,7 +23,8 @@ public class HomeController {
     public void WDashboard(){}
 
     @GetMapping("/qh/Dashboard")
-    public void QDashboard(){}
+    public void QDashboard(){
+    }
   
     @GetMapping("/qh/outbound")
     public void Qoutbound(){}

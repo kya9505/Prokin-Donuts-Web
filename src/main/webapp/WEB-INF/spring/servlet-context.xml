@@ -3,33 +3,44 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd">
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context
+         https://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/mvc
+         https://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <!--    Spring MVC 에서 어노테이션 기반 기능들을 활성화 하는 역할을 한다.-->
-    <mvc:annotation-driven/>
-
-    <!-- 지정한 패키지 및 그 하위 패키지에서 어노테이션이 붙은 클래스를 자동으로 찾아서 Spring 컨테이너에 빈으로 등록하는 역할을 한다. -->
-    <!--    @Component, @Controller, @Service 등등-->
+    <!-- 1) 스캔 설정 -->
     <context:component-scan base-package="com.donut.prokindonutsweb.franchise.controller"/>
-        <context:component-scan base-package="com.donut.prokindonutsweb.warehouse.controller"/>
-        <context:component-scan base-package="com.donut.prokindonutsweb.product.controller"/>
-        <context:component-scan base-package="com.donut.prokindonutsweb.inventory.controller"/>
-        <context:component-scan base-package="com.donut.prokindonutsweb.inbound.controller"/>
-        <context:component-scan base-package="com.donut.prokindonutsweb.member.controller"/>
-        <context:component-scan base-package="com.donut.prokindonutsweb.order.controller"/>
-        <context:component-scan base-package="com.donut.prokindonutsweb.outbound.controller"/>
+    <context:component-scan base-package="com.donut.prokindonutsweb.warehouse.controller"/>
+    <context:component-scan base-package="com.donut.prokindonutsweb.product.controller"/>
+    <context:component-scan base-package="com.donut.prokindonutsweb.inventory.controller"/>
+    <context:component-scan base-package="com.donut.prokindonutsweb.inbound.controller"/>
+    <context:component-scan base-package="com.donut.prokindonutsweb.member.controller"/>
+    <context:component-scan base-package="com.donut.prokindonutsweb.order.controller"/>
+    <context:component-scan base-package="com.donut.prokindonutsweb.outbound.controller"/>
     <context:component-scan base-package="com.donut.prokindonutsweb.home.controller"/>
+    <!-- Advice나 ArgumentResolver 등이 있는 패키지도 스캔 -->
+    <context:component-scan base-package="com.donut.prokindonutsweb.security.config"/>
 
-    <!--    뷰 리졸버로서, 컨트롤러에서 반환하는 문자열을 이용해 JSP 파일 경로를 매핑한다. -->
+    <!-- 2) MVC 어노테이션 드라이빙 & ArgumentResolver & Validator -->
+    <mvc:annotation-driven validator="validator">
+        <mvc:argument-resolvers>
+            <bean class="org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver"/>
+        </mvc:argument-resolvers>
+    </mvc:annotation-driven>
+
+    <!-- 3) 뷰 리졸버 -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/views/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
 
-    <!--    Spring MVC 에서 정적 자원을 처리하기 위한 설정 -->
-    <!--    클라이언트가 /resources/** 로 접근하면, 내부적으로는 resources/static/ 경로에서 해당 파일을 찾아 반환해 준다. -->
+    <!-- 4) 정적 리소스 -->
     <mvc:resources mapping="/resources/**" location="classpath:/static/"/>
 
+    <!-- 5) Formatter, Validator 빈 -->
     <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
         <property name="formatters">
             <set>
@@ -37,8 +48,5 @@
             </set>
         </property>
     </bean>
-
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
-    <mvc:annotation-driven validator="validator"/>
-
 </beans>
