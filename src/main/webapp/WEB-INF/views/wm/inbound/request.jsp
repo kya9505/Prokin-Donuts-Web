@@ -65,10 +65,47 @@
                         <h6 class="mb-10">제품 메뉴</h6>
                         <p class="text-sm mb-20"></p>
 
+                        <!-- 원하는 필터(중분류, 소분류) 설정 -->
                         <div id="myCustomFilters" style="display: none;">
-                            <div class="d-flex align-items-center gap-2" style="margin-top: -30px;">
+
+                            <div class="d-flex align-items-center gap-2">
+
+                                <!-- 중분류 -->
+                                <div >
+                                    <div class="select-style-1">
+                                        <div class="select-position">
+                                            <!-- 중분류 드롭다운 -->
+                                            <select id="midCategory">
+                                                <option value="">중분류</option>
+                                                <c:forEach var="mid" items="${categoryMidList}">
+                                                    <option value="${mid}">${mid}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 소분류 -->
+                                <div >
+                                    <div class="select-style-1">
+                                        <div class="select-position">
+                                            <!-- 소분류 드롭다운 (초기엔 비워둠) -->
+                                            <select id="subCategory">
+                                                <option value="">소분류</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 필터 초기화 -->
+                                <div class="mb-30">
+                                    <button class="main-btn warning-btn-outline square-btn btn-hover btn-sm btn-xs" id="resetFilterBtn" style="height:auto; min-height:auto;">
+                                        필터 초기화
+                                    </button>
+                                </div>
+
                                 <!-- 오른쪽: 등록/수정/삭제 -->
-                                <div class="btu-group-1 d-flex gap-2">
+                                <div class="btu-group-1 d-flex gap-2 mb-30">
                                     <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="btnInboundAdd">입고 요청</button>
                                 </div>
                             </div>
