@@ -66,7 +66,20 @@
             <div class="col-lg">
                 <!-- Start card -->
                 <div class="card-style mb-30">
-                    <h6 class="mb-10">입고 목록</h6>
+                    <h6 class="mb-10">입고 목록
+                        <label>
+                            <i
+                                    class="mdi mdi-help-circle text-primary"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="right"
+                                    data-bs-html="true"
+                                    data-bs-custom-class="wide-tooltip"
+                                    title="<b>승인</b>: 제품 검수 후 재고에 반영한다.<br><br> <b>수정, 취소</b>: 본사관리자 승인 후에는 불가능"
+                                    style="cursor: pointer;">
+                            </i>
+                        </label>
+                    </h6>
+
                     <p class="text-sm mb-20">
 
                         <!-- 원하는 필터(중분류, 소분류) 설정 -->
@@ -341,6 +354,14 @@
     }
 </style>
 <script>
+    // Bootstrap 5 Tooltip 활성화 (모달 내부)
+    document.addEventListener('DOMContentLoaded', function () {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+
     const inboundDetails = [
         <c:forEach var="detail" items="${inboundDetailList}" varStatus="loop">
         {
