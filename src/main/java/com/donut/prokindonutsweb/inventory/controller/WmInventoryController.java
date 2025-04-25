@@ -1,18 +1,16 @@
 package com.donut.prokindonutsweb.inventory.controller;
 
 import com.donut.prokindonutsweb.inventory.dto.InventorySelectDTO;
-import com.donut.prokindonutsweb.inventory.service.QhInventoryService;
 import com.donut.prokindonutsweb.inventory.service.WmInventoryService;
-import com.donut.prokindonutsweb.member.vo.MemberAccountVO;
 import com.donut.prokindonutsweb.product.service.CategoryFilterService;
+import com.donut.prokindonutsweb.security.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -27,9 +25,11 @@ public class WmInventoryController {
   
   // 1) 초기 페이지 로딩
   @GetMapping
-  public void wmGetInventoryList(Model model) {
+  public void wmGetInventoryList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
+    log.info(String.valueOf(user));
     // 1. 로그인 안 되어 있으므로 더미 담당자 코드로 설정
-    String dummyMemberCode = "WM1";
+    String dummyMemberCode = user.getMemberCode();
+    log.info("WM - Fetching inventory list for member: {}", dummyMemberCode);
     
     // 2. 해당 담당자에게 할당된 창고코드 조회 + 창고명 조회
     String warehouseCode = wmInventoryService.findWarehouseCodeByMemberCode(dummyMemberCode);

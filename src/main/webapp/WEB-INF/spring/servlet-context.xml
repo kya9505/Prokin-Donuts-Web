@@ -39,6 +39,7 @@
 
     <!-- 4) 정적 리소스 -->
     <mvc:resources mapping="/resources/**" location="classpath:/static/"/>
+    <mvc:resources mapping="/favicon.ico" location="classpath:/static/images/"/>
 
     <!-- 5) Formatter, Validator 빈 -->
     <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
