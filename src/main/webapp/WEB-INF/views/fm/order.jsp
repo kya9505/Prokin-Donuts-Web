@@ -30,7 +30,7 @@
 <!-- ======== sidebar-nav start =========== -->
 <aside class="sidebar-nav-wrapper">
     <div class="navbar-logo">
-        <a href="fm-dashboard.html">
+        <a href="<c:url value='/fm/order'/>">
             <img src="<c:url value='/resources/images/logo/menu_logo.png'/>" alt="logo" />
         </a>
     </div>
