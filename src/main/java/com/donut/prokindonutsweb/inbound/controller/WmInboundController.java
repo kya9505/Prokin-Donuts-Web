@@ -90,7 +90,7 @@ public class WmInboundController {
 //    창고관리자 - 입고관리 페이지
     @GetMapping("/approval")
     public void getInboundList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
-       /* log.debug("현재 사용자 정보: {}", user.getMemberCode());
+       log.debug("현재 사용자 정보: {}", user.getMemberCode());
 
         String memberCode = user.getMemberCode();
         String warehouseCode = inboundService.getWarehouseCode(memberCode);
@@ -100,7 +100,7 @@ public class WmInboundController {
         List<InboundDTO> inboundList = inboundService.findInboundList(warehouseCode);
         List<InboundDetailDTO> inboundDetailList = inboundService.findInboundDetailList();
         model.addAttribute("inboundList", inboundList);
-        model.addAttribute("inboundDetailList", inboundDetailList);*/
+        model.addAttribute("inboundDetailList", inboundDetailList);
     }
 
     /**
