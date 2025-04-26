@@ -623,6 +623,50 @@
 
 
         // 수정 버튼 클릭 시
+        $('#btnMemberEdit_clone').on('click', function (e) {
+            const selectedData = [];
+
+            $('#datatable tbody input.row-checkbox:checked').each(function () {
+                const $tr = $(this).closest('tr');
+                const rowData = {
+                    memberCode: $tr.find('td').eq(1).text().trim(),
+                    name: $tr.find('td').eq(2).text().trim(),
+                    phoneNumber: $tr.find('td').eq(3).text().trim(),
+                    email: $tr.find('td').eq(4).text().trim(),
+                    address: $tr.find('td').eq(5).text().trim(),
+                    id: $tr.find('td').eq(6).text().trim(),
+                    password: $tr.data('password') // 🔥 여기!
+                };
+                selectedData.push(rowData);
+            });
+
+            const $tableBody = $('#memberEditModalBody');
+            $tableBody.empty();
+
+            selectedData.forEach((item, index) => {
+                const rowHtml = `
+<tr>
+    <td><select class="form-select" name="memberList[` + index + `].authorityCode">
+        <option value="QH">본사관리자</option>
+        <option value="WM">창고관리자</option>
+        <option value="FM">가맹점주</option>
+    </select></td>
+    <td><input type="text" name="memberList[` + index + `].name" class="form-control" value="` + item.name + `" /></td>
+    <td><input type="text" name="memberList[` + index + `].email" class="form-control" value="` + item.email + `" data-original-email="` + item.email + `" /></td>
+    <td><input type="text" name="memberList[` + index + `].phoneNumber" class="form-control" value="` + item.phoneNumber + `" /></td>
+    <td><input type="text" name="memberList[` + index + `].address" class="form-control" value="` + item.address + `" /></td>
+    <td><input type="text" name="memberList[` + index + `].id" class="form-control" value="` + item.id + `" readonly /></td>
+</tr>
+<input type="hidden" name="memberList[` + index + `].memberCode" value="` + item.memberCode + `" />
+<input type="hidden" name="memberList[` + index + `].password" value="` + item.password + `" />
+`;
+
+                $tableBody.append(rowHtml);
+            });
+
+            $('#memberEditModal').modal('show');
+        });
+        //수정 클릭 시 confirm
         $('#modify-bnt').on('click', async function (e) {
             e.preventDefault();
 
@@ -631,7 +675,7 @@
             const regPhone = /^[0-9]{10,11}$/;
             const contextPath = '${pageContext.request.contextPath}';
 
-            const $rows = $('#memberEditModal tbody tr');
+            const $rows = $('#memberEditModalBody tr');
             const memberList = [];
 
             for (let i = 0; i < $rows.length; i++) {
@@ -643,8 +687,9 @@
                 const phoneNumber = $tr.find('input[name$=".phoneNumber"]').val().trim();
                 const authorityCode = $tr.find('select[name$=".authorityCode"]').val();
                 const id = $tr.find('input[name$=".id"]').val().trim();
-                const memberCode = $tr.next('input[type="hidden"]').val();
-                const password = $tr.next('input[type="hidden"][name$=".password"]').val();
+                const memberCode = $tr.find('input[name$=".memberCode"]').val();   // 🔥 수정: next() 대신 find()로
+                const password = $tr.find('input[name$=".password"]').val();       // 🔥 수정: next() 대신 find()로
+                const address = $tr.find('input[name$=".address"]').val().trim();
 
                 if (!regName.test(name)) {
                     alert(name + ' 님의 이름이 올바르지 않습니다. (한글/영어 최대 10자)');
@@ -672,13 +717,13 @@
                     return;
                 }
 
-                // 검증 통과한 데이터만 리스트에 추가
+                // ✅ 검증 통과한 데이터만 리스트에 추가
                 memberList.push({
                     authorityCode,
                     name,
                     email,
                     phoneNumber,
-                    address: $tr.find('input[name$=".address"]').val().trim(),
+                    address,
                     id,
                     memberCode,
                     password
