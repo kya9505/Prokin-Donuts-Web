@@ -17,8 +17,9 @@ public class HomeController {
     // 루트("/") 요청 처리
     @GetMapping("/")
     public String redirectToLoginOrDashboard(Authentication authentication) {
+        //인증정보가 존재하고, 인증받은 상태인 경우 (로그인한 경우)
         if (authentication != null && authentication.isAuthenticated()) {
-            // 로그인한 경우 권한별로 대시보드로 이동
+            // 권한별로 대시보드로 이동
             Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
             if (authorities.stream().anyMatch(a -> a.getAuthority().equals("QH"))) {
                 return "redirect:/qh/Dashboard";
