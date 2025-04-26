@@ -329,12 +329,10 @@
     `;
             $list.append(li);
         });
-        $('#approveModal').modal('show');
-    });
 
 
     // 승인 확인 버튼 클릭 시: form에 hidden input 추가하고 전송
-    $('#confirmApproval').on('click', function (e) {
+        $('#confirmApproval').off('click').on('click', function (e) {
         const $form = $('#approvalForm');
 
         // 혹시 이전에 추가된 hidden input이 있으면 제거
@@ -346,9 +344,18 @@
             $form.append(input);
         });
 
-        $form.submit(); // form 전송
+        const result = confirm('선택하신 회원을 승인 하시겠습니까?');
+        if (result) {
+            console.log('승인');
+            $form.submit();
+        } else {
+            console.log('승인 취소');
+        }
     });
 
+        // 모달 열기
+        $('#approveModal').modal('show');
+    });
 
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
