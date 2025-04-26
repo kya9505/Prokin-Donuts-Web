@@ -5,9 +5,16 @@ import com.donut.prokindonutsweb.inbound.dto.ProductDTO;
 import com.donut.prokindonutsweb.inbound.service.InboundService;
 import com.donut.prokindonutsweb.inbound.exception.ErrorType;
 import com.donut.prokindonutsweb.inbound.exception.UserException;
+import com.donut.prokindonutsweb.order.dto.OrderDTO;
+import com.donut.prokindonutsweb.order.dto.OrderDetailDTO;
 import com.donut.prokindonutsweb.order.dto.OrderForm;
+import com.donut.prokindonutsweb.order.dto.OrderStatus;
+import com.donut.prokindonutsweb.order.service.OrderService;
+import com.donut.prokindonutsweb.security.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -25,7 +33,9 @@ import java.util.List;
 @RequestMapping("/fm")
 public class OrderController {
 
+    @Autowired
     private final InboundService inboundService;
+    @Autowired private final OrderService orderService;
 
     // 발주 요청에 필요한 제품 목록 출력
     @GetMapping("/order")
@@ -38,8 +48,10 @@ public class OrderController {
     @PostMapping("/order")
     public String addOrder(@RequestParam String orderDate, OrderForm orderForm,
                            RedirectAttributes redirectAttributes,
-                           BindingResult bindingResult) {
+                           BindingResult bindingResult, @AuthenticationPrincipal CustomUserDetails user) {
         log.info("발주요청 호출");
+        log.info(orderDate);
+        log.info(String.valueOf(orderForm));
         if(bindingResult.hasErrors()) {
             String error = bindingResult.getAllErrors().get(0).getDefaultMessage();
             redirectAttributes.addFlashAttribute("errorMessage", error);
@@ -51,19 +63,23 @@ public class OrderController {
         log.info(orderDate);
         log.info(orderForm.toString());
 
-        /*List<InboundDetailDTO> orderDetailList = orderForm.getProductList();
+        List<OrderDetailDTO> orderDetailList = orderForm.getProductList();
+        String memberCode = user.getMemberCode();
+
+        String franchiseCode = orderService.findFranchiseCode(memberCode);
 
         // 발주 요청 저장
         String orderCode = orderService.findNextOrderCode();
-        orderDTO dto = orderDTO.builder()
+
+        OrderDTO dto = OrderDTO.builder()
                 .orderCode(orderCode)
                 .orderDate(LocalDate.parse((orderDate)))
-                .orderStatus(orderStatus.REQUEST.getStatus())
+                .orderStatus(OrderStatus.REQUEST.getStatus())
                 .warehouseCode("GG1")   // 로그인 한 사용자 정보 가져와서 창고 코드 입력!
                 .build();
-        log.info(orderStatus.REQUEST.getStatus());
-        orderService.addorder(dto, orderDetailList);
-        redirectAttributes.addFlashAttribute("successMessage", "발주 요청이 완료되었습니다!");*/
+        log.info(OrderStatus.REQUEST.getStatus());
+        orderService.addOrder(dto, orderDetailList, franchiseCode);
+        redirectAttributes.addFlashAttribute("successMessage", "발주 요청이 완료되었습니다!");
 
 
         return "redirect:/fm/order";
