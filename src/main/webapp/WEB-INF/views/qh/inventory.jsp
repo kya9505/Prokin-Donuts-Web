@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -132,10 +133,10 @@
 
                                 <!-- colgroup를 통해 열 폭을 강제 지정 -->
                                 <colgroup>
-                                    <col style="width: 20%;" />
+                                    <col style="width: 15%;" />
                                     <col style="width: 15%;" />
                                     <col style="width: 10%;" />
-                                    <col style="width: 10%;" />
+                                    <col style="width: 15%;" />
                                     <col style="width: 15%;" />
                                     <col style="width: 20%;" />
                                     <col style="width: 10%;" />
@@ -162,7 +163,7 @@
                                         <td>${item.categoryMid}</td>
                                         <td>${item.categorySub}</td>
                                         <td>${item.productName}</td>
-                                        <td>${item.quantity}</td>
+                                        <td><fmt:formatNumber value="${item.quantity}" type="number" groupingUsed="true"/> 개</td>
                                     </tr>
                                 </c:forEach>
                                 </tbody>
@@ -379,7 +380,7 @@
         $('body').on('click', '#resetFilterBtn', function () {
             $('#warehouseCategory_clone').val('');
             $('#midCategory_clone').val('');
-            $('#subCategory_clone').prop('disabled', true);
+            $('#subCategory_clone').val('').prop('disabled', true);
             table.draw();
         });
 

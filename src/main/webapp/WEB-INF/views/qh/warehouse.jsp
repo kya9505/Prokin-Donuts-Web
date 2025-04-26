@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,7 +66,7 @@
                     <!-- Start card -->
 
                     <!-- 지도 API 띄울 공간 -->
-                    <div class="card-style mb-30 map-wrapper" style="height: max(600px, calc(100vh - 200px)); display: flex; flex-direction: column;">
+                    <div class="card-style mb-30 map-wrapper" style="height: max(600px, calc(100vh - 100px)); display: flex; flex-direction: column;">
                         <h6 class="mb-10" style="">창고 위치</h6>
                         <div style="flex: 1; overflow: hidden;">
                             <div id="map" style="width: 100%; height: 100%;"></div>
@@ -134,7 +135,7 @@
                                     <th>소재지</th>
                                     <th>수용한도</th>
                                     <th>담당자</th>
-                                    <th>담당자 이메일</th>
+                                    <th>이메일</th>
                                     <th>수정 | 취소</th> <!-- 수정/삭제 열 -->
                                     <th style="display: none;"></th>
                                     <th style="display: none;"></th>
@@ -153,7 +154,7 @@
                                         <td>${w.warehouseCode}</td>
                                         <td>${w.warehouseName}</td>
                                         <td>${w.address}</td>
-                                        <td>${w.capacityLimit}</td>
+                                        <td><fmt:formatNumber value="${w.capacityLimit}" type="number" groupingUsed="true"/> ㎡</td>
                                         <td>
                                             <c:choose>
                                                 <c:when test="${not empty w.memberName}">
@@ -293,7 +294,7 @@
                                     <div class="input-group">
                                         <input
                                                 type="text"
-                                                class="form-control"
+                                                class="form-control number-comma"
                                                 id="capacity"
                                                 name="capacityLimit"
                                                 placeholder="한도를 입력하세요"
@@ -455,20 +456,8 @@
 
 <!-- 다음 우편번호 API -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-<!-- 카카오맵 API -->
-
-<!-- 강조 스타일 -->
-<style>
-    .highlighted {
-        color: #FF9D32;
-        font-weight: bold;
-        background-color: #fff5eb;
-    }
-</style>
-
 <!-- Kakao Maps SDK -->
 <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2a5f2e41113ad6da9ca9746f7bcb47f6&libraries=services"></script>
-
 <script>
     document.addEventListener('DOMContentLoaded', async function() {
         var map = new kakao.maps.Map(document.getElementById('map'), {
@@ -621,6 +610,9 @@
         // 테이블 행 클릭 → 강조/이동
         rows.forEach(function(row) {
             row.addEventListener('click', function(e) {
+                // 버튼 클릭 시에는 행 클릭 무시
+                if (e.target.closest('.btn-edit') || e.target.closest('.btn-delete')) return;
+
                 e.stopPropagation();
                 highlightWarehouse(row.dataset.warehouseName);
             });
@@ -887,7 +879,7 @@
             const zonecode = $("#zonecode_disp").val().trim();
             const roadAddress = $("#roadAddress_disp").val().trim();
             const detailAddress = $("#detailAddress_disp").val().trim();
-            const capacity = $("#capacity").val().trim();
+            const capacity = $("#capacity").val().replace(/,/g, '').trim();
             const regName = /^[A-Za-z0-9가-힣]{1,10}$/;
             const regCap = /^[0-9]+$/;
             // 상세주소: 한글, 영어, 숫자, 띄어쓰기, 특수문자 허용
@@ -1103,6 +1095,7 @@
             }
             $('#warehouseDeleteForm').submit();
         });
+
     });
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>

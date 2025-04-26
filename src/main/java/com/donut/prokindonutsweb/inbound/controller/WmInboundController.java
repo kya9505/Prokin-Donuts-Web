@@ -5,6 +5,7 @@ import com.donut.prokindonutsweb.inbound.exception.ErrorType;
 import com.donut.prokindonutsweb.inbound.exception.UserException;
 import com.donut.prokindonutsweb.inbound.service.InboundService;
 import com.donut.prokindonutsweb.inbound.vo.InventoryVO;
+import com.donut.prokindonutsweb.product.service.CategoryFilterService;
 import com.donut.prokindonutsweb.security.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,8 @@ public class WmInboundController {
 
     private final InboundService inboundService;
 
+    private final CategoryFilterService categoryFilterService;
+
     /**
      * O
      * 입고 할 수 있는 제품 정보 리스트를 반환한다.
@@ -38,6 +41,9 @@ public class WmInboundController {
         log.info(String.valueOf(user));
         List<ProductDTO> productList = inboundService.findProductList()
                 .orElseThrow(() -> new UserException(ErrorType.PRODUCT_NOT_FOUND));
+        List<String> categoryMidList = categoryFilterService.findCategoryMidList();
+
+        model.addAttribute("categoryMidList", categoryMidList);
         model.addAttribute("product", productList);
     }
 

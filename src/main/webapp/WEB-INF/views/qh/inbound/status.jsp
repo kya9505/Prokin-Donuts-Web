@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -89,11 +90,11 @@
                                         <td>${detail.inboundCode}</td>
                                         <td>${detail.productCode}</td>
                                         <td>${detail.productName}</td>
-                                        <td>${detail.productPrice}</td>
+                                        <td><fmt:formatNumber value="${detail.productPrice}" type="number"/>원</td>
                                         <td>${detail.inboundDate}</td>
                                         <td>${detail.inboundStatus}</td>
                                         <td>${detail.sectionCode}</td>
-                                        <td>${detail.quantity}</td>
+                                        <td>${detail.quantity}개</td>
                                     </tr>
                                 </c:forEach>
                                 </tbody>

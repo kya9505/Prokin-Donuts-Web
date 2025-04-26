@@ -63,7 +63,7 @@
                     <!-- Start card -->
 
                     <!-- 지도 API 띄울 공간 -->
-                    <div class="card-style mb-30 map-wrapper" style="height: max(600px, calc(100vh - 200px)); display: flex; flex-direction: column;">
+                    <div class="card-style mb-30 map-wrapper" style="height: max(600px, calc(100vh - 100px)); display: flex; flex-direction: column;">
                         <h6 class="mb-10" style="">가맹점 위치</h6>
                         <div style="flex: 1; overflow: hidden;">
                             <div id="map" style="width: 100%; height: 100%;"></div>
@@ -378,132 +378,144 @@
 <!-- 카카오맵 API -->
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2a5f2e41113ad6da9ca9746f7bcb47f6&libraries=services"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-        const map = new kakao.maps.Map(document.getElementById('map'), {
-            center: new kakao.maps.LatLng(36.5, 127.5), // 대한민국 중심
-            level: 7 // 초기에는 살짝 넓게
+    document.addEventListener('DOMContentLoaded', async function() {
+        var map = new kakao.maps.Map(document.getElementById('map'), {
+            center: new kakao.maps.LatLng(36.5, 127.5),
+            level: 7
+        });
+        var geocoder = new kakao.maps.services.Geocoder();
+        var rows = Array.prototype.slice.call(document.querySelectorAll('#datatable tbody tr'));
+        var bounds = new kakao.maps.LatLngBounds();
+
+        // 화면 클릭 시 강조 해제 (단, tr 클릭 제외)
+        document.body.addEventListener('click', function(e) {
+            if (!e.target.closest('tr')) {
+                rows.forEach(function(r) { r.classList.remove('highlighted'); });
+            }
         });
 
-        // 지도 클릭 → 다음 우편번호 팝업 + 모달 열기
+        // 강조 및 지도 이동 함수
+        window.highlightFranchise = function(franchiseName) {
+            rows.forEach(function(r) { r.classList.remove('highlighted'); });
+            var match = rows.find(function(r) {
+                return r.dataset.franchiseName === franchiseName;
+            });
+            if (!match) return;
+            match.classList.add('highlighted');
+            match.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            var lat = match.dataset.lat, lng = match.dataset.lng;
+            if (lat && lng) {
+                var pos = new kakao.maps.LatLng(lat, lng);
+                map.setLevel(3);
+                setTimeout(function() { map.panTo(pos); }, 100);
+            }
+        };
+
+        // 지도 클릭 시 주소 검색 및 모달 오픈
         kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
             geocoder.coord2Address(
                 mouseEvent.latLng.getLng(),
                 mouseEvent.latLng.getLat(),
                 function(result, status) {
-                    if (status === kakao.maps.services.Status.OK) {
-                        // 1) 도로명주소 추출
-                        var roadAddr = result[0].road_address
-                            ? result[0].road_address.address_name
-                            : result[0].address.address_name;
-
-                        // 2) 다음 우편번호 팝업 호출 (검색 창에 roadAddr 가 바로 채워짐)
-                        new daum.Postcode({
-                            autoClose: true,
-                            oncomplete: function(data) {
-                                // 팝업에서 선택한 결과로 필드 채우기
-                                $('#zonecode_disp').val(data.zonecode);
-                                $('#zonecode_hidden').val(data.zonecode);
-                                $('#roadAddress_disp').val(data.roadAddress);
-                                $('#roadAddress_hidden').val(data.roadAddress);
-
-                                // 모달 열기 (주소 선택이 완료된 직후)
-                                $('#franchiseAddModal').modal('show');
-
-                                // 상세주소 입력 필드만 포커스
-                                $('#detailAddress_disp').val('').focus();
-                            }
-                        }).open({
-                            q: roadAddr
-                        });
-                    }
+                    if (status !== kakao.maps.services.Status.OK) return;
+                    var roadAddr = result[0].road_address
+                        ? result[0].road_address.address_name
+                        : result[0].address.address_name;
+                    new daum.Postcode({
+                        autoClose: true,
+                        oncomplete: function(data) {
+                            $('#zonecode_disp').val(data.zonecode);
+                            $('#zonecode_hidden').val(data.zonecode);
+                            $('#roadAddress_disp').val(data.roadAddress);
+                            $('#roadAddress_hidden').val(data.roadAddress);
+                            $('#franchiseAddModal').modal('show');
+                            $('#detailAddress_disp').val('').focus();
+                        }
+                    }).open({ q: roadAddr });
                 }
             );
         });
 
-        // 지도에 확대 축소 컨트롤을 생성한다
-        var zoomControl = new kakao.maps.ZoomControl();
+        // 각 행 → 마커 + 오버레이 + bounds 확장
+        await Promise.all(rows.map(function(row) {
+            return new Promise(function(resolve) {
+                var addr = row.dataset.franchiseAddr;
+                var name = row.dataset.franchiseName;
+                geocoder.addressSearch(addr, function(res, status) {
+                    if (status === kakao.maps.services.Status.OK) {
+                        var lat = res[0].y, lng = res[0].x;
+                        var pos = new kakao.maps.LatLng(lat, lng);
 
-        // 지도의 우측에 확대 축소 컨트롤을 추가한다
-        map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+                        // 마커
+                        var marker = new kakao.maps.Marker({
+                            map: map,
+                            position: pos,
+                            clickable: true
+                        });
 
-        const geocoder = new kakao.maps.services.Geocoder();
-        const rows = Array.from(document.querySelectorAll('#datatable tbody tr'));
-        const bounds = new kakao.maps.LatLngBounds();
+                        // 마커 클릭 → 강조 및 이동
+                        kakao.maps.event.addListener(marker, 'click', function() {
+                            rows.forEach(function(r) { r.classList.remove('highlighted'); });
+                            row.classList.add('highlighted');
+                            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            map.setLevel(3);
+                            setTimeout(function() { map.panTo(pos); }, 100);
+                        });
 
-        // 1) 주소별 마커 + 레이블 생성 + bounds 계산
-        await Promise.all(rows.map(row => new Promise(resolve => {
-            const addr = row.dataset.franchiseAddr;
-            const name = row.dataset.franchiseName;
+                        // 클릭 박스 오버레이
+                        var clickBoxHtml = ''
+                            + '<div style="width:60px;height:60px;background:transparent;position:absolute;transform:translate(-50%,-100%);cursor:pointer;z-index:10;" '
+                            + 'onclick="event.stopPropagation(); highlightFranchise(\'' + name + '\');"></div>';
 
-            geocoder.addressSearch(addr, (res, status) => {
-                if (status === kakao.maps.services.Status.OK) {
-                    const lat = res[0].y;
-                    const lng = res[0].x;
-                    const pos = new kakao.maps.LatLng(lat, lng);
+                        new kakao.maps.CustomOverlay({
+                            map: map,
+                            position: pos,
+                            content: clickBoxHtml,
+                            yAnchor: 1,
+                            clickable: true
+                        });
 
-                    // 마커 & 레이블
-                    new kakao.maps.Marker({ map, position: pos });
-                    new kakao.maps.CustomOverlay({
-                        map,
-                        position: pos,
-                        content: `<div style="
-                              display:inline-block;
-                              padding:4px 8px;
-                              font-size:12px;
-                              white-space:nowrap;
-                              text-align:center;
-                              background:rgba(255,255,255,0.9);
-                              border:1px solid rgba(0,0,0,0.2);
-                              border-radius:4px;
-                              box-shadow:0 1px 4px rgba(0,0,0,0.2);
-                              transform:translateY(-35px);
-                            ">` + name + `</div>`,
-                        yAnchor: 1
-                    });
+                        // 라벨 오버레이
+                        var labelHtml = ''
+                            + '<div style="pointer-events:none;display:inline-block;padding:4px 8px;font-size:12px;white-space:nowrap;text-align:center;background:rgba(255,255,255,0.9);border:1px solid rgba(0,0,0,0.2);border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,0.2);transform:translateY(-35px);">'
+                            + name
+                            + '</div>';
 
-                    // 다음 클릭을 위한 좌표 저장
-                    row.dataset.lat = lat;
-                    row.dataset.lng = lng;
+                        new kakao.maps.CustomOverlay({
+                            map: map,
+                            position: pos,
+                            content: labelHtml,
+                            yAnchor: 1,
+                            clickable: false
+                        });
 
-                    bounds.extend(pos);
-                }
-                resolve();
+                        // 좌표 저장 및 bounds 확장
+                        row.dataset.lat = lat;
+                        row.dataset.lng = lng;
+                        bounds.extend(pos);
+                    }
+                    resolve();
+                });
             });
-        })));
+        }));
 
-        // 2) 초기 지도: 전체 마커가 보이게 축소/이동
+        // 초기 마커 전체 보기
         map.setBounds(bounds);
 
-        // 3) 클릭 시 확대 후 이동 (순서 매우 중요)
-        rows.forEach(row => {
-            row.addEventListener('click', () => {
-                const lat = row.dataset.lat;
-                const lng = row.dataset.lng;
+        // 행 클릭 시 → 강조 + 이동 (단, 버튼 클릭 제외)
+        rows.forEach(function(row) {
+            row.addEventListener('click', function(e) {
+                // ✅ 수정/삭제 버튼 클릭 시 무시
+                if (e.target.closest('.btn-edit') || e.target.closest('.btn-delete')) return;
 
-                if (lat && lng) {
-                    const pos = new kakao.maps.LatLng(lat, lng);
-
-                    map.setLevel(3); // 먼저 확대
-                    setTimeout(() => {
-                        map.setCenter(pos); // 그다음 이동
-                    }, 100);
-                } else {
-                    // 비상: geocoding이 아직 안 된 경우
-                    geocoder.addressSearch(row.dataset.franchiseAddr, (res, st) => {
-                        if (st === kakao.maps.services.Status.OK) {
-                            const pos = new kakao.maps.LatLng(res[0].y, res[0].x);
-                            map.setLevel(3);
-                            setTimeout(() => {
-                                map.setCenter(pos);
-                            }, 100);
-
-                            row.dataset.lat = res[0].y;
-                            row.dataset.lng = res[0].x;
-                        }
-                    });
-                }
+                e.stopPropagation();
+                highlightFranchise(row.dataset.franchiseName);
             });
         });
+
+        // 지도 확대/축소 컨트롤
+        var zoomControl = new kakao.maps.ZoomControl();
+        map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
     });
 </script>
 

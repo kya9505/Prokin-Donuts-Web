@@ -511,11 +511,16 @@
                 $tbody.append('<tr><td colspan="5">데이터가 없습니다.</td></tr>');
             } else {
                 filteredDetails.forEach(detail => {
+
+                    console.log(typeof detail.productPrice);  // "number" 여야 함
+
+                    const priceFormatted = Number(detail.productPrice).toLocaleString() + '원';
+
                     const row = `
                 <tr>
                  <td>` + detail.productCode + `</td>
                  <td>` + detail.productName + `</td>
-                 <td>` + detail.productPrice + `</td>
+                 <td>` + priceFormatted + `</td>
                  <td>` + detail.storedType + `</td>
                  <td>` + detail.quantity + `</td>
                 </tr>

@@ -6,7 +6,9 @@
 
 <!--    입고를 요청할 때 필요한 제품 리스트를 반환한다-->
     <select id="selectAllProductList" resultType="com.donut.prokindonutsweb.inbound.vo.ProductVO">
-        select productCode, productName, productPrice, storedType from product
+        select c.categoryMid, c.categorySub, p.productCode, p.productName, p.productPrice, p.storedType
+        from product p, category c
+        where p.categoryCode = c.categoryCode;
     </select>
 
 <!--    입고 정보를 저장한다. -->
