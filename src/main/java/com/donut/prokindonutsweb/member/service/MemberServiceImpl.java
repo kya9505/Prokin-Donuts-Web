@@ -71,9 +71,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void updateByMember(MemberAccountDTO dto){
-        MemberAccountVO memberAccountVO = modelMapper.map(dto,MemberAccountVO.class);
-        memberMapper.updateMember(memberAccountVO);
+    public void updateByMember(String userid ,MemberAccountDTO dto){
+        MemberAccountVO updateMember = modelMapper.map(dto,MemberAccountVO.class);
+        MemberAccountVO uservo = findMapper.searchId(userid);
+        updateMember.setMemberCode(uservo.getMemberCode());
+        updateMember.setAuthorityCode(uservo.getAuthorityCode());
+        memberMapper.updateMember(updateMember);
     }
 
     @Override
