@@ -41,6 +41,11 @@
         <!-- 3) 그 외 모든 요청은 인증 필요 -->
         <intercept-url pattern="/**" access="isAuthenticated()"/>
 
+        <!--remember-me-->
+        <remember-me
+                token-validity-seconds="1209600"
+                key="mySecretKey"
+                user-service-ref="userDetailsServiceImpl" />
         <!-- form-login 설정 -->
         <form-login
                 login-page="/home/login"
