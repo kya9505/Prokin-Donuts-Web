@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ProductDTO {
+    private String categoryMid;
+    private String categorySub;
     private String productCode;
     private String productName;
     private Integer productPrice;
