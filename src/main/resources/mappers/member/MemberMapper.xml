@@ -26,6 +26,17 @@
             where memberCode = #{memberCode}
     </update>
 
+    <update id="updateMemberById" >
+        update memberaccount
+        set authorityCode = #{authorityCode},
+            name = #{name},
+            phoneNumber = #{phoneNumber},
+            email = #{email},
+            address = #{address},
+            id = #{id},
+            password = #{password}
+        where memberCode = #{id}
+    </update>
 
     <delete id="deleteMember" parameterType="list">
         delete from memberaccount

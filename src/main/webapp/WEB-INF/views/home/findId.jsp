@@ -260,10 +260,24 @@
                 const id = await res.text();
 
                 if (id && id !== "false") {
-                    alert("찾으시는 아이디 : " + id);
+                    // 1. 복사
+                    try {
+                        await navigator.clipboard.writeText(id);
+                        alert("찾으신 아이디가 클립보드에 복사되었습니다 \n" + id);
+                    } catch (e) {
+                        console.error('복사 실패', e);
+                        alert("아이디: " + id + "\n(※ 복사는 실패했습니다. 직접 복사해주세요.)");
+                    }
+
+                    // 2. 이동 확인
+                    const confirmed = confirm("로그인 페이지로 이동하시겠습니까?");
+                    if (confirmed) {
+                        window.location.href = "${pageContext.request.contextPath}/home/login";
+                    }
                 } else {
                     alert("유효한 인증번호가 아닙니다. 다시 입력해주세요. \n (발급받은 인증번호는 10분동안만 유효합니다.)");
                 }
+
             } catch (error) {
                 alert("서버 요청 중 오류가 발생했습니다.");
             }

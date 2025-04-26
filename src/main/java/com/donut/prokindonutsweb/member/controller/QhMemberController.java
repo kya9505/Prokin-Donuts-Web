@@ -7,6 +7,7 @@ import com.donut.prokindonutsweb.member.service.MemberRequestService;
 import com.donut.prokindonutsweb.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -64,18 +65,20 @@ public class QhMemberController {
 
 
     @PostMapping("/update")
-    public String qhUpdateMembers(@Valid @ModelAttribute("memberList")  MemberListForm memberlist,
-                                  BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-            if (bindingResult.hasErrors()) {
-                String errorMessage = bindingResult.getAllErrors().get(0).getDefaultMessage();
-                redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
-                redirectAttributes.addFlashAttribute("memberList", memberlist.getMemberList());
-                return "redirect:list";
-            }
+    @ResponseBody
+    public ResponseEntity<String> qhUpdateMembers(@RequestBody MemberListForm memberListForm) {
 
-            memberService.updateMember(memberlist.getMemberList());
-        return "redirect:list";
+        List<MemberAccountDTO> memberList = memberListForm.getMemberList();
+
+        if (memberList == null || memberList.isEmpty()) {
+            return ResponseEntity.badRequest().body("수정할 데이터가 없습니다.");
+        }
+
+        memberService.updateMember(memberList);
+
+        return ResponseEntity.ok("수정 완료");
     }
+
 
     @PostMapping("/delete")
     public String qhDeleteMembers( MemberCodeListForm memberCode) {

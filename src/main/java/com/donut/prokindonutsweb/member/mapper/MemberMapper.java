@@ -10,6 +10,7 @@ public interface MemberMapper{
     List<MemberAccountVO> selectMember();
     void insertMember(MemberAccountVO memberVO);
     void updateMember(MemberAccountVO memberVO);
+    void updateMemberById(MemberAccountVO memberVO);
     void deleteMember(@Param("list") List<String> memberList);
     String memberCode();
     int memberIdCheck(String id);
