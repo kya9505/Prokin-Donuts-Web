@@ -122,6 +122,7 @@
                                         <div class="mb-30 text-end">
                                             <p class="mb-0">
                                                 <a href="<c:url value='/home/findId'/>" class="hover-underline">아이디 찾기</a>
+                                                <a>|</a>
                                                 <a href="<c:url value='/home/findPassword'/>" class="hover-underline">비밀번호 찾기</a>
                                             </p>
                                         </div>
