@@ -89,7 +89,6 @@
                                     <th>이메일</th>
                                     <th>주소</th>
                                     <th>아이디</th>
-                                    <th>비밀번호</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -102,7 +101,6 @@
                                         <td>${member.email}</td>
                                         <td>${member.address}</td>
                                         <td>${member.id}</td>
-                                        <td>${member.password}</td>
                                     </tr>
 
                                 </c:forEach>
@@ -275,7 +273,6 @@
                             <th>전화번호</th>
                             <th>주소</th>
                             <th>아이디</th>
-                            <th>비밀번호</th>
                         </tr>
                         </thead>
                         <tbody id="memberEditModalBody">
@@ -293,8 +290,7 @@
                                     <td><input type="text" name="memberList[${status.index}].email" class="form-control" value="${item.email}" /></td>
                                     <td><input type="text" name="memberList[${status.index}].phoneNumber" class="form-control" value="${item.phoneNumber}" /></td>
                                     <td><input type="text" name="memberList[${status.index}].address" class="form-control" value="${item.address}" /></td>
-                                    <td><input type="text" name="memberList[${status.index}].id" class="form-control" value="${item.id}" /></td>
-                                    <td><input type="text" name="memberList[${status.index}].password" class="form-control" value="${item.password}" /></td>
+                                    <td><input type="text" name="memberList[${status.index}].id" class="form-control" value="${item.id} " readonly/></td>
                                 </tr>
                                 <input type="hidden" name="memberList[${status.index}].memberCode" value="${item.memberCode}" />
                             </c:forEach>
@@ -327,7 +323,7 @@
                             <form id="memberDeleteForm" method="post" action="/qh/member/delete" accept-charset="UTF-8">
                             <h5>선택한 회원을 정말 삭제하시겠습니까?</h5><br>
                             <ul id="deleteMemberList" class="list-group mb-3 ">
-                                <!-- 선택된 회원 목록 삽입 -->
+                                <!--선택된 회원 목록 삽입 -->
                             </ul>
                             <div class="d-flex justify-content-end gap-2">
                                 <button type="button" class="main-btn primary-btn btn-hover text-center" id="confirmDelete">삭제</button>
@@ -346,7 +342,7 @@
     </section>
     <!-- ========== section end ========== -->
 
-    <!-- ========== footer start =========== -->
+    <!-- ==========footer start =========== -->
     <footer class="footer">
         <div class="container-fluid">
             <div class="row">
@@ -389,7 +385,7 @@
             { width: '95px', targets: -1 },  // Actions 열 너비
 
             {targets: 0, orderable: false, searchable: false}, // 체크박스 컬럼
-            {targets: [1, 2, 3, 4,5, 6, 7], className: 'text-center'}
+            {targets: [1, 2, 3, 4,5, 6], className: 'text-center'}
 
         ],
         order: [[1, 'asc']],
@@ -640,8 +636,7 @@
                 phoneNumber: $tr.find('td').eq(3).text().trim(),
                 email: $tr.find('td').eq(4).text().trim(),
                 address: $tr.find('td').eq(5).text().trim(),
-                id: $tr.find('td').eq(6).text().trim(),
-                password: $tr.find('td').eq(7).text().trim()
+                id: $tr.find('td').eq(6).text().trim()
             };
             selectedData.push(rowData);
         });
@@ -668,8 +663,7 @@
         <td><input type="text" name="memberList[` + index + `].phoneNumber" class="form-control" value="` + item.phoneNumber + `" /></td>
         <td><input type="text" name="memberList[` + index + `].address" class="form-control" value="` + item.address + `" /></td>
         <td><input type="text" name="memberList[` + index + `].id" class="form-control" value="` + item.id + `" /></td>
-        <td><input type="text" name="memberList[` + index + `].password" class="form-control" value="` + item.password + `" /></td>
-    </tr>
+        </tr>
         <input type="hidden" name="memberList[` + index + `].memberCode" value="` + item.memberCode + `" />
 
     `;
@@ -680,19 +674,78 @@
     });
 
         //수정 클릭 시 confirm
-        $('#modify-bnt').on('click', function (e) {
+        $('#modify-bnt').on('click', async function(e) {
             e.preventDefault();
-            const result = confirm('입력하신 정보로 수정 하시겠습니까? ');
 
-            if (result) {
-                console.log('수정');
-                $("#memberEditForm").submit();
-            } else {
-                console.log('수정 취소');
+            const regName  = /^[A-Za-z가-힣]{1,10}$/;
+            const regEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const regPhone = /^[0-9]{10,11}$/;
+            const contextPath = '${pageContext.request.contextPath}';
+
+            // 1) 각 행 순회하면서 유효성·중복 검사
+            const $rows = $('#memberEditModal tbody tr');
+            for (let i = 0; i < $rows.length; i++) {
+                const $tr = $($rows[i]);
+                const name        = $tr.find('input[name$=".name"]').val().trim();
+                const email       = $tr.find('input[name$=".email"]').val().trim();
+                const phoneNumber = $tr.find('input[name$=".phoneNumber"]').val().trim();
+
+                if (!regName.test(name)) {
+                    alert(name + ' 님의 이름이 올바르지 않습니다. (한글/영어 최대 10자)');
+                    return;
+                }
+                if (!regEmail.test(email)) {
+                    alert(name + ' 님의 이메일 형식이 올바르지 않습니다.');
+                    return;
+                }
+                // 이메일 중복 체크
+                try {
+                    const res = await fetch(`${contextPath}/qh/member/emailCheck?email=` + encodeURIComponent(email));
+                    const text = await res.text();
+                    if (text === 'true') {
+                        alert(name + ' 님의 이메일은 이미 사용 중입니다.');
+                        return;
+                    }
+                } catch (err) {
+                    alert('이메일 중복 확인 중 오류가 발생했습니다.');
+                    return;
+                }
+                if (phoneNumber && !regPhone.test(phoneNumber)) {
+                    alert(name + ' 님의 전화번호 형식이 올바르지 않습니다. (10~11자리 숫자)');
+                    return;
+                }
+            }
+
+            // 2) 최종 확인
+            if (!confirm('입력하신 정보로 수정하시겠습니까?')) return;
+
+            // 3) FormData → URLSearchParams 변환
+            const formElem = document.getElementById('memberEditForm');
+            const formData = new FormData(formElem);
+            const body     = new URLSearchParams(formData);
+
+            // 4) fetch 비동기 전송
+            try {
+                const res = await fetch(contextPath + `/qh/member/update`, {
+                    method: 'POST',
+                    body
+                });
+                if (res.ok) {
+                    alert('수정 완료되었습니다.');
+                    // 모달 닫고, 테이블 리로드 혹은 갱신
+                    $('#memberEditModal').modal('hide');
+                    location.reload();
+                } else {
+                    alert('수정 중 오류가 발생했습니다.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('서버와 연결에 실패했습니다.');
             }
         });
 
-    //valid시 에러시 모달 원복
+
+        //valid시 에러시 모달 원복
     window.addEventListener('DOMContentLoaded', function () {
         <c:if test="${not empty errorMessage}">
         alert('${fn:replace(fn:escapeXml(errorMessage), "'", "\\'")}');
