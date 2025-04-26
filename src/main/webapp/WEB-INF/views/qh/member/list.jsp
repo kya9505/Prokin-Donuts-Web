@@ -744,32 +744,31 @@
             $list.append(li);
         });
 
-        // 모달 열기
-        $('#memberDeleteModal').modal('show');
-    });
-
-    // 삭제 확인 버튼 클릭 시: form에 hidden input 추가하고 전송
-    $('#confirmDelete').on('click', function (e) {
-        const $form = $('#memberDeleteForm');
+            $('#confirmDelete').off('click').on('click', function (e) {
+                const $form = $('#memberDeleteForm');
 
         // 혹시 이전에 추가된 hidden input이 있으면 제거
         $form.find('input[name="memberCodeList"]').remove();
 
-        // <ul> 안의 badge에서 memberCode 꺼내서 hidden input 추가
-        $('#deleteMemberList .badge').each(function () {
-            const memberCode = $(this).text().trim();
-            const input = `<input type="hidden" name="memberCodeList" value="` + memberCode + `" />`;
-            $form.append(input);
+                // 🔥 새로운 hidden input 추가
+                selectedData.forEach((item) => {
+                    $form.append(`
+                <input type="hidden" name="memberCodeList" value="`+item.memberCode+`">
+            `);
+                });
 
-            const result = confirm('선택하신 회원을 삭제 하시겠습니까? ');
-            if (result) {
-                console.log('삭제');
-                $form.submit();
-            } else {
-                console.log('삭제 취소');
-            }
-        });// form 전송
-    });
+                const result = confirm('선택하신 회원을 삭제 하시겠습니까?');
+                if (result) {
+                    console.log('삭제');
+                    $form.submit();
+                } else {
+                    console.log('삭제 취소');
+                }
+            });
+
+            // 모달 열기
+            $('#memberDeleteModal').modal('show');
+        });
 
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
