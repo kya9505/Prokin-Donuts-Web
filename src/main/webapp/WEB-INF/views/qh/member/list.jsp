@@ -289,7 +289,7 @@
                                     <td><input type="text" name="memberList[${status.index}].email" class="form-control" value="${item.email}" /></td>
                                     <td><input type="text" name="memberList[${status.index}].phoneNumber" class="form-control" value="${item.phoneNumber}" /></td>
                                     <td><input type="text" name="memberList[${status.index}].address" class="form-control" value="${item.address}" /></td>
-                                    <td><input type="text" name="memberList[${status.index}].id" class="form-control" value="${item.id} " readonly/></td>
+                                    <td><input type="text" name="memberList[${status.index}].id" class="form-control" value="${item.id} " /></td>
                                 </tr>
                                 <input type="hidden" name="memberList[${status.index}].memberCode" value="${item.memberCode}" />
                             </c:forEach>
@@ -657,8 +657,8 @@
     <td><input type="text" name="memberList[` + index + `].email" class="form-control" value="` + item.email + `" data-original-email="` + item.email + `" /></td>
     <td><input type="text" name="memberList[` + index + `].phoneNumber" class="form-control" value="` + item.phoneNumber + `" /></td>
     <td><input type="text" name="memberList[` + index + `].address" class="form-control" value="` + item.address + `" /></td>
+    <td><input type="text" name="memberList[` + index + `].id" class="form-control" value="` + item.id + `" /></td>
     <td>
-        <input type="text" name="memberList[` + index + `].id" class="form-control" value="` + item.id + `" readonly />
         <input type="hidden" name="memberList[` + index + `].memberCode" value="` + item.memberCode + `" />
         <input type="hidden" name="memberList[` + index + `].password" value="` + item.password + `" />
     </td>
