@@ -635,7 +635,7 @@
                     email: $tr.find('td').eq(4).text().trim(),
                     address: $tr.find('td').eq(5).text().trim(),
                     id: $tr.find('td').eq(6).text().trim(),
-                    password: $tr.data('password') // 🔥 여기!
+                    password: $tr.data('password') // 여기!
                 };
                 selectedData.push(rowData);
             });
@@ -646,21 +646,24 @@
             selectedData.forEach((item, index) => {
                 const rowHtml = `
 <tr>
-    <td><select class="form-select" name="memberList[` + index + `].authorityCode">
-        <option value="QH">본사관리자</option>
-        <option value="WM">창고관리자</option>
-        <option value="FM">가맹점주</option>
-    </select></td>
+    <td>
+        <select class="form-select" name="memberList[` + index + `].authorityCode">
+            <option value="QH">본사관리자</option>
+            <option value="WM">창고관리자</option>
+            <option value="FM">가맹점주</option>
+        </select>
+    </td>
     <td><input type="text" name="memberList[` + index + `].name" class="form-control" value="` + item.name + `" /></td>
     <td><input type="text" name="memberList[` + index + `].email" class="form-control" value="` + item.email + `" data-original-email="` + item.email + `" /></td>
     <td><input type="text" name="memberList[` + index + `].phoneNumber" class="form-control" value="` + item.phoneNumber + `" /></td>
     <td><input type="text" name="memberList[` + index + `].address" class="form-control" value="` + item.address + `" /></td>
-    <td><input type="text" name="memberList[` + index + `].id" class="form-control" value="` + item.id + `" readonly /></td>
+    <td>
+        <input type="text" name="memberList[` + index + `].id" class="form-control" value="` + item.id + `" readonly />
+        <input type="hidden" name="memberList[` + index + `].memberCode" value="` + item.memberCode + `" />
+        <input type="hidden" name="memberList[` + index + `].password" value="` + item.password + `" />
+    </td>
 </tr>
-<input type="hidden" name="memberList[` + index + `].memberCode" value="` + item.memberCode + `" />
-<input type="hidden" name="memberList[` + index + `].password" value="` + item.password + `" />
-`;
-
+        `;
                 $tableBody.append(rowHtml);
             });
 
@@ -687,8 +690,8 @@
                 const phoneNumber = $tr.find('input[name$=".phoneNumber"]').val().trim();
                 const authorityCode = $tr.find('select[name$=".authorityCode"]').val();
                 const id = $tr.find('input[name$=".id"]').val().trim();
-                const memberCode = $tr.find('input[name$=".memberCode"]').val();   // 🔥 수정: next() 대신 find()로
-                const password = $tr.find('input[name$=".password"]').val();       // 🔥 수정: next() 대신 find()로
+                const memberCode = $tr.find('input[name$=".memberCode"]').val();
+                const password = $tr.find('input[name$=".password"]').val();
                 const address = $tr.find('input[name$=".address"]').val().trim();
 
                 if (!regName.test(name)) {
@@ -717,7 +720,6 @@
                     return;
                 }
 
-                // ✅ 검증 통과한 데이터만 리스트에 추가
                 memberList.push({
                     authorityCode,
                     name,
@@ -730,16 +732,15 @@
                 });
             }
 
-            // 최종 확인
             if (!confirm('입력하신 정보로 수정하시겠습니까?')) return;
 
             try {
                 const res = await fetch(contextPath + '/qh/member/update', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'  // JSON 보내겠다고 명시
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ memberList: memberList })  // JSON 배열로 보내기
+                    body: JSON.stringify({ memberList: memberList })
                 });
 
                 if (res.ok) {
