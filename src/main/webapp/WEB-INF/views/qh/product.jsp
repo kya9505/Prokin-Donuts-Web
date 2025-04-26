@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -250,7 +251,7 @@
                                         <td>${item.categorySub}</td>
                                         <td>${item.storedType}</td>
                                         <td>${item.productName}</td>
-                                        <td>${item.productPrice}</td>
+                                        <td><fmt:formatNumber value="${item.productPrice}" type="number" groupingUsed="true"/> 원</td>
                                     </tr>
                                 </c:forEach>
                                 </tbody>
@@ -514,20 +515,20 @@
                         <tr>
                             <th style="width: 20px;">#</th>
                             <th>제품코드</th>
-                            <th>중분류*</th>
-                            <th>소분류*</th>
-                            <th>제품명*
+                            <th>중분류 (*)</th>
+                            <th>소분류 (*)</th>
+                            <th>제품명 (*)
                                 <i
                                         class="mdi mdi-help-circle text-primary wide-tooltip tooltip-inner"
                                         data-bs-toggle="tooltip"
                                         data-bs-placement="right"
                                         data-bs-html="true"
-                                        title="냉동 보관 제품의 경우,<br>제품명 앞에 보관타입을 명시해 주세요.<br>예: 냉동초코프로틴도넛"
+                                        title="냉동 보관 제품의 경우,<br>제품명 앞에 보관타입을<br>명시해 주세요.<br>예: 냉동초코프로틴도넛"
                                         style="cursor: pointer; margin-left: 5px;">
                                 </i>
                             </th>
-                            <th>제공단가*</th>
-                            <th>보관타입*</th>
+                            <th>제공단가 (*)</th>
+                            <th>보관타입 (*)</th>
                             <th>중복확인</th>
                         </tr>
                         </thead>
@@ -1396,8 +1397,9 @@
                 '<td><input type="text" class="form-control form-control-sm required-field name-input" ' +
                 'name="productList[' + index + '].productName" maxlength="10" value="' + (rowData.productName || '') + '"></td>' +
 
-                '<td><input type="text" class="form-control form-control-sm required-field price-input" ' +
-                'name="productList[' + index + '].productPrice" value="' + (rowData.productPrice || '') + '"></td>' +
+                '<td><div class="input-group"><input type="text" class="form-control form-control-sm required-field price-input" ' +
+                'name="productList[' + index + '].productPrice" value="' + (rowData.productPrice || '') + '"><span class="input-group-text form-control-sm px-2 py-0"' +
+                ' style="height: 30px; line-height: 1.2; font-size: 0.875rem; display: flex; align-items: center;">원</span></div></td>' +
 
                 '<td><select class="form-select form-select-sm required-field stored-select" name="productList[' + index + '].storedType">' +
                 '<option value="">선택</option>' +

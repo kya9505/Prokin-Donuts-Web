@@ -1,5 +1,3 @@
-\
-
 <aside class="sidebar-nav-wrapper">
     <div class="navbar-logo">
         <a href="<c:url value='/wm/Dashboard'/>">
