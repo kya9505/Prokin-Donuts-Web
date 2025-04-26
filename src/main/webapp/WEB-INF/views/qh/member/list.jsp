@@ -93,7 +93,7 @@
                                 </thead>
                                 <tbody>
                                 <c:forEach var="member" items="${qhMemberList}">
-                                    <tr>
+                                    <tr data-password="${member.password}">
                                         <td><input type="checkbox" class="row-checkbox" /></td>
                                         <td>${member.memberCode}</td>
                                         <td>${member.name}</td>
@@ -102,7 +102,6 @@
                                         <td>${member.address}</td>
                                         <td>${member.id}</td>
                                     </tr>
-
                                 </c:forEach>
                                 </tbody>
                             </table>
@@ -624,57 +623,52 @@
 
 
         // 수정 버튼 클릭 시
-    $('#btnMemberEdit_clone').on('click', function (e) {
-        const selectedData = [];
+        $('#btnMemberEdit_clone').on('click', function (e) {
+            const selectedData = [];
 
-        // 체크된 행들의 데이터 수집
-        $('#datatable tbody input.row-checkbox:checked').each(function () {
-            const $tr = $(this).closest('tr');
-            const rowData = {
-                memberCode: $tr.find('td').eq(1).text().trim(),
-                name: $tr.find('td').eq(2).text().trim(),
-                phoneNumber: $tr.find('td').eq(3).text().trim(),
-                email: $tr.find('td').eq(4).text().trim(),
-                address: $tr.find('td').eq(5).text().trim(),
-                id: $tr.find('td').eq(6).text().trim()
-            };
-            selectedData.push(rowData);
+            $('#datatable tbody input.row-checkbox:checked').each(function () {
+                const $tr = $(this).closest('tr');
+                const rowData = {
+                    memberCode: $tr.find('td').eq(1).text().trim(),
+                    name: $tr.find('td').eq(2).text().trim(),
+                    phoneNumber: $tr.find('td').eq(3).text().trim(),
+                    email: $tr.find('td').eq(4).text().trim(),
+                    address: $tr.find('td').eq(5).text().trim(),
+                    id: $tr.find('td').eq(6).text().trim(),
+                    password: $tr.data('password') // 🔥 여기!
+                };
+                selectedData.push(rowData);
+            });
+
+            const $tableBody = $('#memberEditModal tbody');
+            $tableBody.empty();
+
+            selectedData.forEach((item, index) => {
+                const rowHtml = `
+<tr>
+    <td><select class="form-select" name="memberList[` + index + `].authorityCode">
+        <option value="QH">본사관리자</option>
+        <option value="WM">창고관리자</option>
+        <option value="FM">가맹점주</option>
+    </select></td>
+    <td><input type="text" name="memberList[` + index + `].name" class="form-control" value="` + item.name + `" /></td>
+    <td><input type="text" name="memberList[` + index + `].email" class="form-control" value="` + item.email + `" data-original-email="` + item.email + `" /></td>
+    <td><input type="text" name="memberList[` + index + `].phoneNumber" class="form-control" value="` + item.phoneNumber + `" /></td>
+    <td><input type="text" name="memberList[` + index + `].address" class="form-control" value="` + item.address + `" /></td>
+    <td><input type="text" name="memberList[` + index + `].id" class="form-control" value="` + item.id + `" readonly /></td>
+</tr>
+<input type="hidden" name="memberList[` + index + `].memberCode" value="` + item.memberCode + `" />
+<input type="hidden" name="memberList[` + index + `].password" value="` + item.password + `" />
+`;
+
+                $tableBody.append(rowHtml);
+            });
+
+            $('#memberEditModal').modal('show');
         });
-
-
-        if (selectedData.length == 0) {
-            alert('수정할 항목을 선택하세요.');
-            return;
-        }
-
-        const $tableBody = $('#memberEditModal tbody');
-        $tableBody.empty();
-
-        selectedData.forEach((item, index) => {
-            const rowHtml = `
-    <tr>
-         <td><select class="form-select"  name="memberList[` + index + `].authorityCode">
-              <option value="QH">본사관리자</option>
-              <option value="WM">창고관리자</option>
-              <option value="FM">가맹점주</option>
-            </select></td>
-        <td><input type="text" name="memberList[` + index + `].name" class="form-control" value="` + item.name + `" /></td>
-        <td><input type="text" name="memberList[` + index + `].email" class="form-control" value="` + item.email + `" /></td>
-        <td><input type="text" name="memberList[` + index + `].phoneNumber" class="form-control" value="` + item.phoneNumber + `" /></td>
-        <td><input type="text" name="memberList[` + index + `].address" class="form-control" value="` + item.address + `" /></td>
-        <td><input type="text" name="memberList[` + index + `].id" class="form-control" value="` + item.id + `" /></td>
-        </tr>
-        <input type="hidden" name="memberList[` + index + `].memberCode" value="` + item.memberCode + `" />
-
-    `;
-            $tableBody.append(rowHtml);
-        });
-
-        $('#memberEditModal').modal('show');
-    });
 
         //수정 클릭 시 confirm
-        $('#modify-bnt').on('click', async function(e) {
+        $('#modify-bnt').on('click', async function (e) {
             e.preventDefault();
 
             const regName  = /^[A-Za-z가-힣]{1,10}$/;
@@ -682,12 +676,13 @@
             const regPhone = /^[0-9]{10,11}$/;
             const contextPath = '${pageContext.request.contextPath}';
 
-            // 1) 각 행 순회하면서 유효성·중복 검사
             const $rows = $('#memberEditModal tbody tr');
             for (let i = 0; i < $rows.length; i++) {
                 const $tr = $($rows[i]);
-                const name        = $tr.find('input[name$=".name"]').val().trim();
-                const email       = $tr.find('input[name$=".email"]').val().trim();
+                const name = $tr.find('input[name$=".name"]').val().trim();
+                const emailInput = $tr.find('input[name$=".email"]');
+                const email = emailInput.val().trim();
+                const originalEmail = emailInput.attr('data-original-email');
                 const phoneNumber = $tr.find('input[name$=".phoneNumber"]').val().trim();
 
                 if (!regName.test(name)) {
@@ -698,17 +693,18 @@
                     alert(name + ' 님의 이메일 형식이 올바르지 않습니다.');
                     return;
                 }
-                // 이메일 중복 체크
-                try {
-                    const res = await fetch(`${contextPath}/qh/member/emailCheck?email=` + encodeURIComponent(email));
-                    const text = await res.text();
-                    if (text === 'true') {
-                        alert(name + ' 님의 이메일은 이미 사용 중입니다.');
+                if (email !== originalEmail) { // 이메일이 수정된 경우만 체크
+                    try {
+                        const res = await fetch(contextPath + '/qh/member/emailCheck?email=' + encodeURIComponent(email));
+                        const text = await res.text();
+                        if (text === 'true') {
+                            alert(name + ' 님의 이메일은 이미 사용 중입니다.');
+                            return;
+                        }
+                    } catch (err) {
+                        alert('이메일 중복 확인 중 오류가 발생했습니다.');
                         return;
                     }
-                } catch (err) {
-                    alert('이메일 중복 확인 중 오류가 발생했습니다.');
-                    return;
                 }
                 if (phoneNumber && !regPhone.test(phoneNumber)) {
                     alert(name + ' 님의 전화번호 형식이 올바르지 않습니다. (10~11자리 숫자)');
@@ -722,11 +718,10 @@
             // 3) FormData → URLSearchParams 변환
             const formElem = document.getElementById('memberEditForm');
             const formData = new FormData(formElem);
-            const body     = new URLSearchParams(formData);
+            const body = new URLSearchParams(formData);
 
-            // 4) fetch 비동기 전송
             try {
-                const res = await fetch(contextPath + `/qh/member/update`, {
+                const res = await fetch(contextPath + '/qh/member/update', {
                     method: 'POST',
                     body
                 });
@@ -743,8 +738,6 @@
                 alert('서버와 연결에 실패했습니다.');
             }
         });
-
-
         //valid시 에러시 모달 원복
     window.addEventListener('DOMContentLoaded', function () {
         <c:if test="${not empty errorMessage}">
