@@ -354,7 +354,7 @@
         // 6. 필터 초기화 버튼
         $('body').on('click', '#resetFilterBtn', function () {
             $('#midCategory_clone').val('');
-            $('#subCategory_clone').prop('disabled', true);
+            $('#subCategory_clone').val('').prop('disabled', true);
             table.draw();
         });
 

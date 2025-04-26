@@ -380,7 +380,7 @@
         $('body').on('click', '#resetFilterBtn', function () {
             $('#warehouseCategory_clone').val('');
             $('#midCategory_clone').val('');
-            $('#subCategory_clone').prop('disabled', true);
+            $('#subCategory_clone').val('').prop('disabled', true);
             table.draw();
         });
 
