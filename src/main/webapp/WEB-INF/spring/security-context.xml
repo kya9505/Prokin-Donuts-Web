@@ -19,7 +19,7 @@
         <csrf disabled="true"/>
 
         <!-- 1) 로그인 폼·처리 URL 공개 -->
-        <intercept-url pattern="/home/login"        access="isAnonymous()"/>
+        <intercept-url pattern="/home/login"        access="permitAll"/>
         <intercept-url pattern="/home/login?error"  access="permitAll"/>
 
         <!-- 2) 나머지 공개 경로 -->

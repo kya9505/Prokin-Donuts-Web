@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.donut.prokindonutsweb.dashboard.mapper">
+
+    <!--미승인 회원가입 -->
+    <select id="NewRequestCount" resultType="int">
+        select count(*) from memberrequest where request = '승인대기'
+    </select>
+
+    <!--미승인 입고요청-->
+    <select id="NewInboundCount" resultType="int">
+        select count(*) from inbound where inboundStatus = '승인대기'
+    </select>
+</mapper>
