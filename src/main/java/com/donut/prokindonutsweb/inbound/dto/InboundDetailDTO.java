@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull;
 @Builder
 @ToString
 public class InboundDetailDTO {
-    @NotNull
     private String inboundCode;
     private String productCode;
     private String productName;
