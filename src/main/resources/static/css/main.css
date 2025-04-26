@@ -6279,3 +6279,9 @@ height: auto !important;
   border: none !important;
   box-shadow: none !important;
 }
+
+.highlighted {
+  color: #FF9D32;
+  font-weight: bold;
+  background-color: #fff5eb;
+}
