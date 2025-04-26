@@ -45,6 +45,11 @@ public class MemberServiceImpl implements MemberService {
                 .map(member -> modelMapper.map(member,MemberAccountVO.class)).toList();
         for (MemberAccountVO member : memberVOList) {
             memberMapper.updateMember(member);
+            //멤버 권한 변경시 멤버 코드 재발급하여 재 수정
+            if (!member.getAuthorityCode().equals(member.getMemberCode().substring(0, 2))) {
+                member.setMemberCode(memberCode(member.getAuthorityCode()));
+                memberMapper.updateMemberById(member);
+            }
         }
     }
 
