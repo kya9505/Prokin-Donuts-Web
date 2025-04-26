@@ -14,5 +14,7 @@ public interface OrderMapper {
     // 발주 상세 정보 저장
     void insertOrderDetailList(@Param("list") List<OrderDetailVO> list);
 
+    String selectOrderCode();
 
+    String selectFranchiseCode(String memberCode);
 }
