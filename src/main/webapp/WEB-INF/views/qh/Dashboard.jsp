@@ -56,59 +56,56 @@
             </div>
             <!-- ========== title-wrapper end ========== -->
             <div class="row">
-                <div class="col-xl-3 col-lg-4 col-sm-6">
+                <a href="<c:url value='/qh/member/request'/>" class="col-xl-3 col-lg-4 col-sm-6" style="text-decoration: none; color: inherit;">
                     <div class="icon-card mb-30">
                         <div class="icon purple">
                             <i class="lni lni-user"></i>
                         </div>
                         <div class="content">
-                            <h6 class="mb-10">미승인 회원가입</h6>
-                            <h3 class="text-bold mb-10">5건</h3>
+                            <h6 class="mb-10">미승인 회원가입 요청</h6>
+                            <h3 class="text-bold mb-10" name="CountNewRequest">${CountNewRequest}건</h3>
                         </div>
                     </div>
-                    <!-- End Icon Cart -->
-                </div>
-                <!-- End Col -->
-                <div class="col-xl-3 col-lg-4 col-sm-6">
+                </a>
+
+                <a href="<c:url value='/qh/inbound/request'/>" class="col-xl-3 col-lg-4 col-sm-6" style="text-decoration: none; color: inherit;">
                     <div class="icon-card mb-30">
                         <div class="icon success">
                             <i class="lni lni-cart"></i>
                         </div>
                         <div class="content">
                             <h6 class="mb-10">미승인 입고요청</h6>
-                            <h3 class="text-bold mb-10">11건</h3>
+                            <h3 class="text-bold mb-10" name="CountNewInbound">${CountNewInbound}건</h3>
                         </div>
                     </div>
-                    <!-- End Icon Cart -->
-                </div>
-                <!-- End Col -->
-                <div class="col-xl-3 col-lg-4 col-sm-6">
-                    <div class="icon-card mb-30">
-                        <div class="icon primary">
-                            <i class="lni lni-delivery"></i>
-                        </div>
-                        <div class="content">
-                            <h6 class="mb-10">미승인 발주요청</h6>
-                            <h3 class="text-bold mb-10">7건</h3>
-                        </div>
-                    </div>
-                    <!-- End Icon Cart -->
-                </div>
-                <!-- End Col -->
-                <div class="col-xl-3 col-lg-4 col-sm-6">
+                </a>
+
+                <a href="<c:url value='/qh/franchise'/>" class="col-xl-3 col-lg-4 col-sm-6" style="text-decoration: none; color: inherit;">
                     <div class="icon-card mb-30">
                         <div class="icon orange">
                             <i class="lni lni-grow"></i>
                         </div>
                         <div class="content">
-                            <h6 class="mb-10">신규 가맹점</h6>
-                            <h3 class="text-bold mb-10">1건</h3>
+                            <h6 class="mb-10">총 가맹점 수</h6>
+                            <h3 class="text-bold mb-10" name="TotalFranchise">${TotalFranchise}개</h3>
                         </div>
                     </div>
-                    <!-- End Icon Cart -->
-                </div>
-                <!-- End Col -->
+                </a>
+
+                <a href="<c:url value='/qh/warehouse'/>" class="col-xl-3 col-lg-4 col-sm-6" style="text-decoration: none; color: inherit;">
+                    <div class="icon-card mb-30">
+                        <div class="icon primary">
+                            <i class="lni lni-delivery"></i>
+                        </div>
+                        <div class="content">
+                            <h6 class="mb-10">총 창고 수</h6>
+                            <h3 class="text-bold mb-10" name="TotalWarehouse">${TotalWarehouse}개</h3>
+                        </div>
+                    </div>
+                </a>
             </div>
+            <!-- ========== row end ========== -->
+
             <!-- End Row -->
             <div class="row">
                 <div class="col-lg-7">
