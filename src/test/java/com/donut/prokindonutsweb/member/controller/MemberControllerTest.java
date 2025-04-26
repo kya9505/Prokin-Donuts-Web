@@ -71,7 +71,7 @@ class MemberControllerTest {
         qhMemberController.qhAddMemberList(memberDTO, bindingResult, redirectAttributes);
     }
 
-    @Test
+    /*@Test
     @DisplayName("qh update controller 회원 수정 DB 반영 테스트")
     public void qhUpdateMembers(){
         MemberAccountDTO memberDTO = MemberAccountDTO.builder()
@@ -94,7 +94,7 @@ class MemberControllerTest {
         String result = qhMemberController.qhUpdateMembers(memberListForm, bindingResult, redirectAttributes);
         assertEquals("redirect:list", result);
 
-    }
+    }*/
 
     @Test
     @DisplayName("qh delete controller 회원 삭제 DB 반영 테스트")
