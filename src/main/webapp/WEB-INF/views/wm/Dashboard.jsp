@@ -259,7 +259,8 @@
                     borderColor: '#FF9D32',
                     backgroundColor: 'transparent',
                     tension: 0.3,
-                    pointRadius: 4
+                    pointRadius: 2,
+                    pointHoverRadius: 5
                 },
                 {
                     label: '입고 완료',
@@ -267,7 +268,8 @@
                     borderColor: '#4CAF50',
                     backgroundColor: 'transparent',
                     tension: 0.3,
-                    pointRadius: 4
+                    pointRadius: 2,
+                    pointHoverRadius: 5
                 }
             ]
         },
