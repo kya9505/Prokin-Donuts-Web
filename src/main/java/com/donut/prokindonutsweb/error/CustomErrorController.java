@@ -31,4 +31,22 @@ public class CustomErrorController {
         model.addAttribute("message", "알 수 없는 오류입니다.");
         return "error/default";
     }
+
+
+    @GetMapping("/403")
+    public String error403(Model model) {
+        model.addAttribute("statusCode", 403);
+        model.addAttribute("message", "접속할 권한이 없습니다.");
+        return "error/403";
+    }
+
+
+    @GetMapping("/401")
+    public String error401(Model model) {
+        model.addAttribute("statusCode", 401);
+        model.addAttribute("message", "로그인 후 이용해주세요.");
+        return "error/401";
+    }
+
+
 }

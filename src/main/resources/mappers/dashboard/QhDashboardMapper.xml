@@ -31,9 +31,43 @@
             productName,
             IFNULL(totalOrderRequest, 0) AS totalOrderRequest,
             IFNULL(totalInventory, 0) AS totalInventory
-        FROM qhCart2
+        FROM orderinventory
         ORDER BY (totalOrderRequest/totalInventory) DESC
             LIMIT 5
+    </select>
+
+    <!--입고완료상태의 입고건-->
+<select id="countApprovedInboundStatus" resultType="int">
+    select  count(*)
+    from inbound
+    where inboundStatus = '입고완료'
+      and warehouseCode =#{warehouseCode}
+</select>
+
+    <select id="countTotalInbound" resultType="int">
+    select  count(*)
+    from inbound
+    where warehouseCode =#{warehouseCode}
+    </select>
+
+    <select id="countApprovedOrderStatus" resultType="int">
+    select count(*)
+    from `order`
+    where orderStatus = '출고대기'
+      and warehouseCode =#{warehouseCode}
+    </select>
+
+
+    <select id="countTotalOrder" resultType="int">
+    select count(*)
+    from `order`
+    where warehouseCode =#{warehouseCode}
+    </select>
+
+    <select id="getWarehouseCode" resultType="String">
+        select warehouseCode
+        from warehouse
+        where warehouseName = #{warehouseName}
     </select>
 
 </mapper>
