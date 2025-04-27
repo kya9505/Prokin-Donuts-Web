@@ -135,7 +135,7 @@
                         </div>
                         <!-- End Title -->
                         <div class="chart">
-                            <canvas id="Chart1" style="width: 100%; height: 400px; margin-left: -45px;"></canvas>
+                            <canvas id="Chart1" style="width: 100%; height: 400px; margin-left: 0px;"></canvas>
                         </div>
                         <!-- End Chart -->
                     </div>
@@ -155,7 +155,7 @@
                                     <div class="select-position select-sm">
                                         <select id="filterType" class="light-bg" style="width: 200px;">
                                             <option value="category" selected>Category</option>
-                                            <option value="category">Section</option>
+                                            <option value="section">Section</option>
                                         </select>
                                     </div>
                                 </div>
@@ -164,7 +164,7 @@
                         </div>
                         <!-- End Title -->
                         <div class="chart">
-                            <canvas id="Chart2" style="width: 100%; height: 400px; margin-left: -35px;"></canvas>
+                            <canvas id="Chart2" style="width: 100%; height: 400px; margin-left: -20px;"></canvas>
                         </div>
                         <!-- End Chart -->
                     </div>
@@ -208,6 +208,7 @@
 <!-- ========== Javascript end =========== -->
 
 <script>
+    var warehouseCode = '${warehouseCode}';
     // === 1) 숨겨둔 DIV에서 “월별” 데이터 읽어두기 ===
     var rawInboundLabels = document
         .getElementById('inboundMonthLabelsData').textContent
@@ -253,17 +254,17 @@
             labels: monthlyLabels,
             datasets: [
                 {
-                    label: '입고 완료',
-                    data: monthlyInbound,
-                    borderColor: '#4CAF50',
+                    label: '출고 완료',
+                    data: monthlyOrder,
+                    borderColor: '#FF9D32',
                     backgroundColor: 'transparent',
                     tension: 0.3,
                     pointRadius: 4
                 },
                 {
-                    label: '출고 완료',
-                    data: monthlyOrder,
-                    borderColor: '#FF9D32',
+                    label: '입고 완료',
+                    data: monthlyInbound,
+                    borderColor: '#4CAF50',
                     backgroundColor: 'transparent',
                     tension: 0.3,
                     pointRadius: 4
@@ -336,7 +337,7 @@
 
     const productInventoryBySubcategory = {};
     if (rawSubcatData) {
-        rawSubcatData.split(',').forEach(entry => {
+        rawSubcatData.split(',').forEach(function(entry) {
             const [sub, prod, qty] = entry.trim().split('/');
             const subTrim  = sub.trim();
             const prodTrim = prod.trim();
@@ -353,13 +354,15 @@
 
     // 5) 소분류 리스트와 총수량 계산
     const subcategories = Object.keys(productInventoryBySubcategory);
-    const subcategoryQuantities = subcategories.map(sub =>
-        productInventoryBySubcategory[sub].reduce((sum, p) => sum + p.quantity, 0)
-    );
+    const subcategoryQuantities = subcategories.map(function(sub) {
+        return productInventoryBySubcategory[sub].reduce(function(sum, p) {
+            return sum + p.quantity;
+        }, 0);
+    });
 
     // 6) Chart2: 소분류 바 차트 + 툴팁
     const ctx2 = document.getElementById('Chart2').getContext('2d');
-    new Chart(ctx2, {
+    const chart2 = new Chart(ctx2, {   // ✅ chart2 변수로 저장
         type: 'bar',
         data: {
             labels: subcategories,
@@ -379,12 +382,20 @@
                 legend: { display: false },
                 tooltip: {
                     callbacks: {
-                        title: ctx => ctx[0].label,     // 소분류명
-                        label: ctx => {
-                            const list = productInventoryBySubcategory[ctx.label] || [];
-                            return list.length ? list.map(function(p) {
-                                    return '  ' + p.name + ': ' + p.quantity + '개';
-                                }) : ['  (제품 없음)'];
+                        title: function(ctx) {
+                            return ctx[0].label;
+                        },
+                        label: function(ctx) {
+                            if (document.getElementById('filterType').value === 'section') {
+                                return '  사용률: ' + ctx.raw + '%';
+                            } else {
+                                const list = productInventoryBySubcategory[ctx.label] || [];
+                                return list.length
+                                    ? list.map(function(p) {
+                                        return '  ' + p.name + ': ' + p.quantity + '개';
+                                    })
+                                    : ['  (제품 없음)'];
+                            }
                         }
                     },
                     backgroundColor: '#F3F6F8',
@@ -405,6 +416,40 @@
             layout: { padding: { top: 15, right: 15, bottom: 15, left: 15 } }
         }
     });
+
+    document.getElementById('filterType')
+        .addEventListener('change', function(e){
+            const selected = e.target.value;
+            const code = '' + warehouseCode;
+
+            if (selected === 'section') {
+                // 섹션 사용률 가져오기
+                fetch('/wm/Dashboard/inventory/stat?warehouseCode=' + code + '&type=section')
+                    .then(function(res){ return res.json(); })
+                    .then(function(data){
+                        const labels = data.map(function(item){ return item.storedType; });
+                        const values = data.map(function(item){ return item.usedRate; });
+
+                        // ✅ chart2 업데이트
+                        chart2.data.labels = labels;
+                        chart2.data.datasets[0].label = '섹션 사용률';
+                        chart2.data.datasets[0].data = values;
+                        chart2.data.datasets[0].backgroundColor = '#4CAF50'; // (선택사항) 색상 변경
+                        chart2.update();
+                    })
+                    .catch(function(err){
+                        console.error('섹션 사용률 로딩 실패:', err);
+                    });
+            } else {
+                // 카테고리 선택일 때 → 원래 소분류 기준으로 돌아가기
+                chart2.data.labels = subcategories;
+                chart2.data.datasets[0].label = '재고 수량';
+                chart2.data.datasets[0].data = subcategoryQuantities;
+                chart2.data.datasets[0].backgroundColor = '#FF9D32'; // 다시 색상 복원
+                chart2.update();
+            }
+        });
+
 </script>
 </body>
 </html>
