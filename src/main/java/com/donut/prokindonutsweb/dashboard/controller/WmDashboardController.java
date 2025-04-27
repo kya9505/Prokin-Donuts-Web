@@ -100,7 +100,7 @@ public class WmDashboardController {
   }
   
   // 섹션 온도 업데이트
-  @PostMapping("/temperature/update")
+  @GetMapping("/temperature/edit")
   @ResponseBody
   public String updateSectionTemperature(@RequestParam String warehouseCode,
                                          @RequestParam String storedType,

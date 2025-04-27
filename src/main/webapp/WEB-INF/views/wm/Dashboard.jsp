@@ -63,13 +63,16 @@
                     <div class="icon-card mb-30 text-center">
                         <div class="content">
                             <h6 class="mb-10">냉장섹션</h6>
-                            <div class="d-flex justify-content-center ml-15">
-                                <div class="d-flex align-items-center" style="margin-bottom: 6px;">
-                                    <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1 " onclick="changeTemp('fridge', -1)">-</button>
-                                    <h3 id="temp-fridge" class="text-bold mx-2 " style="font-size: 20px;">${coldTemp}°C</h3>
-                                    <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1 " onclick="changeTemp('fridge', 1)">+</button>
-                                    <button class="main-btn primary-btn btn-hover btn-sm px-3 py-1 ms-2" onclick="confirmTemp('fridge')">결정</button>
-                                </div>
+                            <div class="d-flex justify-content-center align-items-center" style="gap: 8px; margin-bottom: 6px;">
+                                <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1"
+                                        onclick="changeTemp('fridge', -1)">-</button>
+                                <h3 id="temp-fridge" class="text-bold mx-2" style="font-size: 20px; width: 50px;">
+                                    ${coldTemp}°C
+                                </h3>
+                                <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1"
+                                        onclick="changeTemp('fridge', 1)">+</button>
+                                <button class="main-btn primary-btn btn-hover btn-sm px-3 py-1 ms-2"
+                                        onclick="confirmTemp('fridge')">결정</button>
                             </div>
                         </div>
                     </div>
@@ -80,13 +83,16 @@
                     <div class="icon-card mb-30 text-center">
                         <div class="content">
                             <h6 class="mb-10">냉동섹션</h6>
-                            <div class="d-flex justify-content-center ml-10">
-                                <div class="d-flex align-items-center" style="margin-bottom: 6px;">
-                                    <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1" onclick="changeTemp('freezer', -1)">-</button>
-                                    <h3 id="temp-freezer" class="text-bold mx-2 " style="font-size: 20px;">${frozenTemp}°C</h3>
-                                    <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1 " onclick="changeTemp('freezer', 1)">+</button>
-                                    <button class="main-btn primary-btn btn-hover btn-sm px-3 py-1 ms-2 " onclick="confirmTemp('freezer')">결정</button>
-                                </div>
+                            <div class="d-flex justify-content-center align-items-center" style="gap: 8px; margin-bottom: 6px;">
+                                <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1"
+                                        onclick="changeTemp('freezer', -1)">-</button>
+                                <h3 id="temp-freezer" class="text-bold mx-2" style="font-size: 20px; width: 50px;">
+                                    ${frozenTemp}°C
+                                </h3>
+                                <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1"
+                                        onclick="changeTemp('freezer', 1)">+</button>
+                                <button class="main-btn primary-btn btn-hover btn-sm px-3 py-1 ms-2"
+                                        onclick="confirmTemp('freezer')">결정</button>
                             </div>
                         </div>
                     </div>
@@ -97,18 +103,23 @@
                     <div class="icon-card mb-30 text-center">
                         <div class="content">
                             <h6 class="mb-10">상온섹션</h6>
-                            <div class="d-flex justify-content-center ml-15">
-                                <div class="d-flex align-items-center" style="margin-bottom: 6px;">
-                                    <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1" onclick="changeTemp('room', -1)">-</button>
-                                    <h3 id="temp-room" class="text-bold mx-2" style="font-size: 20px;">${roomTemp}°C</h3>
-                                    <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1 " onclick="changeTemp('room', 1)">+</button>
-                                    <button class="main-btn primary-btn btn-hover btn-sm px-3 py-1 ms-2 " onclick="confirmTemp('room')">결정</button>
-                                </div>
+                            <div class="d-flex justify-content-center align-items-center" style="gap: 8px; margin-bottom: 6px;">
+                                <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1"
+                                        onclick="changeTemp('room', -1)">-</button>
+                                <h3 id="temp-room" class="text-bold mx-2" style="font-size: 20px; width: 50px;">
+                                    ${roomTemp}°C
+                                </h3>
+                                <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1"
+                                        onclick="changeTemp('room', 1)">+</button>
+                                <button class="main-btn primary-btn btn-hover btn-sm px-3 py-1 ms-2"
+                                        onclick="confirmTemp('room')">결정</button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+
+            </div> <!-- ← 이 부분이 빠져 있었음 -->
+                <input type="hidden" id="warehouseCode" value="${warehouseCode}" />
 
             <!-- End Row -->
 
@@ -211,7 +222,79 @@
 <!-- ========== Javascript end =========== -->
 
 <script>
-    var warehouseCode = '${warehouseCode}';
+    var warehouseCode = document.getElementById('warehouseCode').value;
+    let isSubmitting = false;
+
+    function changeTemp(section, delta) {
+        console.log('[changeTemp] section =', section, 'delta =', delta);
+        var tempElement = document.getElementById('temp-' + section);
+        var currentTemp = parseInt(tempElement.textContent.trim().replace('°C', ''), 10);
+        var newTemp = currentTemp + delta;
+        tempElement.textContent = newTemp + '°C';
+    }
+
+    function confirmTemp(section) {
+        if (isSubmitting) {
+            console.log('[confirmTemp] 중복 요청 방지');
+            return;
+        }
+        isSubmitting = true;
+
+        // DOM 업데이트(온도 변경)가 브라우저에 반영될 시간을 확보하기 위해 50ms 딜레이
+        setTimeout(function() {
+            // 1) 최종 온도 값 읽기
+            var tempElement = document.getElementById('temp-' + section);
+            var finalTemp = parseInt(tempElement.textContent.trim().replace('°C', ''), 10);
+
+            // 2) storedType 결정
+            var storedType = '';
+            if (section === 'fridge') {
+                storedType = '냉장';
+            } else if (section === 'freezer') {
+                storedType = '냉동';
+            } else if (section === 'room') {
+                storedType = '상온';
+            }
+
+            // 3) 요청 URL 조립
+            var url = '/wm/Dashboard/temperature/edit'
+                + '?warehouseCode=' + encodeURIComponent(warehouseCode)
+                + '&storedType='   + encodeURIComponent(storedType)
+                + '&temperature='  + encodeURIComponent(finalTemp);
+
+            console.log('[confirmTemp] section =', section,
+                'storedType =', storedType,
+                'finalTemp =', finalTemp);
+            console.log('[confirmTemp] Fetch URL →', url);
+
+            // 4) fetch 요청 보내기
+            fetch(url, { method: 'GET' })
+                .then(function(res) {
+                    isSubmitting = false;
+                    console.log('[confirmTemp] Response status =', res.status);
+                    if (!res.ok) {
+                        throw new Error('서버 응답 실패: ' + res.status);
+                    }
+                    return res.text();
+                })
+                .then(function(text) {
+                    console.log('[confirmTemp] Response text =', text);
+                    if (text === 'ok') {
+                        alert('[' + storedType + '] 온도가 ' + finalTemp + '°C로 저장되었습니다!');
+                    } else {
+                        alert('온도 저장 실패: ' + text);
+                    }
+                })
+                .catch(function(err) {
+                    isSubmitting = false;
+                    console.error('[confirmTemp] 에러 발생 →', err);
+                    alert('서버 오류가 발생했습니다: ' + err.message);
+                });
+        }, 100);
+    }
+</script>
+
+<script>
     // === 1) 숨겨둔 DIV에서 “월별” 데이터 읽어두기 ===
     var rawInboundLabels = document
         .getElementById('inboundMonthLabelsData').textContent
