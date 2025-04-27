@@ -181,6 +181,17 @@
     </section>
     <!-- ========== section end ========== -->
 
+    <!-- ====== 입고 라벨 ====== -->
+    <div id="inboundMonthLabelsData" style="display:none;"><c:forEach var="item" items="${inboundMonthData}" varStatus="status"><c:out value="${item.period}월"/><c:if test="${!status.last}">,</c:if></c:forEach></div>
+    <!-- ====== 입고 카운트 ====== -->
+    <div id="inboundMonthCountsData" style="display:none;"><c:forEach var="item" items="${inboundMonthData}" varStatus="status">${item.count}<c:if test="${!status.last}">,</c:if></c:forEach></div>
+
+    <!-- ====== 출고 라벨 ====== -->
+    <div id="orderMonthLabelsData" style="display:none;"><c:forEach var="item" items="${orderMonthData}" varStatus="status"><c:out value="${item.period}월"/><c:if test="${!status.last}">,</c:if></c:forEach></div>
+    <!-- ====== 출고 카운트 ====== -->
+    <div id="orderMonthCountsData" style="display:none;"><c:forEach var="item" items="${orderMonthData}" varStatus="status">${item.count}<c:if test="${!status.last}">,</c:if></c:forEach></div>
+
+
     <!-- ========== common-footer start =========== -->
     <%@ include file="/WEB-INF/views/includes/common/Footer.jsp" %>
     <!-- ========== common-footer end =========== -->
@@ -192,360 +203,109 @@
 <!-- ========== Javascript end =========== -->
 
 <script>
+    // 1) 숨김 div에서 기존 데이터 가져오기
+    const rawInbound = document
+        .getElementById('inboundMonthLabelsData')
+        .textContent
+        .split(',')
+        .map(s => s.trim());
+    const rawInboundCounts = document
+        .getElementById('inboundMonthCountsData')
+        .textContent
+        .split(',')
+        .map(s => Number(s.trim()));
 
+    const rawOrder = document
+        .getElementById('orderMonthLabelsData')
+        .textContent
+        .split(',')
+        .map(s => s.trim());
+    const rawOrderCounts = document
+        .getElementById('orderMonthCountsData')
+        .textContent
+        .split(',')
+        .map(s => Number(s.trim()));
 
+    // 2) 과거 12개월 라벨 생성 (MM월)
+    const labels12 = [];
+    const today = new Date();
+    for (let i = 1; i <= 12; i++) {
+        labels12.push(i + '월');
+    }
+    // 3) 원본 데이터 → Map 으로 변환
+    const inboundMap = rawInbound.reduce((m, label, idx) => {
+        m[label] = rawInboundCounts[idx];
+        return m;
+    }, {});
+    const orderMap = rawOrder.reduce((m, label, idx) => {
+        m[label] = rawOrderCounts[idx];
+        return m;
+    }, {});
 
-    // ======== chart one start (스타일은 예전 그대로)
+    // 4) 12개월 전체 카운트 배열로 채우기 (데이터 없으면 0)
+    const inboundCounts12 = labels12.map(label => inboundMap[label] || 0);
+    const orderCounts12   = labels12.map(label => orderMap[label]   || 0);
+
+    console.log('✅ labels12       :', labels12);
+    console.log('✅ inboundCounts12:', inboundCounts12);
+    console.log('✅ orderCounts12  :', orderCounts12);
+
+    // 5) 차트 1 (입고) 다시 그리기
     const ctx1 = document.getElementById("Chart1").getContext("2d");
-    const chart1 = new Chart(ctx1, {
+    new Chart(ctx1, {
         type: "line",
         data: {
-            labels: ["도넛", "티", "텀블러"],  // ✅ 더미 데이터: 제품 이름
-            datasets: [
-                {
-                    label: "재고 수량", // ✅ label은 '재고 수량'으로
-                    backgroundColor: "transparent",
-                    borderColor:  "#FF9D32",
-                    data: [100, 50, 30],  // ✅ 더미 데이터: 수량
-                    pointBackgroundColor: "transparent",
-                    pointHoverBackgroundColor: "#365CF5",
-                    pointBorderColor: "transparent",
-                    pointHoverBorderColor: "#fff",
-                    pointHoverBorderWidth: 5,
-                    borderWidth: 5,
-                    pointRadius: 8,
-                    pointHoverRadius: 8,
-                    cubicInterpolationMode: "monotone", // ✅ 부드러운 곡선 그대로
-                },
-            ],
+            labels: labels12,
+            datasets: [{
+                label: "월별 입고 수량",
+                data: inboundCounts12,
+                backgroundColor: "transparent",
+                borderColor: "#FF9D32",
+                borderWidth: 5,
+                pointRadius: 8,
+                pointHoverRadius: 8,
+                cubicInterpolationMode: "monotone",
+                pointBackgroundColor: "transparent",
+                pointHoverBackgroundColor: "#365CF5"
+            }]
         },
         options: {
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        labelColor: function (context) {
-                            return {
-                                backgroundColor: "#ffffff",
-                                color: "#171717"
-                            };
-                        },
-                    },
-                    intersect: false,
-                    backgroundColor: "#f9f9f9",
-                    title: {
-                        fontFamily: "Plus Jakarta Sans",
-                        color: "#8F92A1",
-                        fontSize: 12,
-                    },
-                    body: {
-                        fontFamily: "Plus Jakarta Sans",
-                        color: "#171717",
-                        fontStyle: "bold",
-                        fontSize: 16,
-                    },
-                    multiKeyBackground: "transparent",
-                    displayColors: false,
-                    padding: {
-                        x: 30,
-                        y: 10,
-                    },
-                    bodyAlign: "center",
-                    titleAlign: "center",
-                    titleColor: "#8F92A1",
-                    bodyColor: "#171717",
-                    bodyFont: {
-                        family: "Plus Jakarta Sans",
-                        size: "16",
-                        weight: "bold",
-                    },
-                },
-                legend: {
-                    display: false,
-                },
-            },
             responsive: true,
             maintainAspectRatio: false,
-            title: {
-                display: false,
-            },
             scales: {
-                y: {
-                    grid: {
-                        display: false,
-                        drawTicks: false,
-                        drawBorder: false,
-                    },
-                    ticks: {
-                        padding: 35,
-                        max: 120,  // ✅ 최대치 수정 (예: 재고 100 넘는 경우 대비)
-                        min: 0,
-                    },
-                },
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        color: "rgba(143, 146, 161, .1)",
-                        zeroLineColor: "rgba(143, 146, 161, .1)",
-                    },
-                    ticks: {
-                        padding: 20,
-                    },
-                },
+                y: { ticks: { beginAtZero:true, padding:35 }, grid:{display:false} },
+                x: { ticks:{padding:20}, grid:{drawBorder:false,color:"rgba(143,146,161,.1)"} }
             },
-        },
+            plugins: { legend:{display:false}, tooltip:{intersect:false,displayColors:false} }
+        }
     });
-    // ======== chart one end
 
-
-
-
-    //mypageData
-    <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
-
-
-//    // =========== chart one start
-//    const ctx1 = document.getElementById("Chart1").getContext("2d");
-//    const chart1 = new Chart(ctx1, {
-//        type: "line",
-//        data: {
-//            labels: [
-//                "Jan",
-//                "Fab",
-//                "Mar",
-//                "Apr",
-//                "May",
-//                "Jun",
-//                "Jul",
-//                "Aug",
-//                "Sep",
-//                "Oct",
-//                "Nov",
-//                "Dec",
-//            ],
-//            datasets: [
-//                {
-//                    label: "",
-//                    backgroundColor: "transparent",
-//                    borderColor:  "#FF9D32",
-//                    data: [
-//                        600, 800, 750, 880, 940, 880, 900, 770, 920, 890, 976, 1100,
-//                    ],
-//                    pointBackgroundColor: "transparent",
-//                    pointHoverBackgroundColor: "#365CF5",
-//                    pointBorderColor: "transparent",
-//                    pointHoverBorderColor: "#fff",
-//                    pointHoverBorderWidth: 5,
-//                    borderWidth: 5,
-//                    pointRadius: 8,
-//                    pointHoverRadius: 8,
-//                    cubicInterpolationMode: "monotone", // Add this line for curved line
-//                },
-//            ],
-//        },
-//        options: {
-//            plugins: {
-//                tooltip: {
-//                    callbacks: {
-//                        labelColor: function (context) {
-//                            return {
-//                                backgroundColor: "#ffffff",
-//                                color: "#171717"
-//                            };
-//                        },
-//                    },
-//                    intersect: false,
-//                    backgroundColor: "#f9f9f9",
-//                    title: {
-//                        fontFamily: "Plus Jakarta Sans",
-//                        color: "#8F92A1",
-//                        fontSize: 12,
-//                    },
-//                    body: {
-//                        fontFamily: "Plus Jakarta Sans",
-//                        color: "#171717",
-//                        fontStyle: "bold",
-//                        fontSize: 16,
-//                    },
-//                    multiKeyBackground: "transparent",
-//                    displayColors: false,
-//                    padding: {
-//                        x: 30,
-//                        y: 10,
-//                    },
-//                    bodyAlign: "center",
-//                    titleAlign: "center",
-//                    titleColor: "#8F92A1",
-//                    bodyColor: "#171717",
-//                    bodyFont: {
-//                        family: "Plus Jakarta Sans",
-//                        size: "16",
-//                        weight: "bold",
-//                    },
-//                },
-//                legend: {
-//                    display: false,
-//                },
-//            },
-//            responsive: true,
-//            maintainAspectRatio: false,
-//            title: {
-//                display: false,
-//            },
-//            scales: {
-//                y: {
-//                    grid: {
-//                        display: false,
-//                        drawTicks: false,
-//                        drawBorder: false,
-//                    },
-//                    ticks: {
-//                        padding: 35,
-//                        max: 1200,
-//                        min: 500,
-//                    },
-//                },
-//                x: {
-//                    grid: {
-//                        drawBorder: false,
-//                        color: "rgba(143, 146, 161, .1)",
-//                        zeroLineColor: "rgba(143, 146, 161, .1)",
-//                    },
-//                    ticks: {
-//                        padding: 20,
-//                    },
-//                },
-//            },
-//        },
-//    });
-//    // =========== chart one end
-//
-//
-
-
-
-
-//    // =========== chart two start
-//    const ctx2 = document.getElementById("Chart2").getContext("2d");
-//    const chart2 = new Chart(ctx2, {
-//        type: "bar",
-//        data: {
-//            labels: [
-//                "Jan",
-//                "Fab",
-//                "Mar",
-//                "Apr",
-//                "May",
-//                "Jun",
-//                "Jul",
-//                "Aug",
-//                "Sep",
-//                "Oct",
-//                "Nov",
-//                "Dec",
-//            ],
-//            datasets: [
-//                {
-//                    label: "",
-//                    backgroundColor: "#FF9D32",
-//                    borderRadius: 30,
-//                    barThickness: 6,
-//                    maxBarThickness: 8,
-//                    data: [
-//                        600, 700, 1000, 700, 650, 800, 690, 740, 720, 1120, 876, 900,
-//                    ],
-//                },
-//            ],
-//        },
-//        options: {
-//            plugins: {
-//                tooltip: {
-//                    callbacks: {
-//                        titleColor: function (context) {
-//                            return "#8F92A1";
-//                        },
-//                        label: function (context) {
-//                            let label = context.dataset.label || "";
-//
-//                            if (label) {
-//                                label += ": ";
-//                            }
-//                            label += context.parsed.y;
-//                            return label;
-//                        },
-//                    },
-//                    backgroundColor: "#F3F6F8",
-//                    titleAlign: "center",
-//                    bodyAlign: "center",
-//                    titleFont: {
-//                        size: 12,
-//                        weight: "bold",
-//                        color: "#8F92A1",
-//                    },
-//                    bodyFont: {
-//                        size: 16,
-//                        weight: "bold",
-//                        color: "#171717",
-//                    },
-//                    displayColors: false,
-//                    padding: {
-//                        x: 30,
-//                        y: 10,
-//                    },
-//                },
-//            },
-//            legend: {
-//                display: false,
-//            },
-//            legend: {
-//                display: false,
-//            },
-//            layout: {
-//                padding: {
-//                    top: 15,
-//                    right: 15,
-//                    bottom: 15,
-//                    left: 15,
-//                },
-//            },
-//            responsive: true,
-//            maintainAspectRatio: false,
-//            scales: {
-//                y: {
-//                    grid: {
-//                        display: false,
-//                        drawTicks: false,
-//                        drawBorder: false,
-//                    },
-//                    ticks: {
-//                        padding: 35,
-//                        max: 1200,
-//                        min: 0,
-//                    },
-//                },
-//                x: {
-//                    grid: {
-//                        display: false,
-//                        drawBorder: false,
-//                        color: "rgba(143, 146, 161, .1)",
-//                        drawTicks: false,
-//                        zeroLineColor: "rgba(143, 146, 161, .1)",
-//                    },
-//                    ticks: {
-//                        padding: 20,
-//                    },
-//                },
-//            },
-//            plugins: {
-//                legend: {
-//                    display: false,
-//                },
-//                title: {
-//                    display: false,
-//                },
-//            },
-//        },
-//    });
-    // =========== chart two end
+    // 6) 차트 2 (출고) 다시 그리기
+    const ctx2 = document.getElementById("Chart2").getContext("2d");
+    new Chart(ctx2, {
+        type: "bar",
+        data: {
+            labels: labels12,
+            datasets: [{
+                label: "월별 출고 수량",
+                data: orderCounts12,
+                backgroundColor: "#4CAF50",
+                borderRadius: 30,
+                barThickness: 6,
+                maxBarThickness: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { ticks:{beginAtZero:true,padding:35}, grid:{display:false} },
+                x: { ticks:{padding:20}, grid:{display:false} }
+            },
+            plugins: { legend:{display:false}, tooltip:{displayColors:false} },
+            layout: { padding:{top:15,right:15,bottom:15,left:15} }
+        }
+    });
 </script>
 </body>
 </html>
