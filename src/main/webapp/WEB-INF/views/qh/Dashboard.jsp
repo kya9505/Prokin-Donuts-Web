@@ -139,10 +139,11 @@
                 </div>
                 <!-- End Col -->
                 <div class="col-lg-6">
-                    <div class="card-style mb-30 w-100">
+                    <div class="card-style mb-30 ">
                         <div class="title d-flex flex-wrap align-items-center justify-content-between">
                             <div class="left">
-                                <h6 class="text-medium mb-30">발주 요청량/ 총 재고량 </h6>
+                                <h6 class="text-medium mb-10">공급 우선순위 제품</h6>
+                                <h3 class="text-bold">발주 요청량/총 재고량 (개)</h3>
                             </div>
                         </div>
                         <!-- End Title -->
