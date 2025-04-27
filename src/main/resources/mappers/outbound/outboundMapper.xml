@@ -41,5 +41,9 @@
         WHERE o.orderCode = #{outboundCode}
     </update>
 
+<!--    멤버코드 -> 창고코드 반환-->
+    <select id="getWarehouseCode" resultType="String">
+        select warehouseCode from warehouse where memberCode = #{memberCode}
+    </select>
 
 </mapper>
