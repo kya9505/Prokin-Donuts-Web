@@ -139,10 +139,11 @@
                 </div>
                 <!-- End Col -->
                 <div class="col-lg-6">
-                    <div class="card-style mb-30 w-100">
+                    <div class="card-style mb-30 ">
                         <div class="title d-flex flex-wrap align-items-center justify-content-between">
                             <div class="left">
-                                <h6 class="text-medium mb-30">발주 요청량/ 총 재고량 </h6>
+                                <h6 class="text-medium mb-10">공급 우선순위 제품</h6>
+                                <h3 class="text-bold">발주 요청량/총 재고량 (개)</h3>
                             </div>
                         </div>
                         <!-- End Title -->
@@ -208,7 +209,7 @@
                     labels: productName,
                     datasets: [
                         {
-                            label: 'orderRequest',
+                            label: '발주요청량',
                             data: orderRequest,
                             backgroundColor: '#fbd4ab',
                             borderRadius: 30,
@@ -216,7 +217,7 @@
                             maxBarThickness: 8,
                         },
                         {
-                            label: 'inventory',
+                            label: '재고량',
                             data: inventory,
                             backgroundColor: '#ff9d32',
                             borderRadius: 30,
@@ -245,12 +246,22 @@
                             display: false
                         },
                         tooltip: {
+                            backgroundColor: "#fbd4ab",
+                            titleColor: "#333",
+                            bodyColor: "#333",
+                            displayColors: false,
+                            titleAlign: "center",
+                            bodyAlign: "center",
+                            titleFont: { size: 14, weight: "bold" },
+                            bodyFont: { size: 16, weight: "bold" },
+                            padding: { x: 30, y: 10 },
                             callbacks: {
-                                titleColor: function (context) { return "#f58636"; },
-                                label: function (context) {
-                                    let label = context.dataset.label || "";
-                                    if (label) { label += ": "; }
-                                    label += context.parsed.x; // 가로 막대 x축 값
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.parsed.x;
                                     return label;
                                 },
                             },
@@ -260,12 +271,10 @@
                             titleFont: {
                                 size: 12,
                                 weight: "bold",
-                                color: "#0e0e0e",
                             },
                             bodyFont: {
                                 size: 16,
                                 weight: "bold",
-                                color: "#171717",
                             },
                             displayColors: false,
                             padding: { x: 30, y: 10 },
@@ -281,6 +290,7 @@
                             ticks: {
                                 padding: 10,
                                 font: { size: 17 },
+
                             },
                             barPercentage: 0.6 ,
                         },
@@ -294,7 +304,11 @@
                             ticks: {
                                 max: 900,
                                 padding: 20,
-                                stepSize: 50,    // ★ 추가 : 50단위로 끊기
+                                stepSize: 50,
+                                callback: function(value) {
+                                    return value + '개';   // 👈 이렇게 숫자 뒤에 '개' 붙여줌
+                                }
+// ★ 추가 : 50단위로 끊기
                             }
                         }
                     }
@@ -305,28 +319,8 @@
             console.error('Chart5 데이터 불러오기 실패:', error);
         });
 
-    var $clone = $('#myCustomFilters').clone(true);
-    // 복제 후 삽입 시, ID 제거 필수!
-    $clone.find('#warehouseCategory').attr('id', 'warehouseCategory_clone');
 
-    $('div.myFilterArea').html($clone.html());
-
-
-    // 5. 필터링 로직 정의
-    $.fn.dataTable.ext.search.push(function(settings, data) {
-        const selectedWarehouse = $('#warehouseCategory_clone').val();
-
-        const warehouseName = data[1];
-
-        // 1) 창고 필터
-        if (selectedWarehouse && selectedWarehouse !== warehouseName) {
-            return false;
-        }
-
-        // 조건 만족 시 표시
-        return true;
-    });
-    // 6. 필터 초기화 버튼
+    //창고 필터
     $('body').on('click', '#resetFilterBtn', function () {
         $('#warehouseCategory_clone').val('')
         table.draw();
@@ -334,68 +328,110 @@
 
 
     //도넛차트
-    function drawWarehouseChart(canvasId, label1, value1, label2, value2) {
+    let inboundChart;  // 차크 변수 선언
+
+    // 페이지 로딩 시 초기 차트 그리기
+    document.addEventListener('DOMContentLoaded', function() {
+        const firstWarehouse = document.getElementById('warehouseCategory').value;
+        if (firstWarehouse) {
+            fetchWarehouseData(firstWarehouse);
+        }
+    });
+
+    // 창고 선택 시 호출
+    $('#warehouseCategory').on('change', function() {
+        const selectedWarehouse = $(this).val();
+        if (selectedWarehouse) {
+            fetchWarehouseData(selectedWarehouse);
+        }
+    });
+
+    // 서버에서 창고 데이터 가져오기
+    function fetchWarehouseData(warehouse) {
+        fetch('<c:url value="/qh/inbound-order-rate"/>' + '?warehouse=' + encodeURIComponent(warehouse))
+            .then(response => response.json())
+            .then(data => {
+                updateWarehouseChart('inboundChart-1', data.inboundRate, data.orderRate);
+            })
+            .catch(error => {
+                console.error('창고 데이터 불러오기 실패:', error);
+            });
+    }
+
+    function updateWarehouseChart(canvasId, inboundRate, orderRate) {
+        if (inboundChart) {
+            inboundChart.destroy();
+        }
         const ctx = document.getElementById(canvasId).getContext('2d');
-        new Chart(ctx, {
+
+        const centerTextPlugin = {
+            id: 'centerText',
+            beforeDraw(chart) {
+                const { width, height, ctx } = chart;
+                ctx.save();
+
+                ctx.font = `17px sans-serif`;
+                ctx.textBaseline = 'middle';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#333';
+
+                const inboundText = '입고 ' + inboundRate + '%';
+                const outboundText = '출고 ' + orderRate + '%';
+                ctx.fillText(inboundText, width / 2, height / 2 - 10);
+                ctx.fillText(outboundText, width / 2, height / 2 + 20);
+                ctx.restore();
+            }
+        };
+
+        inboundChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: [label1, label2],
-                datasets: [{
-                    data: [value1, 100 - value1],  // 예: 완료%와 나머지
-                    backgroundColor: ['#ff9d32', '#f3f3f3'],
-                    borderRadius: 30,
-                    cutout: '70%',
-                    radius: '80%',
-                },
+                labels: ['진행률', '남은비율'],
+                datasets: [
                     {
-                        data: [value2, 100 - value2],  // 출고용
+                        label: '입고 진행율',
+                        data: [inboundRate || 0.01, 100 - (inboundRate || 0.01)],
+                        backgroundColor: ['#ff9d32', '#f3f3f3'],
+                        borderRadius: 30,
+                        cutout: '70%',
+                        radius: '80%',
+                    },
+                    {
+                        label: '출고 진행율',
+                        data: [orderRate || 0.01, 100 - (orderRate || 0.01)],
                         backgroundColor: ['#fbd4ab', '#f3f3f3'],
                         borderRadius: 30,
-                        cutout: '50%',   // 하나는 살짝 안쪽
+                        cutout: '50%',
                         radius: '60%',
-                    }]
+                    }
+                ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        display: false
-                    },
-                    title: {
-                        display: false
-                    },
+                    legend: { display: false },
+                    title: { display: false },
                     tooltip: {
                         callbacks: {
-                            titleColor: function (context) { return "#f58636"; },
-                            label: function (context) {
-                                let label = context.dataset.label || "";
-                                if (label) { label += ": "; }
-                                label += context.parsed.x; // 가로 막대 x축 값
-                                return label;
-                            },
-                        },
-                        backgroundColor: "#fbd4ab",
-                        titleAlign: "center",
-                        bodyAlign: "center",
-                        titleFont: {
-                            size: 12,
-                            weight: "bold",
-                            color: "#0e0e0e",
-                        },
-                        bodyFont: {
-                            size: 16,
-                            weight: "bold",
-                            color: "#171717",
-                        },
-                        displayColors: false,
-                        padding: { x: 30, y: 10 },
+                            label: function(context) {
+                                if (context.dataIndex === 0) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.parsed + '%';
+                                    return label;
+                                }
+                                return '';
+                            }
+                        }
                     }
                 }
-            }
+            },
+            plugins: [centerTextPlugin] // 플러그인 등록
         });
     }
-    drawWarehouseChart('inboundChart-1', '입고', 85, '출고', 70);
 
 </script>
 </body>

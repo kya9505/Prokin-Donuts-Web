@@ -59,6 +59,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public String findFranchiseCode(String memberCode) {
-        return orderMapper.selectFranchiseCode(memberCode);
+        return orderMapper.selectFranchiseCode(memberCode).substring(0,2);
+    }
+
+    @Override
+    public List<String> findWarehouseCode() {
+        return orderMapper.findWarehouseCode().stream()
+                .map(code -> code.substring(0,2))
+                .toList();
     }
 }

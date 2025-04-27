@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum OrderStatus {
-    REQUEST("발주요청");
+    REQUEST("출고대기");
 
 
     private final String status;

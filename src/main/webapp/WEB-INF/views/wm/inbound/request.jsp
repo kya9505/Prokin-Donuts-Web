@@ -497,7 +497,7 @@
           <td>` + item.productName + `</td>
           <td>` + item.productPrice + `</td>
           <td>` + item.storedType + `</td>
-          <td><input type="number" class="form-control quantity-input"   min="100" value="100" step="100" style="width: 80px;"></td>
+          <td><input type="number" class="form-control quantity-input"  min="100" value="100" step="100" style="width: 80px;"></td>
         </tr>
       `;
             $tableBody.append(rowHtml);

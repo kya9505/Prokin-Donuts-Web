@@ -1,7 +1,9 @@
 package com.donut.prokindonutsweb.dashboard.service;
 
+import com.donut.prokindonutsweb.dashboard.dto.OrderInboundDTO;
 import com.donut.prokindonutsweb.dashboard.mapper.QhDashboardMapper;
 import com.donut.prokindonutsweb.dashboard.dto.OrderInventoryDTO;
+import com.donut.prokindonutsweb.warehouse.mapper.WarehouseMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -35,8 +37,27 @@ public class QhDashboardServiceImpl implements QhDashboardService {
         return qhDashboardMapper.TotalWarehouse();
     }
 
+    //발주요청/입고량
     @Override
     public List<OrderInventoryDTO> getOrderRequestVsInventory() {
         return qhDashboardMapper.getOrderRequestVsInventory();
     }
+
+    //입고/출고진행
+    @Override
+    public OrderInboundDTO getOrderInbound(String warehouseCode){
+       return    OrderInboundDTO.builder()
+                .receivedQuantity(qhDashboardMapper.countApprovedInboundStatus(warehouseCode))
+                .totalInboundQuantity(qhDashboardMapper.countTotalInbound(warehouseCode))
+                .orderedQuantity(qhDashboardMapper.countApprovedOrderStatus(warehouseCode))
+                .totalOrderQuantity(qhDashboardMapper.countTotalOrder(warehouseCode))
+                .build();
+    }
+    //창고이믈 -> 번호로 변환
+    @Override
+    public String getWarehouseCode(String warehouse) {
+        return qhDashboardMapper.getWarehouseCode(warehouse);
+    }
+
+
 }

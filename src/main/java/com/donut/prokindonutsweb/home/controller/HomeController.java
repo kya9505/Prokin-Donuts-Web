@@ -35,7 +35,7 @@ public class HomeController {
     //개발 안된 페이지
     @GetMapping("/wm/outbound")
     public void Woutbound(){}
-    
+
     @GetMapping("/qh/outbound")
     public void Qoutbound(){}
 

@@ -86,14 +86,13 @@
                                     <th>이메일</th>
                                     <th>주소</th>
                                     <th>아이디</th>
-                                    <th>비밀번호</th>
                                     <th>요청상태</th>
                                 </tr>
                                 </thead>
                                 <tbody>
 
                                 <c:forEach var="request" items="${requestList}">
-                                    <tr>
+                                    <tr data-password="${request.password}">
                                         <td><input type="checkbox" class="row-checkbox" /></td>
                                         <td>${request.requestDate}</td>
                                         <td>${request.requestCode}</td>
@@ -102,10 +101,8 @@
                                         <td>${request.email}</td>
                                         <td>${request.address}</td>
                                         <td>${request.id}</td>
-                                        <td>${request.password}</td>
                                         <td>${request.request}</td>
                                     </tr>
-
                                 </c:forEach>
                                 </tbody>
                             </table>
@@ -182,7 +179,7 @@
         autoWidth: false,
         columnDefs: [
             { width: '95px', targets: -1 },  // Actions 열 너비
-            { targets: [1, 2, 3, 4, 5, 6, 7], className: 'text-center' }, // JS 속성으로 가운데 정렬
+            { targets: [1, 2, 3, 4, 5, 6], className: 'text-center' }, // JS 속성으로 가운데 정렬
             {targets: 0, orderable: false, searchable: false} // 체크박스 컬럼
 
         ],
@@ -306,7 +303,7 @@
                 id: $tr.find('td').eq(7).text().trim(),      // 아이디
                 name: $tr.find('td').eq(3).text().trim(),    // 성함
                 requestCode: $tr.find('td').eq(2).text().trim(),  // 요청 코드
-                request: $tr.find('td').eq(9).text().trim()  // 요청 상태
+                request: $tr.find('td').eq(8).text().trim()  // 요청 상태
             };
             selectedData.push(rowData);
         });
