@@ -34,6 +34,9 @@
         Select franchiseCode From franchise Where memberCode = #{memberCode}
     </select>
 
-
+<!--    창고코드 리스트 반환-->
+    <select id="findWarehouseCode" resultType="java.lang.String">
+        select warehouseCode from warehouse
+    </select>
 
 </mapper>

@@ -14,4 +14,6 @@ public interface OrderService {
     String findNextOrderCode();
 
     String findFranchiseCode(String memberCode);
+
+    List<String> findWarehouseCode();
 }
