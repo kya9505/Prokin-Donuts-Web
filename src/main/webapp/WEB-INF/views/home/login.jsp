@@ -112,8 +112,8 @@
                                     <!-- end col -->
                                     <div class="col-xxl-6 col-lg-12 col-md-6">
                                         <div class="form-check checkbox-style mb-30">
-                                            <input class="form-check-input" type="checkbox" value="" id="checkbox-remember" />
-                                            <label class="form-check-label" for="checkbox-remember">
+                                            <input class="form-check-input" type="checkbox" value="true" id="checkbox-remember" name="remember-me" />
+                                            <label class="form-check-label" for="checkbox-remember" >
                                                 Remember me next time</label>
                                         </div>
                                     </div>
@@ -122,6 +122,7 @@
                                         <div class="mb-30 text-end">
                                             <p class="mb-0">
                                                 <a href="<c:url value='/home/findId'/>" class="hover-underline">아이디 찾기</a>
+                                                <a>|</a>
                                                 <a href="<c:url value='/home/findPassword'/>" class="hover-underline">비밀번호 찾기</a>
                                             </p>
                                         </div>
