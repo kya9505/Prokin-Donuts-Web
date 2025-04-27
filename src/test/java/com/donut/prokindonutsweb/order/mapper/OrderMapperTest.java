@@ -77,4 +77,10 @@ public class OrderMapperTest {
         log.info(franchiseCode);
     }
 
+    @Test
+    @DisplayName("창고코드 리스트 반환")
+    void findWarehouseCode() {
+        List<String> list = orderMapper.findWarehouseCode();
+        list.forEach(log::info);
+    }
 }

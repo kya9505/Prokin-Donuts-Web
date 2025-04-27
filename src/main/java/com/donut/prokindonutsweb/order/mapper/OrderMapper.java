@@ -17,4 +17,6 @@ public interface OrderMapper {
     String selectOrderCode();
 
     String selectFranchiseCode(String memberCode);
+
+    List<String> findWarehouseCode();
 }

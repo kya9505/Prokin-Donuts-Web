@@ -66,6 +66,32 @@
                         <h6 class="mb-10">입고현황</h6>
                         <p class="text-sm mb-20"></p>
 
+                        <!-- 원하는 필터 설정 -->
+                        <div id="myCustomFilters" style="display: none;">
+
+                            <div class="d-flex flex-wrap gap-2">
+
+                                <!-- 입고상태 -->
+                                <div >
+                                    <div class="select-style-1">
+                                        <div class="select-position">
+                                            <select id="InboundCategories">
+                                                <option value="">입고 상태</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 필터 초기화 -->
+                                <div class="mb-20">
+                                    <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="resetFilterBtn" style="height:auto; min-height:auto;">
+                                        필터 초기화
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+
 
                         <div class="table-wrapper table-responsive p-0">
                             <!-- Start table -->
@@ -150,12 +176,30 @@
 <script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
 
 <script>
+    $(document).ready(function() {
+        // 1. 더미 데이터 정의 (입고상태)
+        const dummyInboundCategories = [
+            {"id": "입고요청", "name": "입고요청"},
+            {"id": "승인대기", "name": "승인대기"},
+            {"id": "입고완료", "name": "입고완료"},
+            {"id": "입고취소", "name": "입고취소"},
+
+        ];
+
+        // 2. 원본 필터 영역에 입고상태 옵션 채우기
+        var $midSelect = $('#myCustomFilters #InboundCategories');
+        $.each(dummyInboundCategories, function (index, item) {
+            $midSelect.append($('<option>', {
+                value: item.id,
+                text: item.name
+            }));
+        });
+
     var table = $('#datatable').DataTable({
         autoWidth: false,
         columnDefs: [
-            // { targets: 0, orderable: false, searchable: false }, // 체크박스 컬럼
-            // { targets: [1, 2, 3, 4], className: 'text-center' }
-            // { targets: [1, 2, 3, 4, 6, 7], className: 'text-center' }
+            {width: '95px', targets: -1},  // Actions 열 너비
+            {targets: [0, 1, 2, 3, 4, 5, 6, 7], className: 'text-center'} // JS 속성으로 가운데 정렬
         ],
         order: [[1, 'asc']],
         columns: [
@@ -250,6 +294,8 @@
     var $clone = $('#myCustomFilters').clone(true);
     // 복제 후 삽입 시, ID 제거 필수
 
+        $clone.find('#InboundCategories').attr('id', 'InboundCategories_clone');
+
     $clone.find('#btnInboundAdd').attr('id', 'btnInboundAdd_clone');
     $clone.find('#btnInboundEdit').attr('id', 'btnInboundEdit_clone');
     $clone.find('#btnInboundDelete').attr('id', 'btnInboundDelete_clone');
@@ -268,6 +314,41 @@
         $('#select-all').prop('checked', false);
     });
 
+        // 6-1. 이벤트 위임 방식으로 변경된 ID에 새롭게 바인딩 (body를 통해 실제 필터에 작동하게!)
+        $('body').on('change', '#InboundCategories_clone', function () {
+            $('#InboundSubCategories_clone').val('');
+            table.draw();
+        });
+
+        $('body').on('click', '#resetFilterBtn', function () {
+            const table = $('#datatable').DataTable();
+
+            table.search('').columns().search('');
+
+            $('#InboundCategories_clone, #inboundDateInput_clone').val('');
+
+            table.order([[0, 'asc']]);
+            table.draw();
+        });
+
+        // 7. 필터 이벤트: 드롭다운 변경 시 테이블 필터링
+        $('#InboundCategories, #inboundDateInput').on('change keyup', function () {
+            table.draw();
+        });
+
+        // 7-1. (7번 함수에서 각각이 변경될 때마다) 필터링 함수도 변경된 ID값을 기준으로 수정
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            const selectedInbound = $('#InboundCategories_clone').val();
+            const categoryInbound = data[5]; // 입고상태를 기준으로
+
+            // 일부 포함에도 검색
+            if (selectedInbound && !categoryInbound.includes(selectedInbound)) {
+                return false;
+            }
+
+            return true;
+        });
+    });
 
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
