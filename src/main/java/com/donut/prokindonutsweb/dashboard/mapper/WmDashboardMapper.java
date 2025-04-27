@@ -1,14 +1,13 @@
 package com.donut.prokindonutsweb.dashboard.mapper;
 
-import com.donut.prokindonutsweb.dashboard.dto.CategoryProductInventoryDTO;
 import com.donut.prokindonutsweb.dashboard.dto.CountStatDTO;
 import com.donut.prokindonutsweb.dashboard.dto.InventoryStatisticDTO;
 import com.donut.prokindonutsweb.dashboard.dto.SectionUsageDTO;
+import com.donut.prokindonutsweb.dashboard.dto.SubcategoryProductInventoryDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface WmDashboardMapper {
@@ -56,8 +55,7 @@ public interface WmDashboardMapper {
   
   // 카테고리별 재고 현황
   List<InventoryStatisticDTO> selectCategoryInventoryByWarehouse(String warehouseCode);
-  List<CategoryProductInventoryDTO> selectCategoryProductInventoryByWarehouse(String warehouseCode);
-  
+  List<SubcategoryProductInventoryDTO> selectSubcategoryProductInventoryByWarehouse(String warehouseCode);
   
   // ❗ 주석 처리된 거라 주석 형태로 같이 둠
 //    List<InventoryStatisticDTO> selectSectionInventoryByStoredType(@Param("warehouseCode") String warehouseCode,

@@ -125,8 +125,8 @@
                                 <div class="select-style-1">
                                     <div class="select-position select-sm">
                                         <select class="light-bg">
-                                            <option value="" selected>month</option>
-                                            <option value="">week</option>
+                                            <option value="" selected>Month</option>
+                                            <option value="">Week</option>
                                         </select>
                                     </div>
                                 </div>
@@ -154,9 +154,8 @@
                                 <div class="select-style-1">
                                     <div class="select-position select-sm">
                                         <select id="filterType" class="light-bg" style="width: 200px;">
-                                            <option value="category" selected>카테고리별 조회</option>
-                                            <option value="product">제품별 조회</option>
-                                            <option value="category">섹션별 조회</option>
+                                            <option value="category" selected>Category</option>
+                                            <option value="category">Section</option>
                                         </select>
                                     </div>
                                 </div>
@@ -193,9 +192,9 @@
     <!-- 재고 -->
     <div id="productNamesData" style="display:none;"> <c:forEach var="item" items="${categoryInventory}" varStatus="status"> ${item.name}<c:if test="${!status.last}">,</c:if> </c:forEach> </div>
     <div id="productQuantitiesData" style="display:none;"> <c:forEach var="item" items="${categoryInventory}" varStatus="status"> ${item.quantity}<c:if test="${!status.last}">,</c:if> </c:forEach> </div>
-    <!-- ====== 카테고리별 제품별 재고목록 데이터 ====== -->
-    <div id="categoryProductInventoryData" style="display:none;">  <c:forEach var="item" items="${categoryProductInventoryList}" varStatus="status">
-        ${item.categoryName}/${item.productName}/${item.quantity}<c:if test="${!status.last}">,</c:if> </c:forEach>
+    <!-- ====== 소분류별 제품별 재고목록 데이터 ====== -->
+    <div id="subcategoryProductInventoryData" style="display:none;">  <c:forEach var="item" items="${subcategoryProductInventoryList}" varStatus="status">
+        ${item.subcategoryName}/${item.productName}/${item.quantity}<c:if test="${!status.last}">,</c:if> </c:forEach>
     </div>
 
     <!-- ========== common-footer start =========== -->
@@ -209,115 +208,67 @@
 <!-- ========== Javascript end =========== -->
 
 <script>
-    // 1) 숨겨둔 div에서 입고/출고 데이터 가져오기
-    const rawInbound = document
-        .getElementById('inboundMonthLabelsData')
-        .textContent
-        .split(',')
-        .map(s => s.trim());
+    // 1) 오늘 입/출고 월별 데이터 읽기
+    const rawInboundLabels = document
+        .getElementById('inboundMonthLabelsData').textContent
+        .split(',').map(s => s.trim());
     const rawInboundCounts = document
-        .getElementById('inboundMonthCountsData')
-        .textContent
-        .split(',')
-        .map(s => Number(s.trim()));
-
-    const rawOrder = document
-        .getElementById('orderMonthLabelsData')
-        .textContent
-        .split(',')
-        .map(s => s.trim());
+        .getElementById('inboundMonthCountsData').textContent
+        .split(',').map(s => Number(s.trim()));
+    const rawOrderLabels = document
+        .getElementById('orderMonthLabelsData').textContent
+        .split(',').map(s => s.trim());
     const rawOrderCounts = document
-        .getElementById('orderMonthCountsData')
-        .textContent
-        .split(',')
-        .map(s => Number(s.trim()));
+        .getElementById('orderMonthCountsData').textContent
+        .split(',').map(s => Number(s.trim()));
 
-    // ✅ 추가: 재고 데이터 가져오기
-    const productNames = document.getElementById('productNamesData')
-        .textContent.split(',').map(s => s.trim());
-    const productQuantities = document.getElementById('productQuantitiesData')
-        .textContent.split(',').map(s => Number(s.trim()));
+    // 2) 1~12월 라벨·데이터 준비
+    const labels12 = Array.from({ length: 12 }, function(_, i) {
+        return (i + 1) + '월';
+    });
+    const inboundMap = Object.fromEntries(rawInboundLabels.map((l, i) => [l, rawInboundCounts[i]]));
+    const orderMap   = Object.fromEntries(rawOrderLabels.map((l, i) => [l, rawOrderCounts[i]]));
+    const inboundCounts12 = labels12.map(l => inboundMap[l] || 0);
+    const orderCounts12   = labels12.map(l => orderMap[l]   || 0);
 
-    console.log('✅ 제품명:', productNames);
-    console.log('✅ 수량:', productQuantities);
+    // /////////////////////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////////////////////
 
-    // 숨겨진 div에서 카테고리-제품 데이터 읽어오기
-    const rawCategoryProductData = document.getElementById('categoryProductInventoryData').textContent.trim();
+    const ctx = document.getElementById('Chart1').getContext('2d');
 
-    const productInventoryByCategory = {};
+    // 입고용 그라데이션
+    const gradIn = ctx.createLinearGradient(0, 0, 0, 300);
+    // gradIn.addColorStop(0, 'rgba(76,175,80,0.4)');
+    // gradIn.addColorStop(1, 'rgba(76,175,80,0)');
 
-    // 파싱 시작
-    if (rawCategoryProductData) {
-        rawCategoryProductData.split(',').forEach(record => {
-            const [categoryName, productName, quantityStr] = record.trim().split('/');
-            if (!categoryName || !productName) return;
+    // 출고용 그라데이션
+    const gradOut = ctx.createLinearGradient(0, 0, 0, 300);
+    // gradOut.addColorStop(0, 'rgba(255,157,50,0.4)');
+    // gradOut.addColorStop(1, 'rgba(255,157,50,0)');
 
-            if (!productInventoryByCategory[categoryName]) {
-                productInventoryByCategory[categoryName] = [];
-            }
-            productInventoryByCategory[categoryName].push({
-                name: productName,
-                quantity: parseInt(quantityStr, 10)
-            });
-        });
-    }
-
-    console.log('✅ 카테고리별 제품 재고:', productInventoryByCategory);
-
-    // 2) 1월~12월 라벨 생성
-    const labels12 = [];
-    for (let m = 1; m <= 12; m++) {
-        labels12.push(m + '월');
-    }
-
-    // 3) Map 변환
-    const inboundMap = rawInbound.reduce((m, label, idx) => {
-        m[label] = rawInboundCounts[idx];
-        return m;
-    }, {});
-    const orderMap = rawOrder.reduce((m, label, idx) => {
-        m[label] = rawOrderCounts[idx];
-        return m;
-    }, {});
-
-    // 4) 12개월 데이터 채우기
-    const inboundCounts12 = labels12.map(label => inboundMap[label] || 0);
-    const orderCounts12   = labels12.map(label => orderMap[label]   || 0);
-
-    console.log('✅ labels12       :', labels12);
-    console.log('✅ inboundCounts12:', inboundCounts12);
-    console.log('✅ orderCounts12  :', orderCounts12);
-
-    // 5) Chart1: 입고/출고 같이 그리기
-    const ctx1 = document.getElementById("Chart1").getContext("2d");
-    new Chart(ctx1, {
-        type: "line",
+    new Chart(ctx, {
+        type: 'line',
         data: {
-            labels: labels12,
+            labels: labels12,  // 1월~12월
             datasets: [
                 {
-                    label: "월별 입고 수량",
-                    data: inboundCounts12,
-                    backgroundColor: "transparent",
-                    borderColor: "#FF9D32",
-                    borderWidth: 5,
-                    pointRadius: 8,
-                    pointHoverRadius: 8,
-                    cubicInterpolationMode: "monotone",
-                    pointBackgroundColor: "transparent",
-                    pointHoverBackgroundColor: "#FF9D32"
+                    label: '출고 완료',
+                    data: orderCounts12,
+                    fill: true,
+                    backgroundColor: gradOut,
+                    borderColor: '#FF9D32',
+                    tension: 0.4,
+                    pointRadius: 0
                 },
                 {
-                    label: "월별 출고 수량",
-                    data: orderCounts12,
-                    backgroundColor: "transparent",
-                    borderColor: "#4CAF50",
-                    borderWidth: 5,
-                    pointRadius: 8,
-                    pointHoverRadius: 8,
-                    cubicInterpolationMode: "monotone",
-                    pointBackgroundColor: "transparent",
-                    pointHoverBackgroundColor: "#4CAF50"
+                    label: '입고 완료',
+                    data: inboundCounts12,
+                    fill: true,
+                    backgroundColor: gradIn,
+                    borderColor: '#4CAF50',
+                    tension: 0.4,
+                    pointRadius: 0
                 }
             ]
         },
@@ -325,37 +276,74 @@
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: true },
-                tooltip: { intersect: false, displayColors: true }
+                legend: { display: false },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: '#F3F6F8',
+                    titleColor: '#171717',
+                    bodyColor: '#171717',
+                    titleFont: { size: 14, weight: 'bold' },
+                    bodyFont: { size: 12 },
+                    padding: { top: 10, bottom: 10, left: 20, right: 20 }
+                }
             },
             scales: {
-                y: { ticks: { beginAtZero: true, padding: 35 }, grid: { display: false } },
-                x: { ticks: { padding: 20 }, grid: { drawBorder: false, color: "rgba(143,146,161,.1)" } }
-            }
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#888', padding: 10 }
+                },
+                y: {
+                    grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' },
+                    ticks: { display: false }
+                }
+            },
+            layout: { padding: { top: 20, right: 20, bottom: 20, left: 20 } }
         }
     });
 
+    // /////////////////////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////////////////////
 
+    // 4) 숨긴 DIV에서 소분류‒제품‒수량 데이터 읽기
+    const rawSubcatData = document
+        .getElementById('subcategoryProductInventoryData')
+        .textContent.trim();
 
-    // 1) productInventoryByCategory 는 이미 이렇게 생겼죠:
-    //    { "도넛":[{name:"초코",quantity:530},…], "베이글":[…], … }
+    const productInventoryBySubcategory = {};
+    if (rawSubcatData) {
+        rawSubcatData.split(',').forEach(entry => {
+            const [sub, prod, qty] = entry.trim().split('/');
+            const subTrim  = sub.trim();
+            const prodTrim = prod.trim();
+            const qtyNum   = parseInt(qty.trim(), 10);
+            if (!productInventoryBySubcategory[subTrim]) {
+                productInventoryBySubcategory[subTrim] = [];
+            }
+            productInventoryBySubcategory[subTrim].push({
+                name: prodTrim,
+                quantity: qtyNum
+            });
+        });
+    }
 
-    // 2) 카테고리 리스트와 총수량 계산
-    const categories = Object.keys(productInventoryByCategory);
-    const categoryQuantities = categories.map(cat =>
-        productInventoryByCategory[cat].reduce((sum, p) => sum + p.quantity, 0)
+    // 5) 소분류 리스트와 총수량 계산
+    const subcategories = Object.keys(productInventoryBySubcategory);
+    const subcategoryQuantities = subcategories.map(sub =>
+        productInventoryBySubcategory[sub].reduce((sum, p) => sum + p.quantity, 0)
     );
 
-    // 3) 차트 그리기
-    const ctx2 = document.getElementById("Chart2").getContext("2d");
+    // 6) Chart2: 소분류 바 차트 + 툴팁
+    const ctx2 = document.getElementById('Chart2').getContext('2d');
     new Chart(ctx2, {
-        type: "bar",
+        type: 'bar',
         data: {
-            labels: categories,          // x축: 카테고리명
+            labels: subcategories,
             datasets: [{
-                label: "재고 수량",
-                data: categoryQuantities,  // y축: 카테고리별 총 수량
-                backgroundColor: "#FF9D32",
+                label: '재고 수량',
+                data: subcategoryQuantities,
+                backgroundColor: '#FF9D32',
                 borderRadius: 30,
                 barThickness: 20,
                 maxBarThickness: 30
@@ -368,30 +356,23 @@
                 legend: { display: false },
                 tooltip: {
                     callbacks: {
-                        // 툴팁 타이틀에 카테고리명
-                        title: function(ctx) {
-                            return ctx[0].label;
-                        },
-                        // 툴팁 본문에 제품명: 수량개 리스트
-                        label: function(ctx) {
-                            const cat = ctx.label;
-                            const products = productInventoryByCategory[cat] || [];
-                            if (products.length === 0) {
-                                return "  (제품 없음)";
-                            }
-                            // Chart.js는 array를 돌려주면 라인별로 보여줌
-                            return products.map(p => '  ' + p.name + ': ' + p.quantity + '개');
+                        title: ctx => ctx[0].label,     // 소분류명
+                        label: ctx => {
+                            const list = productInventoryBySubcategory[ctx.label] || [];
+                            return list.length ? list.map(function(p) {
+                                    return '  ' + p.name + ': ' + p.quantity + '개';
+                                }) : ['  (제품 없음)'];
                         }
                     },
-                    backgroundColor: "#F3F6F8",
-                    titleColor: "#171717",
-                    bodyColor: "#171717",
-                    titleFont: { size: 14, weight: "bold" },
+                    backgroundColor: '#F3F6F8',
+                    titleColor: '#171717',
+                    bodyColor: '#171717',
+                    titleFont: { size: 14, weight: 'bold' },
                     bodyFont: { size: 10 },
                     displayColors: false,
                     padding: { top: 10, bottom: 10, left: 20, right: 20 },
-                    bodyAlign: "left",
-                    titleAlign: "left"
+                    bodyAlign: 'left',
+                    titleAlign: 'left'
                 }
             },
             scales: {

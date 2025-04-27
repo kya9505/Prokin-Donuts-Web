@@ -1,8 +1,8 @@
 package com.donut.prokindonutsweb.dashboard.controller;
 
-import com.donut.prokindonutsweb.dashboard.dto.CategoryProductInventoryDTO;
 import com.donut.prokindonutsweb.dashboard.dto.CountStatDTO;
 import com.donut.prokindonutsweb.dashboard.dto.InventoryStatisticDTO;
+import com.donut.prokindonutsweb.dashboard.dto.SubcategoryProductInventoryDTO;
 import com.donut.prokindonutsweb.dashboard.service.WmDashboardService;
 import com.donut.prokindonutsweb.security.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ public class WmDashboardController {
     List<CountStatDTO> inboundByMonth = wmDashboardService.findInboundCountByMonth(currentYear, warehouseCode); // 올해 월별 입고완료 건수
     List<CountStatDTO> orderByMonth = wmDashboardService.findOrderCountByMonth(currentYear, warehouseCode); // 올해 월별 출고완료 건수
     List<InventoryStatisticDTO> categoryInventory = wmDashboardService.findCategoryInventoryByWarehouse(warehouseCode); // 카테고리별 재고 수량 목록
-    List<CategoryProductInventoryDTO> categoryProductInventoryList = wmDashboardService.findCategoryProductInventoryByWarehouse(warehouseCode); // 카테고리별 제품별 재고 상세 목록
+    List<SubcategoryProductInventoryDTO> subcategoryProductInventoryList = wmDashboardService.findSubcategoryProductInventoryByWarehouse(warehouseCode);
     
     model.addAttribute("warehouseCode", warehouseCode); // 로그인한 창고관리자의 창고코드
     model.addAttribute("inboundWaiting", inboundWaiting); // 오늘 미승인 입고요청 건수
@@ -61,7 +61,7 @@ public class WmDashboardController {
     model.addAttribute("inboundByMonth", inboundByMonth); // 월별 입고완료 건수
     model.addAttribute("orderByMonth", orderByMonth); // 월별 출고완료 건수
     model.addAttribute("categoryInventory", categoryInventory); // 카테고리별 재고 수량 목록
-    model.addAttribute("categoryProductInventoryList", categoryProductInventoryList); // 카테고리별 제품별 재고 상세 목록
+    model.addAttribute("subcategoryProductInventoryList", subcategoryProductInventoryList); // 카테고리별 제품별 재고 상세 목록
   }
   
   // 입고완료/출고완료 통합 조회 (월별/주별)

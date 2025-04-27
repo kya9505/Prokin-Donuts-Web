@@ -1,9 +1,9 @@
 package com.donut.prokindonutsweb.dashboard.service;
 
-import com.donut.prokindonutsweb.dashboard.dto.CategoryProductInventoryDTO;
 import com.donut.prokindonutsweb.dashboard.dto.CountStatDTO;
 import com.donut.prokindonutsweb.dashboard.dto.InventoryStatisticDTO;
 import com.donut.prokindonutsweb.dashboard.dto.SectionUsageDTO;
+import com.donut.prokindonutsweb.dashboard.dto.SubcategoryProductInventoryDTO;
 import com.donut.prokindonutsweb.dashboard.mapper.WmDashboardMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -78,8 +78,8 @@ public class WmDashboardServiceImpl implements WmDashboardService {
     return wmDashboardMapper.selectCategoryInventoryByWarehouse(warehouseCode);
   }
   @Override
-  public List<CategoryProductInventoryDTO> findCategoryProductInventoryByWarehouse(String warehouseCode) {
-    return wmDashboardMapper.selectCategoryProductInventoryByWarehouse(warehouseCode);
+  public List<SubcategoryProductInventoryDTO> findSubcategoryProductInventoryByWarehouse(String warehouseCode) {
+    return wmDashboardMapper.selectSubcategoryProductInventoryByWarehouse(warehouseCode);
   }
 
 //    @Override

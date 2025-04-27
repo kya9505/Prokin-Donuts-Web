@@ -176,19 +176,19 @@
     </select>
 
     <!-- 카테고리별 제품별 재고 목록 조회 -->
-    <select id="selectCategoryProductInventoryByWarehouse"
+    <select id="selectSubcategoryProductInventoryByWarehouse"
             parameterType="string"
-            resultType="com.donut.prokindonutsweb.dashboard.dto.CategoryProductInventoryDTO">
+            resultType="com.donut.prokindonutsweb.dashboard.dto.SubcategoryProductInventoryDTO">
         SELECT
-            c.categoryMid AS categoryName,
-            p.productName AS productName,
-            SUM(i.quantity) AS quantity
+            c.categorySub  AS subcategoryName,
+            p.productName    AS productName,
+            SUM(i.quantity)  AS quantity
         FROM Inventory i
-                 JOIN Product p ON i.productCode = p.productCode
-                 JOIN Category c ON p.categoryCode = c.categoryCode
+                 JOIN Product   p ON i.productCode   = p.productCode
+                 JOIN Category  c ON p.categoryCode  = c.categoryCode
         WHERE i.warehouseCode = #{warehouseCode}
-        GROUP BY c.categoryMid, p.productName
-        ORDER BY c.categoryMid, p.productName
+        GROUP BY c.categorySub, p.productName
+        ORDER BY c.categorySub, p.productName
     </select>
 
 <!--    &lt;!&ndash; 섹션별 재고 현황 (storedType 파라미터로 분기) &ndash;&gt;-->

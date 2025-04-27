@@ -1,9 +1,9 @@
 package com.donut.prokindonutsweb.dashboard.service;
 
-import com.donut.prokindonutsweb.dashboard.dto.CategoryProductInventoryDTO;
 import com.donut.prokindonutsweb.dashboard.dto.CountStatDTO;
 import com.donut.prokindonutsweb.dashboard.dto.InventoryStatisticDTO;
 import com.donut.prokindonutsweb.dashboard.dto.SectionUsageDTO;
+import com.donut.prokindonutsweb.dashboard.dto.SubcategoryProductInventoryDTO;
 
 import java.util.List;
 
@@ -43,7 +43,7 @@ public interface WmDashboardService {
   
   // 카테고리별 재고 수량
   List<InventoryStatisticDTO> findCategoryInventoryByWarehouse(String warehouseCode);
-  List<CategoryProductInventoryDTO> findCategoryProductInventoryByWarehouse(String warehouseCode);
+  List<SubcategoryProductInventoryDTO> findSubcategoryProductInventoryByWarehouse(String warehouseCode);
   
   // ❗ 주석 처리된 기능 (필요 시 복구 가능)
 //    List<InventoryStatisticDTO> findSectionInventoryByStoredType(String warehouseCode, String storedType);
