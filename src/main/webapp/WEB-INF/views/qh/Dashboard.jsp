@@ -290,6 +290,7 @@
                             ticks: {
                                 padding: 10,
                                 font: { size: 17 },
+
                             },
                             barPercentage: 0.6 ,
                         },
@@ -303,7 +304,11 @@
                             ticks: {
                                 max: 900,
                                 padding: 20,
-                                stepSize: 50,    // ★ 추가 : 50단위로 끊기
+                                stepSize: 50,
+                                callback: function(value) {
+                                    return value + '개';   // 👈 이렇게 숫자 뒤에 '개' 붙여줌
+                                }
+// ★ 추가 : 50단위로 끊기
                             }
                         }
                     }
