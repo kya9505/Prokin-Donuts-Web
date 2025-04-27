@@ -191,6 +191,18 @@
     <!-- ====== 출고 카운트 ====== -->
     <div id="orderMonthCountsData" style="display:none;"><c:forEach var="item" items="${orderMonthData}" varStatus="status">${item.count}<c:if test="${!status.last}">,</c:if></c:forEach></div>
 
+    <!-- 재고 -->
+    <div id="productNamesData" style="display:none;">
+        <c:forEach var="item" items="${productInventoryList}" varStatus="status">
+            ${item.name}<c:if test="${!status.last}">,</c:if>
+        </c:forEach>
+    </div>
+
+    <div id="productQuantitiesData" style="display:none;">
+        <c:forEach var="item" items="${productInventoryList}" varStatus="status">
+            ${item.quantity}<c:if test="${!status.last}">,</c:if>
+        </c:forEach>
+    </div>
 
     <!-- ========== common-footer start =========== -->
     <%@ include file="/WEB-INF/views/includes/common/Footer.jsp" %>
@@ -203,7 +215,7 @@
 <!-- ========== Javascript end =========== -->
 
 <script>
-    // 1) 숨김 div에서 기존 데이터 가져오기
+    // 1) 숨겨둔 div에서 입고/출고 데이터 가져오기
     const rawInbound = document
         .getElementById('inboundMonthLabelsData')
         .textContent
@@ -226,13 +238,22 @@
         .split(',')
         .map(s => Number(s.trim()));
 
-    // 2) 과거 12개월 라벨 생성 (MM월)
+    // ✅ 추가: 재고 데이터 가져오기
+    const productNames = document.getElementById('productNamesData')
+        .textContent.split(',').map(s => s.trim());
+    const productQuantities = document.getElementById('productQuantitiesData')
+        .textContent.split(',').map(s => Number(s.trim()));
+
+    console.log('✅ 제품명:', productNames);
+    console.log('✅ 수량:', productQuantities);
+
+    // 2) 1월~12월 라벨 생성
     const labels12 = [];
-    const today = new Date();
-    for (let i = 1; i <= 12; i++) {
-        labels12.push(i + '월');
+    for (let m = 1; m <= 12; m++) {
+        labels12.push(m + '월');
     }
-    // 3) 원본 데이터 → Map 으로 변환
+
+    // 3) Map 변환
     const inboundMap = rawInbound.reduce((m, label, idx) => {
         m[label] = rawInboundCounts[idx];
         return m;
@@ -242,7 +263,7 @@
         return m;
     }, {});
 
-    // 4) 12개월 전체 카운트 배열로 채우기 (데이터 없으면 0)
+    // 4) 12개월 데이터 채우기
     const inboundCounts12 = labels12.map(label => inboundMap[label] || 0);
     const orderCounts12   = labels12.map(label => orderMap[label]   || 0);
 
@@ -250,60 +271,93 @@
     console.log('✅ inboundCounts12:', inboundCounts12);
     console.log('✅ orderCounts12  :', orderCounts12);
 
-    // 5) 차트 1 (입고) 다시 그리기
+    // 5) Chart1: 입고/출고 같이 그리기
     const ctx1 = document.getElementById("Chart1").getContext("2d");
     new Chart(ctx1, {
         type: "line",
         data: {
             labels: labels12,
-            datasets: [{
-                label: "월별 입고 수량",
-                data: inboundCounts12,
-                backgroundColor: "transparent",
-                borderColor: "#FF9D32",
-                borderWidth: 5,
-                pointRadius: 8,
-                pointHoverRadius: 8,
-                cubicInterpolationMode: "monotone",
-                pointBackgroundColor: "transparent",
-                pointHoverBackgroundColor: "#365CF5"
-            }]
+            datasets: [
+                {
+                    label: "월별 입고 수량",
+                    data: inboundCounts12,
+                    backgroundColor: "transparent",
+                    borderColor: "#FF9D32",
+                    borderWidth: 5,
+                    pointRadius: 8,
+                    pointHoverRadius: 8,
+                    cubicInterpolationMode: "monotone",
+                    pointBackgroundColor: "transparent",
+                    pointHoverBackgroundColor: "#FF9D32"
+                },
+                {
+                    label: "월별 출고 수량",
+                    data: orderCounts12,
+                    backgroundColor: "transparent",
+                    borderColor: "#4CAF50",
+                    borderWidth: 5,
+                    pointRadius: 8,
+                    pointHoverRadius: 8,
+                    cubicInterpolationMode: "monotone",
+                    pointBackgroundColor: "transparent",
+                    pointHoverBackgroundColor: "#4CAF50"
+                }
+            ]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: {
-                y: { ticks: { beginAtZero:true, padding:35 }, grid:{display:false} },
-                x: { ticks:{padding:20}, grid:{drawBorder:false,color:"rgba(143,146,161,.1)"} }
+            plugins: {
+                legend: { display: true },
+                tooltip: { intersect: false, displayColors: true }
             },
-            plugins: { legend:{display:false}, tooltip:{intersect:false,displayColors:false} }
+            scales: {
+                y: { ticks: { beginAtZero: true, padding: 35 }, grid: { display: false } },
+                x: { ticks: { padding: 20 }, grid: { drawBorder: false, color: "rgba(143,146,161,.1)" } }
+            }
         }
     });
 
-    // 6) 차트 2 (출고) 다시 그리기
+
+    // ✅ Chart2: 재고현황 (DB기반으로 변경)
     const ctx2 = document.getElementById("Chart2").getContext("2d");
     new Chart(ctx2, {
         type: "bar",
         data: {
-            labels: labels12,
+            labels: productNames,
             datasets: [{
-                label: "월별 출고 수량",
-                data: orderCounts12,
-                backgroundColor: "#4CAF50",
+                label: "재고 수량",
+                data: productQuantities,
+                backgroundColor: "#FF9D32",
                 borderRadius: 30,
-                barThickness: 6,
-                maxBarThickness: 8
+                barThickness: 20,
+                maxBarThickness: 30
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: {
-                y: { ticks:{beginAtZero:true,padding:35}, grid:{display:false} },
-                x: { ticks:{padding:20}, grid:{display:false} }
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || "";
+                            if (label) label += ": ";
+                            label += context.parsed.y;
+                            return label;
+                        }
+                    },
+                    backgroundColor: "#F3F6F8",
+                    displayColors: false,
+                    padding: { x: 30, y: 10 }
+                }
             },
-            plugins: { legend:{display:false}, tooltip:{displayColors:false} },
-            layout: { padding:{top:15,right:15,bottom:15,left:15} }
+            scales: {
+                y: { ticks: { beginAtZero: true, padding: 35 }, grid: { display: false } },
+                x: { ticks: { padding: 20 }, grid: { display: false } }
+            },
+            layout: { padding: { top: 15, right: 15, bottom: 15, left: 15 } }
         }
     });
 </script>
