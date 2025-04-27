@@ -119,14 +119,14 @@
                     <div class="card-style mb-30">
                         <div class="title d-flex flex-wrap align-items-center justify-content-between">
                             <div class="left">
-                                <h6 class="text-medium mb-30">역대 입고/출고 현황</h6>
+                                <h6 class="text-medium mb-30">입고/출고 현황</h6>
                             </div>
                             <div class="right">
                                 <div class="select-style-1">
                                     <div class="select-position select-sm">
-                                        <select class="light-bg">
-                                            <option value="" selected>Month</option>
-                                            <option value="">Week</option>
+                                        <select id="chart1PeriodType" class="light-bg">
+                                            <option value="month" selected>Month</option>
+                                            <option value="week">Week</option>
                                         </select>
                                     </div>
                                 </div>
