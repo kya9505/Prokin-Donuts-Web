@@ -275,8 +275,29 @@
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'top' },
-                tooltip: { mode: 'index', intersect: false }
+                legend: {
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'rectRounded',
+                        padding: 20,
+                        font: { size: 12, weight: 'bold' },
+                        color: '#555'
+                    }
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: '#F3F6F8',
+                    titleColor: '#171717',
+                    bodyColor: '#171717',
+                    titleFont: { size: 14, weight: 'bold' },
+                    bodyFont: { size: 10 },
+                    displayColors: false,
+                    padding: { top: 10, bottom: 10, left: 20, right: 20 },
+                    bodyAlign: 'left',
+                    titleAlign: 'left'
+                }
             },
             scales: {
                 x: { grid: { display: false }, ticks: { padding: 10 } },
