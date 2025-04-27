@@ -20,6 +20,5 @@
         <package name="com.donut.prokindonutsweb.inbound.vo"/>
         <package name="com.donut.prokindonutsweb.dashboard.dto"/>
         <package name="com.donut.prokindonutsweb.dashboard.vo"/>
-        <package name="com.donut.prokindonutsweb.dashboard.dto"/>
     </typeAliases>
 </configuration>
