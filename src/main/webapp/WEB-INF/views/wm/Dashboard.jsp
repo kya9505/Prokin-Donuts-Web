@@ -40,7 +40,7 @@
                         </div>
                         <div class="content">
                             <h6 class="mb-10">미승인 입고요청</h6>
-                            <h3 class="text-bold mb-10">${todayWaitingInboundCount}건</h3>
+                            <h3 class="text-bold mb-10">${inboundWaiting}건</h3>
                         </div>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                         </div>
                         <div class="content">
                             <h6 class="mb-10">미승인 출고요청</h6>
-                            <h3 class="text-bold mb-10">${todayWaitingOrderCount}건</h3>
+                            <h3 class="text-bold mb-10">${orderWaiting}건</h3>
                         </div>
                     </div>
                 </div>
@@ -66,7 +66,7 @@
                             <div class="d-flex justify-content-center ml-15">
                                 <div class="d-flex align-items-center" style="margin-bottom: 6px;">
                                     <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1 " onclick="changeTemp('fridge', -1)">-</button>
-                                    <h3 id="temp-fridge" class="text-bold mx-2 " style="font-size: 20px;">7°C</h3>
+                                    <h3 id="temp-fridge" class="text-bold mx-2 " style="font-size: 20px;">${coldTemp}°C</h3>
                                     <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1 " onclick="changeTemp('fridge', 1)">+</button>
                                     <button class="main-btn primary-btn btn-hover btn-sm px-3 py-1 ms-2" onclick="confirmTemp('fridge')">결정</button>
                                 </div>
@@ -83,7 +83,7 @@
                             <div class="d-flex justify-content-center ml-10">
                                 <div class="d-flex align-items-center" style="margin-bottom: 6px;">
                                     <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1" onclick="changeTemp('freezer', -1)">-</button>
-                                    <h3 id="temp-freezer" class="text-bold mx-2 " style="font-size: 20px;">-21°C</h3>
+                                    <h3 id="temp-freezer" class="text-bold mx-2 " style="font-size: 20px;">${frozenTemp}°C</h3>
                                     <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1 " onclick="changeTemp('freezer', 1)">+</button>
                                     <button class="main-btn primary-btn btn-hover btn-sm px-3 py-1 ms-2 " onclick="confirmTemp('freezer')">결정</button>
                                 </div>
@@ -100,7 +100,7 @@
                             <div class="d-flex justify-content-center ml-15">
                                 <div class="d-flex align-items-center" style="margin-bottom: 6px;">
                                     <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1" onclick="changeTemp('room', -1)">-</button>
-                                    <h3 id="temp-room" class="text-bold mx-2" style="font-size: 20px;">20°C</h3>
+                                    <h3 id="temp-room" class="text-bold mx-2" style="font-size: 20px;">${roomTemp}°C</h3>
                                     <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1 " onclick="changeTemp('room', 1)">+</button>
                                     <button class="main-btn primary-btn btn-hover btn-sm px-3 py-1 ms-2 " onclick="confirmTemp('room')">결정</button>
                                 </div>
@@ -125,9 +125,8 @@
                                 <div class="select-style-1">
                                     <div class="select-position select-sm">
                                         <select class="light-bg">
-                                            <option value="">주별 조회</option>
-                                            <option value="" selected>월별 조회</option>
-                                            <option value="">연별 조회</option>
+                                            <option value="" selected>month</option>
+                                            <option value="">week</option>
                                         </select>
                                     </div>
                                 </div>
@@ -149,14 +148,14 @@
                         <div class="title d-flex flex-wrap justify-content-between">
                             <div class="left">
                                 <h6 class="text-medium mb-10">재고현황</h6>
-                                <h3 class="text-bold">총 자산 : ${totalInventoryPrice} 원</h3>
+                                <h3 class="text-bold">총 자산가치 : ${totalInventoryPrice} 원</h3>
                             </div>
                             <div class="right">
                                 <div class="select-style-1">
                                     <div class="select-position select-sm">
                                         <select id="filterType" class="light-bg" style="width: 200px;">
-                                            <option value="product" selected>제품별 조회</option>
-                                            <option value="category">카테고리별 조회</option>
+                                            <option value="category" selected>카테고리별 조회</option>
+                                            <option value="product">제품별 조회</option>
                                             <option value="category">섹션별 조회</option>
                                         </select>
                                     </div>
@@ -182,26 +181,21 @@
     <!-- ========== section end ========== -->
 
     <!-- ====== 입고 라벨 ====== -->
-    <div id="inboundMonthLabelsData" style="display:none;"><c:forEach var="item" items="${inboundMonthData}" varStatus="status"><c:out value="${item.period}월"/><c:if test="${!status.last}">,</c:if></c:forEach></div>
+    <div id="inboundMonthLabelsData" style="display:none;"><c:forEach var="item" items="${inboundByMonth}" varStatus="status"><c:out value="${item.period}월"/><c:if test="${!status.last}">,</c:if></c:forEach></div>
     <!-- ====== 입고 카운트 ====== -->
-    <div id="inboundMonthCountsData" style="display:none;"><c:forEach var="item" items="${inboundMonthData}" varStatus="status">${item.count}<c:if test="${!status.last}">,</c:if></c:forEach></div>
+    <div id="inboundMonthCountsData" style="display:none;"><c:forEach var="item" items="${inboundByMonth}" varStatus="status">${item.count}<c:if test="${!status.last}">,</c:if></c:forEach></div>
 
     <!-- ====== 출고 라벨 ====== -->
-    <div id="orderMonthLabelsData" style="display:none;"><c:forEach var="item" items="${orderMonthData}" varStatus="status"><c:out value="${item.period}월"/><c:if test="${!status.last}">,</c:if></c:forEach></div>
+    <div id="orderMonthLabelsData" style="display:none;"><c:forEach var="item" items="${orderByMonth}" varStatus="status"><c:out value="${item.period}월"/><c:if test="${!status.last}">,</c:if></c:forEach></div>
     <!-- ====== 출고 카운트 ====== -->
-    <div id="orderMonthCountsData" style="display:none;"><c:forEach var="item" items="${orderMonthData}" varStatus="status">${item.count}<c:if test="${!status.last}">,</c:if></c:forEach></div>
+    <div id="orderMonthCountsData" style="display:none;"><c:forEach var="item" items="${orderByMonth}" varStatus="status">${item.count}<c:if test="${!status.last}">,</c:if></c:forEach></div>
 
     <!-- 재고 -->
-    <div id="productNamesData" style="display:none;">
-        <c:forEach var="item" items="${productInventoryList}" varStatus="status">
-            ${item.name}<c:if test="${!status.last}">,</c:if>
-        </c:forEach>
-    </div>
-
-    <div id="productQuantitiesData" style="display:none;">
-        <c:forEach var="item" items="${productInventoryList}" varStatus="status">
-            ${item.quantity}<c:if test="${!status.last}">,</c:if>
-        </c:forEach>
+    <div id="productNamesData" style="display:none;"> <c:forEach var="item" items="${categoryInventory}" varStatus="status"> ${item.name}<c:if test="${!status.last}">,</c:if> </c:forEach> </div>
+    <div id="productQuantitiesData" style="display:none;"> <c:forEach var="item" items="${categoryInventory}" varStatus="status"> ${item.quantity}<c:if test="${!status.last}">,</c:if> </c:forEach> </div>
+    <!-- ====== 카테고리별 제품별 재고목록 데이터 ====== -->
+    <div id="categoryProductInventoryData" style="display:none;">  <c:forEach var="item" items="${categoryProductInventoryList}" varStatus="status">
+        ${item.categoryName}/${item.productName}/${item.quantity}<c:if test="${!status.last}">,</c:if> </c:forEach>
     </div>
 
     <!-- ========== common-footer start =========== -->
@@ -246,6 +240,29 @@
 
     console.log('✅ 제품명:', productNames);
     console.log('✅ 수량:', productQuantities);
+
+    // 숨겨진 div에서 카테고리-제품 데이터 읽어오기
+    const rawCategoryProductData = document.getElementById('categoryProductInventoryData').textContent.trim();
+
+    const productInventoryByCategory = {};
+
+    // 파싱 시작
+    if (rawCategoryProductData) {
+        rawCategoryProductData.split(',').forEach(record => {
+            const [categoryName, productName, quantityStr] = record.trim().split('/');
+            if (!categoryName || !productName) return;
+
+            if (!productInventoryByCategory[categoryName]) {
+                productInventoryByCategory[categoryName] = [];
+            }
+            productInventoryByCategory[categoryName].push({
+                name: productName,
+                quantity: parseInt(quantityStr, 10)
+            });
+        });
+    }
+
+    console.log('✅ 카테고리별 제품 재고:', productInventoryByCategory);
 
     // 2) 1월~12월 라벨 생성
     const labels12 = [];
@@ -319,15 +336,25 @@
     });
 
 
-    // ✅ Chart2: 재고현황 (DB기반으로 변경)
+
+    // 1) productInventoryByCategory 는 이미 이렇게 생겼죠:
+    //    { "도넛":[{name:"초코",quantity:530},…], "베이글":[…], … }
+
+    // 2) 카테고리 리스트와 총수량 계산
+    const categories = Object.keys(productInventoryByCategory);
+    const categoryQuantities = categories.map(cat =>
+        productInventoryByCategory[cat].reduce((sum, p) => sum + p.quantity, 0)
+    );
+
+    // 3) 차트 그리기
     const ctx2 = document.getElementById("Chart2").getContext("2d");
     new Chart(ctx2, {
         type: "bar",
         data: {
-            labels: productNames,
+            labels: categories,          // x축: 카테고리명
             datasets: [{
                 label: "재고 수량",
-                data: productQuantities,
+                data: categoryQuantities,  // y축: 카테고리별 총 수량
                 backgroundColor: "#FF9D32",
                 borderRadius: 30,
                 barThickness: 20,
@@ -341,16 +368,30 @@
                 legend: { display: false },
                 tooltip: {
                     callbacks: {
-                        label: function(context) {
-                            let label = context.dataset.label || "";
-                            if (label) label += ": ";
-                            label += context.parsed.y;
-                            return label;
+                        // 툴팁 타이틀에 카테고리명
+                        title: function(ctx) {
+                            return ctx[0].label;
+                        },
+                        // 툴팁 본문에 제품명: 수량개 리스트
+                        label: function(ctx) {
+                            const cat = ctx.label;
+                            const products = productInventoryByCategory[cat] || [];
+                            if (products.length === 0) {
+                                return "  (제품 없음)";
+                            }
+                            // Chart.js는 array를 돌려주면 라인별로 보여줌
+                            return products.map(p => '  ' + p.name + ': ' + p.quantity + '개');
                         }
                     },
                     backgroundColor: "#F3F6F8",
+                    titleColor: "#171717",
+                    bodyColor: "#171717",
+                    titleFont: { size: 14, weight: "bold" },
+                    bodyFont: { size: 10 },
                     displayColors: false,
-                    padding: { x: 30, y: 10 }
+                    padding: { top: 10, bottom: 10, left: 20, right: 20 },
+                    bodyAlign: "left",
+                    titleAlign: "left"
                 }
             },
             scales: {

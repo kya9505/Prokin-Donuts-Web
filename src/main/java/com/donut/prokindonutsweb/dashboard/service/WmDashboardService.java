@@ -1,40 +1,53 @@
 package com.donut.prokindonutsweb.dashboard.service;
 
+import com.donut.prokindonutsweb.dashboard.dto.CategoryProductInventoryDTO;
 import com.donut.prokindonutsweb.dashboard.dto.CountStatDTO;
 import com.donut.prokindonutsweb.dashboard.dto.InventoryStatisticDTO;
 import com.donut.prokindonutsweb.dashboard.dto.SectionUsageDTO;
 
 import java.util.List;
-import java.util.Map;
 
 public interface WmDashboardService {
-  // ─── 창고 코드 조회 ─────────────────────
+  // 창고코드 조회
   List<String> findWarehouseCodesByMember(String memberCode);
-
-  // ─── 섹션 온도 조회/수정 ─────────────────
-  int findSectionTemperature(Map<String, Object> paramMap);
-  int updateSectionTemperature(Map<String, Object> paramMap);
   
-  // ─── 오늘 미승인 입고요청/출고요청 수 ──────
+  // 섹션별 온도 조회
+  int findSectionTemperature(String warehouseCode, String storedType);
+  
+  // 섹션 온도 업데이트
+  void updateSectionTemperature(String warehouseCode, String storedType, int temperature);
+  
+  // 오늘 미승인 입고요청 수
   int findTodayWaitingInboundCount(String warehouseCode);
-  int findTodayWaitingOrderCount(String warehouseCode);
-
-  // ─── Inbound 건수 집계 (년/월/주) ──────────
-  List<CountStatDTO> findInboundCountByYear(String warehouseCode);
-  List<CountStatDTO> findInboundCountByMonth(Map<String, Object> paramMap);
-  List<CountStatDTO> findInboundCountByWeek(Map<String, Object> paramMap);
-
-  // ─── Order 건수 집계 (년/월/주) ────────────
-  List<CountStatDTO> findOrderCountByYear(String warehouseCode);
-  List<CountStatDTO> findOrderCountByMonth(Map<String, Object> paramMap);
-  List<CountStatDTO> findOrderCountByWeek(Map<String, Object> paramMap);
   
-  // ─── 재고/자산 현황 ──────────────────────
+  // 오늘 미승인 출고요청 수
+  int findTodayWaitingOrderCount(String warehouseCode);
+  
+  // 입고 완료 (월별)
+  List<CountStatDTO> findInboundCountByMonth(int year, String warehouseCode);
+  
+  // 입고 완료 (주별)
+  List<CountStatDTO> findInboundCountByWeek(int year, String warehouseCode);
+  
+  // 출고 완료 (월별)
+  List<CountStatDTO> findOrderCountByMonth(int year, String warehouseCode);
+  
+  // 출고 완료 (주별)
+  List<CountStatDTO> findOrderCountByWeek(int year, String warehouseCode);
+  
+  // 창고 총 자산 금액
   Long findTotalInventoryPrice(String warehouseCode);
-  List<InventoryStatisticDTO> findProductInventoryByWarehouse(String warehouseCode);
+  
+  // 제품별 재고 수량
+//  List<InventoryStatisticDTO> findProductInventoryByWarehouse(String warehouseCode);
+  
+  // 카테고리별 재고 수량
   List<InventoryStatisticDTO> findCategoryInventoryByWarehouse(String warehouseCode);
-  List<InventoryStatisticDTO> findSectionInventoryByStoredType(Map<String, Object> paramMap);
-
-  // ─── 섹션 사용률 (percent) ─────────────────
+  List<CategoryProductInventoryDTO> findCategoryProductInventoryByWarehouse(String warehouseCode);
+  
+  // ❗ 주석 처리된 기능 (필요 시 복구 가능)
+//    List<InventoryStatisticDTO> findSectionInventoryByStoredType(String warehouseCode, String storedType);
+  
+  // 섹션별 사용률
   List<SectionUsageDTO> findSectionUsageRateByWarehouse(String warehouseCode);
 }
