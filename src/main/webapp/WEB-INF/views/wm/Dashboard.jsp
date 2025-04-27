@@ -326,14 +326,24 @@
 
     // === 1-3) 12개월 전체 배열(값 없으면 0) ===
     var monthlyInbound = monthlyLabels.map(function(m){
-        return inboundMap[m] || 0;
+        return inboundMap[m] != null ? inboundMap[m] : 0;
     });
     var monthlyOrder = monthlyLabels.map(function(m){
-        return orderMap[m] || 0;
+        return orderMap[m] != null ? orderMap[m] : 0;
     });
 
-    // === 2) Chart1 초기화 (월별) ===
     var ctx1 = document.getElementById('Chart1').getContext('2d');
+
+    // 그라데이션 만들기
+    var gradientInbound = ctx1.createLinearGradient(0, 0, 0, 400);
+    gradientInbound.addColorStop(0, 'rgba(255, 157, 50, 0.4)');     // 주황, 위쪽
+    gradientInbound.addColorStop(1, 'rgba(255, 157, 50, 0.05)');    // 주황, 아래쪽
+
+    var gradientOrder = ctx1.createLinearGradient(0, 0, 0, 400);
+    gradientOrder.addColorStop(0, 'rgba(76, 175, 80, 0.4)');    // 초록, 위쪽
+    gradientOrder.addColorStop(1, 'rgba(76, 175, 80, 0.05)');   // 초록, 아래쪽
+
+    // === 2) Chart1 초기화 (월별) ===
     var chart1 = new Chart(ctx1, {
         type: 'line',
         data: {
@@ -342,20 +352,22 @@
                 {
                     label: '출고 완료',
                     data: monthlyOrder,
-                    borderColor: '#FF9D32',
-                    backgroundColor: 'transparent',
+                    borderColor: '#4CAF50',
+                    backgroundColor: gradientOrder,
                     tension: 0.3,
-                    pointRadius: 2,
-                    pointHoverRadius: 5
+                    pointRadius: 4,
+                    pointHoverRadius: 8,
+                    fill: true
                 },
                 {
                     label: '입고 완료',
                     data: monthlyInbound,
-                    borderColor: '#4CAF50',
-                    backgroundColor: 'transparent',
+                    borderColor: '#FF9D32',
+                    backgroundColor: gradientInbound,
                     tension: 0.3,
-                    pointRadius: 2,
-                    pointHoverRadius: 5
+                    pointRadius: 4,
+                    pointHoverRadius: 8,
+                    fill: true
                 }
             ]
         },
