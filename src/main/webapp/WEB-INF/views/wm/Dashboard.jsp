@@ -148,7 +148,10 @@
                         <div class="title d-flex flex-wrap justify-content-between">
                             <div class="left">
                                 <h6 class="text-medium mb-10">재고현황</h6>
-                                <h3 class="text-bold">총 자산가치 : ${totalInventoryPrice} 원</h3>
+                                <h3 class="text-bold">
+                                    총 자산가치 :
+                                    <fmt:formatNumber value="${totalInventoryPrice}" type="number" groupingUsed="true"/> 원
+                                </h3>
                             </div>
                             <div class="right">
                                 <div class="select-style-1">
