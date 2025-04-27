@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="<c:url value='/resources/css/materialdesignicons.min.css'/>" type="text/css" />
     <link rel="stylesheet" href="<c:url value='/resources/css/fullcalendar.css'/>" />
     <link rel="stylesheet" href="<c:url value='/resources/css/main.css'/>" />
+
     <!-- datatable을 위해 필요함 -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 </head>
@@ -108,7 +109,7 @@
 
             <!-- End Row -->
             <div class="row">
-                <div class="col-lg-7">
+                <div class="col-lg-6">
                     <div class="card-style mb-30">
                         <div class="title d-flex flex-wrap justify-content-between">
                             <div class="left">
@@ -130,22 +131,22 @@
                         </div>
                         <!-- End Title -->
                         <div class="chart">
-                            <canvas id="Chart1" style="width: 100%; height: 400px; margin-left: -35px;"></canvas>
+                            <canvas id="inboundChart-1" style="width: 100%; height: 420px;"></canvas>
                         </div>
                         <!-- End Chart -->
                     </div>
                 </div>
                 <!-- End Col -->
-                <div class="col-lg-5">
+                <div class="col-lg-6">
                     <div class="card-style mb-30 w-100">
                         <div class="title d-flex flex-wrap align-items-center justify-content-between">
                             <div class="left">
-                                <h6 class="text-medium mb-30">상품별 입고량 / 현재 재고량</h6>
+                                <h6 class="text-medium mb-30">발주 요청량/ 총 재고량 </h6>
                             </div>
                         </div>
                         <!-- End Title -->
                         <div class="chart">
-                            <canvas id="Chart5" style="width: 100%; height: 400px;"></canvas>
+                            <canvas id="Chart5" style="width: 100%; height: 420px;"></canvas>
                         </div>
                         <!-- End Chart -->
                     </div>
@@ -179,10 +180,7 @@
 <!-- ======== main-wrapper end =========== -->
 <!-- ========= All Javascript files linkup ======== -->
 <script src="<c:url value='/resources/js/Chart.min.js'/>"></script>
-<script src="<c:url value='/resources/js/dynamic-pie-chart.js'/>"></script>
 <script src="<c:url value='/resources/js/moment.min.js'/>"></script>
-<script src="<c:url value='/resources/js/fullcalendar.js'/>"></script>
-<script src="<c:url value='/resources/js/jvectormap.min.js'/>"></script>
 <script src="<c:url value='/resources/js/world-merc.js'/>"></script>
 <script src="<c:url value='/resources/js/polyfill.js'/>"></script>
 <script src="<c:url value='/resources/js/main.js'/>"></script>
@@ -195,298 +193,116 @@
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
 
-    // ======== jvectormap activation
-    var markers = [
-        { name: "Egypt", coords: [26.8206, 30.8025] },
-        { name: "Russia", coords: [61.524, 105.3188] },
-        { name: "Canada", coords: [56.1304, -106.3468] },
-        { name: "Greenland", coords: [71.7069, -42.6043] },
-        { name: "Brazil", coords: [-14.235, -51.9253] },
-    ];
+    fetch('<c:url value="/qh/order-vs-inventory"/>')
+        .then(response => response.json())
+        .then(data => {
+            const productName = data.map(item => item.productName);
+            const orderRequest = data.map(item => item.totalOrderRequest);
+            const inventory = data.map(item => item.totalInventory);
 
-
-    var jvm = new jsVectorMap({
-        map: "world_merc",
-        selector: "#map",
-        zoomButtons: true,
-
-        regionStyle: {
-            initial: {
-                fill: "#d1d5db",
-            },
-        },
-
-        labels: {
-            markers: {
-                render: (marker) => marker.name,
-            },
-        },
-
-        markersSelectable: true,
-        selectedMarkers: markers.map((marker, index) => {
-            var name = marker.name;
-
-            if (name === "Russia" || name === "Brazil") {
-                return index;
-            }
-        }),
-        markers: markers,
-        markerStyle: {
-            initial: { fill: "#4A6CF7" },
-            selected: { fill: "#ff5050" },
-        },
-        markerLabelStyle: {
-            initial: {
-                fontWeight: 400,
-                fontSize: 14,
-            },
-        },
-    });
-    // ====== calendar activation
-    document.addEventListener("DOMContentLoaded", function () {
-        var calendarMiniEl = document.getElementById("calendar-mini");
-        var calendarMini = new FullCalendar.Calendar(calendarMiniEl, {
-            initialView: "dayGridMonth",
-            headerToolbar: {
-                end: "today prev,next",
-            },
-        });
-        calendarMini.render();
-    });
-
-    // =========== chart one start
-    const ctx1 = document.getElementById("Chart1").getContext("2d");
-    const chart1 = new Chart(ctx1, {
-        type: "line",
-        data: {
-            labels: [
-                "Jan",
-                "Fab",
-                "Mar",
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
-            ],
-            datasets: [
-                {
-                    label: "",
-                    backgroundColor: "transparent",
-                    borderColor: " #FF9D32",
-                    data: [
-                        600, 800, 750, 880, 940, 880, 900, 770, 920, 890, 976, 1100,
-                    ],
-                    pointBackgroundColor: "transparent",
-                    pointHoverBackgroundColor: "#FF9D32",
-                    pointBorderColor: "transparent",
-                    pointHoverBorderColor: "#fff",
-                    pointHoverBorderWidth: 5,
-                    borderWidth: 5,
-                    pointRadius: 8,
-                    pointHoverRadius: 8,
-                    cubicInterpolationMode: "monotone", // Add this line for curved line
+            const ctx5 = document.getElementById("Chart5").getContext("2d");
+            new Chart(ctx5, {
+                type: 'bar',
+                data: {
+                    labels: productName,
+                    datasets: [
+                        {
+                            label: 'orderRequest',
+                            data: orderRequest,
+                            backgroundColor: '#fbd4ab',
+                            borderRadius: 30,
+                            barThickness: 10   ,
+                            maxBarThickness: 8,
+                        },
+                        {
+                            label: 'inventory',
+                            data: inventory,
+                            backgroundColor: '#ff9d32',
+                            borderRadius: 30,
+                            barThickness: 10,
+                            maxBarThickness: 8,
+                        }
+                    ]
                 },
-            ],
-        },
-        options: {
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        labelColor: function (context) {
-                            return {
-                                backgroundColor: "#ffffff",
-                                color: "#171717"
-                            };
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 15,
+                            right: 15,
+                            bottom: 15,
+                            left: 0,
                         },
                     },
-                    intersect: false,
-                    backgroundColor: "#f9f9f9",
-                    title: {
-                        fontFamily: "Plus Jakarta Sans",
-                        color: "#8F92A1",
-                        fontSize: 12,
-                    },
-                    body: {
-                        fontFamily: "Plus Jakarta Sans",
-                        color: "#171717",
-                        fontStyle: "bold",
-                        fontSize: 16,
-                    },
-                    multiKeyBackground: "transparent",
-                    displayColors: false,
-                    padding: {
-                        x: 30,
-                        y: 10,
-                    },
-                    bodyAlign: "center",
-                    titleAlign: "center",
-                    titleColor: "#8F92A1",
-                    bodyColor: "#171717",
-                    bodyFont: {
-                        family: "Plus Jakarta Sans",
-                        size: "16",
-                        weight: "bold",
-                    },
-                },
-                legend: {
-                    display: false,
-                },
-            },
-            responsive: true,
-            maintainAspectRatio: false,
-            title: {
-                display: false,
-            },
-            scales: {
-                y: {
-                    grid: {
-                        display: false,
-                        drawTicks: false,
-                        drawBorder: false,
-                    },
-                    ticks: {
-                        padding: 35,
-                        max: 1200,
-                        min: 500,
-                    },
-                },
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        color: "rgba(143, 146, 161, .1)",
-                        zeroLineColor: "rgba(143, 146, 161, .1)",
-                    },
-                    ticks: {
-                        padding: 20,
-                    },
-                },
-            },
-        },
-    });
-    // =========== chart five start (입고량 vs 재고량) ==========
-    const ctx5 = document.getElementById("Chart5").getContext("2d");
-    const chart5 = new Chart(ctx5, {
-        type: "bar",
-        data: {
-            labels: ["도넛A", "도넛B", "도넛C", "도넛D","도넛D"],
-            datasets: [
-                {
-                    label: "입고량",
-                    backgroundColor: "#FF9D32",
-                    borderRadius: 30,
-                    barThickness: 40,
-                    maxBarThickness: 8,
-                    data: [120, 90, 150, 100 , 30],
-                    backgroundColor: "#fbd4ab"
-                },
-                {
-                    label: "현재 재고량",
-                    backgroundColor: "#FF9D32",
-                    borderRadius: 40,
-                    barThickness: 6,
-                    maxBarThickness: 8,
-                    data: [30, 70, 50, 20 , 10],
-                    backgroundColor: "#ff9d32"
-                }
-            ]
-        },
-        options: {
-            indexAxis: 'y',  //  가로 막대 설정
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        titleColor: function (context) {
-                            return "#8F92A1";
+                    plugins: {
+                        legend: {
+                            display: false
                         },
-                        label: function (context) {
-                            let label = context.dataset.label || "";
-
-                            if (label) {
-                                label += ": ";
-                            }
-                            label += context.parsed.y;
-                            return label;
+                        title: {
+                            display: false
                         },
-                    },
-                    backgroundColor: "#F3F6F8",
-                    titleAlign: "center",
-                    bodyAlign: "center",
-                    titleFont: {
-                        size: 12,
-                        weight: "bold",
-                        color: "#8F92A1",
-                    },
-                    bodyFont: {
-                        size: 16,
-                        weight: "bold",
-                        color: "#171717",
-                    },
-                    displayColors: false,
-                    padding: {
-                        x: 30,
-                        y: 10,
-                    },
-                },
-            },
-            legend: {
-                display: false,
-            },
-            legend: {
-                display: false,
-            },
-            layout: {
-                padding: {
-                    top: 15,
-                    right: 15,
-                    bottom: 15,
-                    left: 0,
-                },
-            },
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    grid: {
-                        display: false,
-                        drawTicks: false,
-                        drawBorder: false,
-                    },
-                    ticks: {
-                        padding: 10,
-                        font: {
-                            size: 17,
+                        tooltip: {
+                            callbacks: {
+                                titleColor: function (context) { return "#f58636"; },
+                                label: function (context) {
+                                    let label = context.dataset.label || "";
+                                    if (label) { label += ": "; }
+                                    label += context.parsed.x; // 가로 막대 x축 값
+                                    return label;
+                                },
+                            },
+                            backgroundColor: "#fbd4ab",
+                            titleAlign: "center",
+                            bodyAlign: "center",
+                            titleFont: {
+                                size: 12,
+                                weight: "bold",
+                                color: "#0e0e0e",
+                            },
+                            bodyFont: {
+                                size: 16,
+                                weight: "bold",
+                                color: "#171717",
+                            },
+                            displayColors: false,
+                            padding: { x: 30, y: 10 },
                         }
                     },
-                },
-                x: {
-                    grid: {
-                        display: false,
-                        drawBorder: false,
-                        color: "rgba(143, 146, 161, .1)",
-                        drawTicks: false,
-                        zeroLineColor: "rgba(143, 146, 161, .1)",
-                    },
-                    ticks: {
-                        padding: 20,
-                    },
-                },
-            },
-            plugins: {
-                legend: {
-                    display: false,
-                },
-                title: {
-                    display: false,
-                },
-            },
-        },
-    });
-    // =========== chart two end
+                    scales: {
+                        y: {
+                            grid: {
+                                display: false,
+                                drawTicks: false,
+                                drawBorder: false,
+                            },
+                            ticks: {
+                                padding: 10,
+                                font: { size: 17 },
+                            },
+                            barPercentage: 0.6 ,
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false,
+                                color: "rgba(143, 146, 161, .1)",
+                                drawTicks: false,
+                            },
+                            ticks: {
+                                max: 900,
+                                padding: 20,
+                                stepSize: 50,    // ★ 추가 : 50단위로 끊기
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Chart5 데이터 불러오기 실패:', error);
+        });
 
 </script>
 </body>

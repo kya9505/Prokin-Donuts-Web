@@ -25,4 +25,15 @@
         select count(*) from warehouse
     </select>
 
+    <!--최근 3개월간 상품별 발주요청량 -재고량 순위 상위 5개 -->
+    <select id="getOrderRequestVsInventory" resultType="OrderInventoryDTO">
+        SELECT
+            productName,
+            IFNULL(totalOrderRequest, 0) AS totalOrderRequest,
+            IFNULL(totalInventory, 0) AS totalInventory
+        FROM qhCart2
+        ORDER BY (totalOrderRequest/totalInventory) DESC
+            LIMIT 5
+    </select>
+
 </mapper>
