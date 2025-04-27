@@ -555,7 +555,7 @@
                 <tr>
                  <td>` + detail.productCode + `</td>
                  <td>` + detail.productName + `</td>
-                 <td>` + detail.productPrice + `</td>
+                 <td>` + Number(detail.productPrice).toLocaleString() + '원'+`</td>
                  <td>` + detail.storedType + `</td>
                  <td>` + detail.quantity + `</td>
                 </tr>
@@ -620,7 +620,7 @@
                 <tr>
                      <td>` + detail.productCode + `</td>
                      <td>` + detail.productName + `</td>
-                     <td>` + detail.productPrice + `</td>
+                     <td>` + Number(detail.productPrice).toLocaleString() + '원'+`</td>
                      <td>` + detail.storedType + `</td>
                      <td>
                         <input type="hidden" name="items[`+index+`].inboundCode" value=`+detail.inboundCode+` />
@@ -670,7 +670,7 @@
                 <tr>
                  <td>` + detail.productCode + `</td>
                  <td>` + detail.productName + `</td>
-                 <td>` + detail.productPrice + `</td>
+                 <td>` + Number(detail.productPrice).toLocaleString() + '원'+`</td>
                  <td>` + detail.storedType + `</td>
                  <td>` + detail.quantity + `</td>
                 </tr>

@@ -377,8 +377,8 @@
     $(document).ready(function() {
         // 1. 더미 데이터 정의 (출고상태)
         const dummyoutboundCategories = [
-            { "id": "출고요청", "name": "출고요청" },
-            { "id": "승인대기", "name": "승인대기" },
+            { "id": "출고대기", "name": "출고대기" },
+            { "id": "출고완료", "name": "출고완료" },
         ];
 
         // 2. 원본 필터 영역에 출고상태 옵션 채우기
