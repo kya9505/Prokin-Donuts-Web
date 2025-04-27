@@ -209,7 +209,7 @@
                     labels: productName,
                     datasets: [
                         {
-                            label: 'orderRequest',
+                            label: '발주요청량',
                             data: orderRequest,
                             backgroundColor: '#fbd4ab',
                             borderRadius: 30,
@@ -217,7 +217,7 @@
                             maxBarThickness: 8,
                         },
                         {
-                            label: 'inventory',
+                            label: '재고량',
                             data: inventory,
                             backgroundColor: '#ff9d32',
                             borderRadius: 30,
@@ -246,12 +246,22 @@
                             display: false
                         },
                         tooltip: {
+                            backgroundColor: "#fbd4ab",
+                            titleColor: "#333",
+                            bodyColor: "#333",
+                            displayColors: false,
+                            titleAlign: "center",
+                            bodyAlign: "center",
+                            titleFont: { size: 14, weight: "bold" },
+                            bodyFont: { size: 16, weight: "bold" },
+                            padding: { x: 30, y: 10 },
                             callbacks: {
-                                titleColor: function (context) { return "#f58636"; },
-                                label: function (context) {
-                                    let label = context.dataset.label || "";
-                                    if (label) { label += ": "; }
-                                    label += context.parsed.x; // 가로 막대 x축 값
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.parsed.x;
                                     return label;
                                 },
                             },
@@ -261,12 +271,10 @@
                             titleFont: {
                                 size: 12,
                                 weight: "bold",
-                                color: "#0e0e0e",
                             },
                             bodyFont: {
                                 size: 16,
                                 weight: "bold",
-                                color: "#171717",
                             },
                             displayColors: false,
                             padding: { x: 30, y: 10 },
@@ -351,6 +359,25 @@
         }
         const ctx = document.getElementById(canvasId).getContext('2d');
 
+        const centerTextPlugin = {
+            id: 'centerText',
+            beforeDraw(chart) {
+                const { width, height, ctx } = chart;
+                ctx.save();
+
+                ctx.font = `17px sans-serif`;
+                ctx.textBaseline = 'middle';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#333';
+
+                const inboundText = '입고 ' + inboundRate + '%';
+                const outboundText = '출고 ' + orderRate + '%';
+                ctx.fillText(inboundText, width / 2, height / 2 - 10);
+                ctx.fillText(outboundText, width / 2, height / 2 + 20);
+                ctx.restore();
+            }
+        };
+
         inboundChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -358,7 +385,7 @@
                 datasets: [
                     {
                         label: '입고 진행율',
-                        data: [inboundRate, 100 - inboundRate],
+                        data: [inboundRate || 0.01, 100 - (inboundRate || 0.01)],
                         backgroundColor: ['#ff9d32', '#f3f3f3'],
                         borderRadius: 30,
                         cutout: '70%',
@@ -366,7 +393,7 @@
                     },
                     {
                         label: '출고 진행율',
-                        data: [orderRate, 100 - orderRate],
+                        data: [orderRate || 0.01, 100 - (orderRate || 0.01)],
                         backgroundColor: ['#fbd4ab', '#f3f3f3'],
                         borderRadius: 30,
                         cutout: '50%',
@@ -391,12 +418,13 @@
                                     label += context.parsed + '%';
                                     return label;
                                 }
-                                return ''; // 남은비율은 툴팁 안 보여줌
+                                return '';
                             }
                         }
                     }
                 }
-            }
+            },
+            plugins: [centerTextPlugin] // 플러그인 등록
         });
     }
 
