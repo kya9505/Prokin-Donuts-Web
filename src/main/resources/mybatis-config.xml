@@ -18,5 +18,7 @@
         <package name="com.donut.prokindonutsweb.member.vo"/>
         <package name="com.donut.prokindonutsweb.inbound.dto"/>
         <package name="com.donut.prokindonutsweb.inbound.vo"/>
+        <package name="com.donut.prokindonutsweb.dashboard.dto"/>
+        <package name="com.donut.prokindonutsweb.dashboard.vo"/>
     </typeAliases>
 </configuration>

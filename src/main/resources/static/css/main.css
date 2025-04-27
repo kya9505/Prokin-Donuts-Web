@@ -6285,3 +6285,25 @@ height: auto !important;
   font-weight: bold;
   background-color: #fff5eb;
 }
+
+/*커서 설정*/
+
+.cursor {
+  position: fixed;        /* 뷰포트 기준 */
+  left: -9999px;          /* 초기엔 화면 밖 */
+  top: -9999px;
+  pointer-events: none;   /* 클릭 투과 */
+  z-index: 9999;          /* 최상단 */
+  opacity: 0;             /* 보이지 않음 */
+  transition: opacity .15s;
+}
+
+.cursor.visible {
+  opacity: 1;             /* 첫 마우스무브 후 보이기 */
+}
+
+.cursor img {
+  /* 해상도 대응 예시: 뷰포트 가로의 3%지만 24~48px 사이 */
+  width: 34px;
+  height: auto;           /* 원본 비율 유지 */
+}
