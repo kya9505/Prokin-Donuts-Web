@@ -1498,6 +1498,8 @@
 
             alert('제품이 성공적으로 수정되었습니다.');
             $('#productEditModal').modal('hide');
+
+            $('#productEditForm')[0].submit();
         });
 
 
