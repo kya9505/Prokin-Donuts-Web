@@ -303,6 +303,40 @@
         .catch(error => {
             console.error('Chart5 데이터 불러오기 실패:', error);
         });
+    //
+    function drawWarehouseChart(canvasId, label1, value1, label2, value2) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: [label1, label2],
+                datasets: [{
+                    data: [value1, 100 - value1],  // 예: 완료%와 나머지
+                    backgroundColor: ['#ff9d32', '#f3f3f3'],
+                    borderRadius: 30,
+                    cutout: '70%',
+                    radius: '80%',
+                },
+                    {
+                        data: [value2, 100 - value2],  // 출고용
+                        backgroundColor: ['#fbd4ab', '#f3f3f3'],
+                        borderRadius: 30,
+                        cutout: '50%',   // 하나는 살짝 안쪽
+                        radius: '60%',
+                    }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+    drawWarehouseChart('inboundChart-1', '입고', 85, '출고', 70);
 
 </script>
 </body>
