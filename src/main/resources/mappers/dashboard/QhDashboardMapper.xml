@@ -31,7 +31,7 @@
             productName,
             IFNULL(totalOrderRequest, 0) AS totalOrderRequest,
             IFNULL(totalInventory, 0) AS totalInventory
-        FROM qhCart2
+        FROM orderinventory
         ORDER BY (totalOrderRequest/totalInventory) DESC
             LIMIT 5
     </select>
