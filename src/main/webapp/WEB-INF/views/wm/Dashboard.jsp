@@ -208,67 +208,65 @@
 <!-- ========== Javascript end =========== -->
 
 <script>
-    // 1) 오늘 입/출고 월별 데이터 읽기
-    const rawInboundLabels = document
+    // === 1) 숨겨둔 DIV에서 “월별” 데이터 읽어두기 ===
+    var rawInboundLabels = document
         .getElementById('inboundMonthLabelsData').textContent
-        .split(',').map(s => s.trim());
-    const rawInboundCounts = document
+        .split(',').map(function(s){ return s.trim(); });
+    var rawInboundCounts = document
         .getElementById('inboundMonthCountsData').textContent
-        .split(',').map(s => Number(s.trim()));
-    const rawOrderLabels = document
+        .split(',').map(function(s){ return Number(s.trim()); });
+    var rawOrderLabels   = document
         .getElementById('orderMonthLabelsData').textContent
-        .split(',').map(s => s.trim());
-    const rawOrderCounts = document
+        .split(',').map(function(s){ return s.trim(); });
+    var rawOrderCounts   = document
         .getElementById('orderMonthCountsData').textContent
-        .split(',').map(s => Number(s.trim()));
+        .split(',').map(function(s){ return Number(s.trim()); });
 
-    // 2) 1~12월 라벨·데이터 준비
-    const labels12 = Array.from({ length: 12 }, function(_, i) {
+    // === 1-1) “1월”~“12월” 고정 라벨 ===
+    var monthlyLabels = Array.from({ length: 12 }, function(_, i) {
         return (i + 1) + '월';
     });
-    const inboundMap = Object.fromEntries(rawInboundLabels.map((l, i) => [l, rawInboundCounts[i]]));
-    const orderMap   = Object.fromEntries(rawOrderLabels.map((l, i) => [l, rawOrderCounts[i]]));
-    const inboundCounts12 = labels12.map(l => inboundMap[l] || 0);
-    const orderCounts12   = labels12.map(l => orderMap[l]   || 0);
 
-    // /////////////////////////////////////////////////////////////////////////////////////////////
-    // /////////////////////////////////////////////////////////////////////////////////////////////
-    // /////////////////////////////////////////////////////////////////////////////////////////////
+    // === 1-2) rawInboundLabels/rawInboundCounts → 맵 생성 ===
+    var inboundMap = {};
+    rawInboundLabels.forEach(function(l, i){
+        inboundMap[l] = rawInboundCounts[i];
+    });
+    var orderMap = {};
+    rawOrderLabels.forEach(function(l, i){
+        orderMap[l] = rawOrderCounts[i];
+    });
 
-    const ctx = document.getElementById('Chart1').getContext('2d');
+    // === 1-3) 12개월 전체 배열(값 없으면 0) ===
+    var monthlyInbound = monthlyLabels.map(function(m){
+        return inboundMap[m] || 0;
+    });
+    var monthlyOrder = monthlyLabels.map(function(m){
+        return orderMap[m] || 0;
+    });
 
-    // 입고용 그라데이션
-    const gradIn = ctx.createLinearGradient(0, 0, 0, 300);
-    // gradIn.addColorStop(0, 'rgba(76,175,80,0.4)');
-    // gradIn.addColorStop(1, 'rgba(76,175,80,0)');
-
-    // 출고용 그라데이션
-    const gradOut = ctx.createLinearGradient(0, 0, 0, 300);
-    // gradOut.addColorStop(0, 'rgba(255,157,50,0.4)');
-    // gradOut.addColorStop(1, 'rgba(255,157,50,0)');
-
-    new Chart(ctx, {
+    // === 2) Chart1 초기화 (월별) ===
+    var ctx1 = document.getElementById('Chart1').getContext('2d');
+    var chart1 = new Chart(ctx1, {
         type: 'line',
         data: {
-            labels: labels12,  // 1월~12월
+            labels: monthlyLabels,
             datasets: [
                 {
-                    label: '출고 완료',
-                    data: orderCounts12,
-                    fill: true,
-                    backgroundColor: gradOut,
-                    borderColor: '#FF9D32',
-                    tension: 0.4,
-                    pointRadius: 0
+                    label: '입고 완료',
+                    data: monthlyInbound,
+                    borderColor: '#4CAF50',
+                    backgroundColor: 'transparent',
+                    tension: 0.3,
+                    pointRadius: 4
                 },
                 {
-                    label: '입고 완료',
-                    data: inboundCounts12,
-                    fill: true,
-                    backgroundColor: gradIn,
-                    borderColor: '#4CAF50',
-                    tension: 0.4,
-                    pointRadius: 0
+                    label: '출고 완료',
+                    data: monthlyOrder,
+                    borderColor: '#FF9D32',
+                    backgroundColor: 'transparent',
+                    tension: 0.3,
+                    pointRadius: 4
                 }
             ]
         },
@@ -276,29 +274,54 @@
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: false },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false,
-                    backgroundColor: '#F3F6F8',
-                    titleColor: '#171717',
-                    bodyColor: '#171717',
-                    titleFont: { size: 14, weight: 'bold' },
-                    bodyFont: { size: 12 },
-                    padding: { top: 10, bottom: 10, left: 20, right: 20 }
-                }
+                legend: { position: 'top' },
+                tooltip: { mode: 'index', intersect: false }
             },
             scales: {
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#888', padding: 10 }
-                },
-                y: {
-                    grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' },
-                    ticks: { display: false }
-                }
-            },
-            layout: { padding: { top: 20, right: 20, bottom: 20, left: 20 } }
+                x: { grid: { display: false }, ticks: { padding: 10 } },
+                y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { beginAtZero: true, padding: 10 } }
+            }
+        }
+    });
+
+    // === 3) “월별/주별” Select 처리 ===
+    document.getElementById('chart1PeriodType').addEventListener('change', function(e) {
+        var type = e.target.value;  // 'month' or 'week'
+        if (type === 'month') {
+            // 월별로 되돌리기
+            chart1.data.labels = monthlyLabels;
+            chart1.data.datasets[0].data = monthlyInbound;
+            chart1.data.datasets[1].data = monthlyOrder;
+            chart1.update();
+        } else {
+            // 주별 데이터 비동기 요청
+            var year = new Date().getFullYear();
+            var code = '' + '${warehouseCode}';
+            fetch('/wm/Dashboard/stat/inbound-order?year=' + year +
+                '&warehouseCode=' + code +
+                '&periodType=week')
+                .then(function(res){ return res.json(); })
+                .then(function(json){
+                    var inStats  = json.inboundStats;
+                    var outStats = json.orderStats;
+                    var weekLabels = inStats.map(function(o){
+                        return o.period + '주';
+                    });
+                    var weekIn  = inStats.map(function(o){
+                        return o.count;
+                    });
+                    var weekOut = outStats.map(function(o){
+                        return o.count;
+                    });
+
+                    chart1.data.labels = weekLabels;
+                    chart1.data.datasets[0].data = weekIn;
+                    chart1.data.datasets[1].data = weekOut;
+                    chart1.update();
+                })
+                .catch(function(err){
+                    console.error('주별 데이터 로딩 실패:', err);
+                });
         }
     });
 
