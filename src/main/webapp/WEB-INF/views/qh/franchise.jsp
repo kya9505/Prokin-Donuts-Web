@@ -751,7 +751,7 @@
                 alert("가맹점명 중복확인을 해주세요.");
                 return false;
             }
-
+            alert("가맹점이 성공적으로 등록되었습니다.");
             // address 하나로 합쳐서 hidden 필드 추가
             const $existing = $("input[name='franchiseLocation']");
             const fullAddress = (roadAddress + " " + detailAddress).replace(/^,/, "").trim();
@@ -874,6 +874,7 @@
                 e.preventDefault();
                 return;
             }
+            alert("가맹점 정보가 성공적으로 수정되었습니다.");
         });
 
         // 삭제 버튼 클릭 시
@@ -935,6 +936,7 @@
                 alert('삭제할 수 없는 가맹점입니다.');
                 return;
             }
+            alert("가맹점이 성공적으로 삭제되었습니다.");
             $('#franchiseDeleteForm').submit();
         });
     });
