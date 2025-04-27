@@ -278,7 +278,7 @@
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'top',
+                    position: 'bottom',
                     labels: {
                         usePointStyle: true,
                         pointStyle: 'rectRounded',
