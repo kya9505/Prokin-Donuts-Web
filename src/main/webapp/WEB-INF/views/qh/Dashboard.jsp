@@ -113,16 +113,17 @@
                     <div class="card-style mb-30">
                         <div class="title d-flex flex-wrap justify-content-between">
                             <div class="left">
-                                <h6 class="text-medium mb-10">Yearly Stats</h6>
-                                <h3 class="text-bold">$245,479</h3>
+                                <h6 class="text-medium mb-10">창고별 입고/출고</h6>
+                                <h3 class="text-bold">진행율(%)</h3>
                             </div>
                             <div class="right">
                                 <div class="select-style-1">
                                     <div class="select-position select-sm">
-                                        <select class="light-bg">
-                                            <option value="">Yearly</option>
-                                            <option value="">Monthly</option>
-                                            <option value="">Weekly</option>
+                                        <!-- 창고 드롭다운 -->
+                                        <select id="warehouseCategory">
+                                            <c:forEach var="warehouse" items="${warehouseList}">
+                                                <option value="${warehouse}">${warehouse}</option>
+                                            </c:forEach>
                                         </select>
                                     </div>
                                 </div>
@@ -303,7 +304,36 @@
         .catch(error => {
             console.error('Chart5 데이터 불러오기 실패:', error);
         });
-    //
+
+    var $clone = $('#myCustomFilters').clone(true);
+    // 복제 후 삽입 시, ID 제거 필수!
+    $clone.find('#warehouseCategory').attr('id', 'warehouseCategory_clone');
+
+    $('div.myFilterArea').html($clone.html());
+
+
+    // 5. 필터링 로직 정의
+    $.fn.dataTable.ext.search.push(function(settings, data) {
+        const selectedWarehouse = $('#warehouseCategory_clone').val();
+
+        const warehouseName = data[1];
+
+        // 1) 창고 필터
+        if (selectedWarehouse && selectedWarehouse !== warehouseName) {
+            return false;
+        }
+
+        // 조건 만족 시 표시
+        return true;
+    });
+    // 6. 필터 초기화 버튼
+    $('body').on('click', '#resetFilterBtn', function () {
+        $('#warehouseCategory_clone').val('')
+        table.draw();
+    });
+
+
+    //도넛차트
     function drawWarehouseChart(canvasId, label1, value1, label2, value2) {
         const ctx = document.getElementById(canvasId).getContext('2d');
         new Chart(ctx, {
@@ -331,6 +361,35 @@
                 plugins: {
                     legend: {
                         display: false
+                    },
+                    title: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            titleColor: function (context) { return "#f58636"; },
+                            label: function (context) {
+                                let label = context.dataset.label || "";
+                                if (label) { label += ": "; }
+                                label += context.parsed.x; // 가로 막대 x축 값
+                                return label;
+                            },
+                        },
+                        backgroundColor: "#fbd4ab",
+                        titleAlign: "center",
+                        bodyAlign: "center",
+                        titleFont: {
+                            size: 12,
+                            weight: "bold",
+                            color: "#0e0e0e",
+                        },
+                        bodyFont: {
+                            size: 16,
+                            weight: "bold",
+                            color: "#171717",
+                        },
+                        displayColors: false,
+                        padding: { x: 30, y: 10 },
                     }
                 }
             }
@@ -341,3 +400,5 @@
 </script>
 </body>
 </html>
+
+
