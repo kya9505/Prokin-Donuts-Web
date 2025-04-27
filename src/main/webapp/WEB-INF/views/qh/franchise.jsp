@@ -777,7 +777,7 @@
 
             const code = rowData[0];        // 가맹점코드
             const name = rowData[1];        // 가맹점명
-            const memberCode = rowData[6];  // 숨겨진 td: 담당자코드
+            const memberCode = rowData[7];  // 숨겨진 td: 담당자코드
             const memberName = rowData[3];  // 담당자이름
 
             // 모달 input 세팅

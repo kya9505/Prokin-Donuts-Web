@@ -887,7 +887,7 @@
 
             const code = rowData[0];        // 창고코드
             const name = rowData[1];        // 창고명
-            const memberCode = rowData[7];  // 숨겨진 td: 담당자코드
+            const memberCode = rowData[8];  // 숨겨진 td: 담당자코드
             const memberName = rowData[4];  // 담당자이름
 
             // 모달 input 세팅
