@@ -771,6 +771,7 @@
                     return false;  // 전송 막기
                 }
                 // 통과 시 true 반환 → form action으로 POST
+                alert('카테고리가 성공적으로 등록되었습니다.');
                 return true;
             });
 
@@ -862,6 +863,7 @@
                     $form.append('<input type="hidden" name="categoryCodes" value="' + code + '"/>');
                 });
 
+                alert('카테고리가 성공적으로 삭제되었습니다.');
                 $form.submit();
             });
 
@@ -1249,6 +1251,7 @@
                     return;
                 }
 
+                alert('제품이 성공적으로 등록되었습니다.');
                 this.submit(); // ✅ 유효성 통과 시 실제 form 전송
             });
         });
@@ -1496,8 +1499,8 @@
                 }
             }
 
-            alert('제품이 성공적으로 수정되었습니다.');
             $('#productEditModal').modal('hide');
+            alert('제품이 성공적으로 수정되었습니다.');
 
             $('#productEditForm')[0].submit();
         });
@@ -1578,6 +1581,7 @@
                 return false;
             }
 
+            alert('제품이 성공적으로 삭제되었습니다.');
             $form.submit(); // 서버 전송
         });
     });
