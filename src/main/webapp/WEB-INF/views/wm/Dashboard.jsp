@@ -290,7 +290,7 @@
                     console.error('[confirmTemp] 에러 발생 →', err);
                     alert('서버 오류가 발생했습니다: ' + err.message);
                 });
-        }, 100);
+        }, 500);
     }
 </script>
 
