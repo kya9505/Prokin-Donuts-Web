@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="<c:url value='/resources/css/materialdesignicons.min.css'/>" type="text/css" />
     <link rel="stylesheet" href="<c:url value='/resources/css/fullcalendar.css'/>" />
     <link rel="stylesheet" href="<c:url value='/resources/css/main.css'/>" />
+
     <!-- datatable을 위해 필요함 -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 </head>
@@ -56,75 +57,73 @@
             </div>
             <!-- ========== title-wrapper end ========== -->
             <div class="row">
-                <div class="col-xl-3 col-lg-4 col-sm-6">
+                <a href="<c:url value='/qh/member/request'/>" class="col-xl-3 col-lg-4 col-sm-6" style="text-decoration: none; color: inherit;">
                     <div class="icon-card mb-30">
                         <div class="icon purple">
                             <i class="lni lni-user"></i>
                         </div>
                         <div class="content">
-                            <h6 class="mb-10">미승인 회원가입</h6>
-                            <h3 class="text-bold mb-10">5건</h3>
+                            <h6 class="mb-10">미승인 회원가입 요청</h6>
+                            <h3 class="text-bold mb-10" name="CountNewRequest">${CountNewRequest}건</h3>
                         </div>
                     </div>
-                    <!-- End Icon Cart -->
-                </div>
-                <!-- End Col -->
-                <div class="col-xl-3 col-lg-4 col-sm-6">
+                </a>
+
+                <a href="<c:url value='/qh/inbound/request'/>" class="col-xl-3 col-lg-4 col-sm-6" style="text-decoration: none; color: inherit;">
                     <div class="icon-card mb-30">
                         <div class="icon success">
                             <i class="lni lni-cart"></i>
                         </div>
                         <div class="content">
                             <h6 class="mb-10">미승인 입고요청</h6>
-                            <h3 class="text-bold mb-10">11건</h3>
+                            <h3 class="text-bold mb-10" name="CountNewInbound">${CountNewInbound}건</h3>
                         </div>
                     </div>
-                    <!-- End Icon Cart -->
-                </div>
-                <!-- End Col -->
-                <div class="col-xl-3 col-lg-4 col-sm-6">
-                    <div class="icon-card mb-30">
-                        <div class="icon primary">
-                            <i class="lni lni-delivery"></i>
-                        </div>
-                        <div class="content">
-                            <h6 class="mb-10">미승인 발주요청</h6>
-                            <h3 class="text-bold mb-10">7건</h3>
-                        </div>
-                    </div>
-                    <!-- End Icon Cart -->
-                </div>
-                <!-- End Col -->
-                <div class="col-xl-3 col-lg-4 col-sm-6">
+                </a>
+
+                <a href="<c:url value='/qh/franchise'/>" class="col-xl-3 col-lg-4 col-sm-6" style="text-decoration: none; color: inherit;">
                     <div class="icon-card mb-30">
                         <div class="icon orange">
                             <i class="lni lni-grow"></i>
                         </div>
                         <div class="content">
-                            <h6 class="mb-10">신규 가맹점</h6>
-                            <h3 class="text-bold mb-10">1건</h3>
+                            <h6 class="mb-10">총 가맹점 수</h6>
+                            <h3 class="text-bold mb-10" name="TotalFranchise">${TotalFranchise}개</h3>
                         </div>
                     </div>
-                    <!-- End Icon Cart -->
-                </div>
-                <!-- End Col -->
+                </a>
+
+                <a href="<c:url value='/qh/warehouse'/>" class="col-xl-3 col-lg-4 col-sm-6" style="text-decoration: none; color: inherit;">
+                    <div class="icon-card mb-30">
+                        <div class="icon primary">
+                            <i class="lni lni-delivery"></i>
+                        </div>
+                        <div class="content">
+                            <h6 class="mb-10">총 창고 수</h6>
+                            <h3 class="text-bold mb-10" name="TotalWarehouse">${TotalWarehouse}개</h3>
+                        </div>
+                    </div>
+                </a>
             </div>
+            <!-- ========== row end ========== -->
+
             <!-- End Row -->
             <div class="row">
-                <div class="col-lg-7">
+                <div class="col-lg-6">
                     <div class="card-style mb-30">
                         <div class="title d-flex flex-wrap justify-content-between">
                             <div class="left">
-                                <h6 class="text-medium mb-10">Yearly Stats</h6>
-                                <h3 class="text-bold">$245,479</h3>
+                                <h6 class="text-medium mb-10">창고별 입고/출고</h6>
+                                <h3 class="text-bold">진행율(%)</h3>
                             </div>
                             <div class="right">
                                 <div class="select-style-1">
                                     <div class="select-position select-sm">
-                                        <select class="light-bg">
-                                            <option value="">Yearly</option>
-                                            <option value="">Monthly</option>
-                                            <option value="">Weekly</option>
+                                        <!-- 창고 드롭다운 -->
+                                        <select id="warehouseCategory">
+                                            <c:forEach var="warehouse" items="${warehouseList}">
+                                                <option value="${warehouse}">${warehouse}</option>
+                                            </c:forEach>
                                         </select>
                                     </div>
                                 </div>
@@ -133,34 +132,22 @@
                         </div>
                         <!-- End Title -->
                         <div class="chart">
-                            <canvas id="Chart1" style="width: 100%; height: 400px; margin-left: -35px;"></canvas>
+                            <canvas id="inboundChart-1" style="width: 100%; height: 420px;"></canvas>
                         </div>
                         <!-- End Chart -->
                     </div>
                 </div>
                 <!-- End Col -->
-                <div class="col-lg-5">
-                    <div class="card-style mb-30">
+                <div class="col-lg-6">
+                    <div class="card-style mb-30 w-100">
                         <div class="title d-flex flex-wrap align-items-center justify-content-between">
                             <div class="left">
-                                <h6 class="text-medium mb-30">Sales/Revenue</h6>
-                            </div>
-                            <div class="right">
-                                <div class="select-style-1">
-                                    <div class="select-position select-sm">
-                                        <select class="light-bg">
-                                            <option value="">Yearly</option>
-                                            <option value="">Monthly</option>
-                                            <option value="">Weekly</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <!-- end select -->
+                                <h6 class="text-medium mb-30">발주 요청량/ 총 재고량 </h6>
                             </div>
                         </div>
                         <!-- End Title -->
                         <div class="chart">
-                            <canvas id="Chart2" style="width: 100%; height: 400px; margin-left: -45px;"></canvas>
+                            <canvas id="Chart5" style="width: 100%; height: 420px;"></canvas>
                         </div>
                         <!-- End Chart -->
                     </div>
@@ -194,10 +181,7 @@
 <!-- ======== main-wrapper end =========== -->
 <!-- ========= All Javascript files linkup ======== -->
 <script src="<c:url value='/resources/js/Chart.min.js'/>"></script>
-<script src="<c:url value='/resources/js/dynamic-pie-chart.js'/>"></script>
 <script src="<c:url value='/resources/js/moment.min.js'/>"></script>
-<script src="<c:url value='/resources/js/fullcalendar.js'/>"></script>
-<script src="<c:url value='/resources/js/jvectormap.min.js'/>"></script>
 <script src="<c:url value='/resources/js/world-merc.js'/>"></script>
 <script src="<c:url value='/resources/js/polyfill.js'/>"></script>
 <script src="<c:url value='/resources/js/main.js'/>"></script>
@@ -210,540 +194,211 @@
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
 
-    // ======== jvectormap activation
-    var markers = [
-        { name: "Egypt", coords: [26.8206, 30.8025] },
-        { name: "Russia", coords: [61.524, 105.3188] },
-        { name: "Canada", coords: [56.1304, -106.3468] },
-        { name: "Greenland", coords: [71.7069, -42.6043] },
-        { name: "Brazil", coords: [-14.235, -51.9253] },
-    ];
+    fetch('<c:url value="/qh/order-vs-inventory"/>')
+        .then(response => response.json())
+        .then(data => {
+            const productName = data.map(item => item.productName);
+            const orderRequest = data.map(item => item.totalOrderRequest);
+            const inventory = data.map(item => item.totalInventory);
 
-
-    var jvm = new jsVectorMap({
-        map: "world_merc",
-        selector: "#map",
-        zoomButtons: true,
-
-        regionStyle: {
-            initial: {
-                fill: "#d1d5db",
-            },
-        },
-
-        labels: {
-            markers: {
-                render: (marker) => marker.name,
-            },
-        },
-
-        markersSelectable: true,
-        selectedMarkers: markers.map((marker, index) => {
-            var name = marker.name;
-
-            if (name === "Russia" || name === "Brazil") {
-                return index;
-            }
-        }),
-        markers: markers,
-        markerStyle: {
-            initial: { fill: "#4A6CF7" },
-            selected: { fill: "#ff5050" },
-        },
-        markerLabelStyle: {
-            initial: {
-                fontWeight: 400,
-                fontSize: 14,
-            },
-        },
-    });
-    // ====== calendar activation
-    document.addEventListener("DOMContentLoaded", function () {
-        var calendarMiniEl = document.getElementById("calendar-mini");
-        var calendarMini = new FullCalendar.Calendar(calendarMiniEl, {
-            initialView: "dayGridMonth",
-            headerToolbar: {
-                end: "today prev,next",
-            },
-        });
-        calendarMini.render();
-    });
-
-    // =========== chart one start
-    const ctx1 = document.getElementById("Chart1").getContext("2d");
-    const chart1 = new Chart(ctx1, {
-        type: "line",
-        data: {
-            labels: [
-                "Jan",
-                "Fab",
-                "Mar",
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
-            ],
-            datasets: [
-                {
-                    label: "",
-                    backgroundColor: "transparent",
-                    borderColor: " #FF9D32",
-                    data: [
-                        600, 800, 750, 880, 940, 880, 900, 770, 920, 890, 976, 1100,
-                    ],
-                    pointBackgroundColor: "transparent",
-                    pointHoverBackgroundColor: "#FF9D32",
-                    pointBorderColor: "transparent",
-                    pointHoverBorderColor: "#fff",
-                    pointHoverBorderWidth: 5,
-                    borderWidth: 5,
-                    pointRadius: 8,
-                    pointHoverRadius: 8,
-                    cubicInterpolationMode: "monotone", // Add this line for curved line
+            const ctx5 = document.getElementById("Chart5").getContext("2d");
+            new Chart(ctx5, {
+                type: 'bar',
+                data: {
+                    labels: productName,
+                    datasets: [
+                        {
+                            label: 'orderRequest',
+                            data: orderRequest,
+                            backgroundColor: '#fbd4ab',
+                            borderRadius: 30,
+                            barThickness: 10   ,
+                            maxBarThickness: 8,
+                        },
+                        {
+                            label: 'inventory',
+                            data: inventory,
+                            backgroundColor: '#ff9d32',
+                            borderRadius: 30,
+                            barThickness: 10,
+                            maxBarThickness: 8,
+                        }
+                    ]
                 },
-            ],
-        },
-        options: {
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        labelColor: function (context) {
-                            return {
-                                backgroundColor: "#ffffff",
-                                color: "#171717"
-                            };
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 15,
+                            right: 15,
+                            bottom: 15,
+                            left: 0,
                         },
                     },
-                    intersect: false,
-                    backgroundColor: "#f9f9f9",
-                    title: {
-                        fontFamily: "Plus Jakarta Sans",
-                        color: "#8F92A1",
-                        fontSize: 12,
-                    },
-                    body: {
-                        fontFamily: "Plus Jakarta Sans",
-                        color: "#171717",
-                        fontStyle: "bold",
-                        fontSize: 16,
-                    },
-                    multiKeyBackground: "transparent",
-                    displayColors: false,
-                    padding: {
-                        x: 30,
-                        y: 10,
-                    },
-                    bodyAlign: "center",
-                    titleAlign: "center",
-                    titleColor: "#8F92A1",
-                    bodyColor: "#171717",
-                    bodyFont: {
-                        family: "Plus Jakarta Sans",
-                        size: "16",
-                        weight: "bold",
-                    },
-                },
-                legend: {
-                    display: false,
-                },
-            },
-            responsive: true,
-            maintainAspectRatio: false,
-            title: {
-                display: false,
-            },
-            scales: {
-                y: {
-                    grid: {
-                        display: false,
-                        drawTicks: false,
-                        drawBorder: false,
-                    },
-                    ticks: {
-                        padding: 35,
-                        max: 1200,
-                        min: 500,
-                    },
-                },
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        color: "rgba(143, 146, 161, .1)",
-                        zeroLineColor: "rgba(143, 146, 161, .1)",
-                    },
-                    ticks: {
-                        padding: 20,
-                    },
-                },
-            },
-        },
-    });
-    // =========== chart one end
-
-    // =========== chart two start
-    const ctx2 = document.getElementById("Chart2").getContext("2d");
-    const chart2 = new Chart(ctx2, {
-        type: "bar",
-        data: {
-            labels: [
-                "Jan",
-                "Fab",
-                "Mar",
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
-            ],
-            datasets: [
-                {
-                    label: "",
-                    backgroundColor: "#FF9D32",
-                    borderRadius: 30,
-                    barThickness: 6,
-                    maxBarThickness: 8,
-                    data: [
-                        600, 700, 1000, 700, 650, 800, 690, 740, 720, 1120, 876, 900,
-                    ],
-                },
-            ],
-        },
-        options: {
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        titleColor: function (context) {
-                            return "#8F92A1";
+                    plugins: {
+                        legend: {
+                            display: false
                         },
-                        label: function (context) {
-                            let label = context.dataset.label || "";
-
-                            if (label) {
-                                label += ": ";
+                        title: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                titleColor: function (context) { return "#f58636"; },
+                                label: function (context) {
+                                    let label = context.dataset.label || "";
+                                    if (label) { label += ": "; }
+                                    label += context.parsed.x; // 가로 막대 x축 값
+                                    return label;
+                                },
+                            },
+                            backgroundColor: "#fbd4ab",
+                            titleAlign: "center",
+                            bodyAlign: "center",
+                            titleFont: {
+                                size: 12,
+                                weight: "bold",
+                                color: "#0e0e0e",
+                            },
+                            bodyFont: {
+                                size: 16,
+                                weight: "bold",
+                                color: "#171717",
+                            },
+                            displayColors: false,
+                            padding: { x: 30, y: 10 },
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: {
+                                display: false,
+                                drawTicks: false,
+                                drawBorder: false,
+                            },
+                            ticks: {
+                                padding: 10,
+                                font: { size: 17 },
+                            },
+                            barPercentage: 0.6 ,
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false,
+                                color: "rgba(143, 146, 161, .1)",
+                                drawTicks: false,
+                            },
+                            ticks: {
+                                max: 900,
+                                padding: 20,
+                                stepSize: 50,    // ★ 추가 : 50단위로 끊기
                             }
-                            label += context.parsed.y;
-                            return label;
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Chart5 데이터 불러오기 실패:', error);
+        });
+
+    var $clone = $('#myCustomFilters').clone(true);
+    // 복제 후 삽입 시, ID 제거 필수!
+    $clone.find('#warehouseCategory').attr('id', 'warehouseCategory_clone');
+
+    $('div.myFilterArea').html($clone.html());
+
+
+    // 5. 필터링 로직 정의
+    $.fn.dataTable.ext.search.push(function(settings, data) {
+        const selectedWarehouse = $('#warehouseCategory_clone').val();
+
+        const warehouseName = data[1];
+
+        // 1) 창고 필터
+        if (selectedWarehouse && selectedWarehouse !== warehouseName) {
+            return false;
+        }
+
+        // 조건 만족 시 표시
+        return true;
+    });
+    // 6. 필터 초기화 버튼
+    $('body').on('click', '#resetFilterBtn', function () {
+        $('#warehouseCategory_clone').val('')
+        table.draw();
+    });
+
+
+    //도넛차트
+    function drawWarehouseChart(canvasId, label1, value1, label2, value2) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: [label1, label2],
+                datasets: [{
+                    data: [value1, 100 - value1],  // 예: 완료%와 나머지
+                    backgroundColor: ['#ff9d32', '#f3f3f3'],
+                    borderRadius: 30,
+                    cutout: '70%',
+                    radius: '80%',
+                },
+                    {
+                        data: [value2, 100 - value2],  // 출고용
+                        backgroundColor: ['#fbd4ab', '#f3f3f3'],
+                        borderRadius: 30,
+                        cutout: '50%',   // 하나는 살짝 안쪽
+                        radius: '60%',
+                    }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            titleColor: function (context) { return "#f58636"; },
+                            label: function (context) {
+                                let label = context.dataset.label || "";
+                                if (label) { label += ": "; }
+                                label += context.parsed.x; // 가로 막대 x축 값
+                                return label;
+                            },
                         },
-                    },
-                    backgroundColor: "#F3F6F8",
-                    titleAlign: "center",
-                    bodyAlign: "center",
-                    titleFont: {
-                        size: 12,
-                        weight: "bold",
-                        color: "#8F92A1",
-                    },
-                    bodyFont: {
-                        size: 16,
-                        weight: "bold",
-                        color: "#171717",
-                    },
-                    displayColors: false,
-                    padding: {
-                        x: 30,
-                        y: 10,
-                    },
-                },
-            },
-            legend: {
-                display: false,
-            },
-            legend: {
-                display: false,
-            },
-            layout: {
-                padding: {
-                    top: 15,
-                    right: 15,
-                    bottom: 15,
-                    left: 15,
-                },
-            },
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    grid: {
-                        display: false,
-                        drawTicks: false,
-                        drawBorder: false,
-                    },
-                    ticks: {
-                        padding: 35,
-                        max: 1200,
-                        min: 0,
-                    },
-                },
-                x: {
-                    grid: {
-                        display: false,
-                        drawBorder: false,
-                        color: "rgba(143, 146, 161, .1)",
-                        drawTicks: false,
-                        zeroLineColor: "rgba(143, 146, 161, .1)",
-                    },
-                    ticks: {
-                        padding: 20,
-                    },
-                },
-            },
-            plugins: {
-                legend: {
-                    display: false,
-                },
-                title: {
-                    display: false,
-                },
-            },
-        },
-    });
-    // =========== chart two end
+                        backgroundColor: "#fbd4ab",
+                        titleAlign: "center",
+                        bodyAlign: "center",
+                        titleFont: {
+                            size: 12,
+                            weight: "bold",
+                            color: "#0e0e0e",
+                        },
+                        bodyFont: {
+                            size: 16,
+                            weight: "bold",
+                            color: "#171717",
+                        },
+                        displayColors: false,
+                        padding: { x: 30, y: 10 },
+                    }
+                }
+            }
+        });
+    }
+    drawWarehouseChart('inboundChart-1', '입고', 85, '출고', 70);
 
-    // =========== chart three start
-    const ctx3 = document.getElementById("Chart3").getContext("2d");
-    const chart3 = new Chart(ctx3, {
-        type: "line",
-        data: {
-            labels: [
-                "Jan",
-                "Feb",
-                "Mar",
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
-            ],
-            datasets: [
-                {
-                    label: "Revenue",
-                    backgroundColor: "transparent",
-                    borderColor: "#365CF5",
-                    data: [80, 120, 110, 100, 130, 150, 115, 145, 140, 130, 160, 210],
-                    pointBackgroundColor: "transparent",
-                    pointHoverBackgroundColor: "#365CF5",
-                    pointBorderColor: "transparent",
-                    pointHoverBorderColor: "#365CF5",
-                    pointHoverBorderWidth: 3,
-                    pointBorderWidth: 5,
-                    pointRadius: 5,
-                    pointHoverRadius: 8,
-                    fill: false,
-                    tension: 0.4,
-                },
-                {
-                    label: "Profit",
-                    backgroundColor: "transparent",
-                    borderColor: "#9b51e0",
-                    data: [
-                        120, 160, 150, 140, 165, 210, 135, 155, 170, 140, 130, 200,
-                    ],
-                    pointBackgroundColor: "transparent",
-                    pointHoverBackgroundColor: "#9b51e0",
-                    pointBorderColor: "transparent",
-                    pointHoverBorderColor: "#9b51e0",
-                    pointHoverBorderWidth: 3,
-                    pointBorderWidth: 5,
-                    pointRadius: 5,
-                    pointHoverRadius: 8,
-                    fill: false,
-                    tension: 0.4,
-                },
-                {
-                    label: "Order",
-                    backgroundColor: "transparent",
-                    borderColor: "#f2994a",
-                    data: [180, 110, 140, 135, 100, 90, 145, 115, 100, 110, 115, 150],
-                    pointBackgroundColor: "transparent",
-                    pointHoverBackgroundColor: "#f2994a",
-                    pointBorderColor: "transparent",
-                    pointHoverBorderColor: "#f2994a",
-                    pointHoverBorderWidth: 3,
-                    pointBorderWidth: 5,
-                    pointRadius: 5,
-                    pointHoverRadius: 8,
-                    fill: false,
-                    tension: 0.4,
-                },
-            ],
-        },
-        options: {
-            plugins: {
-                tooltip: {
-                    intersect: false,
-                    backgroundColor: "#fbfbfb",
-                    titleColor: "#8F92A1",
-                    bodyColor: "#272727",
-                    titleFont: {
-                        size: 16,
-                        family: "Plus Jakarta Sans",
-                        weight: "400",
-                    },
-                    bodyFont: {
-                        family: "Plus Jakarta Sans",
-                        size: 16,
-                    },
-                    multiKeyBackground: "transparent",
-                    displayColors: false,
-                    padding: {
-                        x: 30,
-                        y: 15,
-                    },
-                    borderColor: "rgba(143, 146, 161, .1)",
-                    borderWidth: 1,
-                    enabled: true,
-                },
-                title: {
-                    display: false,
-                },
-                legend: {
-                    display: false,
-                },
-            },
-            layout: {
-                padding: {
-                    top: 0,
-                },
-            },
-            responsive: true,
-            // maintainAspectRatio: false,
-            legend: {
-                display: false,
-            },
-            scales: {
-                y: {
-                    grid: {
-                        display: false,
-                        drawTicks: false,
-                        drawBorder: false,
-                    },
-                    ticks: {
-                        padding: 35,
-                    },
-                    max: 350,
-                    min: 50,
-                },
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        color: "rgba(143, 146, 161, .1)",
-                        drawTicks: false,
-                        zeroLineColor: "rgba(143, 146, 161, .1)",
-                    },
-                    ticks: {
-                        padding: 20,
-                    },
-                },
-            },
-        },
-    });
-    // =========== chart three end
-
-    // ================== chart four start
-    const ctx4 = document.getElementById("Chart4").getContext("2d");
-    const chart4 = new Chart(ctx4, {
-        type: "bar",
-        data: {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-            datasets: [
-                {
-                    label: "",
-                    backgroundColor: "#365CF5",
-                    borderColor: "transparent",
-                    borderRadius: 20,
-                    borderWidth: 5,
-                    barThickness: 20,
-                    maxBarThickness: 20,
-                    data: [600, 700, 1000, 700, 650, 800],
-                },
-                {
-                    label: "",
-                    backgroundColor: "#d50100",
-                    borderColor: "transparent",
-                    borderRadius: 20,
-                    borderWidth: 5,
-                    barThickness: 20,
-                    maxBarThickness: 20,
-                    data: [690, 740, 720, 1120, 876, 900],
-                },
-            ],
-        },
-        options: {
-            plugins: {
-                tooltip: {
-                    backgroundColor: "#F3F6F8",
-                    titleColor: "#8F92A1",
-                    titleFontSize: 12,
-                    bodyColor: "#171717",
-                    bodyFont: {
-                        weight: "bold",
-                        size: 16,
-                    },
-                    multiKeyBackground: "transparent",
-                    displayColors: false,
-                    padding: {
-                        x: 30,
-                        y: 10,
-                    },
-                    bodyAlign: "center",
-                    titleAlign: "center",
-                    enabled: true,
-                },
-                legend: {
-                    display: false,
-                },
-            },
-            layout: {
-                padding: {
-                    top: 0,
-                },
-            },
-            responsive: true,
-            // maintainAspectRatio: false,
-            title: {
-                display: false,
-            },
-            scales: {
-                y: {
-                    grid: {
-                        display: false,
-                        drawTicks: false,
-                        drawBorder: false,
-                    },
-                    ticks: {
-                        padding: 35,
-                        max: 1200,
-                        min: 0,
-                    },
-                },
-                x: {
-                    grid: {
-                        display: false,
-                        drawBorder: false,
-                        color: "rgba(143, 146, 161, .1)",
-                        zeroLineColor: "rgba(143, 146, 161, .1)",
-                    },
-                    ticks: {
-                        padding: 20,
-                    },
-                },
-            },
-        },
-    });
-    // =========== chart four end
 </script>
 </body>
 </html>
+
+

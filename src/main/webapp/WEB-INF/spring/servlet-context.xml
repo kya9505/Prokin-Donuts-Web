@@ -19,9 +19,10 @@
     <context:component-scan base-package="com.donut.prokindonutsweb.inbound.controller"/>
     <context:component-scan base-package="com.donut.prokindonutsweb.member.controller"/>
     <context:component-scan base-package="com.donut.prokindonutsweb.order.controller"/>
-    <context:component-scan base-package="com.donut.prokindonutsweb.outbound.controller"/>
     <context:component-scan base-package="com.donut.prokindonutsweb.home.controller"/>
+    <context:component-scan base-package="com.donut.prokindonutsweb.dashboard.controller"/>
     <context:component-scan base-package="com.donut.prokindonutsweb.error"/>
+    <context:component-scan base-package="com.donut.prokindonutsweb.outbound.controller"/>
     <!-- Advice나 ArgumentResolver 등이 있는 패키지도 스캔 -->
     <context:component-scan base-package="com.donut.prokindonutsweb.security.config"/>
 

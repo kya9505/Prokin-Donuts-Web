@@ -3,15 +3,37 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.donut.prokindonutsweb.dashboard.mapper">
+<mapper namespace="com.donut.prokindonutsweb.dashboard.mapper.QhDashboardMapper">
 
     <!--미승인 회원가입 -->
-    <select id="NewRequestCount" resultType="int">
+    <select id="CountNewRequest" resultType="int">
         select count(*) from memberrequest where request = '승인대기'
     </select>
 
     <!--미승인 입고요청-->
-    <select id="NewInboundCount" resultType="int">
-        select count(*) from inbound where inboundStatus = '승인대기'
+    <select id="CountNewInbound" resultType="int">
+        select count(*) from inbound where inboundStatus = '입고요청'
     </select>
+
+    <!--총 가맹점 수 -->
+    <select id="TotalFranchise" resultType="int">
+        select count(*) from franchise
+    </select>
+
+    <!--총 창고 수 -->
+    <select id="TotalWarehouse" resultType="int">
+        select count(*) from warehouse
+    </select>
+
+    <!--최근 3개월간 상품별 발주요청량 -재고량 순위 상위 5개 -->
+    <select id="getOrderRequestVsInventory" resultType="OrderInventoryDTO">
+        SELECT
+            productName,
+            IFNULL(totalOrderRequest, 0) AS totalOrderRequest,
+            IFNULL(totalInventory, 0) AS totalInventory
+        FROM qhCart2
+        ORDER BY (totalOrderRequest/totalInventory) DESC
+            LIMIT 5
+    </select>
+
 </mapper>

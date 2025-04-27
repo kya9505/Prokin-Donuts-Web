@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.ui.ExtendedModelMap;
@@ -71,7 +72,7 @@ class MemberControllerTest {
         qhMemberController.qhAddMemberList(memberDTO, bindingResult, redirectAttributes);
     }
 
-    /*@Test
+    @Test
     @DisplayName("qh update controller 회원 수정 DB 반영 테스트")
     public void qhUpdateMembers(){
         MemberAccountDTO memberDTO = MemberAccountDTO.builder()
@@ -91,10 +92,10 @@ class MemberControllerTest {
         BindingResult bindingResult = new org.springframework.validation.BeanPropertyBindingResult(memberListForm, "memberEditForm");
         RedirectAttributes redirectAttributes = new org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap();
 
-        String result = qhMemberController.qhUpdateMembers(memberListForm, bindingResult, redirectAttributes);
-        assertEquals("redirect:list", result);
+        ResponseEntity<String> result = qhMemberController.qhUpdateMembers(memberListForm);
+        log.info(result);
 
-    }*/
+    }
 
     @Test
     @DisplayName("qh delete controller 회원 삭제 DB 반영 테스트")
