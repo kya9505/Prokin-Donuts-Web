@@ -34,4 +34,12 @@ public class OutboundMapperTest {
         boolean ord2 = outboundMapper.checkInventory("ORD6");
         log.info(String.valueOf(ord2));
     }
+
+    @Test
+    @DisplayName("창고코드 반환")
+    void getWarehouseCode() {
+        String warehouseCode = outboundMapper.getWarehouseCode("WM1");
+        log.info(warehouseCode);
+    }
+
 }
