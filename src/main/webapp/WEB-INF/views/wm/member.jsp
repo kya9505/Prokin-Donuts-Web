@@ -80,7 +80,6 @@
                                     <th>이메일</th>
                                     <th>주소</th>
                                     <th>아이디</th>
-                                    <th>비밀번호</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -92,7 +91,6 @@
                                         <td>${member.email}</td>
                                         <td>${member.address}</td>
                                         <td>${member.id}</td>
-                                        <td>${member.password}</td>
                                     </tr>
 
                                 </c:forEach>
@@ -144,7 +142,7 @@
     var table = $('#datatable').DataTable({
         autoWidth: false,
         columnDefs: [
-            { targets: [0, 1, 2, 3, 4, 5 ,6], className: 'text-center' }
+            { targets: [0, 1, 2, 3, 4, 5 ], className: 'text-center' }
         ],
         order: [[0, 'asc']],
         paging: true,
