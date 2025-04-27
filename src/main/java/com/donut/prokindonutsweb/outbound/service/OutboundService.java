@@ -16,4 +16,6 @@ public interface OutboundService {
     void approveOutbound(String outboundCode);
 
     void updateInventory(String outboundCode);
+
+    String getWarehouseCode(String memberCode);
 }

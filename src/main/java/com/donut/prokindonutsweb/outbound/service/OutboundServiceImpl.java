@@ -42,5 +42,10 @@ public class OutboundServiceImpl implements OutboundService{
         outboundMapper.updateInventory(outboundCode);
     }
 
+    @Override
+    public String getWarehouseCode(String memberCode) {
+        return outboundMapper.getWarehouseCode(memberCode);
+    }
+
 
 }
