@@ -36,8 +36,14 @@ public class HomeController {
     @GetMapping("/wm/outbound")
     public void Woutbound(){}
 
+    @GetMapping("/wm/Dashboard")
+    public void WDashboard(){}
+
     @GetMapping("/qh/Dashboard")
     public void QDashboard(){
     }
+  
+    @GetMapping("/qh/outbound")
+    public void Qoutbound(){}
 
 }
