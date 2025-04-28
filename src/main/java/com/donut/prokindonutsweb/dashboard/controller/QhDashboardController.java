@@ -51,7 +51,8 @@ public class QhDashboardController{
         OrderInboundDTO dto = qhDashboardService.getOrderInbound(warehouseCode);
         //입출고 진행량 객체 반환
         return new OrderInboundRateDTO(
-                (int)dto.inboundApprovalRate() * 100, (int)dto.orderedRate() * 100);
+                (int)Math.round(dto.inboundApprovalRate() * 100),
+                (int)Math.round(dto.orderedRate() * 100));
     }
 
 }
