@@ -155,8 +155,8 @@
                                 JOIN `Order` o ON od.orderCode = o.orderCode
                                 JOIN Product prod ON od.productCode = prod.productCode
                        WHERE prod.categoryCode = #{categoryCode}
-                         AND o.orderStatus IN ('발주진행','승인대기')
-                   ) THEN '발주진행'
+                         AND o.orderStatus IN ('출고대기')
+                   ) THEN '출고진행'
                    WHEN EXISTS (
                        SELECT 1
                        FROM Product prod
@@ -187,8 +187,8 @@
                        FROM OrderDetail od
                                 JOIN `Order` o ON od.orderCode = o.orderCode
                        WHERE od.productCode = #{productCode}
-                         AND o.orderStatus IN ('발주진행','승인대기')
-                   ) THEN '발주진행'
+                         AND o.orderStatus IN ('출고대기')
+                   ) THEN '출고진행'
                    ELSE '삭제가능'
                    END
     </select>
