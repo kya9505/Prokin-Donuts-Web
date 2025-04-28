@@ -862,6 +862,7 @@
                 return false;
             }
 
+            alert("창고가 성공적으로 등록되었습니다.");
             // address 하나로 합쳐서 hidden 필드 추가
             const $existing = $("input[name='address']");
             const fullAddress = (roadAddress + " " + detailAddress).replace(/^,/, "").trim();
@@ -887,7 +888,7 @@
 
             const code = rowData[0];        // 창고코드
             const name = rowData[1];        // 창고명
-            const memberCode = rowData[7];  // 숨겨진 td: 담당자코드
+            const memberCode = rowData[8];  // 숨겨진 td: 담당자코드
             const memberName = rowData[4];  // 담당자이름
 
             // 모달 input 세팅
@@ -984,6 +985,7 @@
                 e.preventDefault();
                 return;
             }
+            alert("창고 정보가 성공적으로 수정되었습니다.");  // ← 이 줄 추가
         });
 
         // 삭제 버튼 클릭 시
@@ -1045,6 +1047,7 @@
                 alert('삭제할 수 없는 창고입니다.');
                 return;
             }
+            alert("창고가 성공적으로 삭제되었습니다.");
             $('#warehouseDeleteForm').submit();
         });
 
