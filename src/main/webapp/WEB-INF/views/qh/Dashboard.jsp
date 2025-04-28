@@ -146,8 +146,6 @@
 <%@ include file="/WEB-INF/views/includes/common/Javascript.jsp" %>
 <!-- ========== Javascript end =========== -->
 <script>
-    //mypageData
-    <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
 
     fetch('<c:url value="/qh/order-vs-inventory"/>')
         .then(response => response.json())
@@ -386,6 +384,8 @@
             plugins: [centerTextPlugin] // 플러그인 등록
         });
     }
+    //mypageData
+    <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
 
 </script>
 </body>

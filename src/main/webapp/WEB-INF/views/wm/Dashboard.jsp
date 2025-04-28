@@ -222,6 +222,10 @@
 <!-- ========== Javascript end =========== -->
 
 <script>
+
+    //mypageData
+    <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
+
     var warehouseCode = document.getElementById('warehouseCode').value;
     let isSubmitting = false;
 
