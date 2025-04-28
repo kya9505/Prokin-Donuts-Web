@@ -13,7 +13,7 @@ import lombok.extern.log4j.Log4j2;
 @Builder
 public class OrderInboundRateDTO {
     //입고승인/총입고요청
-    private int inboundRate;
+    private double inboundRate;
     //발주승인/총발주요청(출고승인/총 출고요청)
-    private int orderRate;
+    private double orderRate;
 }

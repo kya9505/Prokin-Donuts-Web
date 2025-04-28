@@ -45,15 +45,13 @@ public class QhDashboardController{
     @GetMapping("/qh/inbound-order-rate")
     @ResponseBody
     public OrderInboundRateDTO getOrderInboundRate(@RequestParam("warehouse") String warehouse) {
-        //창고 명을 코드로 변환하여 전달
+        //창고 명을 코드로 변환
         String warehouseCode = qhDashboardService.getWarehouseCode(warehouse);
         //입출고 객체에 저장
         OrderInboundDTO dto = qhDashboardService.getOrderInbound(warehouseCode);
-        //입출고량 객체 반환
+        //입출고 진행량 객체 반환
         return new OrderInboundRateDTO(
-                (int)Math.round(dto.inboundApprovalRate() * 100),
-                (int)Math.round(dto.orderedRate() * 100)
-        );
+                dto.inboundApprovalRate() * 100, dto.orderedRate() * 100);
     }
 
 }

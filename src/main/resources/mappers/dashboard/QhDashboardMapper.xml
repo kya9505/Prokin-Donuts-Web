@@ -53,7 +53,7 @@
     <select id="countApprovedOrderStatus" resultType="int">
     select count(*)
     from `order`
-    where orderStatus = '출고대기'
+    where orderStatus = '출고완료'
       and warehouseCode =#{warehouseCode}
     </select>
 
