@@ -70,3 +70,11 @@ console.error("요청 실패", err);
 alert("서버와 연결 실패");
 }
 });
+// 탈퇴 버튼
+$('#bntMypageSecession').on('click', function(e){
+e.preventDefault();
+if (confirm('⚠️ 계정을 삭제하시겠습니까?\n삭제된 계정은 복구되지 않습니다.')) {
+$('#mypageModal').modal('hide');
+$('#secessionForm').submit();
+}
+});
