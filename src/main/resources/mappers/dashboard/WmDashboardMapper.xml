@@ -49,14 +49,14 @@
           AND w.warehouseCode = #{warehouseCode}
     </select>
 
-    <!-- 오늘 미승인 출고요청 수 -->
+    <!-- 오늘 미승인 출고대기 수 -->
     <select id="selectTodayWaitingOrderCount"
             parameterType="string"
             resultType="int">
         SELECT COUNT(*)
         FROM `Order` o
                  JOIN Warehouse w ON o.warehouseCode = w.warehouseCode
-        WHERE o.orderStatus = '승인대기'
+        WHERE o.orderStatus = '출고대기'
           AND DATE(o.orderDate) = CURDATE()
           AND w.warehouseCode = #{warehouseCode}
     </select>

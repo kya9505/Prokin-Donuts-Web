@@ -227,10 +227,32 @@
 
     function changeTemp(section, delta) {
         console.log('[changeTemp] section =', section, 'delta =', delta);
+
         var tempElement = document.getElementById('temp-' + section);
-        var currentTemp = parseInt(tempElement.textContent.trim().replace('°C', ''), 10);
+        var currentTemp = parseInt(tempElement.textContent.trim().replace('°C',''), 10);
         var newTemp = currentTemp + delta;
-        tempElement.textContent = newTemp + '°C';
+
+        // 상수 방식 범위 체크
+        if (section === 'fridge') {
+            if (newTemp < 0 || newTemp > 10) {
+                alert('냉장 온도는 ' + 0 + '°C ~ ' + 10 + '°C 사이여야 합니다.');
+                return;
+            }
+        }
+        else if (section === 'freezer') {
+            if (newTemp < -9999 || newTemp > -18) {
+                alert('냉동 온도는 ' + -9999 + '°C ~ ' + -18 + '°C 사이여야 합니다.');
+                return;
+            }
+        }
+        else if (section === 'room') {
+            if (newTemp < 1 || newTemp > 35) {
+                alert('상온 온도는 ' + 1 + '°C ~ ' + 35 + '°C 사이여야 합니다.');
+                return;
+            }
+        }
+
+        tempElement.textContent = '' + newTemp + '°C';
     }
 
     function confirmTemp(section) {
@@ -240,23 +262,39 @@
         }
         isSubmitting = true;
 
-        // DOM 업데이트(온도 변경)가 브라우저에 반영될 시간을 확보하기 위해 50ms 딜레이
         setTimeout(function() {
-            // 1) 최종 온도 값 읽기
             var tempElement = document.getElementById('temp-' + section);
-            var finalTemp = parseInt(tempElement.textContent.trim().replace('°C', ''), 10);
+            var finalTemp = parseInt(tempElement.textContent.trim().replace('°C',''), 10);
 
-            // 2) storedType 결정
-            var storedType = '';
+            // 최종값 상수 방식 체크
             if (section === 'fridge') {
-                storedType = '냉장';
-            } else if (section === 'freezer') {
-                storedType = '냉동';
-            } else if (section === 'room') {
-                storedType = '상온';
+                if (finalTemp < 0 || finalTemp > 10) {
+                    alert('최종 냉장 온도가 허용 범위를 벗어났습니다: ' + 0 + '°C ~ ' + 10 + '°C');
+                    isSubmitting = false;
+                    return;
+                }
+            }
+            else if (section === 'freezer') {
+                if (finalTemp < -9999 || finalTemp > -18) {
+                    alert('최종 냉동 온도가 허용 범위를 벗어났습니다: ' + -9999 + '°C ~ ' + -18 + '°C');
+                    isSubmitting = false;
+                    return;
+                }
+            }
+            else if (section === 'room') {
+                if (finalTemp < 1 || finalTemp > 35) {
+                    alert('최종 상온 온도가 허용 범위를 벗어났습니다: ' + 1 + '°C ~ ' + 35 + '°C');
+                    isSubmitting = false;
+                    return;
+                }
             }
 
-            // 3) 요청 URL 조립
+            // storedType 결정
+            var storedType = '';
+            if (section === 'fridge')      storedType = '냉장';
+            else if (section === 'freezer') storedType = '냉동';
+            else                            storedType = '상온';
+
             var url = '/wm/Dashboard/temperature/edit'
                 + '?warehouseCode=' + encodeURIComponent(warehouseCode)
                 + '&storedType='   + encodeURIComponent(storedType)
@@ -267,18 +305,13 @@
                 'finalTemp =', finalTemp);
             console.log('[confirmTemp] Fetch URL →', url);
 
-            // 4) fetch 요청 보내기
             fetch(url, { method: 'GET' })
                 .then(function(res) {
                     isSubmitting = false;
-                    console.log('[confirmTemp] Response status =', res.status);
-                    if (!res.ok) {
-                        throw new Error('서버 응답 실패: ' + res.status);
-                    }
+                    if (!res.ok) throw new Error('status ' + res.status);
                     return res.text();
                 })
                 .then(function(text) {
-                    console.log('[confirmTemp] Response text =', text);
                     if (text === 'ok') {
                         alert('[' + storedType + '] 온도가 ' + finalTemp + '°C로 저장되었습니다!');
                     } else {
@@ -287,10 +320,10 @@
                 })
                 .catch(function(err) {
                     isSubmitting = false;
-                    console.error('[confirmTemp] 에러 발생 →', err);
-                    alert('서버 오류가 발생했습니다: ' + err.message);
+                    console.error('[confirmTemp] 에러 →', err);
+                    alert('서버 오류 발생: ' + err.message);
                 });
-        }, 500);
+        }, 600);
     }
 </script>
 
