@@ -1,31 +1,8 @@
-<%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="<c:url value='/resources/images/logo/favicon_logo.png'/>" type="image/png" />
-    <title>Prokin Donuts</title>
 
-    <!-- ========== All CSS files linkup ========= -->
-    <link rel="stylesheet" href="<c:url value='/resources/css/bootstrap.min.css'/>" />
-    <link rel="stylesheet" href="<c:url value='/resources/css/lineicons.css'/>" type="text/css" />
-    <link rel="stylesheet" href="<c:url value='/resources/css/materialdesignicons.min.css'/>" type="text/css" />
-    <link rel="stylesheet" href="<c:url value='/resources/css/fullcalendar.css'/>" />
-    <link rel="stylesheet" href="<c:url value='/resources/css/main.css'/>" />
-    <!-- datatable을 위해 필요함 -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-</head>
 
-<body>
-<!-- ======== Preloader =========== -->
-<div id="preloader">
-    <div class="spinner"></div>
-</div>
-<!-- ======== Preloader =========== -->
+<!-- ======== common-header start =========== -->
+<%@ include file="/WEB-INF/views/includes/common/Header.jsp" %>
+<!-- ======== common-header end =========== -->
 
 <!-- ======== sidebar-nav start =========== -->
 <%@include file="/WEB-INF/views/includes/sidebar/wmSidebar.jsp"%>
@@ -55,102 +32,112 @@
             </div>
             <!-- ========== title-wrapper end ========== -->
             <div class="row">
-                <div class="col-xl-3 col-lg-4 col-sm-6">
+                <!-- 미승인 입고요청 -->
+                <div class="col-xl-3 col-lg-6">
                     <div class="icon-card mb-30">
                         <div class="icon purple">
-                            <i class="lni lni-user"></i>
-                        </div>
-                        <div class="content">
-                            <h6 class="mb-10">미승인 회원가입</h6>
-                            <h3 class="text-bold mb-10">5건</h3>
-                        </div>
-                    </div>
-                    <!-- End Icon Cart -->
-                </div>
-                <!-- End Col -->
-                <div class="col-xl-3 col-lg-4 col-sm-6">
-                    <div class="icon-card mb-30">
-                        <div class="icon success">
                             <i class="lni lni-package"></i>
                         </div>
                         <div class="content">
                             <h6 class="mb-10">미승인 입고요청</h6>
-                            <h3 class="text-bold mb-10">11건</h3>
+                            <h3 class="text-bold mb-10">${inboundWaiting}건</h3>
                         </div>
                     </div>
-                    <!-- End Icon Cart -->
                 </div>
-                <!-- End Col -->
-                <div class="col-xl-3 col-lg-4 col-sm-6">
+
+                <!-- 미승인 출고요청 -->
+                <div class="col-xl-3 col-lg-6">
                     <div class="icon-card mb-30">
-                        <div class="icon primary">
+                        <div class="icon success">
                             <i class="lni lni-delivery"></i>
                         </div>
                         <div class="content">
-                            <h6 class="mb-10">미승인 발주요청</h6>
-                            <h3 class="text-bold mb-10">7건</h3>
+                            <h6 class="mb-10">미승인 출고요청</h6>
+                            <h3 class="text-bold mb-10">${orderWaiting}건</h3>
                         </div>
                     </div>
-                    <!-- End Icon Cart -->
                 </div>
-                <!-- End Col -->
-                <div class="col-xl-3 col-lg-4 col-sm-6">
-                    <div class="icon-card mb-30">
-                        <div class="icon orange">
-                            <i class="lni lni-grow"></i>
-                        </div>
+
+                <!-- 냉장섹션 -->
+                <div class="col-xl-2 col-lg-4">
+                    <div class="icon-card mb-30 text-center">
                         <div class="content">
-                            <h6 class="mb-10">신규 가맹점</h6>
-                            <h3 class="text-bold mb-10">1건</h3>
+                            <h6 class="mb-10">냉장섹션</h6>
+                            <div class="d-flex justify-content-center align-items-center" style="gap: 8px; margin-bottom: 6px;">
+                                <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1"
+                                        onclick="changeTemp('fridge', -1)">-</button>
+                                <h3 id="temp-fridge" class="text-bold mx-2" style="font-size: 20px; width: 50px;">
+                                    ${coldTemp}°C
+                                </h3>
+                                <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1"
+                                        onclick="changeTemp('fridge', 1)">+</button>
+                                <button class="main-btn primary-btn btn-hover btn-sm px-3 py-1 ms-2"
+                                        onclick="confirmTemp('fridge')">결정</button>
+                            </div>
                         </div>
                     </div>
-                    <!-- End Icon Cart -->
                 </div>
-                <!-- End Col -->
-            </div>
+
+                <!-- 냉동섹션 -->
+                <div class="col-xl-2 col-lg-4">
+                    <div class="icon-card mb-30 text-center">
+                        <div class="content">
+                            <h6 class="mb-10">냉동섹션</h6>
+                            <div class="d-flex justify-content-center align-items-center" style="gap: 8px; margin-bottom: 6px;">
+                                <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1"
+                                        onclick="changeTemp('freezer', -1)">-</button>
+                                <h3 id="temp-freezer" class="text-bold mx-2" style="font-size: 20px; width: 50px;">
+                                    ${frozenTemp}°C
+                                </h3>
+                                <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1"
+                                        onclick="changeTemp('freezer', 1)">+</button>
+                                <button class="main-btn primary-btn btn-hover btn-sm px-3 py-1 ms-2"
+                                        onclick="confirmTemp('freezer')">결정</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 상온섹션 -->
+                <div class="col-xl-2 col-lg-4">
+                    <div class="icon-card mb-30 text-center">
+                        <div class="content">
+                            <h6 class="mb-10">상온섹션</h6>
+                            <div class="d-flex justify-content-center align-items-center" style="gap: 8px; margin-bottom: 6px;">
+                                <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1"
+                                        onclick="changeTemp('room', -1)">-</button>
+                                <h3 id="temp-room" class="text-bold mx-2" style="font-size: 20px; width: 50px;">
+                                    ${roomTemp}°C
+                                </h3>
+                                <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1"
+                                        onclick="changeTemp('room', 1)">+</button>
+                                <button class="main-btn primary-btn btn-hover btn-sm px-3 py-1 ms-2"
+                                        onclick="confirmTemp('room')">결정</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- ← 이 부분이 빠져 있었음 -->
+                <input type="hidden" id="warehouseCode" value="${warehouseCode}" />
+
             <!-- End Row -->
+
+<%--            -------------------------------------------------------------------------------                --%>
+
             <div class="row">
-                <div class="col-lg-7">
-                    <div class="card-style mb-30">
-                        <div class="title d-flex flex-wrap justify-content-between">
-                            <div class="left">
-                                <h6 class="text-medium mb-10">Yearly Stats</h6>
-                                <h3 class="text-bold">$245,479</h3>
-                            </div>
-                            <div class="right">
-                                <div class="select-style-1">
-                                    <div class="select-position select-sm">
-                                        <select class="light-bg">
-                                            <option value="">Yearly</option>
-                                            <option value="">Monthly</option>
-                                            <option value="">Weekly</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <!-- end select -->
-                            </div>
-                        </div>
-                        <!-- End Title -->
-                        <div class="chart">
-                            <canvas id="Chart1" style="width: 100%; height: 400px; margin-left: -35px;"></canvas>
-                        </div>
-                        <!-- End Chart -->
-                    </div>
-                </div>
-                <!-- End Col -->
-                <div class="col-lg-5">
+                <div class="col-xl-6 col-lg-6">
                     <div class="card-style mb-30">
                         <div class="title d-flex flex-wrap align-items-center justify-content-between">
                             <div class="left">
-                                <h6 class="text-medium mb-30">Sales/Revenue</h6>
+                                <h6 class="text-medium mb-30">입고/출고 현황</h6>
                             </div>
                             <div class="right">
                                 <div class="select-style-1">
                                     <div class="select-position select-sm">
-                                        <select class="light-bg">
-                                            <option value="">Yearly</option>
-                                            <option value="">Monthly</option>
-                                            <option value="">Weekly</option>
+                                        <select id="chart1PeriodType" class="light-bg">
+                                            <option value="month" selected>Month</option>
+                                            <option value="week">Week</option>
                                         </select>
                                     </div>
                                 </div>
@@ -159,12 +146,46 @@
                         </div>
                         <!-- End Title -->
                         <div class="chart">
-                            <canvas id="Chart2" style="width: 100%; height: 400px; margin-left: -45px;"></canvas>
+                            <canvas id="Chart1" style="width: 100%; height: 400px; margin-left: 0px;"></canvas>
+                        </div>
+                        <!-- End Chart -->
+                    </div>
+                </div>
+
+
+                <!-- End Col -->
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card-style mb-30">
+                        <div class="title d-flex flex-wrap justify-content-between">
+                            <div class="left">
+                                <h6 class="text-medium mb-10">재고현황</h6>
+                                <h3 class="text-bold">
+                                    총 자산가치 :
+                                    <fmt:formatNumber value="${totalInventoryPrice}" type="number" groupingUsed="true"/> 원
+                                </h3>
+                            </div>
+                            <div class="right">
+                                <div class="select-style-1">
+                                    <div class="select-position select-sm">
+                                        <select id="filterType" class="light-bg" style="width: 200px;">
+                                            <option value="category" selected>Category</option>
+                                            <option value="section">Section</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- end select -->
+                            </div>
+                        </div>
+                        <!-- End Title -->
+                        <div class="chart">
+                            <canvas id="Chart2" style="width: 100%; height: 400px; margin-left: -20px;"></canvas>
                         </div>
                         <!-- End Chart -->
                     </div>
                 </div>
                 <!-- End Col -->
+
+
             </div>
             <!-- End Row -->
         </div>
@@ -172,576 +193,421 @@
     </section>
     <!-- ========== section end ========== -->
 
-    <!-- ========== footer start =========== -->
-    <footer class="footer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="terms d-flex justify-content-center justify-content-md-end">
-                        <a href="https://small-ragdoll-a57.notion.site/Prokin-Donuts-1b83a719d3508047953eeda89caeec14" class="text-sm">Brand Story</a>
-                        <a href="https://github.com/Prokin-Donuts/Prokin-Donuts" class="text-sm ml-15">Dev Hub</a>
-                    </div>
-                </div>
-                <!-- end col-->
-            </div>
-            <!-- end row -->
-        </div>
-        <!-- end container -->
-    </footer>
-    <!-- ========== footer end =========== -->
+    <!-- ====== 입고 라벨 ====== -->
+    <div id="inboundMonthLabelsData" style="display:none;"><c:forEach var="item" items="${inboundByMonth}" varStatus="status"><c:out value="${item.period}월"/><c:if test="${!status.last}">,</c:if></c:forEach></div>
+    <!-- ====== 입고 카운트 ====== -->
+    <div id="inboundMonthCountsData" style="display:none;"><c:forEach var="item" items="${inboundByMonth}" varStatus="status">${item.count}<c:if test="${!status.last}">,</c:if></c:forEach></div>
+
+    <!-- ====== 출고 라벨 ====== -->
+    <div id="orderMonthLabelsData" style="display:none;"><c:forEach var="item" items="${orderByMonth}" varStatus="status"><c:out value="${item.period}월"/><c:if test="${!status.last}">,</c:if></c:forEach></div>
+    <!-- ====== 출고 카운트 ====== -->
+    <div id="orderMonthCountsData" style="display:none;"><c:forEach var="item" items="${orderByMonth}" varStatus="status">${item.count}<c:if test="${!status.last}">,</c:if></c:forEach></div>
+
+    <!-- 재고 -->
+    <div id="productNamesData" style="display:none;"> <c:forEach var="item" items="${categoryInventory}" varStatus="status"> ${item.name}<c:if test="${!status.last}">,</c:if> </c:forEach> </div>
+    <div id="productQuantitiesData" style="display:none;"> <c:forEach var="item" items="${categoryInventory}" varStatus="status"> ${item.quantity}<c:if test="${!status.last}">,</c:if> </c:forEach> </div>
+    <!-- ====== 소분류별 제품별 재고목록 데이터 ====== -->
+    <div id="subcategoryProductInventoryData" style="display:none;">  <c:forEach var="item" items="${subcategoryProductInventoryList}" varStatus="status">
+        ${item.subcategoryName}/${item.productName}/${item.quantity}<c:if test="${!status.last}">,</c:if> </c:forEach>
+    </div>
+
+    <!-- ========== common-footer start =========== -->
+    <%@ include file="/WEB-INF/views/includes/common/Footer.jsp" %>
+    <!-- ========== common-footer end =========== -->
 </main>
 <!-- ======== main-wrapper end =========== -->
 
-<!-- ========= All Javascript files linkup ======== -->
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="<c:url value='/resources/js/Chart.min.js'/>"></script>
-<script src="<c:url value='/resources/js/dynamic-pie-chart.js'/>"></script>
-<script src="<c:url value='/resources/js/moment.min.js'/>"></script>
-<script src="<c:url value='/resources/js/fullcalendar.js'/>"></script>
-<script src="<c:url value='/resources/js/jvectormap.min.js'/>"></script>
-<script src="<c:url value='/resources/js/world-merc.js'/>"></script>
-<script src="<c:url value='/resources/js/polyfill.js'/>"></script>
-<script src="<c:url value='/resources/js/main.js'/>"></script>
-<!-- datatable을 위해 필요함 -->
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
+<!-- ========== Javascript start =========== -->
+<%@ include file="/WEB-INF/views/includes/common/Javascript.jsp" %>
+<!-- ========== Javascript end =========== -->
 
 <script>
+
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
-    // ======== jvectormap activation
-    var markers = [
-        { name: "Egypt", coords: [26.8206, 30.8025] },
-        { name: "Russia", coords: [61.524, 105.3188] },
-        { name: "Canada", coords: [56.1304, -106.3468] },
-        { name: "Greenland", coords: [71.7069, -42.6043] },
-        { name: "Brazil", coords: [-14.235, -51.9253] },
-    ];
 
-    var jvm = new jsVectorMap({
-        map: "world_merc",
-        selector: "#map",
-        zoomButtons: true,
+    var warehouseCode = document.getElementById('warehouseCode').value;
+    let isSubmitting = false;
 
-        regionStyle: {
-            initial: {
-                fill: "#d1d5db",
-            },
-        },
+    function changeTemp(section, delta) {
+        console.log('[changeTemp] section =', section, 'delta =', delta);
 
-        labels: {
-            markers: {
-                render: (marker) => marker.name,
-            },
-        },
+        var tempElement = document.getElementById('temp-' + section);
+        var currentTemp = parseInt(tempElement.textContent.trim().replace('°C',''), 10);
+        var newTemp = currentTemp + delta;
 
-        markersSelectable: true,
-        selectedMarkers: markers.map((marker, index) => {
-            var name = marker.name;
-
-            if (name === "Russia" || name === "Brazil") {
-                return index;
+        // 상수 방식 범위 체크
+        if (section === 'fridge') {
+            if (newTemp < 0 || newTemp > 10) {
+                alert('냉장 온도는 ' + 0 + '°C ~ ' + 10 + '°C 사이여야 합니다.');
+                return;
             }
-        }),
-        markers: markers,
-        markerStyle: {
-            initial: { fill: "#4A6CF7" },
-            selected: { fill: "#ff5050" },
-        },
-        markerLabelStyle: {
-            initial: {
-                fontWeight: 400,
-                fontSize: 14,
-            },
-        },
+        }
+        else if (section === 'freezer') {
+            if (newTemp < -9999 || newTemp > -18) {
+                alert('냉동 온도는 ' + -9999 + '°C ~ ' + -18 + '°C 사이여야 합니다.');
+                return;
+            }
+        }
+        else if (section === 'room') {
+            if (newTemp < 1 || newTemp > 35) {
+                alert('상온 온도는 ' + 1 + '°C ~ ' + 35 + '°C 사이여야 합니다.');
+                return;
+            }
+        }
+
+        tempElement.textContent = '' + newTemp + '°C';
+    }
+
+    function confirmTemp(section) {
+        if (isSubmitting) {
+            console.log('[confirmTemp] 중복 요청 방지');
+            return;
+        }
+        isSubmitting = true;
+
+        setTimeout(function() {
+            var tempElement = document.getElementById('temp-' + section);
+            var finalTemp = parseInt(tempElement.textContent.trim().replace('°C',''), 10);
+
+            // 최종값 상수 방식 체크
+            if (section === 'fridge') {
+                if (finalTemp < 0 || finalTemp > 10) {
+                    alert('최종 냉장 온도가 허용 범위를 벗어났습니다: ' + 0 + '°C ~ ' + 10 + '°C');
+                    isSubmitting = false;
+                    return;
+                }
+            }
+            else if (section === 'freezer') {
+                if (finalTemp < -9999 || finalTemp > -18) {
+                    alert('최종 냉동 온도가 허용 범위를 벗어났습니다: ' + -9999 + '°C ~ ' + -18 + '°C');
+                    isSubmitting = false;
+                    return;
+                }
+            }
+            else if (section === 'room') {
+                if (finalTemp < 1 || finalTemp > 35) {
+                    alert('최종 상온 온도가 허용 범위를 벗어났습니다: ' + 1 + '°C ~ ' + 35 + '°C');
+                    isSubmitting = false;
+                    return;
+                }
+            }
+
+            // storedType 결정
+            var storedType = '';
+            if (section === 'fridge')      storedType = '냉장';
+            else if (section === 'freezer') storedType = '냉동';
+            else                            storedType = '상온';
+
+            var url = '/wm/Dashboard/temperature/edit'
+                + '?warehouseCode=' + encodeURIComponent(warehouseCode)
+                + '&storedType='   + encodeURIComponent(storedType)
+                + '&temperature='  + encodeURIComponent(finalTemp);
+
+            console.log('[confirmTemp] section =', section,
+                'storedType =', storedType,
+                'finalTemp =', finalTemp);
+            console.log('[confirmTemp] Fetch URL →', url);
+
+            fetch(url, { method: 'GET' })
+                .then(function(res) {
+                    isSubmitting = false;
+                    if (!res.ok) throw new Error('status ' + res.status);
+                    return res.text();
+                })
+                .then(function(text) {
+                    if (text === 'ok') {
+                        alert('[' + storedType + '] 온도가 ' + finalTemp + '°C로 저장되었습니다!');
+                    } else {
+                        alert('온도 저장 실패: ' + text);
+                    }
+                })
+                .catch(function(err) {
+                    isSubmitting = false;
+                    console.error('[confirmTemp] 에러 →', err);
+                    alert('서버 오류 발생: ' + err.message);
+                });
+        }, 600);
+    }
+</script>
+
+<script>
+    // === 1) 숨겨둔 DIV에서 “월별” 데이터 읽어두기 ===
+    var rawInboundLabels = document
+        .getElementById('inboundMonthLabelsData').textContent
+        .split(',').map(function(s){ return s.trim(); });
+    var rawInboundCounts = document
+        .getElementById('inboundMonthCountsData').textContent
+        .split(',').map(function(s){ return Number(s.trim()); });
+    var rawOrderLabels   = document
+        .getElementById('orderMonthLabelsData').textContent
+        .split(',').map(function(s){ return s.trim(); });
+    var rawOrderCounts   = document
+        .getElementById('orderMonthCountsData').textContent
+        .split(',').map(function(s){ return Number(s.trim()); });
+
+    // === 1-1) “1월”~“12월” 고정 라벨 ===
+    var monthlyLabels = Array.from({ length: 12 }, function(_, i) {
+        return (i + 1) + '월';
     });
-    // ====== calendar activation
-    document.addEventListener("DOMContentLoaded", function () {
-        var calendarMiniEl = document.getElementById("calendar-mini");
-        var calendarMini = new FullCalendar.Calendar(calendarMiniEl, {
-            initialView: "dayGridMonth",
-            headerToolbar: {
-                end: "today prev,next",
+
+    // === 1-2) rawInboundLabels/rawInboundCounts → 맵 생성 ===
+    var inboundMap = {};
+    rawInboundLabels.forEach(function(l, i){
+        inboundMap[l] = rawInboundCounts[i];
+    });
+    var orderMap = {};
+    rawOrderLabels.forEach(function(l, i){
+        orderMap[l] = rawOrderCounts[i];
+    });
+
+    // === 1-3) 12개월 전체 배열(값 없으면 0) ===
+    var monthlyInbound = monthlyLabels.map(function(m){
+        return inboundMap[m] != null ? inboundMap[m] : 0;
+    });
+    var monthlyOrder = monthlyLabels.map(function(m){
+        return orderMap[m] != null ? orderMap[m] : 0;
+    });
+
+    var ctx1 = document.getElementById('Chart1').getContext('2d');
+
+    // 그라데이션 만들기
+    var gradientInbound = ctx1.createLinearGradient(0, 0, 0, 400);
+    gradientInbound.addColorStop(0, 'rgba(255, 157, 50, 0.4)');     // 주황, 위쪽
+    gradientInbound.addColorStop(1, 'rgba(255, 157, 50, 0.05)');    // 주황, 아래쪽
+
+    var gradientOrder = ctx1.createLinearGradient(0, 0, 0, 400);
+    gradientOrder.addColorStop(0, 'rgba(76, 175, 80, 0.4)');    // 초록, 위쪽
+    gradientOrder.addColorStop(1, 'rgba(76, 175, 80, 0.05)');   // 초록, 아래쪽
+
+    // === 2) Chart1 초기화 (월별) ===
+    var chart1 = new Chart(ctx1, {
+        type: 'line',
+        data: {
+            labels: monthlyLabels,
+            datasets: [
+                {
+                    label: '출고 완료',
+                    data: monthlyOrder,
+                    borderColor: '#4CAF50',
+                    backgroundColor: gradientOrder,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointHoverRadius: 8,
+                    fill: true
+                },
+                {
+                    label: '입고 완료',
+                    data: monthlyInbound,
+                    borderColor: '#FF9D32',
+                    backgroundColor: gradientInbound,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointHoverRadius: 8,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'rectRounded',
+                        padding: 20,
+                        font: { size: 12, weight: 'bold' },
+                        color: '#555'
+                    }
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: '#F3F6F8',
+                    titleColor: '#171717',
+                    bodyColor: '#171717',
+                    titleFont: { size: 14, weight: 'bold' },
+                    bodyFont: { size: 10 },
+                    displayColors: false,
+                    padding: { top: 10, bottom: 10, left: 20, right: 20 },
+                    bodyAlign: 'left',
+                    titleAlign: 'left'
+                }
             },
+            scales: {
+                x: { grid: { display: false }, ticks: { padding: 10 } },
+                y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { beginAtZero: true, padding: 10 } }
+            }
+        }
+    });
+
+    // === 3) “월별/주별” Select 처리 ===
+    document.getElementById('chart1PeriodType').addEventListener('change', function(e) {
+        var type = e.target.value;  // 'month' or 'week'
+        if (type === 'month') {
+            // 월별로 되돌리기
+            chart1.data.labels = monthlyLabels;
+            chart1.data.datasets[0].data = monthlyInbound;
+            chart1.data.datasets[1].data = monthlyOrder;
+            chart1.update();
+        } else {
+            // 주별 데이터 비동기 요청
+            var year = new Date().getFullYear();
+            var code = '' + '${warehouseCode}';
+            fetch('/wm/Dashboard/stat/inbound-order?year=' + year +
+                '&warehouseCode=' + code +
+                '&periodType=week')
+                .then(function(res){ return res.json(); })
+                .then(function(json){
+                    var inStats  = json.inboundStats;
+                    var outStats = json.orderStats;
+                    var weekLabels = inStats.map(function(o){
+                        return o.period + '주';
+                    });
+                    var weekIn  = inStats.map(function(o){
+                        return o.count;
+                    });
+                    var weekOut = outStats.map(function(o){
+                        return o.count;
+                    });
+
+                    chart1.data.labels = weekLabels;
+                    chart1.data.datasets[0].data = weekIn;
+                    chart1.data.datasets[1].data = weekOut;
+                    chart1.update();
+                })
+                .catch(function(err){
+                    console.error('주별 데이터 로딩 실패:', err);
+                });
+        }
+    });
+
+    // /////////////////////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////////////////////
+
+    // 4) 숨긴 DIV에서 소분류‒제품‒수량 데이터 읽기
+    const rawSubcatData = document
+        .getElementById('subcategoryProductInventoryData')
+        .textContent.trim();
+
+    const productInventoryBySubcategory = {};
+    if (rawSubcatData) {
+        rawSubcatData.split(',').forEach(function(entry) {
+            const [sub, prod, qty] = entry.trim().split('/');
+            const subTrim  = sub.trim();
+            const prodTrim = prod.trim();
+            const qtyNum   = parseInt(qty.trim(), 10);
+            if (!productInventoryBySubcategory[subTrim]) {
+                productInventoryBySubcategory[subTrim] = [];
+            }
+            productInventoryBySubcategory[subTrim].push({
+                name: prodTrim,
+                quantity: qtyNum
+            });
         });
-        calendarMini.render();
+    }
+
+    // 5) 소분류 리스트와 총수량 계산
+    const subcategories = Object.keys(productInventoryBySubcategory);
+    const subcategoryQuantities = subcategories.map(function(sub) {
+        return productInventoryBySubcategory[sub].reduce(function(sum, p) {
+            return sum + p.quantity;
+        }, 0);
     });
 
-    // =========== chart one start
-    const ctx1 = document.getElementById("Chart1").getContext("2d");
-    const chart1 = new Chart(ctx1, {
-        type: "line",
+    // 6) Chart2: 소분류 바 차트 + 툴팁
+    const ctx2 = document.getElementById('Chart2').getContext('2d');
+    const chart2 = new Chart(ctx2, {   // ✅ chart2 변수로 저장
+        type: 'bar',
         data: {
-            labels: [
-                "Jan",
-                "Fab",
-                "Mar",
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
-            ],
-            datasets: [
-                {
-                    label: "",
-                    backgroundColor: "transparent",
-                    borderColor:  "#FF9D32",
-                    data: [
-                        600, 800, 750, 880, 940, 880, 900, 770, 920, 890, 976, 1100,
-                    ],
-                    pointBackgroundColor: "transparent",
-                    pointHoverBackgroundColor: "#365CF5",
-                    pointBorderColor: "transparent",
-                    pointHoverBorderColor: "#fff",
-                    pointHoverBorderWidth: 5,
-                    borderWidth: 5,
-                    pointRadius: 8,
-                    pointHoverRadius: 8,
-                    cubicInterpolationMode: "monotone", // Add this line for curved line
-                },
-            ],
+            labels: subcategories,
+            datasets: [{
+                label: '재고 수량',
+                data: subcategoryQuantities,
+                backgroundColor: '#FF9D32',
+                borderRadius: 30,
+                barThickness: 20,
+                maxBarThickness: 30
+            }]
         },
         options: {
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        labelColor: function (context) {
-                            return {
-                                backgroundColor: "#ffffff",
-                                color: "#171717"
-                            };
-                        },
-                    },
-                    intersect: false,
-                    backgroundColor: "#f9f9f9",
-                    title: {
-                        fontFamily: "Plus Jakarta Sans",
-                        color: "#8F92A1",
-                        fontSize: 12,
-                    },
-                    body: {
-                        fontFamily: "Plus Jakarta Sans",
-                        color: "#171717",
-                        fontStyle: "bold",
-                        fontSize: 16,
-                    },
-                    multiKeyBackground: "transparent",
-                    displayColors: false,
-                    padding: {
-                        x: 30,
-                        y: 10,
-                    },
-                    bodyAlign: "center",
-                    titleAlign: "center",
-                    titleColor: "#8F92A1",
-                    bodyColor: "#171717",
-                    bodyFont: {
-                        family: "Plus Jakarta Sans",
-                        size: "16",
-                        weight: "bold",
-                    },
-                },
-                legend: {
-                    display: false,
-                },
-            },
             responsive: true,
             maintainAspectRatio: false,
-            title: {
-                display: false,
-            },
-            scales: {
-                y: {
-                    grid: {
-                        display: false,
-                        drawTicks: false,
-                        drawBorder: false,
-                    },
-                    ticks: {
-                        padding: 35,
-                        max: 1200,
-                        min: 500,
-                    },
-                },
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        color: "rgba(143, 146, 161, .1)",
-                        zeroLineColor: "rgba(143, 146, 161, .1)",
-                    },
-                    ticks: {
-                        padding: 20,
-                    },
-                },
-            },
-        },
-    });
-    // =========== chart one end
-
-    // =========== chart two start
-    const ctx2 = document.getElementById("Chart2").getContext("2d");
-    const chart2 = new Chart(ctx2, {
-        type: "bar",
-        data: {
-            labels: [
-                "Jan",
-                "Fab",
-                "Mar",
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
-            ],
-            datasets: [
-                {
-                    label: "",
-                    backgroundColor: "#FF9D32",
-                    borderRadius: 30,
-                    barThickness: 6,
-                    maxBarThickness: 8,
-                    data: [
-                        600, 700, 1000, 700, 650, 800, 690, 740, 720, 1120, 876, 900,
-                    ],
-                },
-            ],
-        },
-        options: {
             plugins: {
+                legend: { display: false },
                 tooltip: {
                     callbacks: {
-                        titleColor: function (context) {
-                            return "#8F92A1";
+                        title: function(ctx) {
+                            return ctx[0].label;
                         },
-                        label: function (context) {
-                            let label = context.dataset.label || "";
-
-                            if (label) {
-                                label += ": ";
+                        label: function(ctx) {
+                            if (document.getElementById('filterType').value === 'section') {
+                                return '  사용률: ' + ctx.raw + '%';
+                            } else {
+                                const list = productInventoryBySubcategory[ctx.label] || [];
+                                return list.length
+                                    ? list.map(function(p) {
+                                        return '  ' + p.name + ': ' + p.quantity + '개';
+                                    })
+                                    : ['  (제품 없음)'];
                             }
-                            label += context.parsed.y;
-                            return label;
-                        },
+                        }
                     },
-                    backgroundColor: "#F3F6F8",
-                    titleAlign: "center",
-                    bodyAlign: "center",
-                    titleFont: {
-                        size: 12,
-                        weight: "bold",
-                        color: "#8F92A1",
-                    },
-                    bodyFont: {
-                        size: 16,
-                        weight: "bold",
-                        color: "#171717",
-                    },
+                    backgroundColor: '#F3F6F8',
+                    titleColor: '#171717',
+                    bodyColor: '#171717',
+                    titleFont: { size: 14, weight: 'bold' },
+                    bodyFont: { size: 10 },
                     displayColors: false,
-                    padding: {
-                        x: 30,
-                        y: 10,
-                    },
-                },
+                    padding: { top: 10, bottom: 10, left: 20, right: 20 },
+                    bodyAlign: 'left',
+                    titleAlign: 'left'
+                }
             },
-            legend: {
-                display: false,
-            },
-            legend: {
-                display: false,
-            },
-            layout: {
-                padding: {
-                    top: 15,
-                    right: 15,
-                    bottom: 15,
-                    left: 15,
-                },
-            },
-            responsive: true,
-            maintainAspectRatio: false,
             scales: {
-                y: {
-                    grid: {
-                        display: false,
-                        drawTicks: false,
-                        drawBorder: false,
-                    },
-                    ticks: {
-                        padding: 35,
-                        max: 1200,
-                        min: 0,
-                    },
-                },
-                x: {
-                    grid: {
-                        display: false,
-                        drawBorder: false,
-                        color: "rgba(143, 146, 161, .1)",
-                        drawTicks: false,
-                        zeroLineColor: "rgba(143, 146, 161, .1)",
-                    },
-                    ticks: {
-                        padding: 20,
-                    },
-                },
+                y: { ticks: { beginAtZero: true, padding: 35 }, grid: { display: false } },
+                x: { ticks: { padding: 20 }, grid: { display: false } }
             },
-            plugins: {
-                legend: {
-                    display: false,
-                },
-                title: {
-                    display: false,
-                },
-            },
-        },
+            layout: { padding: { top: 15, right: 15, bottom: 15, left: 15 } }
+        }
     });
-    // =========== chart two end
 
-    // =========== chart three start
-    const ctx3 = document.getElementById("Chart3").getContext("2d");
-    const chart3 = new Chart(ctx3, {
-        type: "line",
-        data: {
-            labels: [
-                "Jan",
-                "Feb",
-                "Mar",
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
-            ],
-            datasets: [
-                {
-                    label: "Revenue",
-                    backgroundColor: "transparent",
-                    borderColor: "#365CF5",
-                    data: [80, 120, 110, 100, 130, 150, 115, 145, 140, 130, 160, 210],
-                    pointBackgroundColor: "transparent",
-                    pointHoverBackgroundColor: "#365CF5",
-                    pointBorderColor: "transparent",
-                    pointHoverBorderColor: "#365CF5",
-                    pointHoverBorderWidth: 3,
-                    pointBorderWidth: 5,
-                    pointRadius: 5,
-                    pointHoverRadius: 8,
-                    fill: false,
-                    tension: 0.4,
-                },
-                {
-                    label: "Profit",
-                    backgroundColor: "transparent",
-                    borderColor: "#9b51e0",
-                    data: [
-                        120, 160, 150, 140, 165, 210, 135, 155, 170, 140, 130, 200,
-                    ],
-                    pointBackgroundColor: "transparent",
-                    pointHoverBackgroundColor: "#9b51e0",
-                    pointBorderColor: "transparent",
-                    pointHoverBorderColor: "#9b51e0",
-                    pointHoverBorderWidth: 3,
-                    pointBorderWidth: 5,
-                    pointRadius: 5,
-                    pointHoverRadius: 8,
-                    fill: false,
-                    tension: 0.4,
-                },
-                {
-                    label: "Order",
-                    backgroundColor: "transparent",
-                    borderColor: "#f2994a",
-                    data: [180, 110, 140, 135, 100, 90, 145, 115, 100, 110, 115, 150],
-                    pointBackgroundColor: "transparent",
-                    pointHoverBackgroundColor: "#f2994a",
-                    pointBorderColor: "transparent",
-                    pointHoverBorderColor: "#f2994a",
-                    pointHoverBorderWidth: 3,
-                    pointBorderWidth: 5,
-                    pointRadius: 5,
-                    pointHoverRadius: 8,
-                    fill: false,
-                    tension: 0.4,
-                },
-            ],
-        },
-        options: {
-            plugins: {
-                tooltip: {
-                    intersect: false,
-                    backgroundColor: "#fbfbfb",
-                    titleColor: "#8F92A1",
-                    bodyColor: "#272727",
-                    titleFont: {
-                        size: 16,
-                        family: "Plus Jakarta Sans",
-                        weight: "400",
-                    },
-                    bodyFont: {
-                        family: "Plus Jakarta Sans",
-                        size: 16,
-                    },
-                    multiKeyBackground: "transparent",
-                    displayColors: false,
-                    padding: {
-                        x: 30,
-                        y: 15,
-                    },
-                    borderColor: "rgba(143, 146, 161, .1)",
-                    borderWidth: 1,
-                    enabled: true,
-                },
-                title: {
-                    display: false,
-                },
-                legend: {
-                    display: false,
-                },
-            },
-            layout: {
-                padding: {
-                    top: 0,
-                },
-            },
-            responsive: true,
-            // maintainAspectRatio: false,
-            legend: {
-                display: false,
-            },
-            scales: {
-                y: {
-                    grid: {
-                        display: false,
-                        drawTicks: false,
-                        drawBorder: false,
-                    },
-                    ticks: {
-                        padding: 35,
-                    },
-                    max: 350,
-                    min: 50,
-                },
-                x: {
-                    grid: {
-                        drawBorder: false,
-                        color: "rgba(143, 146, 161, .1)",
-                        drawTicks: false,
-                        zeroLineColor: "rgba(143, 146, 161, .1)",
-                    },
-                    ticks: {
-                        padding: 20,
-                    },
-                },
-            },
-        },
-    });
-    // =========== chart three end
+    document.getElementById('filterType')
+        .addEventListener('change', function(e){
+            const selected = e.target.value;
+            const code = '' + warehouseCode;
 
-    // ================== chart four start
-    const ctx4 = document.getElementById("Chart4").getContext("2d");
-    const chart4 = new Chart(ctx4, {
-        type: "bar",
-        data: {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-            datasets: [
-                {
-                    label: "",
-                    backgroundColor: "#365CF5",
-                    borderColor: "transparent",
-                    borderRadius: 20,
-                    borderWidth: 5,
-                    barThickness: 20,
-                    maxBarThickness: 20,
-                    data: [600, 700, 1000, 700, 650, 800],
-                },
-                {
-                    label: "",
-                    backgroundColor: "#d50100",
-                    borderColor: "transparent",
-                    borderRadius: 20,
-                    borderWidth: 5,
-                    barThickness: 20,
-                    maxBarThickness: 20,
-                    data: [690, 740, 720, 1120, 876, 900],
-                },
-            ],
-        },
-        options: {
-            plugins: {
-                tooltip: {
-                    backgroundColor: "#F3F6F8",
-                    titleColor: "#8F92A1",
-                    titleFontSize: 12,
-                    bodyColor: "#171717",
-                    bodyFont: {
-                        weight: "bold",
-                        size: 16,
-                    },
-                    multiKeyBackground: "transparent",
-                    displayColors: false,
-                    padding: {
-                        x: 30,
-                        y: 10,
-                    },
-                    bodyAlign: "center",
-                    titleAlign: "center",
-                    enabled: true,
-                },
-                legend: {
-                    display: false,
-                },
-            },
-            layout: {
-                padding: {
-                    top: 0,
-                },
-            },
-            responsive: true,
-            // maintainAspectRatio: false,
-            title: {
-                display: false,
-            },
-            scales: {
-                y: {
-                    grid: {
-                        display: false,
-                        drawTicks: false,
-                        drawBorder: false,
-                    },
-                    ticks: {
-                        padding: 35,
-                        max: 1200,
-                        min: 0,
-                    },
-                },
-                x: {
-                    grid: {
-                        display: false,
-                        drawBorder: false,
-                        color: "rgba(143, 146, 161, .1)",
-                        zeroLineColor: "rgba(143, 146, 161, .1)",
-                    },
-                    ticks: {
-                        padding: 20,
-                    },
-                },
-            },
-        },
-    });
-    // =========== chart four end
+            if (selected === 'section') {
+                // 섹션 사용률 가져오기
+                fetch('/wm/Dashboard/inventory/stat?warehouseCode=' + code + '&type=section')
+                    .then(function(res){ return res.json(); })
+                    .then(function(data){
+                        const labels = data.map(function(item){ return item.storedType; });
+                        const values = data.map(function(item){ return item.usedRate; });
+
+                        // ✅ chart2 업데이트
+                        chart2.data.labels = labels;
+                        chart2.data.datasets[0].label = '섹션 사용률';
+                        chart2.data.datasets[0].data = values;
+                        chart2.data.datasets[0].backgroundColor = '#4CAF50'; // (선택사항) 색상 변경
+                        chart2.update();
+                    })
+                    .catch(function(err){
+                        console.error('섹션 사용률 로딩 실패:', err);
+                    });
+            } else {
+                // 카테고리 선택일 때 → 원래 소분류 기준으로 돌아가기
+                chart2.data.labels = subcategories;
+                chart2.data.datasets[0].label = '재고 수량';
+                chart2.data.datasets[0].data = subcategoryQuantities;
+                chart2.data.datasets[0].backgroundColor = '#FF9D32'; // 다시 색상 복원
+                chart2.update();
+            }
+        });
+
 </script>
 </body>
 </html>

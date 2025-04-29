@@ -1,31 +1,8 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="<c:url value='/resources/images/logo/favicon_logo.png'/>" type="image/png" />
-    <title>Prokin Donuts</title>
 
-    <!-- ========== All CSS files linkup ========= -->
-    <link rel="stylesheet" href="<c:url value='/resources/css/bootstrap.min.css'/>" />
-    <link rel="stylesheet" href="<c:url value='/resources/css/lineicons.css'/>" type="text/css" />
-    <link rel="stylesheet" href="<c:url value='/resources/css/materialdesignicons.min.css'/>" type="text/css" />
-    <link rel="stylesheet" href="<c:url value='/resources/css/fullcalendar.css'/>" />
-    <link rel="stylesheet" href="<c:url value='/resources/css/main.css'/>" />
-    <!-- datatable을 위해 필요함 -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-</head>
 
-<body>
-<!-- ======== Preloader =========== -->
-<div id="preloader">
-    <div class="spinner"></div>
-</div>
-<!-- ======== Preloader =========== -->
+<!-- ======== common-header start =========== -->
+<%@ include file="/WEB-INF/views/includes/common/Header.jsp" %>
+<!-- ======== common-header end =========== -->
 
 <!-- ======== sidebar-nav start =========== -->
 
@@ -65,6 +42,32 @@
                         <h6 class="mb-10">입고현황</h6>
                         <p class="text-sm mb-20"></p>
 
+                        <!-- 원하는 필터 설정 -->
+                        <div id="myCustomFilters" style="display: none;">
+
+                            <div class="d-flex flex-wrap gap-2">
+
+                                <!-- 입고상태 -->
+                                <div >
+                                    <div class="select-style-1">
+                                        <div class="select-position">
+                                            <select id="InboundCategories">
+                                                <option value="">입고 상태</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 필터 초기화 -->
+                                <div class="mb-20">
+                                    <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="resetFilterBtn" style="height:auto; min-height:auto;">
+                                        필터 초기화
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+
 
                         <div class="table-wrapper table-responsive p-0">
                             <!-- Start table -->
@@ -89,11 +92,11 @@
                                         <td>${detail.inboundCode}</td>
                                         <td>${detail.productCode}</td>
                                         <td>${detail.productName}</td>
-                                        <td>${detail.productPrice}</td>
+                                        <td><fmt:formatNumber value="${detail.productPrice}" type="number"/>원</td>
                                         <td>${detail.inboundDate}</td>
                                         <td>${detail.inboundStatus}</td>
                                         <td>${detail.sectionCode}</td>
-                                        <td>${detail.quantity}</td>
+                                        <td>${detail.quantity}개</td>
                                     </tr>
                                 </c:forEach>
                                 </tbody>
@@ -114,47 +117,40 @@
     </section>
     <!-- ========== section end ========== -->
 
-    <!-- ========== footer start =========== -->
-    <footer class="footer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="terms d-flex justify-content-center justify-content-md-end">
-                        <a href="https://small-ragdoll-a57.notion.site/Prokin-Donuts-1b83a719d3508047953eeda89caeec14" class="text-sm">Brand Story</a>
-                        <a href="https://github.com/Prokin-Donuts/Prokin-Donuts" class="text-sm ml-15">Dev Hub</a>
-                    </div>
-                </div>
-                <!-- end col-->
-            </div>
-            <!-- end row -->
-        </div>
-        <!-- end container -->
-    </footer>
-    <!-- ========== footer end =========== -->
+    <!-- ========== common-footer start =========== -->
+    <%@ include file="/WEB-INF/views/includes/common/Footer.jsp" %>
+    <!-- ========== common-footer end =========== -->
 </main>
 <!-- ======== main-wrapper end =========== -->
 
-<!-- ========= All Javascript files linkup ======== -->
-<script src="<c:url value='/resources/js/Chart.min.js'/>"></script>
-<script src="<c:url value='/resources/js/dynamic-pie-chart.js'/>"></script>
-<script src="<c:url value='/resources/js/moment.min.js'/>"></script>
-<script src="<c:url value='/resources/js/fullcalendar.js'/>"></script>
-<script src="<c:url value='/resources/js/jvectormap.min.js'/>"></script>
-<script src="<c:url value='/resources/js/world-merc.js'/>"></script>
-<script src="<c:url value='/resources/js/polyfill.js'/>"></script>
-<script src="<c:url value='/resources/js/main.js'/>"></script>
-<!-- datatable을 위해 필요함 -->
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
-
+<!-- ========== Javascript start =========== -->
+<%@ include file="/WEB-INF/views/includes/common/Javascript.jsp" %>
+<!-- ========== Javascript end =========== -->
 <script>
+    $(document).ready(function() {
+        // 1. 더미 데이터 정의 (입고상태)
+        const dummyInboundCategories = [
+            {"id": "입고요청", "name": "입고요청"},
+            {"id": "승인대기", "name": "승인대기"},
+            {"id": "입고완료", "name": "입고완료"},
+            {"id": "입고취소", "name": "입고취소"},
+
+        ];
+
+        // 2. 원본 필터 영역에 입고상태 옵션 채우기
+        var $midSelect = $('#myCustomFilters #InboundCategories');
+        $.each(dummyInboundCategories, function (index, item) {
+            $midSelect.append($('<option>', {
+                value: item.id,
+                text: item.name
+            }));
+        });
+
     var table = $('#datatable').DataTable({
         autoWidth: false,
         columnDefs: [
-            // { targets: 0, orderable: false, searchable: false }, // 체크박스 컬럼
-            // { targets: [1, 2, 3, 4], className: 'text-center' }
-            // { targets: [1, 2, 3, 4, 6, 7], className: 'text-center' }
+            {width: '95px', targets: -1},  // Actions 열 너비
+            {targets: [0, 1, 2, 3, 4, 5, 6, 7], className: 'text-center'} // JS 속성으로 가운데 정렬
         ],
         order: [[1, 'asc']],
         columns: [
@@ -249,6 +245,8 @@
     var $clone = $('#myCustomFilters').clone(true);
     // 복제 후 삽입 시, ID 제거 필수
 
+        $clone.find('#InboundCategories').attr('id', 'InboundCategories_clone');
+
     $clone.find('#btnInboundAdd').attr('id', 'btnInboundAdd_clone');
     $clone.find('#btnInboundEdit').attr('id', 'btnInboundEdit_clone');
     $clone.find('#btnInboundDelete').attr('id', 'btnInboundDelete_clone');
@@ -267,6 +265,41 @@
         $('#select-all').prop('checked', false);
     });
 
+        // 6-1. 이벤트 위임 방식으로 변경된 ID에 새롭게 바인딩 (body를 통해 실제 필터에 작동하게!)
+        $('body').on('change', '#InboundCategories_clone', function () {
+            $('#InboundSubCategories_clone').val('');
+            table.draw();
+        });
+
+        $('body').on('click', '#resetFilterBtn', function () {
+            const table = $('#datatable').DataTable();
+
+            table.search('').columns().search('');
+
+            $('#InboundCategories_clone, #inboundDateInput_clone').val('');
+
+            table.order([[0, 'asc']]);
+            table.draw();
+        });
+
+        // 7. 필터 이벤트: 드롭다운 변경 시 테이블 필터링
+        $('#InboundCategories, #inboundDateInput').on('change keyup', function () {
+            table.draw();
+        });
+
+        // 7-1. (7번 함수에서 각각이 변경될 때마다) 필터링 함수도 변경된 ID값을 기준으로 수정
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            const selectedInbound = $('#InboundCategories_clone').val();
+            const categoryInbound = data[5]; // 입고상태를 기준으로
+
+            // 일부 포함에도 검색
+            if (selectedInbound && !categoryInbound.includes(selectedInbound)) {
+                return false;
+            }
+
+            return true;
+        });
+    });
 
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>

@@ -1,4 +1,5 @@
-\
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 
 <aside class="sidebar-nav-wrapper">
     <div class="navbar-logo">
@@ -48,16 +49,13 @@
                     <li class="nav-inbound-approval">
                         <a href="<c:url value='/wm/inbound/approval'/>" class="hover-text-grow">입고관리</a>
                     </li>
-                    <!-- <li>
-                        <a href="<c:url value='/wm/inbound/modify'/>" class="hover-text-grow">입고수정/취소</a>
-                    </li> -->
                     <li class="nav-inbound-status">
                         <a href="<c:url value='/wm/inbound/status'/>" class="hover-text-grow">입고현황</a>
                     </li>
                 </ul>
             </li>
             <li class="nav-item nav-outbound">
-                <a href="<c:url value='/wm/outbound'/>">
+                <a href="<c:url value='/wm/outbound/approval'/>">
           <span class="icon">
             <i class="lni lni-delivery"></i>
           </span>

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.donut.prokindonutsweb.dashboard.mapper.WmDashboardMapper">
+    <!-- 창고관리자(멤버) 코드로 해당 창고 코드 조회 -->
+    <select id="selectWarehouseCodesByMember"
+            parameterType="string"
+            resultType="string">
+        SELECT warehouseCode
+        FROM Warehouse
+        WHERE memberCode = #{memberCode}
+    </select>
+
+    <!--    ///////////////////////////////////////////////////////////////////////// -->
+
+    <!-- 창고코드에 해당하는 섹션별 온도 조회 -->
+    <select id="selectSectionTemperature"
+            parameterType="map"
+            resultType="int">
+        SELECT temperature
+        FROM Section
+        WHERE warehouseCode = #{warehouseCode}
+          AND storedType     = #{storedType}
+    </select>
+
+    <!-- 창고코드 & 섹션 타입에 해당하는 온도 수정 -->
+    <update id="updateSectionTemperature"
+            parameterType="map">
+        UPDATE Section
+        SET temperature = #{temperature}
+        WHERE warehouseCode = #{warehouseCode}
+          AND storedType     = #{storedType}
+    </update>
+
+    <!--    ///////////////////////////////////////////////////////////////////////// -->
+
+    <!-- 미승인 입고요청, 미승인 출고요청 -->
+    <!-- 오늘 미승인 입고요청 수 -->
+    <select id="selectTodayWaitingInboundCount"
+            parameterType="string"
+            resultType="int">
+        SELECT COUNT(*)
+        FROM Inbound i
+                 JOIN Warehouse w ON i.warehouseCode = w.warehouseCode
+        WHERE i.inboundStatus = '승인대기'
+          AND DATE(i.inboundDate) = CURDATE()
+          AND w.warehouseCode = #{warehouseCode}
+    </select>
+
+    <!-- 오늘 미승인 출고대기 수 -->
+    <select id="selectTodayWaitingOrderCount"
+            parameterType="string"
+            resultType="int">
+        SELECT COUNT(*)
+        FROM `Order` o
+                 JOIN Warehouse w ON o.warehouseCode = w.warehouseCode
+        WHERE o.orderStatus = '출고대기'
+          AND DATE(o.orderDate) = CURDATE()
+          AND w.warehouseCode = #{warehouseCode}
+    </select>
+
+    <!--    ///////////////////////////////////////////////////////////////////////// -->
+    <!--    ///////////////////////////////////////////////////////////////////////// -->
+    <!--    ///////////////////////////////////////////////////////////////////////// -->
+
+    <!-- 차트1 용 데이터 -->
+    <!-- Inbound 건수 집계 (년, 월, 주별) -->
+<!--    <select id="selectInboundCountByYear" parameterType="string" resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">-->
+<!--        SELECT YEAR(inboundDate)   AS period,-->
+<!--               COUNT(*)            AS count-->
+<!--        FROM Inbound-->
+<!--        WHERE inboundStatus = '입고완료'-->
+<!--          AND warehouseCode = #{warehouseCode}-->
+<!--        GROUP BY YEAR(inboundDate)-->
+<!--        ORDER BY YEAR(inboundDate)-->
+<!--    </select>-->
+    <select id="selectInboundCountByMonth" parameterType="map" resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">
+        SELECT MONTH(inboundDate)  AS period,
+               COUNT(*)            AS count
+        FROM Inbound
+        WHERE inboundStatus = '입고완료'
+          AND YEAR(inboundDate)  = #{year}
+          AND warehouseCode     = #{warehouseCode}
+        GROUP BY MONTH(inboundDate)
+        ORDER BY MONTH(inboundDate)
+    </select>
+    <select id="selectInboundCountByWeek" parameterType="map" resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">
+        SELECT WEEK(inboundDate,1) AS period,
+               COUNT(*)            AS count
+        FROM Inbound
+        WHERE inboundStatus = '입고완료'
+          AND YEAR(inboundDate)  = #{year}
+          AND warehouseCode     = #{warehouseCode}
+        GROUP BY WEEK(inboundDate,1)
+        ORDER BY WEEK(inboundDate,1)
+    </select>
+
+    <!-- Order 건수 집계 (년, 월, 주별) -->
+<!--    <select id="selectOrderCountByYear" parameterType="string" resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">-->
+<!--        SELECT YEAR(orderDate)     AS period,-->
+<!--               COUNT(*)            AS count-->
+<!--        FROM `Order`-->
+<!--        WHERE orderStatus = '출고완료'-->
+<!--          AND warehouseCode = #{warehouseCode}-->
+<!--        GROUP BY YEAR(orderDate)-->
+<!--        ORDER BY YEAR(orderDate)-->
+<!--    </select>-->
+    <select id="selectOrderCountByMonth" parameterType="map" resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">
+        SELECT MONTH(orderDate)    AS period,
+               COUNT(*)            AS count
+        FROM `Order`
+        WHERE orderStatus = '출고완료'
+          AND YEAR(orderDate)    = #{year}
+          AND warehouseCode     = #{warehouseCode}
+        GROUP BY MONTH(orderDate)
+        ORDER BY MONTH(orderDate)
+    </select>
+    <select id="selectOrderCountByWeek" parameterType="map" resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">
+        SELECT WEEK(orderDate,1)   AS period,
+               COUNT(*)            AS count
+        FROM `Order`
+        WHERE orderStatus = '출고완료'
+          AND YEAR(orderDate)    = #{year}
+          AND warehouseCode     = #{warehouseCode}
+        GROUP BY WEEK(orderDate,1)
+        ORDER BY WEEK(orderDate,1)
+    </select>
+
+<!--    ///////////////////////////////////////////////////////////////////////// -->
+<!--    ///////////////////////////////////////////////////////////////////////// -->
+<!--    ///////////////////////////////////////////////////////////////////////// -->
+
+    <!-- 차트2 용 데이터 -->
+
+    <!-- 창고코드에 해당하는 창고의 현재 총 자산 -->
+    <select id="selectTotalInventoryPrice"
+            parameterType="string"
+            resultType="long">
+        SELECT
+            SUM(i.quantity * p.productPrice)
+        FROM Inventory i
+                 JOIN Product   p  ON i.productCode   = p.productCode
+                 JOIN Warehouse w  ON i.warehouseCode = w.warehouseCode
+        WHERE w.warehouseCode = #{warehouseCode}
+    </select>
+
+<!--    &lt;!&ndash; 제품별 재고 현황 (warehouseCode로 필터) &ndash;&gt;-->
+<!--    <select id="selectProductInventoryByWarehouse"-->
+<!--            parameterType="string"-->
+<!--            resultType="com.donut.prokindonutsweb.dashboard.dto.InventoryStatisticDTO">-->
+<!--        SELECT-->
+<!--            p.productName AS name,-->
+<!--            SUM(i.quantity)    AS quantity-->
+<!--        FROM Inventory i-->
+<!--                 JOIN Product   p  ON i.productCode   = p.productCode-->
+<!--                 JOIN Warehouse w  ON i.warehouseCode = w.warehouseCode-->
+<!--        WHERE w.warehouseCode = #{warehouseCode}-->
+<!--        GROUP BY p.productName-->
+<!--    </select>-->
+
+    <!-- 카테고리별 재고 현황 -->
+    <select id="selectCategoryInventoryByWarehouse"
+            parameterType="string"
+            resultType="com.donut.prokindonutsweb.dashboard.dto.InventoryStatisticDTO">
+        SELECT
+            c.categoryMid AS name,
+            SUM(i.quantity) AS quantity
+        FROM Inventory i
+                 JOIN Product   p  ON i.productCode   = p.productCode
+                 JOIN Category  c  ON p.categoryCode  = c.categoryCode
+                 JOIN Warehouse w  ON i.warehouseCode = w.warehouseCode
+        WHERE w.warehouseCode = #{warehouseCode}
+        GROUP BY c.categoryMid
+    </select>
+
+    <!-- 카테고리별 제품별 재고 목록 조회 -->
+    <select id="selectSubcategoryProductInventoryByWarehouse"
+            parameterType="string"
+            resultType="com.donut.prokindonutsweb.dashboard.dto.SubcategoryProductInventoryDTO">
+        SELECT
+            c.categorySub  AS subcategoryName,
+            p.productName    AS productName,
+            SUM(i.quantity)  AS quantity
+        FROM Inventory i
+                 JOIN Product   p ON i.productCode   = p.productCode
+                 JOIN Category  c ON p.categoryCode  = c.categoryCode
+        WHERE i.warehouseCode = #{warehouseCode}
+        GROUP BY c.categorySub, p.productName
+        ORDER BY c.categorySub, p.productName
+    </select>
+
+<!--    &lt;!&ndash; 섹션별 재고 현황 (storedType 파라미터로 분기) &ndash;&gt;-->
+<!--    <select id="selectSectionInventoryByStoredType" parameterType="map" resultType="com.donut.prokindonutsweb.dashboard.dto.InventoryStatisticDTO">-->
+<!--        SELECT-->
+<!--            p.storedType AS name,-->
+<!--            SUM(i.quantity) AS quantity-->
+<!--        FROM Inventory i-->
+<!--                 JOIN Product   p  ON i.productCode   = p.productCode-->
+<!--                 JOIN Warehouse w  ON i.warehouseCode = w.warehouseCode-->
+<!--        WHERE w.warehouseCode = #{warehouseCode}-->
+<!--          AND p.storedType     = #{storedType}-->
+<!--        GROUP BY p.storedType-->
+<!--    </select>-->
+
+    <!-- 섹션 사용률 (percent) -->
+    <select id="selectSectionUsageRateByWarehouse"
+            parameterType="string"
+            resultType="com.donut.prokindonutsweb.dashboard.dto.SectionUsageDTO">
+        SELECT
+            s.storedType,
+            ROUND(
+                    IFNULL(SUM(i.quantity),0)
+                        / (s.storageCapacity + IFNULL(SUM(i.quantity),0))
+                        * 100,
+                    2
+            ) AS usedRate
+        FROM Section s
+                 LEFT JOIN Inventory i
+                           ON s.warehouseCode = i.warehouseCode
+                 LEFT JOIN Product p
+                           ON i.productCode = p.productCode
+                               AND p.storedType = s.storedType
+        WHERE s.warehouseCode = #{warehouseCode}
+        GROUP BY s.sectionCode, s.storedType
+        ORDER BY FIELD(s.storedType, '냉장','냉동','상온')
+    </select>
+
+</mapper>

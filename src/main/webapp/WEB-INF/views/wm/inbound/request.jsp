@@ -2,6 +2,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,6 +29,10 @@
 </div>
 <!-- ======== Preloader =========== -->
 
+<!-- 커서 디자인 -->
+<div class="cursor">
+    <img src="<c:url value='/resources/images/logo/donut.svg'/>" alt="cursor">
+</div>
 <!-- ======== sidebar-nav start =========== -->
 <%@include file="/WEB-INF/views/includes/sidebar/wmSidebar.jsp"%>
 <!-- ======== sidebar-nav end =========== -->
@@ -65,10 +70,47 @@
                         <h6 class="mb-10">제품 메뉴</h6>
                         <p class="text-sm mb-20"></p>
 
+                        <!-- 원하는 필터(중분류, 소분류) 설정 -->
                         <div id="myCustomFilters" style="display: none;">
-                            <div class="d-flex align-items-center gap-2" style="margin-top: -30px;">
+
+                            <div class="d-flex align-items-center gap-2">
+
+                                <!-- 중분류 -->
+                                <div >
+                                    <div class="select-style-1">
+                                        <div class="select-position">
+                                            <!-- 중분류 드롭다운 -->
+                                            <select id="midCategory">
+                                                <option value="">중분류</option>
+                                                <c:forEach var="mid" items="${categoryMidList}">
+                                                    <option value="${mid}">${mid}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 소분류 -->
+                                <div >
+                                    <div class="select-style-1">
+                                        <div class="select-position">
+                                            <!-- 소분류 드롭다운 (초기엔 비워둠) -->
+                                            <select id="subCategory">
+                                                <option value="">소분류</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 필터 초기화 -->
+                                <div class="mb-30">
+                                    <button class="main-btn warning-btn-outline square-btn btn-hover btn-sm btn-xs" id="resetFilterBtn" style="height:auto; min-height:auto;">
+                                        필터 초기화
+                                    </button>
+                                </div>
+
                                 <!-- 오른쪽: 등록/수정/삭제 -->
-                                <div class="btu-group-1 d-flex gap-2">
+                                <div class="btu-group-1 d-flex gap-2 mb-30">
                                     <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="btnInboundAdd">입고 요청</button>
                                 </div>
                             </div>
@@ -79,6 +121,8 @@
                                 <thead>
                                 <tr>
                                     <th><input type="checkbox" id="select-all"></th>
+                                    <th>중분류</th>
+                                    <th>소분류</th>
                                     <th>제품코드</th>
                                     <th>제품명</th>
                                     <th>제품단가</th>
@@ -89,9 +133,11 @@
                                 <c:forEach var="product" items="${product}">
                                     <tr>
                                         <td></td>
+                                        <td>${product.categoryMid}</td>
+                                        <td>${product.categorySub}</td>
                                         <td>${product.productCode}</td>
                                         <td>${product.productName}</td>
-                                        <td>${product.productPrice}</td>
+                                        <td><fmt:formatNumber value="${product.productPrice}" type="number"/>원</td>
                                         <td>${product.storedType}</td>
 
                                     </tr>
@@ -194,7 +240,24 @@
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
 
+<!-- 커서 디자인 -->
+<script>
+    // body 맨 아래에 한 번만!
+    const cursorEl = document.querySelector('.cursor');
+    let shown = false;
 
+    document.addEventListener('mousemove', e => {
+        // 좌표 업데이트
+        cursorEl.style.left = e.clientX + 10 + 'px';
+        cursorEl.style.top  = e.clientY + 10 + 'px';
+
+        // 첫 움직임에만 보이게
+        if (!shown) {
+            cursorEl.classList.add('visible');
+            shown = true;
+        }
+    });
+</script>
 
 <script>
     //ID가 datatable인 테이블을 DataTables로 초기화하고 반환된 객체를 table 변수에 저장.
@@ -203,7 +266,7 @@
         columnDefs: [
             {targets: 0, orderable: false, searchable: false}, // 체크박스 컬럼
             // { targets: [0, 1, 2, 3], className: 'text-center' }
-            {targets: [1, 2, 3, 4], className: 'text-center'}
+            {targets: [1, 2, 3, 4, 5, 6], className: 'text-center'}
             // { targets: [1, 2, 3, 4, 6, 7], className: 'text-center' }
         ],
         order: [[1, 'asc']],
@@ -216,6 +279,8 @@
                     return '<input type="checkbox" class="row-checkbox">';
                 }
             },
+            {data: 'categoryMid', title: '중분류'},
+            {data: 'categoryMSub', title: '소분류'},
             {data: 'productCode', title: '제품코드'},
             {data: 'productName', title: '제품명'},
             {data: 'productPrice', title: '제품단가'},
@@ -300,7 +365,10 @@
 
     // 6. 사용자 정의 필터 영역에 원본 필터를 복제하여 주입
     var $clone = $('#myCustomFilters').clone(true);
-    // 복제 후 삽입 시, ID 제거 필수
+
+    // 복제 후 삽입 시, ID 제거 필수!
+    $clone.find('#midCategory').attr('id', 'midCategory_clone');
+    $clone.find('#subCategory').attr('id', 'subCategory_clone');
 
     $clone.find('#btnInboundAdd').attr('id', 'btnInboundAdd_clone');
     $clone.find('#btnInboundEdit').attr('id', 'btnInboundEdit_clone');
@@ -315,6 +383,93 @@
             $select.wrap('<div class="col-lg-2"><div class="select-style-1"><div class="select-position"></div></div></div>');
         }
     });
+
+    ///////////////////////
+
+    // 2. 소분류 비활성화 초기화
+    $('#subCategory_clone').prop('disabled', true);
+
+    // 3. 중분류 변경 시 → 소분류 초기화 + fetch 요청
+    $("#midCategory_clone").on("change", function() {
+        const midVal = $(this).val();
+        const $sub = $("#subCategory_clone");
+
+        // 3-1. 초기화
+        $sub.empty().append('<option value="">소분류 선택</option>');
+
+        if (!midVal) {
+            $sub.prop("disabled", true);
+            return;
+        }
+
+        // 3-2. fetch 요청
+        const contextPath = "${pageContext.request.contextPath}";
+        fetch(`${contextPath}/category/check?categoryMid=`+encodeURIComponent(midVal))
+            .then(res => res.json())
+            .then(subList => {
+                subList.forEach(sub => {
+                    $sub.append(new Option(sub, sub));
+                });
+                $sub.prop("disabled", false);
+                if (typeof table !== "undefined") table.draw();
+            })
+            .catch(() => {
+                console.warn("Failed to fetch subcategories");
+                $sub.prop("disabled", true);
+            });
+    });
+
+    // 4. 소분류, 창고, 중분류 선택 시 필터링 동작
+    $('#midCategory_clone, #subCategory_clone').on('change', function () {
+        table.draw();
+    });
+
+    // 5. 필터링 로직 정의
+    $.fn.dataTable.ext.search.push(function(settings, data) {
+        const selectedMid = $('#midCategory_clone').val();
+        const selectedSub = $('#subCategory_clone').val();
+
+        const categoryMid = data[1];   // "중분류" 칼럼
+        const categorySub = data[2];   // "소분류" 칼럼
+
+        // 1) 중분류 필터
+        if (selectedMid && selectedMid !== categoryMid) {
+            return false;
+        }
+        // 2) 소분류 필터
+        if (selectedSub && selectedSub !== categorySub) {
+            return false;
+        }
+
+        // 조건 만족 시 표시
+        return true;
+    });
+
+    // 6. 필터 초기화 버튼
+    $('body').on('click', '#resetFilterBtn', function () {
+        $('#midCategory_clone').val('');
+        $('#subCategory_clone').val('').prop('disabled', true);
+        table.draw();
+    });
+
+    // 7. 입력창 변화에 반응
+    $('#productNameInput').on('keyup', function() {
+        table.draw();
+    });
+
+
+
+    /////////////////////
+
+
+
+
+
+
+
+
+
+
     // 8. "Select All" 체크박스 이벤트 및 페이지 변경 시 초기화 등은 그대로 유지
     $('#select-all').on('click', function () {
         const rows = table.rows({page: 'current'}).nodes();
@@ -363,7 +518,7 @@
           <td>` + item.productName + `</td>
           <td>` + item.productPrice + `</td>
           <td>` + item.storedType + `</td>
-          <td><input type="number" class="form-control quantity-input"   min="100" value="100" step="100" style="width: 80px;"></td>
+          <td><input type="number" class="form-control quantity-input"  min="100" value="100" step="100" style="width: 80px;"></td>
         </tr>
       `;
             $tableBody.append(rowHtml);
@@ -423,7 +578,9 @@
 
             const productCode = $tds.eq(1).text().trim();
             const productName = $tds.eq(2).text().trim();
-            const productPrice = $tds.eq(3).text().trim();
+            // const productPrice = $tds.eq(3).text().trim();
+            const productPriceText = $tds.eq(3).text().trim(); // 예: '10,000원'
+            const productPrice = Number(productPriceText.replace(/[^0-9]/g, '')); // → 10000
             const storedType = $tds.eq(4).text().trim();
 
             // form에 hidden input 추가

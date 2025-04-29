@@ -92,8 +92,8 @@
                 WHEN EXISTS (
                     SELECT 1 FROM `Order` o
                     WHERE o.franchiseCode = #{franchiseCode}
-                      AND o.orderStatus IN ('발주진행','승인대기')
-                ) THEN '발주진행'
+                      AND o.orderStatus IN ('출고대기')
+                ) THEN '출고진행'
                 ELSE '삭제가능'
                 END AS status
     </select>

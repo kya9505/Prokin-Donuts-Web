@@ -33,6 +33,10 @@
 </div>
 <!-- ======== Preloader =========== -->
 
+<!-- 커서 디자인 -->
+<div class="cursor">
+    <img src="<c:url value='/resources/images/logo/donut.svg'/>" alt="cursor">
+</div>
 <!-- ======== sidebar-nav start =========== -->
 <%@include file="/WEB-INF/views/includes/sidebar/wmSidebar.jsp"%>
 <!-- ======== sidebar-nav end =========== -->
@@ -66,7 +70,20 @@
             <div class="col-lg">
                 <!-- Start card -->
                 <div class="card-style mb-30">
-                    <h6 class="mb-10">입고 목록</h6>
+                    <h6 class="mb-10">입고 목록
+                        <label>
+                            <i
+                                    class="mdi mdi-help-circle text-primary"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="right"
+                                    data-bs-html="true"
+                                    data-bs-custom-class="wide-tooltip"
+                                    title="<b>승인</b>: 제품 검수 후 재고에 반영한다.<br><br> <b>수정, 취소</b>: 본사관리자 승인 후에는 불가능"
+                                    style="cursor: pointer;">
+                            </i>
+                        </label>
+                    </h6>
+
                     <p class="text-sm mb-20">
 
                         <!-- 원하는 필터(중분류, 소분류) 설정 -->
@@ -333,6 +350,26 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
+
+<!-- 커서 디자인 -->
+<script>
+    // body 맨 아래에 한 번만!
+    const cursorEl = document.querySelector('.cursor');
+    let shown = false;
+
+    document.addEventListener('mousemove', e => {
+        // 좌표 업데이트
+        cursorEl.style.left = e.clientX + 10 + 'px';
+        cursorEl.style.top  = e.clientY + 10 + 'px';
+
+        // 첫 움직임에만 보이게
+        if (!shown) {
+            cursorEl.classList.add('visible');
+            shown = true;
+        }
+    });
+</script>
+
 <style>
     button:disabled {
         border: none !important; /* 테두리 제거 */
@@ -341,6 +378,14 @@
     }
 </style>
 <script>
+    // Bootstrap 5 Tooltip 활성화 (모달 내부)
+    document.addEventListener('DOMContentLoaded', function () {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+
     const inboundDetails = [
         <c:forEach var="detail" items="${inboundDetailList}" varStatus="loop">
         {
@@ -534,7 +579,7 @@
                 <tr>
                  <td>` + detail.productCode + `</td>
                  <td>` + detail.productName + `</td>
-                 <td>` + detail.productPrice + `</td>
+                 <td>` + Number(detail.productPrice).toLocaleString() + '원'+`</td>
                  <td>` + detail.storedType + `</td>
                  <td>` + detail.quantity + `</td>
                 </tr>
@@ -599,7 +644,7 @@
                 <tr>
                      <td>` + detail.productCode + `</td>
                      <td>` + detail.productName + `</td>
-                     <td>` + detail.productPrice + `</td>
+                     <td>` + Number(detail.productPrice).toLocaleString() + '원'+`</td>
                      <td>` + detail.storedType + `</td>
                      <td>
                         <input type="hidden" name="items[`+index+`].inboundCode" value=`+detail.inboundCode+` />
@@ -649,7 +694,7 @@
                 <tr>
                  <td>` + detail.productCode + `</td>
                  <td>` + detail.productName + `</td>
-                 <td>` + detail.productPrice + `</td>
+                 <td>` + Number(detail.productPrice).toLocaleString() + '원'+`</td>
                  <td>` + detail.storedType + `</td>
                  <td>` + detail.quantity + `</td>
                 </tr>

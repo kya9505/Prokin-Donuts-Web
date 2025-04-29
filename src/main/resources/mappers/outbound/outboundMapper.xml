@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.donut.prokindonutsweb.outbound.mapper.OutboundMapper">
+
+<!--    출고 목록 반환-->
+    <select id="selectAllOutboundList" resultType="com.donut.prokindonutsweb.outbound.dto.OutboundDTO">
+        select orderCode as OutboundCode, orderDate as outboundDate, orderStatus as outboundStatus,
+        franchiseCode, warehouseCode from `order` where warehouseCode = #{warehouseCode}
+    </select>
+
+<!--    출고 상세 목록 반환-->
+    <select id="selectAllOutboundDetailList" resultType="com.donut.prokindonutsweb.outbound.dto.OutboundDetailDTO">
+        select orderDetailCode as outboundDetailCode, quantity, orderCode as outboundCode, productCode
+        from orderDetail
+    </select>
+
+<!--    재고 존재 확인 반환-->
+    <select id="checkInventory" resultType="boolean">
+        select case
+            when COUNT(*) = SUM(CASE when i.quantity >= o.quantity THEN 1 ELSE 0 END)
+            THEN TRUE
+        ELSE FALSE
+        END AS IsAllProductEnough
+        from orderDetail o, inventory i
+        Where o.productCode = i.productCode and o.orderCode = #{outboundCode}
+    </select>
+
+<!--    출고상태 변경 (-> 출고완료)-->
+    <update id="approveOutbound">
+        update `order` set orderStatus = "출고완료" where orderCode = #{outboundCode}
+    </update>
+
+<!--    재고차감 (출고) -->
+
+    <update id="updateInventory">
+        UPDATE inventory i
+        JOIN orderDetail o ON i.productCode = o.productCode
+        SET i.quantity = i.quantity - o.quantity
+        WHERE o.orderCode = #{outboundCode}
+    </update>
+
+<!--    멤버코드 -> 창고코드 반환-->
+    <select id="getWarehouseCode" resultType="String">
+        select warehouseCode from warehouse where memberCode = #{memberCode}
+    </select>
+
+</mapper>

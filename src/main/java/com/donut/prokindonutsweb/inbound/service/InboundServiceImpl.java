@@ -46,7 +46,6 @@ public class InboundServiceImpl implements InboundService {
         InboundVO inboundVO = modelMapper.map(inboundDTO, InboundVO.class);
         inboundMapper.insertInbound(inboundVO);
 
-        String inboundCode = inboundDTO.getInboundCode();
         List<InboundDetailVO> inboundDetailVOList = getInboundDetailList(inboundDetailList, inboundDTO);
 
         inboundMapper.insertInboundDetailList(inboundDetailVOList);

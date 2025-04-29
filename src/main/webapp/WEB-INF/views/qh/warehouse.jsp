@@ -1,31 +1,8 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="<c:url value='/resources/images/logo/favicon_logo.png'/>" type="image/png" />
-    <title>Prokin Donuts</title>
 
-    <!-- ========== All CSS files linkup ========= -->
-    <link rel="stylesheet" href="<c:url value='/resources/css/bootstrap.min.css'/>" />
-    <link rel="stylesheet" href="<c:url value='/resources/css/lineicons.css'/>" type="text/css" />
-    <link rel="stylesheet" href="<c:url value='/resources/css/materialdesignicons.min.css'/>" type="text/css" />
-    <link rel="stylesheet" href="<c:url value='/resources/css/fullcalendar.css'/>" />
-    <link rel="stylesheet" href="<c:url value='/resources/css/main.css'/>" />
-    <!-- datatable을 위해 필요함 -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-</head>
 
-<body>
-<!-- ======== Preloader =========== -->
-<div id="preloader">
-    <div class="spinner"></div>
-</div>
-<!-- ======== Preloader =========== -->
+<!-- ======== common-header start =========== -->
+<%@ include file="/WEB-INF/views/includes/common/Header.jsp" %>
+<!-- ======== common-header end =========== -->
 
 <!-- ======== sidebar-nav start =========== -->
 
@@ -65,7 +42,7 @@
                     <!-- Start card -->
 
                     <!-- 지도 API 띄울 공간 -->
-                    <div class="card-style mb-30 map-wrapper" style="height: max(600px, calc(100vh - 200px)); display: flex; flex-direction: column;">
+                    <div class="card-style mb-30 map-wrapper" style="height: max(600px, calc(100vh - 100px)); display: flex; flex-direction: column;">
                         <h6 class="mb-10" style="">창고 위치</h6>
                         <div style="flex: 1; overflow: hidden;">
                             <div id="map" style="width: 100%; height: 100%;"></div>
@@ -134,7 +111,7 @@
                                     <th>소재지</th>
                                     <th>수용한도</th>
                                     <th>담당자</th>
-                                    <th>담당자 이메일</th>
+                                    <th>이메일</th>
                                     <th>수정 | 취소</th> <!-- 수정/삭제 열 -->
                                     <th style="display: none;"></th>
                                     <th style="display: none;"></th>
@@ -153,7 +130,7 @@
                                         <td>${w.warehouseCode}</td>
                                         <td>${w.warehouseName}</td>
                                         <td>${w.address}</td>
-                                        <td>${w.capacityLimit}</td>
+                                        <td><fmt:formatNumber value="${w.capacityLimit}" type="number" groupingUsed="true"/> ㎡</td>
                                         <td>
                                             <c:choose>
                                                 <c:when test="${not empty w.memberName}">
@@ -293,7 +270,7 @@
                                     <div class="input-group">
                                         <input
                                                 type="text"
-                                                class="form-control"
+                                                class="form-control number-comma"
                                                 id="capacity"
                                                 name="capacityLimit"
                                                 placeholder="한도를 입력하세요"
@@ -419,56 +396,20 @@
     </section>
     <!-- ========== section end ========== -->
 
-    <!-- ========== footer start =========== -->
-    <footer class="footer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="terms d-flex justify-content-center justify-content-md-end">
-                        <a href="https://small-ragdoll-a57.notion.site/Prokin-Donuts-1b83a719d3508047953eeda89caeec14" class="text-sm">Brand Story</a>
-                        <a href="https://github.com/Prokin-Donuts/Prokin-Donuts" class="text-sm ml-15">Dev Hub</a>
-                    </div>
-                </div>
-                <!-- end col-->
-            </div>
-            <!-- end row -->
-        </div>
-        <!-- end container -->
-    </footer>
-    <!-- ========== footer end =========== -->
+    <!-- ========== common-footer start =========== -->
+    <%@ include file="/WEB-INF/views/includes/common/Footer.jsp" %>
+    <!-- ========== common-footer end =========== -->
 </main>
 <!-- ======== main-wrapper end =========== -->
 
-<!-- ========= All Javascript files linkup ======== -->
-<script src="<c:url value='/resources/js/Chart.min.js'/>"></script>
-<script src="<c:url value='/resources/js/dynamic-pie-chart.js'/>"></script>
-<script src="<c:url value='/resources/js/moment.min.js'/>"></script>
-<script src="<c:url value='/resources/js/fullcalendar.js'/>"></script>
-<script src="<c:url value='/resources/js/jvectormap.min.js'/>"></script>
-<script src="<c:url value='/resources/js/world-merc.js'/>"></script>
-<script src="<c:url value='/resources/js/polyfill.js'/>"></script>
-<script src="<c:url value='/resources/js/main.js'/>"></script>
-<!-- datatable을 위해 필요함 -->
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
+<!-- ========== Javascript start =========== -->
+<%@ include file="/WEB-INF/views/includes/common/Javascript.jsp" %>
+<!-- ========== Javascript end =========== -->
 
 <!-- 다음 우편번호 API -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-<!-- 카카오맵 API -->
-
-<!-- 강조 스타일 -->
-<style>
-    .highlighted {
-        color: #FF9D32;
-        font-weight: bold;
-        background-color: #fff5eb;
-    }
-</style>
-
 <!-- Kakao Maps SDK -->
 <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2a5f2e41113ad6da9ca9746f7bcb47f6&libraries=services"></script>
-
 <script>
     document.addEventListener('DOMContentLoaded', async function() {
         var map = new kakao.maps.Map(document.getElementById('map'), {
@@ -621,6 +562,9 @@
         // 테이블 행 클릭 → 강조/이동
         rows.forEach(function(row) {
             row.addEventListener('click', function(e) {
+                // 버튼 클릭 시에는 행 클릭 무시
+                if (e.target.closest('.btn-edit') || e.target.closest('.btn-delete')) return;
+
                 e.stopPropagation();
                 highlightWarehouse(row.dataset.warehouseName);
             });
@@ -887,7 +831,7 @@
             const zonecode = $("#zonecode_disp").val().trim();
             const roadAddress = $("#roadAddress_disp").val().trim();
             const detailAddress = $("#detailAddress_disp").val().trim();
-            const capacity = $("#capacity").val().trim();
+            const capacity = $("#capacity").val().replace(/,/g, '').trim();
             const regName = /^[A-Za-z0-9가-힣]{1,10}$/;
             const regCap = /^[0-9]+$/;
             // 상세주소: 한글, 영어, 숫자, 띄어쓰기, 특수문자 허용
@@ -918,6 +862,7 @@
                 return false;
             }
 
+            alert("창고가 성공적으로 등록되었습니다.");
             // address 하나로 합쳐서 hidden 필드 추가
             const $existing = $("input[name='address']");
             const fullAddress = (roadAddress + " " + detailAddress).replace(/^,/, "").trim();
@@ -943,7 +888,7 @@
 
             const code = rowData[0];        // 창고코드
             const name = rowData[1];        // 창고명
-            const memberCode = rowData[7];  // 숨겨진 td: 담당자코드
+            const memberCode = rowData[8];  // 숨겨진 td: 담당자코드
             const memberName = rowData[4];  // 담당자이름
 
             // 모달 input 세팅
@@ -1040,6 +985,7 @@
                 e.preventDefault();
                 return;
             }
+            alert("창고 정보가 성공적으로 수정되었습니다.");  // ← 이 줄 추가
         });
 
         // 삭제 버튼 클릭 시
@@ -1101,8 +1047,10 @@
                 alert('삭제할 수 없는 창고입니다.');
                 return;
             }
+            alert("창고가 성공적으로 삭제되었습니다.");
             $('#warehouseDeleteForm').submit();
         });
+
     });
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>

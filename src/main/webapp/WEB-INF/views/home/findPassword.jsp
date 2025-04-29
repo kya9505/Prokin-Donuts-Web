@@ -26,6 +26,10 @@
 </div>
 <!-- ======== Preloader =========== -->
 
+<!-- 커서 디자인 -->
+<div class="cursor">
+    <img src="<c:url value='/resources/images/logo/donut.svg'/>" alt="cursor">
+</div>
 
 <!-- ======== sidebar-nav start =========== -->
 <%@ include file="/WEB-INF/views/includes/sidebar/homeSidebar.jsp" %>
@@ -200,6 +204,26 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
+
+<!-- 커서 디자인 -->
+<script>
+    // body 맨 아래에 한 번만!
+    const cursorEl = document.querySelector('.cursor');
+    let shown = false;
+
+    document.addEventListener('mousemove', e => {
+        // 좌표 업데이트
+        cursorEl.style.left = e.clientX + 10 + 'px';
+        cursorEl.style.top  = e.clientY + 10 + 'px';
+
+        // 첫 움직임에만 보이게
+        if (!shown) {
+            cursorEl.classList.add('visible');
+            shown = true;
+        }
+    });
+</script>
+
 <script>
 
 
@@ -270,17 +294,36 @@
 
             const contextPath = "${pageContext.request.contextPath}";
             try {
-                const res = await fetch(contextPath + "/home/resultPassword?email=" + encodeURIComponent(email) + "&inputCode=" + encodeURIComponent(code) + "&id=" + encodeURIComponent(id));
-                const result = await res.text();
-                const password = result.trim();
+                const contextPath = "${pageContext.request.contextPath}";
+                try {
+                    const res = await fetch(contextPath + "/home/resultPassword?email=" + encodeURIComponent(email) + "&inputCode=" + encodeURIComponent(code) + "&id=" + encodeURIComponent(id));
+                    const result = await res.text();
+                    const password = result.trim();
 
-                if (result === "IdCheck") {
-                    alert("아이디가 일치하지 않습니다.");
-                } else if (password && password !== "false") {
-                    alert("찾으시는 비밀번호 : " + password);
-                } else {
-                    alert("유효한 인증번호가 아닙니다. 다시 입력해주세요. \n (발급받은 인증번호는 10분동안만 유효합니다.)");
+                    if (result === "IdCheck") {
+                        alert("아이디가 일치하지 않습니다.");
+                    } else if (password && password !== "false") {
+                        // 비밀번호 클립보드 복사
+                        try {
+                            await navigator.clipboard.writeText(password);
+                            alert("찾으신 비밀번호가 클립보드에 복사되었습니다 \n" + password);
+                        } catch (e) {
+                            console.error('복사 실패', e);
+                            alert("아이디: " + password + "\n(※ 복사는 실패했습니다. 직접 복사해주세요.)");
+                        }
+
+                        // 2. 이동 확인
+                        const confirmed = confirm("로그인 페이지로 이동하시겠습니까?");
+                        if (confirmed) {
+                            window.location.href = "${pageContext.request.contextPath}/home/login";
+                        }
+                    } else {
+                        alert("유효한 인증번호가 아닙니다. 다시 입력해주세요.\n(발급받은 인증번호는 10분 동안만 유효합니다.)");
+                    }
+                } catch (error) {
+                    alert("서버 요청 중 오류가 발생했습니다.");
                 }
+
             } catch (error) {
                 alert("서버 요청 중 오류가 발생했습니다.");
             }

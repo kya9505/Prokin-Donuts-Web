@@ -27,6 +27,10 @@
 </div>
 <!-- ======== Preloader =========== -->
 
+<!-- 커서 디자인 -->
+<div class="cursor">
+    <img src="<c:url value='/resources/images/logo/donut.svg'/>" alt="cursor">
+</div>
 <!-- ======== sidebar-nav start =========== -->
 <%@ include file="/WEB-INF/views/includes/sidebar/homeSidebar.jsp" %>
 <!-- ======== sidebar-nav end =========== -->
@@ -219,6 +223,26 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
+
+<!-- 커서 디자인 -->
+<script>
+    // body 맨 아래에 한 번만!
+    const cursorEl = document.querySelector('.cursor');
+    let shown = false;
+
+    document.addEventListener('mousemove', e => {
+        // 좌표 업데이트
+        cursorEl.style.left = e.clientX + 10 + 'px';
+        cursorEl.style.top  = e.clientY + 10 + 'px';
+
+        // 첫 움직임에만 보이게
+        if (!shown) {
+            cursorEl.classList.add('visible');
+            shown = true;
+        }
+    });
+</script>
+
 <script>
 
 
@@ -310,19 +334,15 @@
                 return;
             }
 
-            //signup 클릭 시 confirm
-            $('#memberRequestForm').on('click', function (e) {
+            const result = confirm('입력하신 정보로 회원가입 요청을 하시겠습니까?');
+            if (!result) {
+                console.log('회원가입 요청 취소');
+                return;
+            }
 
-                const result = confirm('입력하신 정보로 회원가입 요청을 하시겠습니까?');
-                if (!result) {
-                    console.log('회원가입 요청 취소');
-                    return;
-                }
+            console.log('회원가입 요청');
+            $("#memberRequestForm").submit();
 
-                console.log('회원가입 요청');
-                $("#memberRequestForm").submit();
-
-            });
         });
     });
 

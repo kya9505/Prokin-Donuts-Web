@@ -1,31 +1,9 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="<c:url value='/resources/images/logo/favicon_logo.png'/>" type="image/png" />
-    <title>Prokin Donuts</title>
 
-    <!-- ========== All CSS files linkup ========= -->
-    <link rel="stylesheet" href="<c:url value='/resources/css/bootstrap.min.css'/>" />
-    <link rel="stylesheet" href="<c:url value='/resources/css/lineicons.css'/>" type="text/css" />
-    <link rel="stylesheet" href="<c:url value='/resources/css/materialdesignicons.min.css'/>" type="text/css" />
-    <link rel="stylesheet" href="<c:url value='/resources/css/fullcalendar.css'/>" />
-    <link rel="stylesheet" href="<c:url value='/resources/css/main.css'/>" />
-    <!-- datatable을 위해 필요함 -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-</head>
 
-<body>
-<!-- ======== Preloader =========== -->
-<div id="preloader">
-    <div class="spinner"></div>
-</div>
-<!-- ======== Preloader =========== -->
+<!-- ======== common-header start =========== -->
+<%@ include file="/WEB-INF/views/includes/common/Header.jsp" %>
+<!-- ======== common-header end =========== -->
+
 
 <!-- ======== sidebar-nav start =========== -->
 
@@ -86,14 +64,13 @@
                                     <th>이메일</th>
                                     <th>주소</th>
                                     <th>아이디</th>
-                                    <th>비밀번호</th>
                                     <th>요청상태</th>
                                 </tr>
                                 </thead>
                                 <tbody>
 
                                 <c:forEach var="request" items="${requestList}">
-                                    <tr>
+                                    <tr data-password="${request.password}">
                                         <td><input type="checkbox" class="row-checkbox" /></td>
                                         <td>${request.requestDate}</td>
                                         <td>${request.requestCode}</td>
@@ -102,10 +79,8 @@
                                         <td>${request.email}</td>
                                         <td>${request.address}</td>
                                         <td>${request.id}</td>
-                                        <td>${request.password}</td>
                                         <td>${request.request}</td>
                                     </tr>
-
                                 </c:forEach>
                                 </tbody>
                             </table>
@@ -143,46 +118,21 @@
     </section>
     <!-- ========== section end ========== -->
 
-    <!-- ========== footer start =========== -->
-    <footer class="footer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="terms d-flex justify-content-center justify-content-md-end">
-                        <a href="https://small-ragdoll-a57.notion.site/Prokin-Donuts-1b83a719d3508047953eeda89caeec14" class="text-sm">Brand Story</a>
-                        <a href="https://github.com/Prokin-Donuts/Prokin-Donuts" class="text-sm ml-15">Dev Hub</a>
-                    </div>
-                </div>
-                <!-- end col-->
-            </div>
-            <!-- end row -->
-        </div>
-        <!-- end container -->
-    </footer>
-    <!-- ========== footer end =========== -->
+    <!-- ========== common-footer start =========== -->
+    <%@ include file="/WEB-INF/views/includes/common/Footer.jsp" %>
+    <!-- ========== common-footer end =========== -->
 </main>
 <!-- ======== main-wrapper end =========== -->
 
-<!-- ========= All Javascript files linkup ======== -->
-<script src="<c:url value='/resources/js/Chart.min.js'/>"></script>
-<script src="<c:url value='/resources/js/dynamic-pie-chart.js'/>"></script>
-<script src="<c:url value='/resources/js/moment.min.js'/>"></script>
-<script src="<c:url value='/resources/js/fullcalendar.js'/>"></script>
-<script src="<c:url value='/resources/js/jvectormap.min.js'/>"></script>
-<script src="<c:url value='/resources/js/world-merc.js'/>"></script>
-<script src="<c:url value='/resources/js/polyfill.js'/>"></script>
-<script src="<c:url value='/resources/js/main.js'/>"></script>
-<!-- datatable을 위해 필요함 -->
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
-
+<!-- ========== Javascript start =========== -->
+<%@ include file="/WEB-INF/views/includes/common/Javascript.jsp" %>
+<!-- ========== Javascript end =========== -->
 <script>
     var table = $('#datatable').DataTable({
         autoWidth: false,
         columnDefs: [
             { width: '95px', targets: -1 },  // Actions 열 너비
-            { targets: [1, 2, 3, 4, 5, 6, 7], className: 'text-center' }, // JS 속성으로 가운데 정렬
+            { targets: [1, 2, 3, 4, 5, 6], className: 'text-center' }, // JS 속성으로 가운데 정렬
             {targets: 0, orderable: false, searchable: false} // 체크박스 컬럼
 
         ],
@@ -306,7 +256,7 @@
                 id: $tr.find('td').eq(7).text().trim(),      // 아이디
                 name: $tr.find('td').eq(3).text().trim(),    // 성함
                 requestCode: $tr.find('td').eq(2).text().trim(),  // 요청 코드
-                request: $tr.find('td').eq(9).text().trim()  // 요청 상태
+                request: $tr.find('td').eq(8).text().trim()  // 요청 상태
             };
             selectedData.push(rowData);
         });
@@ -329,12 +279,10 @@
     `;
             $list.append(li);
         });
-        $('#approveModal').modal('show');
-    });
 
 
     // 승인 확인 버튼 클릭 시: form에 hidden input 추가하고 전송
-    $('#confirmApproval').on('click', function (e) {
+        $('#confirmApproval').off('click').on('click', function (e) {
         const $form = $('#approvalForm');
 
         // 혹시 이전에 추가된 hidden input이 있으면 제거
@@ -346,9 +294,18 @@
             $form.append(input);
         });
 
-        $form.submit(); // form 전송
+        const result = confirm('선택하신 회원을 승인 하시겠습니까?');
+        if (result) {
+            console.log('승인');
+            $form.submit();
+        } else {
+            console.log('승인 취소');
+        }
     });
 
+        // 모달 열기
+        $('#approveModal').modal('show');
+    });
 
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>

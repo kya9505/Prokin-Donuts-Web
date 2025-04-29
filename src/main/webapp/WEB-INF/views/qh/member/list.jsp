@@ -23,6 +23,11 @@
 </head>
 
 <body>
+<!-- 커서 디자인 -->
+<div class="cursor">
+    <img src="<c:url value='/resources/images/logo/donut.svg'/>" alt="cursor">
+</div>
+
 <!-- ======== Preloader =========== -->
 <div id="preloader">
     <div class="spinner"></div>
@@ -89,12 +94,11 @@
                                     <th>이메일</th>
                                     <th>주소</th>
                                     <th>아이디</th>
-                                    <th>비밀번호</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <c:forEach var="member" items="${qhMemberList}">
-                                    <tr>
+                                    <tr data-password="${member.password}">
                                         <td><input type="checkbox" class="row-checkbox" /></td>
                                         <td>${member.memberCode}</td>
                                         <td>${member.name}</td>
@@ -102,9 +106,7 @@
                                         <td>${member.email}</td>
                                         <td>${member.address}</td>
                                         <td>${member.id}</td>
-                                        <td>${member.password}</td>
                                     </tr>
-
                                 </c:forEach>
                                 </tbody>
                             </table>
@@ -275,7 +277,6 @@
                             <th>전화번호</th>
                             <th>주소</th>
                             <th>아이디</th>
-                            <th>비밀번호</th>
                         </tr>
                         </thead>
                         <tbody id="memberEditModalBody">
@@ -293,8 +294,7 @@
                                     <td><input type="text" name="memberList[${status.index}].email" class="form-control" value="${item.email}" /></td>
                                     <td><input type="text" name="memberList[${status.index}].phoneNumber" class="form-control" value="${item.phoneNumber}" /></td>
                                     <td><input type="text" name="memberList[${status.index}].address" class="form-control" value="${item.address}" /></td>
-                                    <td><input type="text" name="memberList[${status.index}].id" class="form-control" value="${item.id}" /></td>
-                                    <td><input type="text" name="memberList[${status.index}].password" class="form-control" value="${item.password}" /></td>
+                                    <td><input type="text" name="memberList[${status.index}].id" class="form-control" value="${item.id} " /></td>
                                 </tr>
                                 <input type="hidden" name="memberList[${status.index}].memberCode" value="${item.memberCode}" />
                             </c:forEach>
@@ -327,7 +327,7 @@
                             <form id="memberDeleteForm" method="post" action="/qh/member/delete" accept-charset="UTF-8">
                             <h5>선택한 회원을 정말 삭제하시겠습니까?</h5><br>
                             <ul id="deleteMemberList" class="list-group mb-3 ">
-                                <!-- 선택된 회원 목록 삽입 -->
+                                <!--선택된 회원 목록 삽입 -->
                             </ul>
                             <div class="d-flex justify-content-end gap-2">
                                 <button type="button" class="main-btn primary-btn btn-hover text-center" id="confirmDelete">삭제</button>
@@ -346,7 +346,7 @@
     </section>
     <!-- ========== section end ========== -->
 
-    <!-- ========== footer start =========== -->
+    <!-- ==========footer start =========== -->
     <footer class="footer">
         <div class="container-fluid">
             <div class="row">
@@ -382,6 +382,24 @@
 <!-- 다음 우편번호 API -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
+<!-- 커서 디자인 -->
+<script>
+    // body 맨 아래에 한 번만!
+    const cursorEl = document.querySelector('.cursor');
+    let shown = false;
+
+    document.addEventListener('mousemove', e => {
+        // 좌표 업데이트
+        cursorEl.style.left = e.clientX + 10 + 'px';
+        cursorEl.style.top  = e.clientY + 10 + 'px';
+
+        // 첫 움직임에만 보이게
+        if (!shown) {
+            cursorEl.classList.add('visible');
+            shown = true;
+        }
+    });
+</script>
 <script>
         var table = $('#datatable').DataTable({
         autoWidth: false,
@@ -389,7 +407,7 @@
             { width: '95px', targets: -1 },  // Actions 열 너비
 
             {targets: 0, orderable: false, searchable: false}, // 체크박스 컬럼
-            {targets: [1, 2, 3, 4,5, 6, 7], className: 'text-center'}
+            {targets: [1, 2, 3, 4,5, 6], className: 'text-center'}
 
         ],
         order: [[1, 'asc']],
@@ -628,71 +646,140 @@
 
 
         // 수정 버튼 클릭 시
-    $('#btnMemberEdit_clone').on('click', function (e) {
-        const selectedData = [];
+        $('#btnMemberEdit_clone').on('click', function (e) {
+            const selectedData = [];
 
-        // 체크된 행들의 데이터 수집
-        $('#datatable tbody input.row-checkbox:checked').each(function () {
-            const $tr = $(this).closest('tr');
-            const rowData = {
-                memberCode: $tr.find('td').eq(1).text().trim(),
-                name: $tr.find('td').eq(2).text().trim(),
-                phoneNumber: $tr.find('td').eq(3).text().trim(),
-                email: $tr.find('td').eq(4).text().trim(),
-                address: $tr.find('td').eq(5).text().trim(),
-                id: $tr.find('td').eq(6).text().trim(),
-                password: $tr.find('td').eq(7).text().trim()
-            };
-            selectedData.push(rowData);
-        });
+            $('#datatable tbody input.row-checkbox:checked').each(function () {
+                const $tr = $(this).closest('tr');
+                const rowData = {
+                    memberCode: $tr.find('td').eq(1).text().trim(),
+                    name: $tr.find('td').eq(2).text().trim(),
+                    phoneNumber: $tr.find('td').eq(3).text().trim(),
+                    email: $tr.find('td').eq(4).text().trim(),
+                    address: $tr.find('td').eq(5).text().trim(),
+                    id: $tr.find('td').eq(6).text().trim(),
+                    password: $tr.data('password') // 여기!
+                };
+                selectedData.push(rowData);
+            });
 
+            const $tableBody = $('#memberEditModalBody');
+            $tableBody.empty();
 
-        if (selectedData.length == 0) {
-            alert('수정할 항목을 선택하세요.');
-            return;
-        }
-
-        const $tableBody = $('#memberEditModal tbody');
-        $tableBody.empty();
-
-        selectedData.forEach((item, index) => {
-            const rowHtml = `
-    <tr>
-         <td><select class="form-select"  name="memberList[` + index + `].authorityCode">
-              <option value="QH">본사관리자</option>
-              <option value="WM">창고관리자</option>
-              <option value="FM">가맹점주</option>
-            </select></td>
-        <td><input type="text" name="memberList[` + index + `].name" class="form-control" value="` + item.name + `" /></td>
-        <td><input type="text" name="memberList[` + index + `].email" class="form-control" value="` + item.email + `" /></td>
-        <td><input type="text" name="memberList[` + index + `].phoneNumber" class="form-control" value="` + item.phoneNumber + `" /></td>
-        <td><input type="text" name="memberList[` + index + `].address" class="form-control" value="` + item.address + `" /></td>
-        <td><input type="text" name="memberList[` + index + `].id" class="form-control" value="` + item.id + `" /></td>
-        <td><input type="text" name="memberList[` + index + `].password" class="form-control" value="` + item.password + `" /></td>
-    </tr>
+            selectedData.forEach((item, index) => {
+                const rowHtml = `
+<tr>
+    <td>
+        <select class="form-select" name="memberList[` + index + `].authorityCode">
+            <option value="QH">본사관리자</option>
+            <option value="WM">창고관리자</option>
+            <option value="FM">가맹점주</option>
+        </select>
+    </td>
+    <td><input type="text" name="memberList[` + index + `].name" class="form-control" value="` + item.name + `" /></td>
+    <td><input type="text" name="memberList[` + index + `].email" class="form-control" value="` + item.email + `" data-original-email="` + item.email + `" /></td>
+    <td><input type="text" name="memberList[` + index + `].phoneNumber" class="form-control" value="` + item.phoneNumber + `" /></td>
+    <td><input type="text" name="memberList[` + index + `].address" class="form-control" value="` + item.address + `" /></td>
+    <td><input type="text" name="memberList[` + index + `].id" class="form-control" value="` + item.id + `" /></td>
+    <td>
         <input type="hidden" name="memberList[` + index + `].memberCode" value="` + item.memberCode + `" />
+        <input type="hidden" name="memberList[` + index + `].password" value="` + item.password + `" />
+    </td>
+</tr>
+        `;
+                $tableBody.append(rowHtml);
+            });
 
-    `;
-            $tableBody.append(rowHtml);
+            $('#memberEditModal').modal('show');
         });
-
-        $('#memberEditModal').modal('show');
-    });
-
         //수정 클릭 시 confirm
-        $('#modify-bnt').on('click', function (e) {
+        $('#modify-bnt').on('click', async function (e) {
             e.preventDefault();
-            const result = confirm('입력하신 정보로 수정 하시겠습니까? ');
 
-            if (result) {
-                console.log('수정');
-                $("#memberEditForm").submit();
-            } else {
-                console.log('수정 취소');
+            const regName = /^[A-Za-z가-힣]{1,10}$/;
+            const regEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const regPhone = /^[0-9]{10,11}$/;
+            const contextPath = '${pageContext.request.contextPath}';
+
+            const $rows = $('#memberEditModalBody tr');
+            const memberList = [];
+
+            for (let i = 0; i < $rows.length; i++) {
+                const $tr = $($rows[i]);
+                const name = $tr.find('input[name$=".name"]').val().trim();
+                const emailInput = $tr.find('input[name$=".email"]');
+                const email = emailInput.val().trim();
+                const originalEmail = emailInput.attr('data-original-email');
+                const phoneNumber = $tr.find('input[name$=".phoneNumber"]').val().trim();
+                const authorityCode = $tr.find('select[name$=".authorityCode"]').val();
+                const id = $tr.find('input[name$=".id"]').val().trim();
+                const memberCode = $tr.find('input[name$=".memberCode"]').val();
+                const password = $tr.find('input[name$=".password"]').val();
+                const address = $tr.find('input[name$=".address"]').val().trim();
+
+                if (!regName.test(name)) {
+                    alert(name + ' 님의 이름이 올바르지 않습니다. (한글/영어 최대 10자)');
+                    return;
+                }
+                if (!regEmail.test(email)) {
+                    alert(name + ' 님의 이메일 형식이 올바르지 않습니다.');
+                    return;
+                }
+                if (email !== originalEmail) {
+                    try {
+                        const res = await fetch(contextPath + '/qh/member/emailCheck?email=' + encodeURIComponent(email));
+                        const text = await res.text();
+                        if (text === 'true') {
+                            alert(name + ' 님의 이메일은 이미 사용 중입니다.');
+                            return;
+                        }
+                    } catch (err) {
+                        alert('이메일 중복 확인 중 오류가 발생했습니다.');
+                        return;
+                    }
+                }
+                if (phoneNumber && !regPhone.test(phoneNumber)) {
+                    alert(name + ' 님의 전화번호 형식이 올바르지 않습니다. (10~11자리 숫자)');
+                    return;
+                }
+
+                memberList.push({
+                    authorityCode,
+                    name,
+                    email,
+                    phoneNumber,
+                    address,
+                    id,
+                    memberCode,
+                    password
+                });
+            }
+
+            if (!confirm('입력하신 정보로 수정하시겠습니까?')) return;
+
+            try {
+                const res = await fetch(contextPath + '/qh/member/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ memberList: memberList })
+                });
+
+                if (res.ok) {
+                    alert('수정 완료되었습니다.');
+                    $('#memberEditModal').modal('hide');
+                    location.reload();
+                } else {
+                    alert('수정 중 오류가 발생했습니다.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('서버와 연결에 실패했습니다.');
             }
         });
 
-    //valid시 에러시 모달 원복
+        //valid시 에러시 모달 원복
     window.addEventListener('DOMContentLoaded', function () {
         <c:if test="${not empty errorMessage}">
         alert('${fn:replace(fn:escapeXml(errorMessage), "'", "\\'")}');
@@ -744,32 +831,31 @@
             $list.append(li);
         });
 
-        // 모달 열기
-        $('#memberDeleteModal').modal('show');
-    });
-
-    // 삭제 확인 버튼 클릭 시: form에 hidden input 추가하고 전송
-    $('#confirmDelete').on('click', function (e) {
-        const $form = $('#memberDeleteForm');
+            $('#confirmDelete').off('click').on('click', function (e) {
+                const $form = $('#memberDeleteForm');
 
         // 혹시 이전에 추가된 hidden input이 있으면 제거
         $form.find('input[name="memberCodeList"]').remove();
 
-        // <ul> 안의 badge에서 memberCode 꺼내서 hidden input 추가
-        $('#deleteMemberList .badge').each(function () {
-            const memberCode = $(this).text().trim();
-            const input = `<input type="hidden" name="memberCodeList" value="` + memberCode + `" />`;
-            $form.append(input);
+                // 🔥 새로운 hidden input 추가
+                selectedData.forEach((item) => {
+                    $form.append(`
+                <input type="hidden" name="memberCodeList" value="`+item.memberCode+`">
+            `);
+                });
 
-            const result = confirm('선택하신 회원을 삭제 하시겠습니까? ');
-            if (result) {
-                console.log('삭제');
-                $form.submit();
-            } else {
-                console.log('삭제 취소');
-            }
-        });// form 전송
-    });
+                const result = confirm('선택하신 회원을 삭제 하시겠습니까?');
+                if (result) {
+                    console.log('삭제');
+                    $form.submit();
+                } else {
+                    console.log('삭제 취소');
+                }
+            });
+
+            // 모달 열기
+            $('#memberDeleteModal').modal('show');
+        });
 
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>

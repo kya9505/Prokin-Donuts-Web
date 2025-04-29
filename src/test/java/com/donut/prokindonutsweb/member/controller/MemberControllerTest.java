@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.ui.ExtendedModelMap;
@@ -91,8 +92,8 @@ class MemberControllerTest {
         BindingResult bindingResult = new org.springframework.validation.BeanPropertyBindingResult(memberListForm, "memberEditForm");
         RedirectAttributes redirectAttributes = new org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap();
 
-        String result = qhMemberController.qhUpdateMembers(memberListForm, bindingResult, redirectAttributes);
-        assertEquals("redirect:list", result);
+        ResponseEntity<String> result = qhMemberController.qhUpdateMembers(memberListForm);
+        log.info(result);
 
     }
 

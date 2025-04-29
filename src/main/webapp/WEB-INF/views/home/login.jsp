@@ -27,6 +27,10 @@
 </div>
 <!-- ======== Preloader =========== -->
 
+<!-- 커서 디자인 -->
+<div class="cursor">
+    <img src="<c:url value='/resources/images/logo/donut.svg'/>" alt="cursor">
+</div>
 <!-- ======== sidebar-nav start =========== -->
 <%@ include file="/WEB-INF/views/includes/sidebar/homeSidebar.jsp" %>
 <!-- ======== sidebar-nav end =========== -->
@@ -112,8 +116,8 @@
                                     <!-- end col -->
                                     <div class="col-xxl-6 col-lg-12 col-md-6">
                                         <div class="form-check checkbox-style mb-30">
-                                            <input class="form-check-input" type="checkbox" value="" id="checkbox-remember" />
-                                            <label class="form-check-label" for="checkbox-remember">
+                                            <input class="form-check-input" type="checkbox" value="true" id="checkbox-remember" name="remember-me" />
+                                            <label class="form-check-label" for="checkbox-remember" >
                                                 Remember me next time</label>
                                         </div>
                                     </div>
@@ -122,6 +126,7 @@
                                         <div class="mb-30 text-end">
                                             <p class="mb-0">
                                                 <a href="<c:url value='/home/findId'/>" class="hover-underline">아이디 찾기</a>
+                                                <a>|</a>
                                                 <a href="<c:url value='/home/findPassword'/>" class="hover-underline">비밀번호 찾기</a>
                                             </p>
                                         </div>
@@ -188,6 +193,25 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
+
+<!-- 커서 디자인 -->
+<script>
+    // body 맨 아래에 한 번만!
+    const cursorEl = document.querySelector('.cursor');
+    let shown = false;
+
+    document.addEventListener('mousemove', e => {
+        // 좌표 업데이트
+        cursorEl.style.left = e.clientX + 10 + 'px';
+        cursorEl.style.top  = e.clientY + 10 + 'px';
+
+        // 첫 움직임에만 보이게
+        if (!shown) {
+            cursorEl.classList.add('visible');
+            shown = true;
+        }
+    });
+</script>
 
 <script>
     // ======== jvectormap activation

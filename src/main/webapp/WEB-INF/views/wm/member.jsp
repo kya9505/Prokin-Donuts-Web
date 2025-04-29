@@ -27,6 +27,10 @@
 </div>
 <!-- ======== Preloader =========== -->
 
+<!-- 커서 디자인 -->
+<div class="cursor">
+    <img src="<c:url value='/resources/images/logo/donut.svg'/>" alt="cursor">
+</div>
 <!-- ======== sidebar-nav start =========== -->
 <%@include file="/WEB-INF/views/includes/sidebar/wmSidebar.jsp"%>
 <!-- ======== sidebar-nav end =========== -->
@@ -80,7 +84,6 @@
                                     <th>이메일</th>
                                     <th>주소</th>
                                     <th>아이디</th>
-                                    <th>비밀번호</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -92,7 +95,6 @@
                                         <td>${member.email}</td>
                                         <td>${member.address}</td>
                                         <td>${member.id}</td>
-                                        <td>${member.password}</td>
                                     </tr>
 
                                 </c:forEach>
@@ -140,11 +142,30 @@
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
 
+<!-- 커서 디자인 -->
+<script>
+    // body 맨 아래에 한 번만!
+    const cursorEl = document.querySelector('.cursor');
+    let shown = false;
+
+    document.addEventListener('mousemove', e => {
+        // 좌표 업데이트
+        cursorEl.style.left = e.clientX + 10 + 'px';
+        cursorEl.style.top  = e.clientY + 10 + 'px';
+
+        // 첫 움직임에만 보이게
+        if (!shown) {
+            cursorEl.classList.add('visible');
+            shown = true;
+        }
+    });
+</script>
+
 <script>
     var table = $('#datatable').DataTable({
         autoWidth: false,
         columnDefs: [
-            { targets: [0, 1, 2, 3, 4, 5 ,6], className: 'text-center' }
+            { targets: [0, 1, 2, 3, 4, 5 ], className: 'text-center' }
         ],
         order: [[0, 'asc']],
         paging: true,

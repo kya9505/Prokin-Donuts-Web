@@ -63,4 +63,25 @@ public class OrderMapperTest {
         orderMapper.insertOrderDetailList(list);
     }
 
+    @Test
+    @DisplayName("최신 발주코드 반환")
+    void selectOrderCode() {
+        String code = orderMapper.selectOrderCode();
+        log.info(code);
+    }
+
+    @Test
+    @DisplayName("멤버코드 -> 가맹점 코드 반환")
+    void selectFranchiseCode() {
+        String franchiseCode = orderMapper.selectFranchiseCode("FM1");
+        log.info(franchiseCode);
+    }
+    
+    @Test
+    @DisplayName("창고코드 리스트 반환")
+    void findWarehouseCode() {
+        List<String> list = orderMapper.findWarehouseCode();
+        list.forEach(log::info);
+    }
+
 }

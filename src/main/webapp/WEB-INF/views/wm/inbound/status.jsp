@@ -1,6 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,6 +29,10 @@
 </div>
 <!-- ======== Preloader =========== -->
 
+<!-- 커서 디자인 -->
+<div class="cursor">
+    <img src="<c:url value='/resources/images/logo/donut.svg'/>" alt="cursor">
+</div>
 <!-- ======== sidebar-nav start =========== -->
 <%@include file="/WEB-INF/views/includes/sidebar/wmSidebar.jsp"%>
 <!-- ======== sidebar-nav end =========== -->
@@ -65,6 +71,36 @@
                         <p class="text-sm mb-20"></p>
 
 
+                        <!-- 원하는 필터 설정 -->
+                        <div id="myCustomFilters" style="display: none;">
+
+                            <div class="d-flex flex-wrap gap-2">
+
+                                <!-- 입고상태 -->
+                                <div >
+                                    <div class="select-style-1">
+                                        <div class="select-position">
+                                            <select id="InboundCategories">
+                                                <option value="">입고 상태</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 필터 초기화 -->
+                                <div class="mb-20">
+                                    <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="resetFilterBtn" style="height:auto; min-height:auto;">
+                                        필터 초기화
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+
+
+
                         <div class="table-wrapper table-responsive p-0">
                             <!-- Start table -->
                             <table id="datatable" class="table striped-table w-100 inbound-datatable" style="width:100%">
@@ -88,11 +124,11 @@
                                         <td>${detail.inboundCode}</td>
                                         <td>${detail.productCode}</td>
                                         <td>${detail.productName}</td>
-                                        <td>${detail.productPrice}</td>
+                                        <td><fmt:formatNumber value="${detail.productPrice}" type="number"/>원</td>
                                         <td>${detail.inboundDate}</td>
                                         <td>${detail.inboundStatus}</td>
                                         <td>${detail.sectionCode}</td>
-                                        <td>${detail.quantity}</td>
+                                        <td>${detail.quantity}개</td>
                                     </tr>
                                 </c:forEach>
 
@@ -148,147 +184,200 @@
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="<c:url value='/resources/js/bootstrap.bundle.min.js'/>"></script>
 
+<!-- 커서 디자인 -->
 <script>
-    var table = $('#datatable').DataTable({
-        autoWidth: false,
-        columnDefs: [
-            // { targets: 0, orderable: false, searchable: false }, // 체크박스 컬럼
-            // { targets: [1, 2, 3, 4], className: 'text-center' }
-            // { targets: [1, 2, 3, 4, 6, 7], className: 'text-center' }
-        ],
-        order: [[1, 'asc']],
-        columns: [
-            // { // 체크박스 컬럼
-            //   data: null,
-            //   orderable: false,
-            //   searchable: false,
-            //   render: function(data, type, row, meta) {
-            //     return '<input type="checkbox" class="row-checkbox">';
-            //   }
-            // },
-            { data: 'inboundCode', title: '입고코드' },
-            { data: 'productCode', title: '제품코드' },
-            { data: 'productName', title: '제품명' },
-            { data: 'productPrice', title: '제품단가' },
-            { data: 'inboundDate', title: '입고일' },
-            { data: 'inboundStatus', title: '입고상태' },
-            { data: 'sectionCode', title: '창고코드' },
-            { data: 'quantity', title: '수량' },
+    // body 맨 아래에 한 번만!
+    const cursorEl = document.querySelector('.cursor');
+    let shown = false;
 
+    document.addEventListener('mousemove', e => {
+        // 좌표 업데이트
+        cursorEl.style.left = e.clientX + 10 + 'px';
+        cursorEl.style.top  = e.clientY + 10 + 'px';
 
-        ],
-        paging: true,
-        pageLength: 10,
-        lengthMenu: [[5, 10, 20, -1], ['5개', '10개', '20개', '전체']],
-        searching: true,
-        ordering: true,
-        info: true,
-        lengthChange: true,
-        dom: '<"top"l<"myFilterArea">fr>t<"bottom"ip>',
-        language: {
-            lengthMenu: '_MENU_',
-            search: "검색 ",
-            info: "Showing _START_ to _END_ of _TOTAL_ entries",
-            infoEmpty: "no data",
-            emptyTable: "empty table",
-            paginate: {
-                previous: "< prev",
-                next: "next >"
-            }
-        },
-        // 초기에 체크박스에서 정렬 화살표 지우기
-        initComplete: function(settings, json) {
-            $('#datatable thead th').eq(0).removeClass('sorting sorting_asc sorting_desc');
-            fixLengthDropdownStyle();
-            const api = this.api();
-
-            setTimeout(() => {
-                api.draw(false);
-            }, 0);
-        },
-        // 새로고침 후 체크박스에서 정렬 화살표 지우기 (유지)
-        drawCallback: function(settings) {
-            $('#datatable thead th').eq(0).removeClass('sorting sorting_asc sorting_desc');
+        // 첫 움직임에만 보이게
+        if (!shown) {
+            cursorEl.classList.add('visible');
+            shown = true;
         }
     });
+</script>
 
-    // 5. DataTable 초기화 (dom 옵션에 사용자 정의 영역 포함)
-    function fixLengthDropdownStyle() {
-        const $length = $('.dataTables_length');
-        const $select = $length.find('select');
-        const selectedValue = $select.val();
+<script>
+    $(document).ready(function() {
+        // 1. 더미 데이터 정의 (입고상태)
+        const dummyInboundCategories = [
+            {"id": "입고요청", "name": "입고요청"},
+            {"id": "승인대기", "name": "승인대기"},
+            {"id": "입고완료", "name": "입고완료"},
+            {"id": "입고취소", "name": "입고취소"},
 
-        const $filter = $('#datatable_filter');
-        const $input = $filter.find('input');
+        ];
 
-        // 기존 label 텍스트 제거 (ex. "표시 개수")
-        $length.find('label').contents().filter(function () {
-            return this.nodeType === 3; // 텍스트 노드
-        }).remove();
+        // 2. 원본 필터 영역에 입고상태 옵션 채우기
+        var $midSelect = $('#myCustomFilters #InboundCategories');
+        $.each(dummyInboundCategories, function (index, item) {
+            $midSelect.append($('<option>', {
+                value: item.id,
+                text: item.name
+            }));
+        });
 
-        // 새 구조로 재조립
-        const $newWrapper = $(`
+
+        var table = $('#datatable').DataTable({
+            autoWidth: false,
+            columnDefs: [
+                {width: '95px', targets: -1},  // Actions 열 너비
+                {targets: [0, 1, 2, 3, 4, 5, 6, 7], className: 'text-center'} // JS 속성으로 가운데 정렬
+            ],
+            order: [[1, 'asc']],
+            /*columns: [
+                {data: 'inboundCode', title: '입고코드'},
+                {data: 'productCode', title: '제품코드'},
+                {data: 'productName', title: '제품명'},
+                {data: 'productPrice', title: '제품단가'},
+                {data: 'inboundDate', title: '입고일'},
+                {data: 'inboundStatus', title: '입고상태'},
+                {data: 'sectionCode', title: '창고코드'},
+                {data: 'quantity', title: '수량'},
+            ],*/
+            paging: true,
+            pageLength: 10,
+            lengthMenu: [[5, 10, 20, -1], ['5개', '10개', '20개', '전체']],
+            searching: true,
+            ordering: true,
+            info: true,
+            lengthChange: true,
+            dom: '<"top"l<"myFilterArea">fr>t<"bottom"ip>',
+            language: {
+                lengthMenu: '_MENU_',
+                search: "검색 ",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                infoEmpty: "no data",
+                emptyTable: "empty table",
+                paginate: {
+                    previous: "< prev",
+                    next: "next >"
+                }
+            },
+            // 초기에 체크박스에서 정렬 화살표 지우기
+            initComplete: function (settings, json) {
+                $('#datatable thead th').eq(0).removeClass('sorting sorting_asc sorting_desc');
+                fixLengthDropdownStyle();
+                const api = this.api();
+
+                setTimeout(() => {
+                    api.draw(false);
+                }, 0);
+            },
+            // 새로고침 후 체크박스에서 정렬 화살표 지우기 (유지)
+            drawCallback: function (settings) {
+                $('#datatable thead th').eq(0).removeClass('sorting sorting_asc sorting_desc');
+            }
+        });
+
+        // 5. DataTable 초기화 (dom 옵션에 사용자 정의 영역 포함)
+        function fixLengthDropdownStyle() {
+            const $length = $('.dataTables_length');
+            const $select = $length.find('select');
+            const selectedValue = $select.val();
+
+            const $filter = $('#datatable_filter');
+            const $input = $filter.find('input');
+
+            // 기존 label 텍스트 제거 (ex. "표시 개수")
+            $length.find('label').contents().filter(function () {
+                return this.nodeType === 3; // 텍스트 노드
+            }).remove();
+
+            // 새 구조로 재조립
+            const $newWrapper = $(`
             <div class="select-style-1">
               <div class="select-position"></div>
             </div>
           `);
 
-        const $newInput = $(`
+            const $newInput = $(`
             <div class="input-style-1">
             </div>
           `);
 
-        $select.detach();
-        $newWrapper.find('.select-position').append($select);
-        $length.empty().append($newWrapper);
+            $select.detach();
+            $newWrapper.find('.select-position').append($select);
+            $length.empty().append($newWrapper);
 
-        $input.detach();
-        $input.attr('placeholder', 'Search...');
-        $newInput.append($input);
-        $filter.empty().append($newInput);
+            $input.detach();
+            $input.attr('placeholder', 'Search...');
+            $newInput.append($input);
+            $filter.empty().append($newInput);
 
-        $select.val(selectedValue);
-    }
-
-    table.on('draw', function () {
-        $('.dataTables_paginate .paginate_button').removeClass().addClass('main-btn deactive-btn-outline square-btn btn-hover mt-1 pt-2 pb-2 pl-15 pr-15');
-    });
-
-    // 6. 사용자 정의 필터 영역에 원본 필터를 복제하여 주입
-    var $clone = $('#myCustomFilters').clone(true);
-    // 복제 후 삽입 시, ID 제거 필수
-
-    $clone.find('#btnInboundAdd').attr('id', 'btnInboundAdd_clone');
-    $clone.find('#btnInboundEdit').attr('id', 'btnInboundEdit_clone');
-    $clone.find('#btnInboundDelete').attr('id', 'btnInboundDelete_clone');
-    $clone.find('#btnInboundAdd, #btnInboundEdit, #btnInboundDelete').remove();
-    $('div.myFilterArea').html($clone.html());
-
-    // select 태그 감싸는 구조 적용
-    $('.dataTables_length select').each(function() {
-        const $select = $(this);
-        if (!$select.parent().hasClass('select-position')) {
-            $select.wrap('<div class="col-lg-2"><div class="select-style-1"><div class="select-position"></div></div></div>');
+            $select.val(selectedValue);
         }
-    });
-    // // 8. "Select All" 체크박스 이벤트 및 페이지 변경 시 초기화 등은 그대로 유지
-    // $('#select-all').on('click', function() {
-    //   const rows = table.rows({ page: 'current' }).nodes();
-    //   $('input.row-checkbox', rows).prop('checked', this.checked);
-    // });
-    // $('#datatable tbody').on('change', 'input.row-checkbox', function() {
-    //   if(!this.checked) {
-    //     const el = $('#select-all').get(0);
-    //     if(el && el.checked) {
-    //       el.checked = false;
-    //     }
-    //   }
-    // });
 
-    table.on('draw', function() {
-        $('#select-all').prop('checked', false);
-    });
+        table.on('draw', function () {
+            $('.dataTables_paginate .paginate_button').removeClass().addClass('main-btn deactive-btn-outline square-btn btn-hover mt-1 pt-2 pb-2 pl-15 pr-15');
+        });
 
+        // 6. 사용자 정의 필터 영역에 원본 필터를 복제하여 주입
+        var $clone = $('#myCustomFilters').clone(true);
+        // 복제 후 삽입 시, ID 제거 필수
+
+        $clone.find('#InboundCategories').attr('id', 'InboundCategories_clone');
+
+        $clone.find('#btnInboundAdd').attr('id', 'btnInboundAdd_clone');
+        $clone.find('#btnInboundEdit').attr('id', 'btnInboundEdit_clone');
+        $clone.find('#btnInboundDelete').attr('id', 'btnInboundDelete_clone');
+        $clone.find('#btnInboundAdd, #btnInboundEdit, #btnInboundDelete').remove();
+        $('div.myFilterArea').html($clone.html());
+
+        // select 태그 감싸는 구조 적용
+        $('.dataTables_length select').each(function () {
+            const $select = $(this);
+            if (!$select.parent().hasClass('select-position')) {
+                $select.wrap('<div class="col-lg-2"><div class="select-style-1"><div class="select-position"></div></div></div>');
+            }
+        });
+
+        table.on('draw', function () {
+            $('#select-all').prop('checked', false);
+        });
+
+
+        // 6-1. 이벤트 위임 방식으로 변경된 ID에 새롭게 바인딩 (body를 통해 실제 필터에 작동하게!)
+        $('body').on('change', '#InboundCategories_clone', function () {
+            $('#InboundSubCategories_clone').val('');
+            table.draw();
+        });
+
+        $('body').on('click', '#resetFilterBtn', function () {
+            const table = $('#datatable').DataTable();
+
+            table.search('').columns().search('');
+
+            $('#InboundCategories_clone, #inboundDateInput_clone').val('');
+
+            table.order([[0, 'asc']]);
+            table.draw();
+        });
+
+        // 7. 필터 이벤트: 드롭다운 변경 시 테이블 필터링
+        $('#InboundCategories, #inboundDateInput').on('change keyup', function () {
+            table.draw();
+        });
+
+        // 7-1. (7번 함수에서 각각이 변경될 때마다) 필터링 함수도 변경된 ID값을 기준으로 수정
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            const selectedInbound = $('#InboundCategories_clone').val();
+            const categoryInbound = data[5]; // 입고상태를 기준으로
+
+            // 일부 포함에도 검색
+            if (selectedInbound && !categoryInbound.includes(selectedInbound)) {
+                return false;
+            }
+
+            return true;
+        });
+    });
 
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>

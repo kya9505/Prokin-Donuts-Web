@@ -1,31 +1,8 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="/resources/images/logo/favicon_logo.png" type="image/png" />
-    <title>Prokin Donuts</title>
 
-    <!-- ========== All CSS files linkup ========= -->
-    <link rel="stylesheet" href="/resources/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/resources/css/lineicons.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="/resources/css/materialdesignicons.min.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="/resources/css/fullcalendar.css" />
-    <link rel="stylesheet" href="/resources/css/main.css" />
-    <!-- datatable을 위해 필요함 -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-</head>
 
-<body>
-<!-- ======== Preloader =========== -->
-<div id="preloader">
-    <div class="spinner"></div>
-</div>
-<!-- ======== Preloader =========== -->
+<!-- ======== common-header start =========== -->
+<%@ include file="/WEB-INF/views/includes/common/Header.jsp" %>
+<!-- ======== common-header end =========== -->
 
 <!-- ======== sidebar-nav start =========== -->
 <%@include file="/WEB-INF/views/includes/sidebar/qhSidebar.jsp"%>
@@ -250,7 +227,7 @@
                                         <td>${item.categorySub}</td>
                                         <td>${item.storedType}</td>
                                         <td>${item.productName}</td>
-                                        <td>${item.productPrice}</td>
+                                        <td><fmt:formatNumber value="${item.productPrice}" type="number" groupingUsed="true"/> 원</td>
                                     </tr>
                                 </c:forEach>
                                 </tbody>
@@ -266,23 +243,9 @@
     </section>
     <!-- ========== section end ========== -->
 
-    <!-- ========== footer start =========== -->
-    <footer class="footer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="terms d-flex justify-content-center justify-content-md-end">
-                        <a href="https://small-ragdoll-a57.notion.site/Prokin-Donuts-1b83a719d3508047953eeda89caeec14" class="text-sm">Brand Story</a>
-                        <a href="https://github.com/Prokin-Donuts/Prokin-Donuts" class="text-sm ml-15">Dev Hub</a>
-                    </div>
-                </div>
-                <!-- end col-->
-            </div>
-            <!-- end row -->
-        </div>
-        <!-- end container -->
-    </footer>
-    <!-- ========== footer end =========== -->
+    <!-- ========== common-footer start =========== -->
+    <%@ include file="/WEB-INF/views/includes/common/Footer.jsp" %>
+    <!-- ========== common-footer end =========== -->
 </main>
 <!-- ======== main-wrapper end =========== -->
 
@@ -514,20 +477,20 @@
                         <tr>
                             <th style="width: 20px;">#</th>
                             <th>제품코드</th>
-                            <th>중분류*</th>
-                            <th>소분류*</th>
-                            <th>제품명*
+                            <th>중분류 (*)</th>
+                            <th>소분류 (*)</th>
+                            <th>제품명 (*)
                                 <i
                                         class="mdi mdi-help-circle text-primary wide-tooltip tooltip-inner"
                                         data-bs-toggle="tooltip"
                                         data-bs-placement="right"
                                         data-bs-html="true"
-                                        title="냉동 보관 제품의 경우,<br>제품명 앞에 보관타입을 명시해 주세요.<br>예: 냉동초코프로틴도넛"
+                                        title="냉동 보관 제품의 경우,<br>제품명 앞에 보관타입을<br>명시해 주세요.<br>예: 냉동초코프로틴도넛"
                                         style="cursor: pointer; margin-left: 5px;">
                                 </i>
                             </th>
-                            <th>제공단가*</th>
-                            <th>보관타입*</th>
+                            <th>제공단가 (*)</th>
+                            <th>보관타입 (*)</th>
                             <th>중복확인</th>
                         </tr>
                         </thead>
@@ -579,19 +542,9 @@
 
 <!-- 모달 끝 -->
 
-<!-- ========= All Javascript files linkup ======== -->
-<script src="/resources/js/Chart.min.js"></script>
-<script src="/resources/js/dynamic-pie-chart.js"></script>
-<script src="/resources/js/moment.min.js"></script>
-<script src="/resources/js/fullcalendar.js"></script>
-<script src="/resources/js/jvectormap.min.js"></script>
-<script src="/resources/js/world-merc.js"></script>
-<script src="/resources/js/polyfill.js"></script>
-<script src="/resources/js/main.js"></script>
-<!-- datatable을 위해 필요함 -->
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="/resources/js/bootstrap.bundle.min.js"></script>
+<!-- ========== Javascript start =========== -->
+<%@ include file="/WEB-INF/views/includes/common/Javascript.jsp" %>
+<!-- ========== Javascript end =========== -->
 
 <script>
     // Bootstrap 5 Tooltip 활성화 (모달 내부)
@@ -818,6 +771,7 @@
                     return false;  // 전송 막기
                 }
                 // 통과 시 true 반환 → form action으로 POST
+                alert('카테고리가 성공적으로 등록되었습니다.');
                 return true;
             });
 
@@ -909,6 +863,7 @@
                     $form.append('<input type="hidden" name="categoryCodes" value="' + code + '"/>');
                 });
 
+                alert('카테고리가 성공적으로 삭제되었습니다.');
                 $form.submit();
             });
 
@@ -1296,6 +1251,7 @@
                     return;
                 }
 
+                alert('제품이 성공적으로 등록되었습니다.');
                 this.submit(); // ✅ 유효성 통과 시 실제 form 전송
             });
         });
@@ -1396,8 +1352,9 @@
                 '<td><input type="text" class="form-control form-control-sm required-field name-input" ' +
                 'name="productList[' + index + '].productName" maxlength="10" value="' + (rowData.productName || '') + '"></td>' +
 
-                '<td><input type="text" class="form-control form-control-sm required-field price-input" ' +
-                'name="productList[' + index + '].productPrice" value="' + (rowData.productPrice || '') + '"></td>' +
+                '<td><div class="input-group"><input type="text" class="form-control form-control-sm required-field price-input" ' +
+                'name="productList[' + index + '].productPrice" value="' + (rowData.productPrice || '') + '"><span class="input-group-text form-control-sm px-2 py-0"' +
+                ' style="height: 30px; line-height: 1.2; font-size: 0.875rem; display: flex; align-items: center;">원</span></div></td>' +
 
                 '<td><select class="form-select form-select-sm required-field stored-select" name="productList[' + index + '].storedType">' +
                 '<option value="">선택</option>' +
@@ -1542,8 +1499,10 @@
                 }
             }
 
-            alert('제품이 성공적으로 수정되었습니다.');
             $('#productEditModal').modal('hide');
+            alert('제품이 성공적으로 수정되었습니다.');
+
+            $('#productEditForm')[0].submit();
         });
 
 
@@ -1622,6 +1581,7 @@
                 return false;
             }
 
+            alert('제품이 성공적으로 삭제되었습니다.');
             $form.submit(); // 서버 전송
         });
     });
