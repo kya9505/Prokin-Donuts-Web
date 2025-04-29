@@ -1,11 +1,11 @@
 # Prokin Donuts Warehouse Management System
 
 ## 개요
-Prokin Donuts WMS는 Prokin 도넛의 물류센터(3PL) 운영을 위한 웹 기반 창고 관리 시스템입니다. Spring MVC 기반의 서버 사이드 렌더링으로 빠른 초기 화면 표시와, DataTables 및 AJAX를 활용한 비동기 데이터 처리를 통해 실시간 재고 관리 및 통계 기능을 제공합니다.
+Prokin Donuts WMS는 Prokin 도넛의 물류센터 운영을 위한 웹 기반 창고 관리 시스템입니다. Spring MVC 기반의 서버 사이드 렌더링으로 빠른 초기 화면 표시와, DataTables 및 AJAX를 활용한 비동기 데이터 처리를 통해 실시간 재고 관리 및 통계 기능을 제공합니다.
 
 ## 주요 기능
 - **권한 기반 접근 관리**: 본사 관리자(QH), 창고 관리자(WM), 가맹점주(FM)
-- **창고 관리**: 창고 등록/수정/삭제, 담당자 할당
+- **창고/가맹점 관리**: 창고 및 가맹점 등록/수정/삭제, 담당자 할당
 - **섹션 관리**: 냉장·냉동·상온 섹션 설정 및 온도 조정
 - **카테고리·제품 관리**: 중분류·소분류 드롭다운 연동, 제품 등록/수정/삭제
 - **입고/출고 처리**: 입고 요청, 출고 요청, 재고 자동 증감
@@ -18,6 +18,7 @@ Prokin Donuts WMS는 Prokin 도넛의 물류센터(3PL) 운영을 위한 웹 기
 - **Frontend**: JSP, Bootstrap 4, jQuery, DataTables, AJAX
 - **Database**: MySQL 8
 - **지도 API**: Kakao Maps API
+- **주소 API**: 다음 주소 API
 - **빌드 도구**: Gradle
 - **서버**: Apache Tomcat 9
 
@@ -51,7 +52,7 @@ Prokin Donuts WMS는 Prokin 도넛의 물류센터(3PL) 운영을 위한 웹 기
 - 풀 리퀘스트 전 `./gradlew test`로 모든 테스트가 성공하는지 확인 바랍니다.
 
 ## 제작자
-- 박건희
-- 고윤아
-- 최문규
+- 박건희 (@psns0122)
+- 고윤아 (@kya9505)
+- 최문규 (@Cmk1031)
 
