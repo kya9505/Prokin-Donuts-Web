@@ -23,30 +23,25 @@ public interface WmDashboardService {
   // 오늘 미승인 출고요청 수
   int findTodayWaitingOrderCount(String warehouseCode);
   
-  // 입고 완료 (월별)
-  List<CountStatDTO> findInboundCountByMonth(int year, String warehouseCode);
-  
-  // 입고 완료 (주별)
-  List<CountStatDTO> findInboundCountByWeek(int year, String warehouseCode);
-  
-  // 출고 완료 (월별)
-  List<CountStatDTO> findOrderCountByMonth(int year, String warehouseCode);
-  
-  // 출고 완료 (주별)
-  List<CountStatDTO> findOrderCountByWeek(int year, String warehouseCode);
+  // 입고 완료 - 최근 12개월 (월별)
+  List<CountStatDTO> findInboundCountLast12Months(String warehouseCode);
+  // 출고 완료 - 최근 12개월 (월별)
+  List<CountStatDTO> findOrderCountLast12Months(String warehouseCode);
+  // 입고 완료 - 최근 4주 (주별)
+  List<CountStatDTO> findInboundCountLast4Weeks(String warehouseCode);
+  // 출고 완료 - 최근 4주 (주별)
+  List<CountStatDTO> findOrderCountLast4Weeks(String warehouseCode);
+  // 입고 완료 - 최근 5년 (연도별)
+  List<CountStatDTO> findInboundCountRecentYears(String warehouseCode);
+  // 출고 완료 - 최근 5년 (연도별)
+  List<CountStatDTO> findOrderCountRecentYears(String warehouseCode);
   
   // 창고 총 자산 금액
   Long findTotalInventoryPrice(String warehouseCode);
   
-  // 제품별 재고 수량
-//  List<InventoryStatisticDTO> findProductInventoryByWarehouse(String warehouseCode);
-  
   // 카테고리별 재고 수량
   List<InventoryStatisticDTO> findCategoryInventoryByWarehouse(String warehouseCode);
   List<SubcategoryProductInventoryDTO> findSubcategoryProductInventoryByWarehouse(String warehouseCode);
-  
-  // ❗ 주석 처리된 기능 (필요 시 복구 가능)
-//    List<InventoryStatisticDTO> findSectionInventoryByStoredType(String warehouseCode, String storedType);
   
   // 섹션별 사용률
   List<SectionUsageDTO> findSectionUsageRateByWarehouse(String warehouseCode);

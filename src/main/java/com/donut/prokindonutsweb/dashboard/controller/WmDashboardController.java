@@ -7,6 +7,7 @@ import com.donut.prokindonutsweb.dashboard.service.WmDashboardService;
 import com.donut.prokindonutsweb.security.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,8 +47,6 @@ public class WmDashboardController {
     Long totalInventoryPrice = wmDashboardService.findTotalInventoryPrice(warehouseCode); // 현재 창고의 총 자산 (재고가치 총합)
     
     int currentYear = Year.now().getValue();
-    List<CountStatDTO> inboundByMonth = wmDashboardService.findInboundCountByMonth(currentYear, warehouseCode); // 올해 월별 입고완료 건수
-    List<CountStatDTO> orderByMonth = wmDashboardService.findOrderCountByMonth(currentYear, warehouseCode); // 올해 월별 출고완료 건수
     List<InventoryStatisticDTO> categoryInventory = wmDashboardService.findCategoryInventoryByWarehouse(warehouseCode); // 카테고리별 재고 수량 목록
     List<SubcategoryProductInventoryDTO> subcategoryProductInventoryList = wmDashboardService.findSubcategoryProductInventoryByWarehouse(warehouseCode);
     
@@ -58,32 +57,46 @@ public class WmDashboardController {
     model.addAttribute("frozenTemp", frozenTemp); // 냉동 섹션 현재 온도
     model.addAttribute("roomTemp", roomTemp); // 상온 섹션 현재 온도
     model.addAttribute("totalInventoryPrice", totalInventoryPrice); // 창고의 총 자산가치
-    model.addAttribute("inboundByMonth", inboundByMonth); // 월별 입고완료 건수
-    model.addAttribute("orderByMonth", orderByMonth); // 월별 출고완료 건수
     model.addAttribute("categoryInventory", categoryInventory); // 카테고리별 재고 수량 목록
     model.addAttribute("subcategoryProductInventoryList", subcategoryProductInventoryList); // 카테고리별 제품별 재고 상세 목록
+    
+    // 처음에 대시보드 들어왔을 때는 "월별" 기준 데이터 세팅해줘야 함
+    List<CountStatDTO> inboundByMonth = wmDashboardService.findInboundCountLast12Months(warehouseCode);
+    List<CountStatDTO> orderByMonth = wmDashboardService.findOrderCountLast12Months(warehouseCode);
+    
+    model.addAttribute("inboundByMonth", inboundByMonth);
+    model.addAttribute("orderByMonth", orderByMonth);
   }
   
-  // 입고완료/출고완료 통합 조회 (월별/주별)
-  @GetMapping("/stat/inbound-order")
+  // 입고완료/출고완료 통합 조회 (년별/월별/주별)
+  @GetMapping(path = "/stat/inbound-order", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
-  public Map<String, List<CountStatDTO>> getInboundAndOrderStats(@RequestParam int year,
-                                                                 @RequestParam String warehouseCode,
-                                                                 @RequestParam String periodType) {
+  public Map<String, List<CountStatDTO>> getInboundAndOrderStats(
+      @RequestParam String warehouseCode,
+      @RequestParam String periodType
+  ) {
     List<CountStatDTO> inboundStats;
     List<CountStatDTO> orderStats;
     
-    if ("week".equals(periodType)) {
-      inboundStats = wmDashboardService.findInboundCountByWeek(year, warehouseCode);
-      orderStats = wmDashboardService.findOrderCountByWeek(year, warehouseCode);
-    } else {
-      inboundStats = wmDashboardService.findInboundCountByMonth(year, warehouseCode);
-      orderStats = wmDashboardService.findOrderCountByMonth(year, warehouseCode);
+    switch (periodType) {
+      case "week":
+        inboundStats = wmDashboardService.findInboundCountLast4Weeks(warehouseCode);
+        orderStats   = wmDashboardService.findOrderCountLast4Weeks(warehouseCode);
+        break;
+      case "year":
+        inboundStats = wmDashboardService.findInboundCountRecentYears(warehouseCode);
+        orderStats   = wmDashboardService.findOrderCountRecentYears(warehouseCode);
+        break;
+      case "month":
+      default:
+        inboundStats = wmDashboardService.findInboundCountLast12Months(warehouseCode);
+        orderStats   = wmDashboardService.findOrderCountLast12Months(warehouseCode);
+        break;
     }
     
     return Map.of(
         "inboundStats", inboundStats,
-        "orderStats", orderStats
+        "orderStats",   orderStats
     );
   }
   
