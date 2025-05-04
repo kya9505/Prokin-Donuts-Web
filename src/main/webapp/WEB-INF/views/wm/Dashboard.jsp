@@ -351,55 +351,6 @@
 </script>
 
 <script>
-    // === 1) 숨겨둔 DIV에서 “월별” 데이터 읽어두기 ===
-    var rawInboundLabels = document.getElementById('inboundMonthLabelsData').textContent
-        .split(',').map(s => s.trim());
-
-    rawInboundLabels = rawInboundLabels.map(s => {
-        const monthNum = parseInt(s.split('-')[1], 10);
-        return monthNum + '월';
-    });
-
-    var rawInboundCounts = document.getElementById('inboundMonthCountsData').textContent
-        .split(',').map(s => Number(s.trim()));
-
-    var rawOrderLabels = document.getElementById('orderMonthLabelsData').textContent
-        .split(',').map(s => s.trim());
-
-    rawOrderLabels = rawOrderLabels.map(s => {
-        const monthNum = parseInt(s.split('-')[1], 10);
-        return monthNum + '월';
-    });
-
-    var rawOrderCounts = document.getElementById('orderMonthCountsData').textContent
-        .split(',').map(s => Number(s.trim()));
-
-    // "1월" ~ "12월" 라벨 고정
-    var monthlyLabels = Array.from({ length: 12 }, function(_, i) {
-        return (i + 1) + '월';
-    });
-
-
-    console.log('rawInboundLabels:', rawInboundLabels);
-    console.log('monthlyLabels:', monthlyLabels);
-
-    // 라벨 → 값 매핑
-    var inboundMap = {};
-    rawInboundLabels.forEach(function(l, i){
-        inboundMap[l] = rawInboundCounts[i];
-    });
-    var orderMap = {};
-    rawOrderLabels.forEach(function(l, i){
-        orderMap[l] = rawOrderCounts[i];
-    });
-
-    // 값 없으면 0 처리
-    var monthlyInbound = monthlyLabels.map(function(m){
-        return inboundMap[m] != null ? inboundMap[m] : 0;
-    });
-    var monthlyOrder = monthlyLabels.map(function(m){
-        return orderMap[m] != null ? orderMap[m] : 0;
-    });
 
     var ctx1 = document.getElementById('Chart1').getContext('2d');
     var gradientInbound = ctx1.createLinearGradient(0, 0, 0, 400);
@@ -409,113 +360,103 @@
     gradientOrder.addColorStop(0, 'rgba(76, 175, 80, 0.4)');
     gradientOrder.addColorStop(1, 'rgba(76, 175, 80, 0.05)');
 
-    var chart1 = new Chart(ctx1, {
-        type: 'line',
-        data: {
-            labels: monthlyLabels,
-            datasets: [
-                {
-                    label: '출고 완료',
-                    data: monthlyOrder,
-                    borderColor: '#4CAF50',
-                    backgroundColor: gradientOrder,
-                    tension: 0.3,
-                    pointRadius: 4,
-                    pointHoverRadius: 8,
-                    fill: true
-                },
-                {
-                    label: '입고 완료',
-                    data: monthlyInbound,
-                    borderColor: '#FF9D32',
-                    backgroundColor: gradientInbound,
-                    tension: 0.3,
-                    pointRadius: 4,
-                    pointHoverRadius: 8,
-                    fill: true
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        usePointStyle: true,
-                        pointStyle: 'rectRounded',
-                        padding: 20,
-                        font: { size: 12, weight: 'bold' },
-                        color: '#555'
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(ctx) {
-                            return ctx.dataset.label + ': ' + ctx.raw.toLocaleString() + '건';
-                        }
-                    },
-                    backgroundColor: '#F3F6F8',
-                    titleColor: '#171717',
-                    bodyColor: '#171717',
-                    titleFont: { size: 14, weight: 'bold' },
-                    bodyFont: { size: 10 },
-                    displayColors: false,
-                    padding: { top: 10, bottom: 10, left: 20, right: 20 },
-                    bodyAlign: 'left',
-                    titleAlign: 'left'
-                }
-            },
-            scales: {
-                x: { grid: { display: false }, ticks: { padding: 10 } },
-                y: {
-                    grid: { color: 'rgba(0,0,0,0.05)' },
-                    ticks: {
-                        beginAtZero: true,
-                        padding: 10,
-                        callback: function(value) {
-                            return value.toLocaleString() + '건';
-                        }
-                    }
-                }
-            }
-        }
-    });
+    let chart1 = null;
 
-    // “월별/주별” Select 처리 ===
     document.getElementById('chart1PeriodType').addEventListener('change', function(e) {
-        var type = e.target.value;  // 'month', 'week', or 'year'
-        var code = '' + document.getElementById('warehouseCode').value;
+        const type = e.target.value;
+        const code = document.getElementById('warehouseCode').value;
 
         fetch('/wm/Dashboard/stat/inbound-order'
             + '?warehouseCode=' + code
             + '&periodType=' + type)
-            .then(function(res) { return res.json(); })
-            .then(function(json) {
-                var inStats  = json.inboundStats;
-                var outStats = json.orderStats;
+            .then(res => res.json())
+            .then(json => {
+                const inStats = json.inboundStats;
+                const outStats = json.orderStats;
 
-                var labelSuffix = '';
+                let labelSuffix = '';
                 if (type === 'week') labelSuffix = '주';
                 else if (type === 'year') labelSuffix = '년';
-                else if (type === 'month') labelSuffix = '월';
+                else labelSuffix = '월';
 
-                var labels = inStats.map(function(o) {
+                const labels = inStats.map(o => {
                     const parts = o.period.split('-');
-                    if (type === 'month') return parseInt(parts[1], 10) + labelSuffix;  // ex: 05월
-                    return o.period + labelSuffix;
+                    if (type === 'month' && parts.length > 1) {
+                        return parseInt(parts[1], 10) + labelSuffix;
+                    } else {
+                        return o.period + labelSuffix;
+                    }
                 });
 
-                var inCounts = inStats.map(o => o.count);
-                var outCounts = outStats.map(o => o.count);
+                const inCounts = inStats.map(o => o.count);
+                const outCounts = outStats.map(o => o.count);
 
-                chart1.data.labels = labels;
-                chart1.data.datasets[0].data = outCounts;
-                chart1.data.datasets[1].data = inCounts;
-                chart1.update();
+                if (!chart1) {
+                    const ctx1 = document.getElementById('Chart1').getContext('2d');
+                    chart1 = new Chart(ctx1, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: '출고 완료',
+                                    data: outCounts,
+                                    borderColor: '#4CAF50',
+                                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                                    tension: 0.3,
+                                    fill: true,
+                                    pointRadius: 4,
+                                    pointHoverRadius: 8
+                                },
+                                {
+                                    label: '입고 완료',
+                                    data: inCounts,
+                                    borderColor: '#FF9D32',
+                                    backgroundColor: 'rgba(255, 157, 50, 0.1)',
+                                    tension: 0.3,
+                                    fill: true,
+                                    pointRadius: 4,
+                                    pointHoverRadius: 8
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'bottom' // 범례를 x축 아래로
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    ticks: {
+                                        beginAtZero: true,
+                                        callback: function(value) {
+                                            return value.toLocaleString() + '회'; // 단위 추가 + 천단위 쉼표
+                                        }
+                                    },
+                                    grid: {
+                                        display: false // y축 가로선 제거
+                                    }
+                                },
+                                x: {
+                                    grid: {
+                                        display: false // x축 세로선도 제거 (선택 사항)
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    chart1.data.labels = labels;
+                    chart1.data.datasets[0].data = outCounts;
+                    chart1.data.datasets[1].data = inCounts;
+                    chart1.update();
+                }
             })
-            .catch(function(err) {
+            .catch(err => {
                 console.error(type + '별 데이터 로딩 실패:', err);
             });
     });
@@ -604,7 +545,20 @@
                 }
             },
             scales: {
-                y: { ticks: { beginAtZero: true, padding: 35 }, grid: { display: false } },
+                y: {
+                    ticks: {
+                        beginAtZero: true,
+                        padding: 35,
+                        callback: function(value) {
+                            const selectedType = document.getElementById('filterType').value;
+                            const unit = selectedType === 'section' ? '%' : '개';
+                            return value.toLocaleString() + unit;
+                        }
+                    },
+                    grid: {
+                        display: false
+                    }
+                },
                 x: { ticks: { padding: 20 }, grid: { display: false } }
             },
             layout: { padding: { top: 15, right: 15, bottom: 15, left: 15 } }
