@@ -2,7 +2,6 @@ package com.donut.prokindonutsweb.inbound.service;
 
 import com.donut.prokindonutsweb.inbound.dto.InboundDTO;
 import com.donut.prokindonutsweb.inbound.dto.InboundDetailDTO;
-import com.donut.prokindonutsweb.inbound.dto.InboundDetailVO;
 import com.donut.prokindonutsweb.inbound.dto.InboundUpdateDTO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;

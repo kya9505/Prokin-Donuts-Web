@@ -9,7 +9,7 @@ import lombok.*;
 @ToString
 public class OutboundDetailDTO {
     private String outboundDetailCode;
-    private String quantity;
+    private Integer quantity;
     private String outboundCode;
     private String productCode;
 }

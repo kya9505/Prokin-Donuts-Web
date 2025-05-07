@@ -1,8 +1,5 @@
 package com.donut.prokindonutsweb.order.mapper;
 
-import com.donut.prokindonutsweb.inbound.dto.InboundDetailVO;
-import com.donut.prokindonutsweb.inbound.mapper.InboundMapper;
-import com.donut.prokindonutsweb.inbound.vo.InboundVO;
 import com.donut.prokindonutsweb.order.vo.OrderDetailVO;
 import com.donut.prokindonutsweb.order.vo.OrderVO;
 import lombok.extern.slf4j.Slf4j;

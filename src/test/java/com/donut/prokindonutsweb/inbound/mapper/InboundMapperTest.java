@@ -1,7 +1,7 @@
 package com.donut.prokindonutsweb.inbound.mapper;
 
 
-import com.donut.prokindonutsweb.inbound.dto.InboundDetailVO;
+import com.donut.prokindonutsweb.inbound.vo.InboundDetailVO;
 import com.donut.prokindonutsweb.inbound.dto.InboundUpdateDTO;
 import com.donut.prokindonutsweb.inbound.vo.InboundVO;
 import com.donut.prokindonutsweb.inbound.vo.InventoryVO;

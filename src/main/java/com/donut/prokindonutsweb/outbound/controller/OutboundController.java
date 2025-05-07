@@ -28,7 +28,7 @@ public class OutboundController {
     private final OutboundService outboundService;
 
     @GetMapping("/approval")
-    public String getOutboundList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
+    public void getOutboundList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
         log.info("check");
 
         String memberCode = user.getMemberCode();
@@ -41,7 +41,7 @@ public class OutboundController {
 
         model.addAttribute("outboundList", outboundList);
         model.addAttribute("outboundDetailList", outboundDetailList);
-        return "wm/outbound/approval";
+//        return "wm/outbound/approval";
     }
 
     @PostMapping("/approval")

@@ -2,6 +2,7 @@ package com.donut.prokindonutsweb.inbound.service;
 
 import com.donut.prokindonutsweb.inbound.dto.*;
 import com.donut.prokindonutsweb.inbound.mapper.InboundMapper;
+import com.donut.prokindonutsweb.inbound.vo.InboundDetailVO;
 import com.donut.prokindonutsweb.inbound.vo.InboundVO;
 import com.donut.prokindonutsweb.inbound.vo.InventoryVO;
 import lombok.RequiredArgsConstructor;

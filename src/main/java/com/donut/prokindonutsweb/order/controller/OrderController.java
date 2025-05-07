@@ -71,11 +71,11 @@ public class OrderController {
         List<String> warehouseList = orderService.findWarehouseCode();
 
 
-        // 가맹점에 따라 창고 배정 다름
+        /*// 가맹점에 따라 창고 배정 다름
         Optional<String> matching = warehouseList.stream()
                 .filter(code -> code.equals(franchiseCode))
                 .findFirst();
-        String warehouseCode = matching.orElse("GG1");
+        String warehouseCode = matching.orElse("GG1");*/
 
         // 발주 요청 저장
         String orderCode = orderService.findNextOrderCode();
@@ -84,7 +84,7 @@ public class OrderController {
                 .orderCode(orderCode)
                 .orderDate(LocalDate.parse((orderDate)))
                 .orderStatus(OrderStatus.REQUEST.getStatus())
-                .warehouseCode(warehouseCode)   // 로그인 한 사용자 정보 가져와서 창고 코드 입력!
+                .warehouseCode("GG1")   // 로그인 한 사용자 정보 가져와서 창고 코드 입력!
                 .build();
         log.info(OrderStatus.REQUEST.getStatus());
         orderService.addOrder(dto, orderDetailList, franchiseCode);
