@@ -7,13 +7,13 @@
 <!--    출고 목록 반환-->
     <select id="selectAllOutboundList" resultType="com.donut.prokindonutsweb.outbound.dto.OutboundDTO">
         select orderCode as OutboundCode, orderDate as outboundDate, orderStatus as outboundStatus,
-        franchiseCode, warehouseCode from `order` where warehouseCode = #{warehouseCode}
+        franchiseCode, warehouseCode from `Order` where warehouseCode = #{warehouseCode}
     </select>
 
 <!--    출고 상세 목록 반환-->
     <select id="selectAllOutboundDetailList" resultType="com.donut.prokindonutsweb.outbound.dto.OutboundDetailDTO">
         select orderDetailCode as outboundDetailCode, quantity, orderCode as outboundCode, productCode
-        from orderDetail
+        from OrderDetail
     </select>
 
 <!--    재고 존재 확인 반환-->
@@ -23,27 +23,27 @@
             THEN TRUE
         ELSE FALSE
         END AS IsAllProductEnough
-        from orderDetail o, inventory i
+        from OrderDetail o, Inventory i
         Where o.productCode = i.productCode and o.orderCode = #{outboundCode}
     </select>
 
 <!--    출고상태 변경 (-> 출고완료)-->
     <update id="approveOutbound">
-        update `order` set orderStatus = "출고완료" where orderCode = #{outboundCode}
+        update `Order` set orderStatus = "출고완료" where orderCode = #{outboundCode}
     </update>
 
 <!--    재고차감 (출고) -->
 
     <update id="updateInventory">
-        UPDATE inventory i
-        JOIN orderDetail o ON i.productCode = o.productCode
+        UPDATE Inventory i
+        JOIN OrderDetail o ON i.productCode = o.productCode
         SET i.quantity = i.quantity - o.quantity
         WHERE o.orderCode = #{outboundCode}
     </update>
 
 <!--    멤버코드 -> 창고코드 반환-->
     <select id="getWarehouseCode" resultType="String">
-        select warehouseCode from warehouse where memberCode = #{memberCode}
+        select warehouseCode from Warehouse where memberCode = #{memberCode}
     </select>
 
 </mapper>

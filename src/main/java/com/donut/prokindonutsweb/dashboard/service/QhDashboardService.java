@@ -7,10 +7,10 @@ import com.donut.prokindonutsweb.dashboard.dto.OrderInventoryDTO;
 import java.util.List;
 
 public interface QhDashboardService {
-    int countNewRequest();
-    int countNewInbound();
-    int totalFranchise();
-    int totalWarehouse();
+    int CountNewRequest();
+    int CountNewInbound();
+    int TotalFranchise();
+    int TotalWarehouse();
     // QhDashboardService.java
     List<OrderInventoryDTO> getOrderRequestVsInventory();
 

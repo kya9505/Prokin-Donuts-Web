@@ -6,16 +6,16 @@
 <mapper namespace="com.donut.prokindonutsweb.member.mapper.MemberMapper">
 
     <select id="selectMember" resultType="MemberAccountVO">
-        select * from memberaccount
+        select * from MemberAccount
     </select>
     
     <insert id="insertMember">
-        insert into memberaccount (memberCode,authorityCode,name,phoneNumber,email,address,id,password)
+        insert into MemberAccount (memberCode,authorityCode,name,phoneNumber,email,address,id,password)
         values (#{memberCode},#{authorityCode},#{name},#{phoneNumber},#{email},#{address},#{id},#{password})
     </insert>
 
     <update id="updateMember" >
-            update memberaccount
+            update MemberAccount
             set authorityCode = #{authorityCode},
             name = #{name},
             phoneNumber = #{phoneNumber},
@@ -27,7 +27,7 @@
     </update>
 
     <update id="updateMemberById" >
-        update memberaccount
+        update MemberAccount
         set authorityCode = #{authorityCode},
             name = #{name},
             phoneNumber = #{phoneNumber},
@@ -39,7 +39,7 @@
     </update>
 
     <delete id="deleteMember" parameterType="list">
-        delete from memberaccount
+        delete from MemberAccount
         where memberCode in
         <foreach collection="list" item="memberCode" open="(" separator="," close=")">
             #{memberCode}
@@ -47,16 +47,16 @@
     </delete>
 
     <select id="memberCode" resultType="String">
-        Select memberCode From memberaccount Order by CAST(substring(memberCode, 3) AS UNSIGNED) DESC LIMIT 1;
+        Select memberCode From MemberAccount Order by CAST(substring(memberCode, 3) AS UNSIGNED) DESC LIMIT 1;
     </select>
 
     <!--아이디 중복확인-->
     <select id="memberIdCheck" resultType="int">
-        SELECT COUNT(*) FROM memberaccount WHERE id = #{id}
+        SELECT COUNT(*) FROM MemberAccount WHERE id = #{id}
     </select>
 
     <!--이메일 중복확인-->
     <select id="memberEmailCheck" resultType="int">
-        select count(*) from memberaccount where email = #{email}
+        select count(*) from MemberAccount where email = #{email}
     </select>
 </mapper>
