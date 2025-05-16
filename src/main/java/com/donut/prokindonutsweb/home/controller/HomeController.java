@@ -16,23 +16,17 @@ public class HomeController {
 
         // 루트화면 요청 시 권한 확인 후 로그인/권한별 화면으로 이동
         @GetMapping("/")
-        public String redirectToLoginOrDashboard(Authentication authentication) {
-            if (authentication != null && authentication.isAuthenticated()) {
-                Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-                if (authorities.stream().anyMatch(a -> a.getAuthority().equals("QH"))) {
-                    return "redirect:/qh/Dashboard";
-                } else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("WM"))) {
-                    return "redirect:/wm/Dashboard";
-                } else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("FM"))) {
-                    return "redirect:/fm/order";
-                }
-            }
-            return "home/login";
+        public String index() {
+            return "index"; // 또는 home/index 등 네가 만든 JSP
         }
 
+    // 로그인 페이지
+    @GetMapping("/login")
+    public String login() {
+        return "home/login"; // => /WEB-INF/views/home/login.jsp
+    }
 
 
-    //개발 안된 페이지
     @GetMapping("/wm/outbound")
     public void Woutbound(){}
 
