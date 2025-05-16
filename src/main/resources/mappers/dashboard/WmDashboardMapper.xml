@@ -66,6 +66,133 @@
     <!--    ///////////////////////////////////////////////////////////////////////// -->
 
     <!-- 차트1 용 데이터 -->
+    <!-- 1. 입고 - 최근 12개월 (월별) -->
+    <select id="selectInboundCountLast12Months"
+            parameterType="string"
+            resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">
+        WITH RECURSIVE months AS (
+        SELECT DATE_SUB(CURDATE(), INTERVAL 11 MONTH) AS month_date
+        UNION ALL
+        SELECT DATE_ADD(month_date, INTERVAL 1 MONTH)
+        FROM months
+        WHERE month_date &lt; CURDATE()
+        )
+        SELECT DATE_FORMAT(m.month_date, '%Y-%m') AS period,
+        IFNULL(COUNT(i.inboundDate), 0) AS count
+        FROM months m
+        LEFT JOIN Inbound i
+        ON DATE_FORMAT(i.inboundDate, '%Y-%m') = DATE_FORMAT(m.month_date, '%Y-%m')
+        AND i.inboundStatus = '입고완료'
+        AND i.warehouseCode = #{warehouseCode}
+        GROUP BY period
+        ORDER BY period
+    </select>
+
+    <!-- 2. 출고 - 최근 12개월 (월별) -->
+    <select id="selectOrderCountLast12Months"
+            parameterType="string"
+            resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">
+        WITH RECURSIVE months AS (
+        SELECT DATE_SUB(CURDATE(), INTERVAL 11 MONTH) AS month_date
+        UNION ALL
+        SELECT DATE_ADD(month_date, INTERVAL 1 MONTH)
+        FROM months
+        WHERE month_date &lt; CURDATE()
+        )
+        SELECT DATE_FORMAT(m.month_date, '%Y-%m') AS period,
+        IFNULL(COUNT(o.orderDate), 0) AS count
+        FROM months m
+        LEFT JOIN `Order` o
+        ON DATE_FORMAT(o.orderDate, '%Y-%m') = DATE_FORMAT(m.month_date, '%Y-%m')
+        AND o.orderStatus = '출고완료'
+        AND o.warehouseCode = #{warehouseCode}
+        GROUP BY period
+        ORDER BY period
+    </select>
+
+    <!-- 3. 입고 - 최근 4주 (주별) -->
+    <select id="selectInboundCountLast4Weeks"
+            parameterType="string"
+            resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">
+        WITH weeks AS (
+            SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL n WEEK), '%x-%v') AS period
+            FROM (SELECT 0 AS n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3) AS nums
+        )
+        SELECT w.period,
+               IFNULL(COUNT(i.inboundDate), 0) AS count
+        FROM weeks w
+                 LEFT JOIN Inbound i
+                           ON DATE_FORMAT(i.inboundDate, '%x-%v') = w.period
+                               AND i.inboundStatus = '입고완료'
+                               AND i.warehouseCode = #{warehouseCode}
+                               AND i.inboundDate >= DATE_SUB(CURDATE(), INTERVAL 4 WEEK)
+        GROUP BY w.period
+        ORDER BY w.period
+    </select>
+
+    <!-- 4. 출고 - 최근 4주 (주별) -->
+    <select id="selectOrderCountLast4Weeks"
+            parameterType="string"
+            resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">
+        WITH weeks AS (
+            SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL n WEEK), '%x-%v') AS period
+            FROM (SELECT 0 AS n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3) AS nums
+        )
+        SELECT w.period,
+               IFNULL(COUNT(o.orderDate), 0) AS count
+        FROM weeks w
+                 LEFT JOIN `Order` o
+                           ON DATE_FORMAT(o.orderDate, '%x-%v') = w.period
+                               AND o.orderStatus = '출고완료'
+                               AND o.warehouseCode = #{warehouseCode}
+                               AND o.orderDate >= DATE_SUB(CURDATE(), INTERVAL 4 WEEK)
+        GROUP BY w.period
+        ORDER BY w.period
+    </select>
+
+    <!-- 5. 입고 - 최근 5년 (연도별) -->
+    <select id="selectInboundCountRecentYears"
+            parameterType="string"
+            resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">
+        WITH year_list AS (
+            SELECT (YEAR(CURDATE()) - n) AS year
+            FROM (
+                     SELECT 0 AS n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+                 ) AS nums
+        )
+        SELECT yl.year AS period,
+               IFNULL(COUNT(i.inboundDate), 0) AS count
+        FROM year_list yl
+                 LEFT JOIN Inbound i
+                           ON YEAR(i.inboundDate) = yl.year
+                               AND i.inboundStatus = '입고완료'
+                               AND i.warehouseCode = #{warehouseCode}
+        GROUP BY yl.year
+        ORDER BY yl.year
+    </select>
+
+    <!-- 6. 출고 - 최근 5년 (연도별) -->
+    <select id="selectOrderCountRecentYears"
+            parameterType="string"
+            resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">
+        WITH year_list AS (
+            SELECT (YEAR(CURDATE()) - n) AS year
+            FROM (
+                     SELECT 0 AS n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+                 ) AS nums
+        )
+        SELECT yl.year AS period,
+               IFNULL(COUNT(o.orderDate), 0) AS count
+        FROM year_list yl
+                 LEFT JOIN `Order` o
+                           ON YEAR(o.orderDate) = yl.year
+                               AND o.orderStatus = '출고완료'
+                               AND o.warehouseCode = #{warehouseCode}
+        GROUP BY yl.year
+        ORDER BY yl.year
+    </select>
+
+
     <!-- Inbound 건수 집계 (년, 월, 주별) -->
 <!--    <select id="selectInboundCountByYear" parameterType="string" resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">-->
 <!--        SELECT YEAR(inboundDate)   AS period,-->
@@ -76,26 +203,26 @@
 <!--        GROUP BY YEAR(inboundDate)-->
 <!--        ORDER BY YEAR(inboundDate)-->
 <!--    </select>-->
-    <select id="selectInboundCountByMonth" parameterType="map" resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">
-        SELECT MONTH(inboundDate)  AS period,
-               COUNT(*)            AS count
-        FROM Inbound
-        WHERE inboundStatus = '입고완료'
-          AND YEAR(inboundDate)  = #{year}
-          AND warehouseCode     = #{warehouseCode}
-        GROUP BY MONTH(inboundDate)
-        ORDER BY MONTH(inboundDate)
-    </select>
-    <select id="selectInboundCountByWeek" parameterType="map" resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">
-        SELECT WEEK(inboundDate,1) AS period,
-               COUNT(*)            AS count
-        FROM Inbound
-        WHERE inboundStatus = '입고완료'
-          AND YEAR(inboundDate)  = #{year}
-          AND warehouseCode     = #{warehouseCode}
-        GROUP BY WEEK(inboundDate,1)
-        ORDER BY WEEK(inboundDate,1)
-    </select>
+<!--    <select id="selectInboundCountByMonth" parameterType="map" resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">-->
+<!--        SELECT MONTH(inboundDate)  AS period,-->
+<!--               COUNT(*)            AS count-->
+<!--        FROM Inbound-->
+<!--        WHERE inboundStatus = '입고완료'-->
+<!--          AND YEAR(inboundDate)  = #{year}-->
+<!--          AND warehouseCode     = #{warehouseCode}-->
+<!--        GROUP BY MONTH(inboundDate)-->
+<!--        ORDER BY MONTH(inboundDate)-->
+<!--    </select>-->
+<!--    <select id="selectInboundCountByWeek" parameterType="map" resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">-->
+<!--        SELECT WEEK(inboundDate,1) AS period,-->
+<!--               COUNT(*)            AS count-->
+<!--        FROM Inbound-->
+<!--        WHERE inboundStatus = '입고완료'-->
+<!--          AND YEAR(inboundDate)  = #{year}-->
+<!--          AND warehouseCode     = #{warehouseCode}-->
+<!--        GROUP BY WEEK(inboundDate,1)-->
+<!--        ORDER BY WEEK(inboundDate,1)-->
+<!--    </select>-->
 
     <!-- Order 건수 집계 (년, 월, 주별) -->
 <!--    <select id="selectOrderCountByYear" parameterType="string" resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">-->
@@ -107,33 +234,32 @@
 <!--        GROUP BY YEAR(orderDate)-->
 <!--        ORDER BY YEAR(orderDate)-->
 <!--    </select>-->
-    <select id="selectOrderCountByMonth" parameterType="map" resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">
-        SELECT MONTH(orderDate)    AS period,
-               COUNT(*)            AS count
-        FROM `Order`
-        WHERE orderStatus = '출고완료'
-          AND YEAR(orderDate)    = #{year}
-          AND warehouseCode     = #{warehouseCode}
-        GROUP BY MONTH(orderDate)
-        ORDER BY MONTH(orderDate)
-    </select>
-    <select id="selectOrderCountByWeek" parameterType="map" resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">
-        SELECT WEEK(orderDate,1)   AS period,
-               COUNT(*)            AS count
-        FROM `Order`
-        WHERE orderStatus = '출고완료'
-          AND YEAR(orderDate)    = #{year}
-          AND warehouseCode     = #{warehouseCode}
-        GROUP BY WEEK(orderDate,1)
-        ORDER BY WEEK(orderDate,1)
-    </select>
+<!--    <select id="selectOrderCountByMonth" parameterType="map" resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">-->
+<!--        SELECT MONTH(orderDate)    AS period,-->
+<!--               COUNT(*)            AS count-->
+<!--        FROM `Order`-->
+<!--        WHERE orderStatus = '출고완료'-->
+<!--          AND YEAR(orderDate)    = #{year}-->
+<!--          AND warehouseCode     = #{warehouseCode}-->
+<!--        GROUP BY MONTH(orderDate)-->
+<!--        ORDER BY MONTH(orderDate)-->
+<!--    </select>-->
+<!--    <select id="selectOrderCountByWeek" parameterType="map" resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">-->
+<!--        SELECT WEEK(orderDate,1)   AS period,-->
+<!--               COUNT(*)            AS count-->
+<!--        FROM `Order`-->
+<!--        WHERE orderStatus = '출고완료'-->
+<!--          AND YEAR(orderDate)    = #{year}-->
+<!--          AND warehouseCode     = #{warehouseCode}-->
+<!--        GROUP BY WEEK(orderDate,1)-->
+<!--        ORDER BY WEEK(orderDate,1)-->
+<!--    </select>-->
 
 <!--    ///////////////////////////////////////////////////////////////////////// -->
 <!--    ///////////////////////////////////////////////////////////////////////// -->
 <!--    ///////////////////////////////////////////////////////////////////////// -->
 
     <!-- 차트2 용 데이터 -->
-
     <!-- 창고코드에 해당하는 창고의 현재 총 자산 -->
     <select id="selectTotalInventoryPrice"
             parameterType="string"

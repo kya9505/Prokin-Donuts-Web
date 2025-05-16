@@ -19,22 +19,22 @@ public class QhDashboardServiceImpl implements QhDashboardService {
 
     @Override
     public int CountNewRequest() {
-       return qhDashboardMapper.CountNewRequest();
+       return qhDashboardMapper.countNewRequest();
     }
 
     @Override
     public int CountNewInbound() {
-        return qhDashboardMapper.CountNewInbound();
+        return qhDashboardMapper.countNewInbound();
     }
 
     @Override
     public int TotalFranchise() {
-        return qhDashboardMapper.TotalFranchise();
+        return qhDashboardMapper.totalFranchise();
     }
 
     @Override
     public int TotalWarehouse() {
-        return qhDashboardMapper.TotalWarehouse();
+        return qhDashboardMapper.totalWarehouse();
     }
 
     //발주요청/입고량
