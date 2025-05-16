@@ -5,10 +5,10 @@ import com.donut.prokindonutsweb.dashboard.dto.OrderInventoryDTO;
 import java.util.List;
 
 public interface QhDashboardMapper {
-    int countNewRequest();
-    int countNewInbound();
-    int totalFranchise();
-    int totalWarehouse();
+    int CountNewRequest();
+    int CountNewInbound();
+    int TotalFranchise();
+    int TotalWarehouse();
     List<OrderInventoryDTO> getOrderRequestVsInventory();
     int countApprovedInboundStatus(String warehouseCode);
     int countTotalInbound(String warehouseCode);
