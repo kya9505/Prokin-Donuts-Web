@@ -15,6 +15,7 @@ import java.util.List;
 @Log4j2
 @RequiredArgsConstructor
 public class WmDashboardServiceImpl implements WmDashboardService {
+  
   private final WmDashboardMapper wmDashboardMapper;
   
   @Override
@@ -43,23 +44,33 @@ public class WmDashboardServiceImpl implements WmDashboardService {
   }
   
   @Override
-  public List<CountStatDTO> findInboundCountByMonth(int year, String warehouseCode) {
-    return wmDashboardMapper.selectInboundCountByMonth(year, warehouseCode);
+  public List<CountStatDTO> findInboundCountLast12Months(String warehouseCode) {
+    return wmDashboardMapper.selectInboundCountLast12Months(warehouseCode);
   }
   
   @Override
-  public List<CountStatDTO> findInboundCountByWeek(int year, String warehouseCode) {
-    return wmDashboardMapper.selectInboundCountByWeek(year, warehouseCode);
+  public List<CountStatDTO> findOrderCountLast12Months(String warehouseCode) {
+    return wmDashboardMapper.selectOrderCountLast12Months(warehouseCode);
   }
   
   @Override
-  public List<CountStatDTO> findOrderCountByMonth(int year, String warehouseCode) {
-    return wmDashboardMapper.selectOrderCountByMonth(year, warehouseCode);
+  public List<CountStatDTO> findInboundCountLast4Weeks(String warehouseCode) {
+    return wmDashboardMapper.selectInboundCountLast4Weeks(warehouseCode);
   }
   
   @Override
-  public List<CountStatDTO> findOrderCountByWeek(int year, String warehouseCode) {
-    return wmDashboardMapper.selectOrderCountByWeek(year, warehouseCode);
+  public List<CountStatDTO> findOrderCountLast4Weeks(String warehouseCode) {
+    return wmDashboardMapper.selectOrderCountLast4Weeks(warehouseCode);
+  }
+  
+  @Override
+  public List<CountStatDTO> findInboundCountRecentYears(String warehouseCode) {
+    return wmDashboardMapper.selectInboundCountRecentYears(warehouseCode);
+  }
+  
+  @Override
+  public List<CountStatDTO> findOrderCountRecentYears(String warehouseCode) {
+    return wmDashboardMapper.selectOrderCountRecentYears(warehouseCode);
   }
   
   @Override
@@ -68,24 +79,15 @@ public class WmDashboardServiceImpl implements WmDashboardService {
     return price != null ? price : 0L;
   }
   
-//  @Override
-//  public List<InventoryStatisticDTO> findProductInventoryByWarehouse(String warehouseCode) {
-//    return wmDashboardMapper.selectProductInventoryByWarehouse(warehouseCode);
-//  }
-  
   @Override
   public List<InventoryStatisticDTO> findCategoryInventoryByWarehouse(String warehouseCode) {
     return wmDashboardMapper.selectCategoryInventoryByWarehouse(warehouseCode);
   }
+  
   @Override
   public List<SubcategoryProductInventoryDTO> findSubcategoryProductInventoryByWarehouse(String warehouseCode) {
     return wmDashboardMapper.selectSubcategoryProductInventoryByWarehouse(warehouseCode);
   }
-
-//    @Override
-//    public List<InventoryStatisticDTO> findSectionInventoryByStoredType(String warehouseCode, String storedType) {
-//        return wmDashboardMapper.selectSectionInventoryByStoredType(warehouseCode, storedType);
-//    }
   
   @Override
   public List<SectionUsageDTO> findSectionUsageRateByWarehouse(String warehouseCode) {
