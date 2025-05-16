@@ -32,21 +32,6 @@ import java.util.Collection;
 public class LoginController {
 
 
-    // 로그인 화면 요청 시 기존 권한 확인
-    @GetMapping("/home/login")
-    public String loginPage(Authentication authentication) {
-        if (authentication != null && authentication.isAuthenticated()) {
-            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-            if (authorities.stream().anyMatch(a -> a.getAuthority().equals("QH"))) {
-                return "redirect:/qh/Dashboard";
-            } else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("WM"))) {
-                return "redirect:/wm/Dashboard";
-            } else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("FM"))) {
-                return "redirect:/fm/order";
-            }
-        }
-        return "home/login";
-    }
 
     @PostMapping("/home/logout")
     public String logout(@AuthenticationPrincipal CustomUserDetails user,HttpSession session){
