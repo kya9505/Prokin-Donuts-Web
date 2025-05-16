@@ -7,13 +7,13 @@
 
     <!--회원가입요청 테이블 조회 -->
     <select id="selectRequestMember" resultType="MemberRequestVO">
-        select * from memberrequest
+        select * from MemberRequest
     </select>
 
 
     <!--회원가입 요청 상태 승인으로 변경 -->
     <update id="approvalMember">
-            update memberrequest
+            update MemberRequest
             set request = '승인'
             where requestCode = #{requestCode}
     </update>
@@ -21,31 +21,31 @@
 
     <!--회원가입 요청 삭제-->
     <delete id="deleteRequestMember" >
-        delete from memberrequest
+        delete from MemberRequest
         where requestCode = #{requestCode}
     </delete>
 
 
     <!--가장 최근 발급한 회원가입 요청 코드 조회 -->
     <select id="requestCode" resultType="String">
-        Select requestCode From memberrequest  Order by CAST(substring(requestCode, 3) AS UNSIGNED) DESC LIMIT 1;
+        Select requestCode From MemberRequest  Order by CAST(substring(requestCode, 3) AS UNSIGNED) DESC LIMIT 1;
     </select>
     
     <select id="selectByMemberRequest" resultType="MemberRequestVO">
-        select * from memberrequest where requestCode = #{requestCode}
+        select * from MemberRequest where requestCode = #{requestCode}
     </select>
 
 
     <select id="requestEmailCheck" resultType="int">
-        select count(*) from memberrequest where email = #{email}
+        select count(*) from MemberRequest where email = #{email}
     </select>
 
     <select id="requestIdCheck" resultType="int">
-        select count(*) from memberrequest where id = #{id}
+        select count(*) from MemberRequest where id = #{id}
     </select>
 
     <insert id="insertRequestMember">
-        insert into memberrequest (requestCode, name, phoneNumber, email, id, password, address, requestDate) VALUES
+        insert into MemberRequest (requestCode, name, phoneNumber, email, id, password, address, requestDate) VALUES
     (#{requestCode},#{name},#{phoneNumber},#{email},#{id},#{password},#{password},now())
      </insert>
 </mapper>
