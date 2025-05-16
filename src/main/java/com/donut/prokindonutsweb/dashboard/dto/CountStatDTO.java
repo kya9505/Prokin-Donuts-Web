@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CountStatDTO {
-  private int period;  // 연: 2025, 월: 4, 주: 16 등
+  private String period;  // 연: 2025, 월: 4, 주: 16 등
   private int count;   // 건수
 }
