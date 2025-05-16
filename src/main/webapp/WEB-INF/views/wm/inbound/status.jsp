@@ -109,7 +109,7 @@
                                     <th>제품단가</th>
                                     <th>입고일</th>
                                     <th>입고상태</th>
-                                    <th>창고코드</th>
+                                    <th>섹션코드</th>
                                     <th>수량</th>
 
                                 </tr>
@@ -208,16 +208,6 @@
                 {targets: [0, 1, 2, 3, 4, 5, 6, 7], className: 'text-center'} // JS 속성으로 가운데 정렬
             ],
             order: [[1, 'asc']],
-            /*columns: [
-                {data: 'inboundCode', title: '입고코드'},
-                {data: 'productCode', title: '제품코드'},
-                {data: 'productName', title: '제품명'},
-                {data: 'productPrice', title: '제품단가'},
-                {data: 'inboundDate', title: '입고일'},
-                {data: 'inboundStatus', title: '입고상태'},
-                {data: 'sectionCode', title: '창고코드'},
-                {data: 'quantity', title: '수량'},
-            ],*/
             paging: true,
             pageLength: 10,
             lengthMenu: [[5, 10, 20, -1], ['5개', '10개', '20개', '전체']],
