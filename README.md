@@ -196,9 +196,7 @@
 
 <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 회고 및 피드백 </h2>
 <ul>
-  <li>추가</li>
-  <li>예정</li>
-  <li>항목</li>
+    https://velog.io/@dbsdk4211/%EC%8B%A0%EC%84%B8%EA%B3%84IC-2%EC%B0%A8%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%9A%8C%EA%B3%A0%EB%A1%9D
 </ul>
 
 <br>
