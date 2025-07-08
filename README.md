@@ -196,9 +196,9 @@
 
 <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 회고 및 피드백 </h2>
 <ul>
-    https://velog.io/@dbsdk4211/%EC%8B%A0%EC%84%B8%EA%B3%84IC-2%EC%B0%A8%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%9A%8C%EA%B3%A0%EB%A1%9D
-</ul>
-
+2차 프로젝트를 통해 직접 서버를 설정하고 Spring Security 구조를 구현하며, 단순 구현을 넘어 구조적 이해와 설계 역량을 키운 성장의 과정이었다.<br>
+<a href="https://velog.io/@dbsdk4211/%EC%8B%A0%EC%84%B8%EA%B3%84IC-2%EC%B0%A8%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%9A%8C%EA%B3%A0%EB%A1%9D" target="_blank" style="font-weight: bold; color: #4CAF50; text-decoration: none;">
+👉 벨로그 회고록 바로가기</ul>
 <br>
 
 <div align="left">
