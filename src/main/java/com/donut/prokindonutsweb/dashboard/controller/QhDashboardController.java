@@ -35,6 +35,7 @@ public class QhDashboardController{
             model.addAttribute("warehouseList",qhInventoryService.findWarehouseList());
     }
 
+    //최근 한달 발주량 대비 재고량
     @GetMapping("/qh/order-vs-inventory")
     @ResponseBody
     public List<OrderInventoryDTO> getOrderRequestVsInventory() {

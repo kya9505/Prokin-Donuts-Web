@@ -7,12 +7,12 @@
 
     <!--id로 회원 찾기-->
     <select id="searchId" resultType="MemberAccountVO">
-        select * from memberaccount  where id = #{id}
+        select * from MemberAccount  where id = #{id}
     </select>
 
     <!--email로 회원 찾기-->
     <select id="searchEmail" resultType="MemberAccountVO">
-        select * from memberaccount  where email = #{email}
+        select * from MemberAccount  where email = #{email}
     </select>
 
 
