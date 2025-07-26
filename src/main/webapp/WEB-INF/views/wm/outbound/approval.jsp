@@ -64,7 +64,7 @@
             <div class="col-lg">
                 <!-- Start card -->
                 <div class="card-style mb-30">
-                    <h6 class="mb-10">출고 목록
+                    <h6 class="mb-10">출고요청 목록
                         <label>
                             <i
                                     class="mdi mdi-help-circle text-primary"
@@ -72,39 +72,21 @@
                                     data-bs-placement="right"
                                     data-bs-html="true"
                                     data-bs-custom-class="wide-tooltip"
-                                    title="<b>승인</b>: 제품 검수 후 재고에 반영한다.<br><br> <b>수정, 취소</b>: 본사관리자 승인 후에는 불가능"
+                                    title="<b>승인</b>: 출고 요청을 승인한다.<br>승인된 요청은 출고현황에서 확인할 수 있다.<br>"
                                     style="cursor: pointer;">
                             </i>
                         </label>
                     </h6>
 
                     <p class="text-sm mb-20">
-
                         <!-- 원하는 필터(중분류, 소분류) 설정 -->
-                    <div id="myCustomFilters" style="display: none;">
-
-                        <div class="d-flex flex-wrap gap-2">
-                            <!-- 중분류 -->
-                            <div >
-                                <div class="select-style-1">
-                                    <div class="select-position">
-                                        <select id="outboundCategories">
-                                            <option value="">출고 상태</option>
-                                        </select>
-                                    </div>
+                        <div id="myCustomFilters" style="display: none;">
+                            <div class="d-flex align-items-center gap-2" style="margin-top: -30px;">
+                                <div class="btu-group-1 d-flex gap-2">
+                                    <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="btnBulkApprove">승인</button>
                                 </div>
                             </div>
-
-                            <!-- 필터 초기화 -->
-                            <div class="mb-20">
-                                <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="resetFilterBtn" style="height:auto; min-height:auto;">
-                                    필터 초기화
-                                </button>
-                            </div>
                         </div>
-
-                    </div>
-
                     </p>
                     <div class="table-wrapper table-responsive p-0">
 
@@ -125,58 +107,25 @@
 
                             <thead>
                             <tr>
+                                <th><input type="checkbox" id="select-all"></th>
                                 <th>출고코드</th>
                                 <th>출고일</th>
                                 <th>출고상태</th>
                                 <th>창고코드</th>
                                 <th>가맹점코드</th>
-                                <th>승인|수정|취소</th> <!-- 수정/삭제 열 -->
                             </tr>
                             </thead>
+                            <tbody>
                             <c:forEach var="outbound" items="${outboundList}">
                                 <tr>
+                                    <td><input type="checkbox" class="row-checkbox" /></td>
                                     <td>${outbound.outboundCode}</td>
                                     <td>${outbound.outboundDate}</td>
                                     <td>${outbound.outboundStatus}</td>
                                     <td>${outbound.franchiseCode}</td>
                                     <td>${outbound.warehouseCode}</td>
-                                    <td>
-                                        <div class="btu-group-2">
-                                           <%-- <button class="btn btn-approve text-success" title="출고 승인" id="btnoutboundAdd" data-outbound-code="${outbound.outboundCode}"
-                                                    data-outbound-date="${outbound.outboundDate}"
-                                                &lt;%&ndash;                                                    현재날짜와 출고날짜가 다르다 or 출고상태가 '승인대기' 상태가 아니다 --> disabled 처리&ndash;%&gt;
-                                                    <c:if test="${outbound.outboundDate ne today or outbound.outboundStatus ne '승인대기'}">disabled</c:if>>
-                                                <i class="lni lni-checkmark-circle"
-                                                   style="color: <c:out value='${(outbound.outboundDate eq today and outbound.outboundStatus eq "승인대기") ? "#28a745" : "#cccccc"}'/>;"></i>
-                                            </button>--%>
-                                               <button class="btn btn-approve text-success" title="출고 승인" id="btnoutboundAdd" data-outbound-code="${outbound.outboundCode}"
-                                                       data-outbound-date="${outbound.outboundDate}"
-                                                       <c:if test="${outbound.outboundStatus eq '출고완료'}">disabled</c:if>>
-                                                   <i class="lni lni-checkmark-circle"></i>
-                                               </button>
-
-                                            <button class="btn btn-edit text-primary-2" data-outbound-code="${outbound.outboundCode}"
-                                                    data-outbound-date="${outbound.outboundDate}"
-                                                <%--                                                    출고상태가 '출고요청' 상태가 아니면 수정이 불가능하다.--%>
-                                                    <c:if test="${outbound.outboundStatus ne '출고요청'}">disabled</c:if>>
-                                                <i class="lni lni-pencil"
-                                                   style="color: <c:out value='${(outbound.outboundStatus ne "출고요청") ? "#cccccc": "#007bff"}'/>;"></i>
-                                            </button>
-
-
-                                            <button class="btn btn-delete text-danger"  data-outbound-code="${outbound.outboundCode}"
-                                                    data-outbound-date="${outbound.outboundDate}"
-                                                <%--                                                    출고상태가 '출고요청' 상태가 아니면 취소가 불가능하다--%>
-                                                    <c:if test="${outbound.outboundStatus ne '출고요청'}">disabled</c:if>>
-                                                <i class="lni lni-trash-can"
-                                                   style="color: <c:out value='${(outbound.outboundStatus ne "출고요청") ? "#cccccc": "#red"}'/>;"></i>
-                                            </button>
-                                        </div>
-                                    </td>
                                 </tr>
                             </c:forEach>
-
-                            <tbody>
                             </tbody>
 
                         </table>
@@ -313,6 +262,29 @@
             </div>
         </form>--%>
 
+        <!-- 승인 모달 (일괄 승인용) -->
+        <form id="bulkApproveForm" method="post" action="/wm/outbound/bulk-approval" accept-charset="UTF-8">
+            <div class="modal fade" id="bulkApproveModal" tabindex="-1" aria-labelledby="bulkApproveModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title" id="bulkApproveModalLabel">출고요청 일괄 승인</h3>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h5>선택한 출고요청을 승인하겠습니까?</h5><br>
+                            <ul id="bulkApprovalList" class="list-group mb-3">
+                                <!-- 선택된 출고요청 목록 삽입 -->
+                            </ul>
+                            <div class="d-flex justify-content-end gap-2">
+                                <button type="button" class="main-btn primary-btn btn-hover text-center" id="confirmBulkApproval">승인</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
         </div>
     </section>
     <!-- ========== section end ========== -->
@@ -399,29 +371,29 @@
 
 
     $(document).ready(function() {
-        // 1. 더미 데이터 정의 (출고상태)
-        const dummyoutboundCategories = [
-            { "id": "출고대기", "name": "출고대기" },
-            { "id": "출고완료", "name": "출고완료" },
-        ];
+        // 1. 더미 데이터 정의 (출고상태) - 제거
+        // const dummyoutboundCategories = [
+        //     { "id": "출고대기", "name": "출고대기" },
+        //     { "id": "출고완료", "name": "출고완료" },
+        // ];
 
-        // 2. 원본 필터 영역에 출고상태 옵션 채우기
-        var $midSelect = $('#myCustomFilters #outboundCategories');
-        $.each(dummyoutboundCategories, function(index, item) {
-            $midSelect.append($('<option>', {
-                value: item.id,
-                text: item.name
-            }));
-        });
+        // 2. 원본 필터 영역에 출고상태 옵션 채우기 - 제거
+        // var $midSelect = $('#myCustomFilters #outboundCategories');
+        // $.each(dummyoutboundCategories, function(index, item) {
+        //     $midSelect.append($('<option>', {
+        //         value: item.id,
+        //         text: item.name
+        //     }));
+        // });
 
         // 5. DataTable 초기화 (dom 옵션에 사용자 정의 영역 포함)
         var table = $('#datatable').DataTable({
             autoWidth: false,
             columnDefs: [
-                { width: '95px', targets: -1 },  // Actions 열 너비
-                { targets: [0, 1, 2, 3], className: 'text-center' } // JS 속성으로 가운데 정렬
+                { targets: [1, 2, 3, 4, 5], className: 'text-center' },
+                { targets: 0, orderable: false, searchable: false }
             ],
-            order: [[0, 'asc']],
+            order: [[1, 'asc']],
             paging: true,
             pageLength: 10,
             lengthMenu: [[5, 10, 20, -1], ['5개', '10개', '20개', '전체']],
@@ -429,7 +401,7 @@
             ordering: true,
             info: true,
             lengthChange: true,
-            dom: '<"top"l<"myFilterArea">fr>t<"bottom"ip>',
+            dom: '<"top"l<"myFilterArea">fr>t<"bottom"ip>', // request.jsp와 동일한 dom 설정
             language: {
                 lengthMenu: '_MENU_',
                 search: "검색 ",
@@ -494,15 +466,14 @@
             $('.dataTables_paginate .paginate_button').removeClass().addClass('main-btn deactive-btn-outline square-btn btn-hover mt-1 pt-2 pb-2 pl-15 pr-15');
         });
 
+        // 6. 사용자 정의 필터 영역에 승인 버튼만 복제 (request.jsp와 동일한 방식)
         var $clone = $('#myCustomFilters').clone(true);
-        // 복제 후 삽입 시, ID 제거 필수!
-        $clone.find('#outboundCategories').attr('id', 'outboundCategories_clone');
-
-        $clone.find('#btnoutboundAdd').attr('id', 'btnoutboundAdd_clone');
-        $clone.find('#btnoutboundEdit').attr('id', 'btnoutboundEdit_clone');
-        $clone.find('#btnoutboundDelete').attr('id', 'btnoutboundDelete_clone');
-        $clone.find('#btnoutboundAdd, #btnoutboundEdit, #btnoutboundDelete').remove();
+        $clone.find('#btnBulkApprove').attr('id', 'btnBulkApprove_clone');
+        $clone.find('#btnBulkApprove').remove();
         $('div.myFilterArea').html($clone.html());
+
+        // 기존의 동적 추가 코드 제거
+        // $('.dataTables_length').after(...) 부분 삭제
 
         // select 태그 감싸는 구조 적용
         $('.dataTables_length select').each(function() {
@@ -512,40 +483,40 @@
             }
         });
 
-        // 6-1. 이벤트 위임 방식으로 변경된 ID에 새롭게 바인딩 (body를 통해 실제 필터에 작동하게!)
-        $('body').on('change', '#outboundCategories_clone', function() {
-            $('#outboundSubCategories_clone').val('');
-            table.draw();
-        });
+        // 6-1. 이벤트 위임 방식으로 변경된 ID에 새롭게 바인딩 - 제거
+        // $('body').on('change', '#outboundCategories_clone', function() {
+        //     $('#outboundSubCategories_clone').val('');
+        //     table.draw();
+        // });
 
-        $('body').on('click', '#resetFilterBtn', function () {
-            const table = $('#datatable').DataTable();
+        // $('body').on('click', '#resetFilterBtn', function () {
+        //     const table = $('#datatable').DataTable();
 
-            table.search('').columns().search('');
+        //     table.search('').columns().search('');
 
-            $('#outboundCategories_clone, #outboundDateInput_clone').val('');
+        //     $('#outboundCategories_clone, #outboundDateInput_clone').val('');
 
-            table.order([[0, 'asc']]);
-            table.draw();
-        });
+        //     table.order([[0, 'asc']]);
+        //     table.draw();
+        // });
 
-        // 7. 필터 이벤트: 드롭다운 변경 시 테이블 필터링
-        $('#outboundCategories, #outboundDateInput').on('change keyup', function() {
-            table.draw();
-        });
+        // 7. 필터 이벤트: 드롭다운 변경 시 테이블 필터링 - 제거
+        // $('#outboundCategories, #outboundDateInput').on('change keyup', function() {
+        //     table.draw();
+        // });
 
-        // 7-1. (7번 함수에서 각각이 변경될 때마다) 필터링 함수도 변경된 ID값을 기준으로 수정
-        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-            const selectedOutbound = $('#outboundCategories_clone').val();
-            const categoryOutbound = data[2]; // 출고상태를 기준으로
+        // 7-1. (7번 함수에서 각각이 변경될 때마다) 필터링 함수도 변경된 ID값을 기준으로 수정 - 제거
+        // $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+        //     const selectedOutbound = $('#outboundCategories_clone').val();
+        //     const categoryOutbound = data[2]; // 출고상태를 기준으로
 
-            // 일부 포함에도 검색
-            if (selectedOutbound && !categoryOutbound.includes(selectedOutbound)) {
-                return false;
-            }
+        //     // 일부 포함에도 검색
+        //     if (selectedOutbound && !categoryOutbound.includes(selectedOutbound)) {
+        //         return false;
+        //     }
 
-            return true;
-        });
+        //     return true;
+        // });
 
 
         // 모달 열릴 때마다 목록 갱신되게 하면 좋아
@@ -709,6 +680,77 @@
             const modal = new bootstrap.Modal(document.getElementById('outboundDeleteModal'));
             modal.show();
         });*/
+
+        // "Select All" 체크박스 이벤트
+        $('#select-all').on('click', function() {
+            const rows = table.rows({ page: 'current' }).nodes();
+            $('input.row-checkbox', rows).prop('checked', this.checked);
+        });
+        $('#datatable tbody').on('change', 'input.row-checkbox', function() {
+            if(!this.checked) {
+                const el = $('#select-all').get(0);
+                if(el && el.checked) {
+                    el.checked = false;
+                }
+            }
+        });
+        table.on('draw', function() {
+            $('#select-all').prop('checked', false);
+        });
+
+        // 승인 버튼 클릭 시 (ID 변경)
+        $('#btnBulkApprove_clone').on('click', function (e) {
+            const selectedData = [];
+            $('#datatable tbody input.row-checkbox:checked').each(function () {
+                const $tr = $(this).closest('tr');
+                const rowData = {
+                    outboundCode: $tr.find('td').eq(1).text().trim(),
+                    outboundDate: $tr.find('td').eq(2).text().trim(),
+                    outboundStatus: $tr.find('td').eq(3).text().trim()
+                };
+                selectedData.push(rowData);
+            });
+
+            if (selectedData.length === 0) {
+                alert('승인할 출고 요청을 선택하세요.');
+                return;
+            }
+
+            // 출고 요청 목록을 <ul> 안에 추가
+            const $list = $('#bulkApprovalList');
+            $list.empty();
+
+            selectedData.forEach((item) => {
+                const li = `
+                    <li class="list-group-item d-flex justify-content-between align-items-center" data-outbound-code="`+ item.outboundCode +`">
+                        <span>` + item.outboundCode + ` (` + item.outboundDate + `)</span>
+                        <span class="badge bg-secondary">` + item.outboundStatus + `</span>
+                    </li>
+                `;
+                $list.append(li);
+            });
+
+            // 승인 확인 버튼 클릭 시: form에 hidden input 추가하고 전송
+            $('#confirmBulkApproval').off('click').on('click', function (e) {
+                const $form = $('#bulkApproveForm');
+                $form.find('input[name="outboundCodeList"]').remove();
+
+                $('#bulkApprovalList .list-group-item').each(function () {
+                    const outboundCode = $(this).data('outbound-code');
+                    const input = `<input type="hidden" name="outboundCodeList" value="` + outboundCode + `" />`;
+                    $form.append(input);
+                });
+
+                const result = confirm('선택하신 출고 요청을 승인 하시겠습니까?');
+                if (result) {
+                    $form.submit();
+                }
+            });
+
+            // 모달 열기
+            const modal = new bootstrap.Modal(document.getElementById('bulkApproveModal'));
+            modal.show();
+        });
     });
 
     //mypageData
