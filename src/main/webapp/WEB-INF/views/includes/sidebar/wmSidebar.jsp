@@ -54,13 +54,29 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item nav-outbound">
-                <a href="<c:url value='/wm/outbound/approval'/>">
-          <span class="icon">
+            <li class="nav-item nav-item-has-children nav-outbound">
+                <a
+                        href="#0"
+                        class="collapsed"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#ddmenu_56"
+                        aria-controls="ddmenu_56"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                >
+        <span class="icon">
             <i class="lni lni-delivery"></i>
-          </span>
+        </span>
                     <span class="text">출고관리</span>
                 </a>
+                <ul id="ddmenu_56" class="collapse dropdown-nav">
+                    <li class="nav-outbound-request">
+                        <a href="<c:url value='/wm/outbound/approval'/>" class="hover-text-grow">출고요청목록</a>
+                    </li>
+                    <li class="nav-outbound-status">
+                        <a href="<c:url value='/wm/outbound/status'/>" class="hover-text-grow">출고현황</a>
+                    </li>
+                </ul>
             </li>
         </ul>
     </nav>
@@ -109,7 +125,8 @@
             { keyword: '/wm/inbound/request', selector: '.nav-inbound-request', parent: '.nav-inbound' },
             { keyword: '/wm/inbound/approval', selector: '.nav-inbound-approval', parent: '.nav-inbound' },
             { keyword: '/wm/inbound/status', selector: '.nav-inbound-status', parent: '.nav-inbound' },
-            { keyword: '/wm/outbound', selector: '.nav-outbound' }
+            { keyword: '/wm/outbound/approval', selector: '.nav-outbound-request', parent: '.nav-outbound' },
+            { keyword: '/wm/outbound/status', selector: '.nav-outbound-status', parent: '.nav-outbound' }
         ];
 
         map.forEach(item => {
