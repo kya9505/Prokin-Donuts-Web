@@ -1,7 +1,5 @@
 package com.donut.prokindonutsweb.outbound.controller;
 
-import com.donut.prokindonutsweb.inbound.dto.InboundDTO;
-import com.donut.prokindonutsweb.inbound.dto.InboundDetailDTO;
 import com.donut.prokindonutsweb.outbound.dto.OutboundDTO;
 import com.donut.prokindonutsweb.outbound.dto.OutboundDetailDTO;
 import com.donut.prokindonutsweb.outbound.service.OutboundService;
@@ -23,7 +21,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/wm/outbound")
-public class OutboundController {
+public class OutboundApprovalController {
 
     private final OutboundService outboundService;
 
