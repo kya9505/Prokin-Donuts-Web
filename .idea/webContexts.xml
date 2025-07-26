@@ -8,6 +8,7 @@
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/wm/Dashboard.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/wm" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/wm/inbound/request.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/wm/inbound" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/wm/outbound/approval.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/wm/outbound" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/wm/outbound/status.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/views/wm/outbound" />
       </map>
     </option>
   </component>
