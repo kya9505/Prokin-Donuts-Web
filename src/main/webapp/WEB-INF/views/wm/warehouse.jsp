@@ -79,7 +79,9 @@
                                 </div>
 
                                 <!-- 오른쪽: 등록/수정/삭제 -->
-                                <div class="ms-auto gap-2 mb-20">
+                                <div class="btu-group-1 d-flex gap-2 mb-30">
+                                    <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="btnSetStockThreshold">적정재고량 설정</button>
+                                    <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="btnCheckExpiry">유통기한 점검</button>
                                 </div>
                             </div>
 
@@ -132,6 +134,99 @@
             </div>
 
             <!-- 모달 위치 -->
+
+            <!-- 유통기한 점검 모달 -->
+            <div class="modal fade" id="expiredItemCheckModal" tabindex="-1" aria-labelledby="expiredItemCheckLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="expiredItemCheckLabel">유통기한 점검</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+                        </div>
+                        <div class="modal-body" id="expiredItemModalBody">
+                            <!-- 메시지 및 버튼이 JS로 삽입됨 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 적정재고량 메인 모달 -->
+            <div class="modal fade" id="stockThresholdModal" tabindex="-1" aria-labelledby="stockThresholdLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <!-- 헤더 -->
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="stockThresholdLabel">적정재고량 설정</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+                        </div>
+
+                        <!-- 바디 -->
+                        <div class="modal-body">
+                            <p class="text-danger mb-2">※ 적정 재고량을 입력하고 저장하세요.</p>
+
+                            <!-- 버튼 그룹 -->
+                            <div class="d-flex justify-content-between mb-2">
+                                <!-- 왼쪽 버튼 -->
+                                <div>
+                                    <button type="button" class="main-btn danger-btn-outline btn-sm" onclick="removeSelectedItems()">선택 삭제</button>
+                                </div>
+
+                                <!-- 오른쪽 버튼 -->
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="main-btn warning-btn-outline btn-sm" onclick="openProductSearchModal()">+ 제품 추가</button>
+                                    <button type="button" class="main-btn warning-btn-outline btn-sm">적정재고량 제안 받기</button>
+                                </div>
+                            </div>
+
+                            <!-- 테이블 -->
+                            <div class="table-responsive">
+                                <table class="table text-center align-middle">
+                                    <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 40px;">
+                                            <input type="checkbox" class="form-check-input row-checkbox" id="selectAllStockItems">
+                                        </th>
+                                        <th style="width: 300px;">제품명</th>
+                                        <th style="width: 160px;">적정 재고량</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="stockThresholdTableBody">
+                                    <!-- 동적으로 삽입됨 -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 푸터 -->
+                        <div class="modal-footer">
+                            <button type="button" class="main-btn gray-btn btn-sm" data-bs-dismiss="modal">취소</button>
+                            <button type="button" class="main-btn primary-btn btn-sm" onclick="submitStockThreshold()">저장</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 적정재고량 서브 모달 -->
+            <div class="modal fade" id="productSearchModal" tabindex="-1" aria-labelledby="productSearchLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-md">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">제품 검색</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control" id="productSearchInput" placeholder="제품명을 입력하세요">
+                                <button class="main-btn warning-btn-outline btn-sm btn-hover" type="button" id="productSearchBtn">검색</button>
+                            </div>
+                            <ul class="list-group" id="productSearchResultList">
+                                <!-- 검색 결과 -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </section>
@@ -315,6 +410,353 @@
             table.draw();
         });
 
+        ////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////
+
+        // 1. 유통기한 점검 버튼 클릭
+        $(document).on('click', '#btnCheckExpiry', function () {
+
+            // fetch('/wm/inventory/expired/check')
+            //     .then(res => res.json())
+            //     .then(data => {
+            //         openExpiredItemModal(data); // data 자체를 넘겨야 item 수 체크 가능
+            //     })
+            //     .catch(err => {
+            //         alert('유통기한 점검 중 오류 발생');
+            //         console.error(err);
+            //     });
+
+            // 가짜 데이터 (테스트용)
+            const dummyItems = [
+                { productCode: 'P001', productName: '상품A' },
+                { productCode: 'P002', productName: '상품B' },
+                { productCode: 'P003', productName: '상품C' }
+            ];
+            openExpiredItemModal(dummyItems);
+        });
+
+        function openExpiredItemModal(items) {
+            const body = document.getElementById('expiredItemModalBody');
+            const count = items.length;
+
+            console.log("넘긴 데이터:", items);
+            console.log("갯수:", items.length);
+
+            body.innerHTML = count > 0
+                ? '<p>유통기한이 지난 재고가 ' + count + '건 있습니다. 일괄 폐기하시겠습니까?</p>'
+                + `<div class="d-flex justify-content-end gap-2 mt-3">
+                <button class="main-btn warning-btn-outline btn-sm" data-bs-dismiss="modal">아니오</button>
+                <button class="main-btn primary-btn btn-sm" onclick="handleDiscardExpired()">예</button>
+             </div>`
+                        : `<p>유통기한이 지난 재고가 없습니다.</p>
+             <div class="text-end mt-3">
+                <button class="main-btn primary-btn btn-sm" data-bs-dismiss="modal">확인</button>
+             </div>`;
+
+            new bootstrap.Modal(document.getElementById('expiredItemCheckModal')).show();
+        }
+
+        window.handleDiscardExpired = function () {
+
+        //     fetch('/wm/inventory/expired/discard', {
+        //         method: 'POST'
+        //     })
+        //         .then(res => {
+        //             if (res.ok) {
+        //                 alert('일괄 폐기 완료');
+        //                 location.reload(); // 혹은 테이블만 다시 불러오기
+        //             } else {
+        //                 alert('폐기 실패');
+        //             }
+        //         })
+        //         .catch(err => {
+        //             alert('폐기 요청 중 오류 발생');
+        //             console.error(err);
+        //         });
+
+            alert('일괄 폐기 완료 (테스트)');
+            bootstrap.Modal.getInstance(document.getElementById('expiredItemCheckModal')).hide();
+
+        };
+
+        ////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////
+
+        // 2. 적정재고량 설정 모달 열기
+        $(document).on('click', '#btnSetStockThreshold', function () {
+            const warehouseCode = $('#warehouseSelect').val(); // 창고 코드 선택값
+
+            // ❗ 가짜 데이터 (서버 연동 전 테스트용)
+            const dummyItems = [
+                { productCode: 'P001', productName: '딸기잼도넛', threshold: 120 },
+                { productCode: 'P002', productName: '크림도넛', threshold: 200 }
+            ];
+
+            $('#stockThresholdTableBody').empty();
+
+            // 표시할 데이터가 있는지 확인
+            if (dummyItems.length === 0) {
+                $('#stockThresholdTableBody').html(`
+            <tr class="text-center text-muted">
+                <td colspan="3">적정재고량이 등록된 제품이 없습니다.</td>
+            </tr>
+        `);
+            } else {
+                dummyItems.forEach(item =>
+                    appendStockRow(item.productCode, item.productName, item.threshold)
+                );
+            }
+
+            // 모든 체크박스 해제
+            $('#selectAllStockItems').prop('checked', false);
+            $('#stockThresholdModal').modal('show');
+
+            <%--fetch(`/wm/stock-threshold/list?warehouseCode=${warehouseCode}`)--%>
+            <%--    .then(res => res.json())--%>
+            <%--    .then(items => {--%>
+            <%--        $('#stockThresholdTableBody').empty();--%>
+            <%--        items.forEach(item => appendStockRow(item.productCode, item.productName, item.threshold));--%>
+            <%--        $('#stockThresholdModal').modal('show');--%>
+            <%--    });--%>
+        });
+
+        // 행 추가 함수
+        function appendStockRow(code, name, threshold) {
+            if (isDuplicate(code)) return;
+
+            // ✅ 기존 "없음 메시지" 제거
+            $('#stockThresholdTableBody tr.text-muted').remove();
+
+            const row =
+                '<tr data-code="' + code + '">' +
+                '  <td><input type="checkbox" class="form-check-input row-checkbox"></td>' +
+                '  <td>' +
+                '    <input type="hidden" name="stockItems[][productCode]" value="' + code + '" class="product-code-input"/>' +
+                '    <span class="form-control form-control-sm text-muted bg-light">' + name + '</span>' +
+                '  </td>' +
+                '  <td>' +
+                '    <div class="input-group">' +
+                '      <input type="number" class="form-control form-control-sm required-field threshold-input" ' +
+                '             name="stockItems[][threshold]" value="' + (threshold || '') + '" min="0" step="100">' +
+                '      <span class="input-group-text form-control-sm px-2 py-0" style="height: 30px; line-height: 1.2; font-size: 0.875rem;">개</span>' +
+                '    </div>' +
+                '  </td>' +
+                '</tr>';
+
+            $('#stockThresholdTableBody').append(row);
+        }
+
+        // 선택된 항목 삭제
+        window.removeSelectedItems = function () {
+            const checked = $('#stockThresholdTableBody .row-checkbox:checked');
+
+            if (checked.length === 0) {
+                alert('삭제할 항목을 선택하세요.');
+                return;
+            }
+
+            if (!confirm('선택한 항목을 삭제하시겠습니까?')) {
+                return;
+            }
+
+            checked.closest('tr').remove();
+
+            // ✅ 남은 항목 체크
+            const remaining = $('#stockThresholdTableBody tr').length;
+
+            if (remaining === 0) {
+                // 전체 선택 체크박스 해제
+                $('#selectAllStockItems').prop('checked', false);
+
+                // "항목 없음" 메시지 표시
+                $('#stockThresholdTableBody').html(`
+            <tr class="text-center text-muted">
+                <td colspan="3">적정재고량이 등록된 제품이 없습니다.</td>
+            </tr>
+        `);
+            }
+        };
+
+        // 저장 버튼
+        window.submitStockThreshold = function () {
+            const result = [];
+            let isValid = true;
+
+            $('#stockThresholdTableBody tr').each(function () {
+                const code = $(this).data('code');
+                const thresholdStr = $(this).find('input[name*="threshold"]').val();
+                const threshold = parseInt(thresholdStr);
+
+                if (!code || thresholdStr === '' || isNaN(threshold) || threshold < 1) {
+                    isValid = false;
+                    return false; // break out of .each()
+                }
+
+                result.push({ productCode: code, threshold });
+            });
+
+            if (!isValid) {
+                alert('모든 항목에 유효한 수치를 입력하세요.');
+                return;
+            }
+
+            // 나중에 실제 저장 요청
+            /*
+            fetch('/wm/stock-threshold/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(result)
+            })
+            .then(res => {
+                if (res.ok) {
+                    alert('저장 성공');
+                    $('#stockThresholdModal').modal('hide');
+                } else {
+                    alert('저장 실패');
+                }
+            })
+            .catch(err => {
+                alert('요청 중 오류 발생');
+                console.error(err);
+            });
+            */
+
+            // 테스트용
+            alert('등록 성공 (테스트)');
+            $('#stockThresholdModal').modal('hide');
+        };
+
+
+        // 중복 체크
+        function isDuplicate(code) {
+            return $('.product-code-input').toArray().some(el => $(el).val() === code);
+        }
+
+
+        ////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////
+
+        // 3. 제품 검색 모달 열기
+        window.openProductSearchModal = function () {
+            $('#productSearchModal').modal('show');
+
+            // 1. 검색 입력 초기화
+            $('#productSearchInput').val('');
+
+            // 2. 검색 결과 목록 초기화
+            $('#productSearchResultList').empty();
+        };
+
+        // 포커스 이동(Optional)
+        $('#productSearchModal').on('shown.bs.modal', function () {
+            $('#productSearchInput').focus();
+        });
+
+        // 검색 입력창에서 Enter 키 누르면 검색 실행
+        $(document).on('keydown', '#productSearchInput', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // form submit 방지
+                $('#productSearchBtn').click(); // 검색 버튼 클릭 트리거
+            }
+        });
+
+        // 검색 후 목록 출력
+        $(document).on('click', '#productSearchBtn', function () {
+            const keyword = $('#productSearchInput').val().trim();
+            const resultList = $('#productSearchResultList');
+            resultList.empty();
+
+            if (!keyword) {
+                resultList.append('<li class="list-group-item text-muted">검색어를 입력하세요</li>');
+                return;
+            }
+
+            // 테스트용 더미 데이터
+            const dummyProducts = [
+                { productCode: 'P001', productName: '딸기잼도넛' },
+                { productCode: 'P002', productName: '크림도넛' },
+                { productCode: 'P003', productName: '초코도넛' }
+            ];
+
+            // keyword 필터링 적용
+            const matched = dummyProducts.filter(p =>
+                p.productName.toLowerCase().includes(keyword.toLowerCase())
+            );
+
+            if (!matched.length) {
+                resultList.append('<li class="list-group-item text-muted">검색 결과 없음</li>');
+                return;
+            }
+
+            matched.forEach(function(prod) {
+                const item =
+                    '<li class="list-group-item d-flex justify-content-between align-items-center">' +
+                    '<span>' + prod.productName + '</span>' +
+                    '<button class="main-btn primary-btn btn-sm btn-select-product" ' +
+                    'data-code="' + prod.productCode + '" data-name="' + prod.productName + '">' +
+                    '추가' +
+                    '</button>' +
+                    '</li>';
+                resultList.append(item);
+            });
+
+            <%--fetch(`/wm/products/search?keyword=${encodeURIComponent(keyword)}`)--%>
+            <%--    .then(res => res.json())--%>
+            <%--    .then(products => {--%>
+            <%--        if (!products.length) {--%>
+            <%--            resultList.append('<li class="list-group-item text-muted">검색 결과 없음</li>');--%>
+            <%--            return;--%>
+            <%--        }--%>
+
+            <%--        products.forEach(prod => {--%>
+            <%--            const item = `--%>
+            <%--        <li class="list-group-item d-flex justify-content-between align-items-center">--%>
+            <%--            <span>${prod.productName}</span>--%>
+            <%--            <button class="btn btn-sm btn-primary btn-select-product"--%>
+            <%--                    data-code="${prod.productCode}" data-name="${prod.productName}">--%>
+            <%--                추가--%>
+            <%--            </button>--%>
+            <%--        </li>`;--%>
+            <%--            resultList.append(item);--%>
+            <%--        });--%>
+            <%--    });--%>
+        });
+
+        // 선택 버튼 클릭시 메인 모달에 추가
+        $(document).on('click', '.btn-select-product', function () {
+            const code = $(this).data('code');
+            const name = $(this).data('name');
+
+            if (isDuplicate(code)) {
+                alert('이미 추가된 상품입니다.');
+                return;
+            }
+
+            $('#productSearchModal').modal('hide');
+            appendStockRow(code, name);
+        });
+
+
+    });
+
+    // 체크박스 전체 선택/해제 (제목행)
+    $(document).on('change', '#selectAllStockItems', function () {
+        const checked = $(this).is(':checked');
+        $('#stockThresholdTableBody .row-checkbox').prop('checked', checked);
+    });
+
+    // 체크박스 전체 선택/해제 (내용행)
+    $(document).on('change', '#stockThresholdTableBody .row-checkbox', function () {
+        const all = $('#stockThresholdTableBody .row-checkbox').length;
+        const checked = $('#stockThresholdTableBody .row-checkbox:checked').length;
+
+        $('#selectAllStockItems').prop('checked', all === checked);
     });
 
     //mypageData
