@@ -35,4 +35,57 @@
         WHERE warehouseCode = #{warehouseCode}
     </select>
 
+    <!-- 4) 유통기한 지난 재고 조회 -->
+    <select id="selectExpiredItems" resultType="com.donut.prokindonutsweb.inventory.dto.InventoryExpiredDTO">
+        SELECT i.inventoryCode, i.productCode, p.productName
+        FROM Inventory i
+                 JOIN Product p ON i.productCode = p.productCode
+        WHERE i.expirationDate &lt; NOW()
+    </select>
+
+    <!-- 5) 유통기한 지난 재고 일괄 폐기 -->
+    <delete id="deleteExpiredItems">
+        DELETE FROM Inventory
+        WHERE expirationDate &lt; CURDATE()
+    </delete>
+
+    <!-- 6) 창고별 적정재고 조회 -->
+    <select id="selectByWarehouse" resultType="com.donut.prokindonutsweb.inventory.dto.MinStockDTO">
+        SELECT
+            wms.warehouseCode,
+            wms.productCode,
+            p.productName,
+            wms.MinStock AS minStock
+        FROM WarehouseMinStock wms
+                 JOIN Product p ON wms.productCode = p.productCode
+        WHERE wms.warehouseCode = #{warehouseCode}
+    </select>
+
+    <!-- 7-1) 창고별 적정재고 수정 : 전달된 항목이 기존에 있으면 update, 없으면 insert -->
+    <insert id="upsert">
+        INSERT INTO WarehouseMinStock (warehouseCode, productCode, MinStock)
+        VALUES (#{warehouseCode}, #{productCode}, #{minStock})
+        ON DUPLICATE KEY UPDATE MinStock = #{minStock}
+    </insert>
+
+    <!-- 7-2) 창고별 적정재고 수정 : 전달되지 않은 항목에 대해 삭제 조치 -->
+    <delete id="deleteMissingItems">
+        DELETE FROM WarehouseMinStock
+        WHERE warehouseCode = #{warehouseCode}
+        <if test="productCodes != null and productCodes.size() > 0">
+            AND productCode NOT IN
+            <foreach item="code" collection="productCodes" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+    </delete>
+
+    <!-- 8) 창고별 적정재고 추가 : 검색결과를 Product 에서 조회 -->
+    <select id="searchProducts" resultType="com.donut.prokindonutsweb.inventory.dto.MinStockProductDTO">
+        SELECT productCode, productName
+        FROM Product
+        WHERE productName LIKE #{keyword}
+        ORDER BY productName
+    </select>
+
 </mapper>

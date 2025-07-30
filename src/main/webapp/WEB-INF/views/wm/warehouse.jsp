@@ -37,6 +37,7 @@
                     <!-- Start card -->
                     <div class="card-style mb-30">
                         <h6 class="mb-10">재고 목록 : ${warehouseName} ( ${warehouseCode} )</h6>
+                        <input type="hidden" id="hiddenWarehouseCode" value="${warehouseCode}">
                         <p class="text-sm mb-20"></p>
 
                             <!-- 원하는 필터(중분류, 소분류) 설정 -->
@@ -417,24 +418,18 @@
 
         // 1. 유통기한 점검 버튼 클릭
         $(document).on('click', '#btnCheckExpiry', function () {
-
-            // fetch('/wm/inventory/expired/check')
-            //     .then(res => res.json())
-            //     .then(data => {
-            //         openExpiredItemModal(data); // data 자체를 넘겨야 item 수 체크 가능
-            //     })
-            //     .catch(err => {
-            //         alert('유통기한 점검 중 오류 발생');
-            //         console.error(err);
-            //     });
-
-            // 가짜 데이터 (테스트용)
-            const dummyItems = [
-                { productCode: 'P001', productName: '상품A' },
-                { productCode: 'P002', productName: '상품B' },
-                { productCode: 'P003', productName: '상품C' }
-            ];
-            openExpiredItemModal(dummyItems);
+            fetch('/wm/warehouse/expired/check')
+                .then(res => {
+                    if (!res.ok) throw new Error("서버 오류");
+                    return res.json();
+                })
+                .then(data => {
+                    openExpiredItemModal(data); // data: expired 재고 목록
+                })
+                .catch(err => {
+                    alert('유통기한 점검 중 오류 발생');
+                    console.error(err);
+                });
         });
 
         function openExpiredItemModal(items) {
@@ -459,26 +454,22 @@
         }
 
         window.handleDiscardExpired = function () {
-
-        //     fetch('/wm/inventory/expired/discard', {
-        //         method: 'POST'
-        //     })
-        //         .then(res => {
-        //             if (res.ok) {
-        //                 alert('일괄 폐기 완료');
-        //                 location.reload(); // 혹은 테이블만 다시 불러오기
-        //             } else {
-        //                 alert('폐기 실패');
-        //             }
-        //         })
-        //         .catch(err => {
-        //             alert('폐기 요청 중 오류 발생');
-        //             console.error(err);
-        //         });
-
-            alert('일괄 폐기 완료 (테스트)');
-            bootstrap.Modal.getInstance(document.getElementById('expiredItemCheckModal')).hide();
-
+            fetch('/wm/warehouse/expired/discard', {
+                method: 'POST'
+            })
+                .then(res => {
+                    if (res.ok) {
+                        alert('일괄 폐기 완료');
+                        bootstrap.Modal.getInstance(document.getElementById('expiredItemCheckModal')).hide();
+                        location.reload(); // 전체 페이지 새로고침 또는 테이블만 리로딩 가능
+                    } else {
+                        alert('폐기 실패');
+                    }
+                })
+                .catch(err => {
+                    alert('폐기 요청 중 오류 발생');
+                    console.error(err);
+                });
         };
 
         ////////////////////////////////////////////////////////
@@ -488,40 +479,36 @@
 
         // 2. 적정재고량 설정 모달 열기
         $(document).on('click', '#btnSetStockThreshold', function () {
-            const warehouseCode = $('#warehouseSelect').val(); // 창고 코드 선택값
+            // 1) 서버에서 적정재고량 불러오기
+            fetch(`/wm/warehouse/threshold/list`)
+                .then(res => {
+                    console.log(res);
+                    if (!res.ok) throw new Error('서버 오류');
+                    return res.json();
+                })
+                .then(items => {
+                    $('#stockThresholdTableBody').empty();
 
-            // ❗ 가짜 데이터 (서버 연동 전 테스트용)
-            const dummyItems = [
-                { productCode: 'P001', productName: '딸기잼도넛', threshold: 120 },
-                { productCode: 'P002', productName: '크림도넛', threshold: 200 }
-            ];
+                    // 2) 데이터가 없을 경우 안내 메시지
+                    if (items.length === 0) {
+                        $('#stockThresholdTableBody').html(`
+                    <tr class="text-center text-muted">
+                        <td colspan="3">적정재고량이 등록된 제품이 없습니다.</td>
+                    </tr>
+                `);
+                    } else {
+                        // 3) 테이블에 행 추가
+                        items.forEach(item => appendStockRow(item.productCode, item.productName, item.minStock));
+                    }
 
-            $('#stockThresholdTableBody').empty();
-
-            // 표시할 데이터가 있는지 확인
-            if (dummyItems.length === 0) {
-                $('#stockThresholdTableBody').html(`
-            <tr class="text-center text-muted">
-                <td colspan="3">적정재고량이 등록된 제품이 없습니다.</td>
-            </tr>
-        `);
-            } else {
-                dummyItems.forEach(item =>
-                    appendStockRow(item.productCode, item.productName, item.threshold)
-                );
-            }
-
-            // 모든 체크박스 해제
-            $('#selectAllStockItems').prop('checked', false);
-            $('#stockThresholdModal').modal('show');
-
-            <%--fetch(`/wm/stock-threshold/list?warehouseCode=${warehouseCode}`)--%>
-            <%--    .then(res => res.json())--%>
-            <%--    .then(items => {--%>
-            <%--        $('#stockThresholdTableBody').empty();--%>
-            <%--        items.forEach(item => appendStockRow(item.productCode, item.productName, item.threshold));--%>
-            <%--        $('#stockThresholdModal').modal('show');--%>
-            <%--    });--%>
+                    // 4) 모달 열기 및 전체 체크박스 해제
+                    $('#selectAllStockItems').prop('checked', false);
+                    $('#stockThresholdModal').modal('show');
+                })
+                .catch(err => {
+                    alert('적정재고량 조회 중 오류 발생');
+                    console.error(err);
+                });
         });
 
         // 행 추가 함수
@@ -583,53 +570,56 @@
 
         // 저장 버튼
         window.submitStockThreshold = function () {
+            const warehouseCode = $('#hiddenWarehouseCode').val();
+
             const result = [];
             let isValid = true;
 
             $('#stockThresholdTableBody tr').each(function () {
                 const code = $(this).data('code');
+                const name = $(this).find('td:nth-child(2) span').text().trim();
                 const thresholdStr = $(this).find('input[name*="threshold"]').val();
                 const threshold = parseInt(thresholdStr);
 
                 if (!code || thresholdStr === '' || isNaN(threshold) || threshold < 1) {
                     isValid = false;
-                    return false; // break out of .each()
+                    return false;
                 }
 
-                result.push({ productCode: code, threshold });
+                result.push({
+                    productName: name,
+                    productCode: code,
+                    minStock: threshold,
+                    warehouseCode: warehouseCode });
             });
 
-            if (!isValid) {
-                alert('모든 항목에 유효한 수치를 입력하세요.');
-                return;
+            // 전체 삭제 상황 → warehouseCode만 포함해 전송
+            if (result.length === 0) {
+                result.push({
+                    warehouseCode: warehouseCode
+                });
             }
 
-            // 나중에 실제 저장 요청
-            /*
-            fetch('/wm/stock-threshold/save', {
+            // 실제 저장 요청
+            fetch('/wm/warehouse/threshold/save', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(result)
+                body: JSON.stringify(result),
+                credentials: 'include'
             })
-            .then(res => {
-                if (res.ok) {
-                    alert('저장 성공');
-                    $('#stockThresholdModal').modal('hide');
-                } else {
-                    alert('저장 실패');
-                }
-            })
-            .catch(err => {
-                alert('요청 중 오류 발생');
-                console.error(err);
-            });
-            */
-
-            // 테스트용
-            alert('등록 성공 (테스트)');
-            $('#stockThresholdModal').modal('hide');
+                .then(res => {
+                    if (res.ok) {
+                        alert('저장 성공');
+                        $('#stockThresholdModal').modal('hide');
+                    } else {
+                        alert('저장 실패');
+                    }
+                })
+                .catch(err => {
+                    alert('요청 중 오류 발생');
+                    console.error(err);
+                });
         };
-
 
         // 중복 체크
         function isDuplicate(code) {
@@ -677,55 +667,33 @@
                 return;
             }
 
-            // 테스트용 더미 데이터
-            const dummyProducts = [
-                { productCode: 'P001', productName: '딸기잼도넛' },
-                { productCode: 'P002', productName: '크림도넛' },
-                { productCode: 'P003', productName: '초코도넛' }
-            ];
+            fetch('/wm/warehouse/threshold/search?keyword=' + encodeURIComponent(keyword))
+                .then(res => {
+                    if (!res.ok) throw new Error("서버 응답 실패");
+                    return res.json();
+                })
+                .then(products => {
+                    if (!products.length) {
+                        resultList.append('<li class="list-group-item text-muted">검색 결과 없음</li>');
+                        return;
+                    }
 
-            // keyword 필터링 적용
-            const matched = dummyProducts.filter(p =>
-                p.productName.toLowerCase().includes(keyword.toLowerCase())
-            );
-
-            if (!matched.length) {
-                resultList.append('<li class="list-group-item text-muted">검색 결과 없음</li>');
-                return;
-            }
-
-            matched.forEach(function(prod) {
-                const item =
-                    '<li class="list-group-item d-flex justify-content-between align-items-center">' +
-                    '<span>' + prod.productName + '</span>' +
-                    '<button class="main-btn primary-btn btn-sm btn-select-product" ' +
-                    'data-code="' + prod.productCode + '" data-name="' + prod.productName + '">' +
-                    '추가' +
-                    '</button>' +
-                    '</li>';
-                resultList.append(item);
-            });
-
-            <%--fetch(`/wm/products/search?keyword=${encodeURIComponent(keyword)}`)--%>
-            <%--    .then(res => res.json())--%>
-            <%--    .then(products => {--%>
-            <%--        if (!products.length) {--%>
-            <%--            resultList.append('<li class="list-group-item text-muted">검색 결과 없음</li>');--%>
-            <%--            return;--%>
-            <%--        }--%>
-
-            <%--        products.forEach(prod => {--%>
-            <%--            const item = `--%>
-            <%--        <li class="list-group-item d-flex justify-content-between align-items-center">--%>
-            <%--            <span>${prod.productName}</span>--%>
-            <%--            <button class="btn btn-sm btn-primary btn-select-product"--%>
-            <%--                    data-code="${prod.productCode}" data-name="${prod.productName}">--%>
-            <%--                추가--%>
-            <%--            </button>--%>
-            <%--        </li>`;--%>
-            <%--            resultList.append(item);--%>
-            <%--        });--%>
-            <%--    });--%>
+                    products.forEach(prod => {
+                        const item =
+                            '<li class="list-group-item d-flex justify-content-between align-items-center">' +
+                            '<span>' + prod.productName + '</span>' +
+                            '<button class="main-btn primary-btn btn-sm btn-select-product" ' +
+                            'data-code="' + prod.productCode + '" data-name="' + prod.productName + '">' +
+                            '추가' +
+                            '</button>' +
+                            '</li>';
+                        resultList.append(item);
+                    });
+                })
+                .catch(err => {
+                    console.error('❌ fetch 실패:', err);
+                    resultList.append('<li class="list-group-item text-danger">검색 중 오류 발생</li>');
+                });
         });
 
         // 선택 버튼 클릭시 메인 모달에 추가
@@ -741,8 +709,6 @@
             $('#productSearchModal').modal('hide');
             appendStockRow(code, name);
         });
-
-
     });
 
     // 체크박스 전체 선택/해제 (제목행)
