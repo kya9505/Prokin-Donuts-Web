@@ -2,11 +2,9 @@ package com.donut.prokindonutsweb.dashboard.controller;
 
 import com.donut.prokindonutsweb.dashboard.dto.OrderInboundDTO;
 import com.donut.prokindonutsweb.dashboard.dto.OrderInboundRateDTO;
+import com.donut.prokindonutsweb.dashboard.dto.OutboundInventoryDTO;
 import com.donut.prokindonutsweb.dashboard.service.QhDashboardService;
-import com.donut.prokindonutsweb.dashboard.dto.OrderInventoryDTO;
 import com.donut.prokindonutsweb.inventory.service.QhInventoryService;
-import com.donut.prokindonutsweb.warehouse.mapper.WarehouseMapper;
-import com.donut.prokindonutsweb.warehouse.service.WarehouseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -38,7 +36,7 @@ public class QhDashboardController{
     //최근 한달 발주량 대비 재고량
     @GetMapping("/qh/order-vs-inventory")
     @ResponseBody
-    public List<OrderInventoryDTO> getOrderRequestVsInventory() {
+    public List<OutboundInventoryDTO> getOrderRequestVsInventory() {
         return qhDashboardService.getOrderRequestVsInventory();
     }
 
