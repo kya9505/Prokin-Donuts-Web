@@ -1,8 +1,8 @@
 package com.donut.prokindonutsweb.dashboard.service;
 
 import com.donut.prokindonutsweb.dashboard.dto.OrderInboundDTO;
+import com.donut.prokindonutsweb.dashboard.dto.OutboundInventoryDTO;
 import com.donut.prokindonutsweb.dashboard.mapper.QhDashboardMapper;
-import com.donut.prokindonutsweb.dashboard.dto.OrderInventoryDTO;
 import com.donut.prokindonutsweb.warehouse.mapper.WarehouseMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -18,28 +18,28 @@ public class QhDashboardServiceImpl implements QhDashboardService {
     private final QhDashboardMapper qhDashboardMapper;
 
     @Override
-    public int CountNewRequest() {
-       return qhDashboardMapper.CountNewRequest();
+    public int countNewRequest() {
+       return qhDashboardMapper.countNewRequest();
     }
 
     @Override
-    public int CountNewInbound() {
-        return qhDashboardMapper.CountNewInbound();
+    public int countNewInbound() {
+        return qhDashboardMapper.countNewInbound();
     }
 
     @Override
-    public int TotalFranchise() {
-        return qhDashboardMapper.TotalFranchise();
+    public int totalFranchise() {
+        return qhDashboardMapper.totalFranchise();
     }
 
     @Override
-    public int TotalWarehouse() {
-        return qhDashboardMapper.TotalWarehouse();
+    public int totalWarehouse() {
+        return qhDashboardMapper.totalWarehouse();
     }
 
     //발주요청/입고량
     @Override
-    public List<OrderInventoryDTO> getOrderRequestVsInventory() {
+    public List<OutboundInventoryDTO> getOrderRequestVsInventory() {
         return qhDashboardMapper.getOrderRequestVsInventory();
     }
 

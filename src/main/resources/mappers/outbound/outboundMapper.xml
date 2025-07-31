@@ -4,19 +4,25 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.donut.prokindonutsweb.outbound.mapper.OutboundMapper">
 
-<!--    출고 목록 반환-->
+<!-- 출고 목록 반환-->
     <select id="selectAllOutboundList" resultType="com.donut.prokindonutsweb.outbound.dto.OutboundDTO">
-        select orderCode as OutboundCode, orderDate as outboundDate, orderStatus as outboundStatus,
-        franchiseCode, warehouseCode from `Order` where warehouseCode = #{warehouseCode}
+        SELECT
+        o.outboundCode,
+        p.productCode,
+        p.productName,
+        o.outboundDate,
+        o.vehicleCode,
+        od.franchiseCode,
+        o.outboundStatus
+        FROM outbound o
+        JOIN inventory i ON o.inventoryCode = i.inventoryCode
+        JOIN product p ON i.productCode = p.productCode
+        JOIN orderdetail odd ON o.orderDetailCode = odd.orderDetailCode
+        JOIN `order` od ON od.orderCode = odd.orderCode
+        WHERE i.warehouseCode = #{warehouseCode}
     </select>
 
-<!--    출고 상세 목록 반환-->
-    <select id="selectAllOutboundDetailList" resultType="com.donut.prokindonutsweb.outbound.dto.OutboundDetailDTO">
-        select orderDetailCode as outboundDetailCode, quantity, orderCode as outboundCode, productCode
-        from OrderDetail
-    </select>
-
-<!--    재고 존재 확인 반환-->
+    <!--    재고 존재 확인 반환-->
     <select id="checkInventory" resultType="boolean">
         select case
             when COUNT(*) = SUM(CASE when i.quantity >= o.quantity THEN 1 ELSE 0 END)

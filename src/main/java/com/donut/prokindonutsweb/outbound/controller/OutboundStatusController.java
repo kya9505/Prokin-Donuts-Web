@@ -1,7 +1,6 @@
 package com.donut.prokindonutsweb.outbound.controller;
 
 import com.donut.prokindonutsweb.outbound.dto.OutboundDTO;
-import com.donut.prokindonutsweb.outbound.dto.OutboundDetailDTO;
 import com.donut.prokindonutsweb.outbound.service.OutboundService;
 import com.donut.prokindonutsweb.security.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +31,8 @@ public class OutboundStatusController {
 
 
         List<OutboundDTO> outboundList = outboundService.findOutboundList(warehouseCode);
-        List<OutboundDetailDTO> outboundDetailList = outboundService.findOutboundDetailList();
 
         model.addAttribute("outboundList", outboundList);
-        model.addAttribute("outboundDetailList", outboundDetailList);
         return "wm/outbound/status";
     }
 }
