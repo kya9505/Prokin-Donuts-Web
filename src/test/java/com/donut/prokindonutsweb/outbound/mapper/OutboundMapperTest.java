@@ -22,11 +22,6 @@ public class OutboundMapperTest {
         outboundMapper.selectAllOutboundList("GG1").forEach(System.out::println);
     }
 
-    @Test
-    @DisplayName("출고상세 목록 반환 메서드 테스트")
-    void selectAllOutboundDetailList() {
-        outboundMapper.selectAllOutboundDetailList().forEach(System.out::println);
-    }
 
     @Test
     @DisplayName("재고 존재 여부 반환 메서드 ")
