@@ -18,22 +18,22 @@ public class QhDashboardServiceImpl implements QhDashboardService {
     private final QhDashboardMapper qhDashboardMapper;
 
     @Override
-    public int CountNewRequest() {
+    public int countNewRequest() {
        return qhDashboardMapper.countNewRequest();
     }
 
     @Override
-    public int CountNewInbound() {
+    public int countNewInbound() {
         return qhDashboardMapper.countNewInbound();
     }
 
     @Override
-    public int TotalFranchise() {
+    public int totalFranchise() {
         return qhDashboardMapper.totalFranchise();
     }
 
     @Override
-    public int TotalWarehouse() {
+    public int totalWarehouse() {
         return qhDashboardMapper.totalWarehouse();
     }
 
