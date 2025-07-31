@@ -19,7 +19,7 @@ public class OutboundMapperTest {
     @Test
     @DisplayName("출고 목록 반환 메서드 테스트")
     void selectAllOutboundList() {
-        outboundMapper.selectAllOutboundList("GG1").forEach(System.out::println);
+        outboundMapper.selectAllOutboundList("DJ1").forEach(System.out::println);
     }
 
 
