@@ -28,10 +28,10 @@ public class QhDashboardController{
 
     @GetMapping("/qh/Dashboard")
     public void QDashboard(Model model, @ModelAttribute("warehouseCode") String warehouseCode){
-     model.addAttribute("CountNewRequest",qhDashboardService.CountNewRequest());
-            model.addAttribute("CountNewInbound",qhDashboardService.CountNewInbound());
-            model.addAttribute("TotalFranchise",qhDashboardService.TotalFranchise());
-            model.addAttribute("TotalWarehouse",qhDashboardService.TotalWarehouse());
+     model.addAttribute("CountNewRequest",qhDashboardService.countNewRequest());
+            model.addAttribute("CountNewInbound",qhDashboardService.countNewInbound());
+            model.addAttribute("TotalFranchise",qhDashboardService.totalFranchise());
+            model.addAttribute("TotalWarehouse",qhDashboardService.totalWarehouse());
             model.addAttribute("warehouseList",qhInventoryService.findWarehouseList());
     }
 
