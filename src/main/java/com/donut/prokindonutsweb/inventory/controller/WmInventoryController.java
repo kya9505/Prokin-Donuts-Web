@@ -1,29 +1,32 @@
 package com.donut.prokindonutsweb.inventory.controller;
 
+import com.donut.prokindonutsweb.inbound.dto.ProductDTO;
+import com.donut.prokindonutsweb.inventory.dto.InventoryExpiredDTO;
 import com.donut.prokindonutsweb.inventory.dto.InventorySelectDTO;
+import com.donut.prokindonutsweb.inventory.dto.MinStockDTO;
 import com.donut.prokindonutsweb.inventory.service.WmInventoryService;
 import com.donut.prokindonutsweb.product.service.CategoryFilterService;
 import com.donut.prokindonutsweb.security.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-@Controller
-@Log4j2
-@RequiredArgsConstructor
-@RequestMapping("/wm/warehouse")
-public class WmInventoryController {
   
-  private final WmInventoryService wmInventoryService;
-  private final CategoryFilterService categoryFilterService;
-  
-  // 1) 초기 페이지 로딩
+  @Controller
+  @Log4j2
+  @RequiredArgsConstructor
+  @RequestMapping("/wm/warehouse")
+  public class WmInventoryController {
+    
+    private final WmInventoryService wmInventoryService;
+    private final CategoryFilterService categoryFilterService;
+    
+    // 1) 초기 페이지 로딩
   @GetMapping
   public void wmGetInventoryList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
     log.info(String.valueOf(user));
@@ -63,6 +66,44 @@ public class WmInventoryController {
     // 7. 중분류 목록을 조회
     List<String> categoryMidList = categoryFilterService.findCategoryMidList();
     model.addAttribute("categoryMidList", categoryMidList);
+  }
+  
+  // 2) 유통기한 지난 재고 조회
+  @GetMapping("/expired/check")
+  public ResponseEntity<List<InventoryExpiredDTO>> checkExpiredItems() {
+    log.info("Checking expired inventory items");
+    List<InventoryExpiredDTO> expiredList = wmInventoryService.getExpiredItems();
+    return ResponseEntity.ok(expiredList);
+  }
+  
+  // 3) 유통기한 지난 재고 일괄 폐기
+  @PostMapping("/expired/discard")
+  public ResponseEntity<Void> discardExpiredItems() {
+    log.info("Discarding expired inventory items");
+    wmInventoryService.discardExpiredItems();
+    return ResponseEntity.ok().build();
+  }
+  
+  @GetMapping("/threshold/list")
+  public ResponseEntity<List<MinStockDTO>> getMinStockList(@AuthenticationPrincipal CustomUserDetails user) {
+    String warehouseCode = wmInventoryService.findWarehouseCodeByMemberCode(user.getMemberCode());
+    List<MinStockDTO> result = wmInventoryService.getMinStockList(warehouseCode);
+    log.info("[적정재고 조회] warehouseCode: {}", result);
+    return ResponseEntity.ok(result);
+  }
+  
+  @PostMapping("/threshold/save")
+  public ResponseEntity<Void> saveMinStockList(@RequestBody List<MinStockDTO> minStockList) {
+    log.info("[적정재고 저장 요청] 건수: {}", minStockList.size());
+    wmInventoryService.saveMinStockList(minStockList);
+    return ResponseEntity.ok().build();
+  }
+  
+  @GetMapping("/threshold/search")
+  public ResponseEntity<List<ProductDTO>> searchProducts(@RequestParam String keyword) {
+    log.info("🔴🔴🔴🔴🔴🔴");
+    List<ProductDTO> products = wmInventoryService.searchProducts(keyword);
+    return ResponseEntity.ok(products);
   }
   
 }
