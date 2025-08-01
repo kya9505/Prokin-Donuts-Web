@@ -115,28 +115,30 @@ class InboundMapperTest {
     }
 
     @Test
-    @DisplayName("입고 완료시 재고에 반영하는 메서드(재고 O)")
-    void updateInventory1() {
-        InventoryVO vo = InventoryVO.builder()
-                .inventoryCode("BS1-BGL1")
-                .quantity(150)
+    @DisplayName("재고 변경사항 적용 테스트")
+    void updateInventory() {
+        InventoryVO vo1 = InventoryVO.builder()
+                .quantity(100)
                 .productCode("BGL1")
-                .warehouseCode("BS1")
+                .warehouseCode("GG1")
+                .barcode("GG1-BGL1-20250804")
+                .expirationDate(LocalDate.parse("2025-08-04"))
                 .build();
-        inboundMapper.updateInventory(vo);
+
+        InventoryVO vo2 = InventoryVO.builder()
+                .quantity(200)
+                .productCode("DGL3")
+                .warehouseCode("GG1")
+                .barcode("GG1-DGL3-20250805")
+                .expirationDate(LocalDate.parse("2025-08-05"))
+                .build();
+
+        List<InventoryVO> list = new ArrayList<>();
+        list.add(vo1);
+        list.add(vo2);
+        inboundMapper.updateInventory(vo2);
     }
 
-    @Test
-    @DisplayName("입고 완료시 재고에 반영하는 메서드(재고 X)")
-    void updateInventory2() {
-        InventoryVO vo = InventoryVO.builder()
-                .inventoryCode("BS3-BGL1")
-                .quantity(150)
-                .productCode("BGL1")
-                .warehouseCode("BS1")
-                .build();
-        inboundMapper.updateInventory(vo);
-    }
 
     @Test
     @DisplayName("입고 날짜 수정 메서드")
