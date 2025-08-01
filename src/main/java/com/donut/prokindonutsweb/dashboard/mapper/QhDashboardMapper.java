@@ -9,7 +9,7 @@ public interface QhDashboardMapper {
     int countNewInbound();
     int totalFranchise();
     int totalWarehouse();
-    List<OutboundInventoryDTO> getOrderRequestVsInventory();
+    List<OrderInventoryDTO> getOrderRequestVsInventory();
     int countApprovedInboundStatus(String warehouseCode);
     int countTotalInbound(String warehouseCode);
     int countApprovedOrderStatus(String warehouseCode);

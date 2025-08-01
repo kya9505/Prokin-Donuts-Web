@@ -3,10 +3,10 @@ package com.donut.prokindonutsweb.dashboard.service;
 import com.donut.prokindonutsweb.dashboard.dto.OrderInboundDTO;
 import com.donut.prokindonutsweb.dashboard.dto.OutboundInventoryDTO;
 import com.donut.prokindonutsweb.dashboard.mapper.QhDashboardMapper;
-import com.donut.prokindonutsweb.warehouse.mapper.WarehouseMapper;
+import com.donut.prokindonutsweb.dashboard.dto.OrderInventoryDTO;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,7 +53,7 @@ public class QhDashboardServiceImpl implements QhDashboardService {
                 .totalOrderQuantity(qhDashboardMapper.countTotalOrder(warehouseCode))
                 .build();
     }
-    //창고이믈 -> 번호로 변환
+    //창고이름 -> 번호로 변환
     @Override
     public String getWarehouseCode(String warehouse) {
         return qhDashboardMapper.getWarehouseCode(warehouse);
