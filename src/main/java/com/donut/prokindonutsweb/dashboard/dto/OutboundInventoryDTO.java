@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderInventoryDTO {
+public class OutboundInventoryDTO {
     private String productName;
-    private int totalOrderRequest;
+    private int totalOutboundRequest;
     private  int totalInventory;
 }

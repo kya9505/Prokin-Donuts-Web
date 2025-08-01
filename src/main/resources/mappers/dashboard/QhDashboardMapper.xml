@@ -26,12 +26,12 @@
     </select>
 
     <!--최근 3개월간 상품별 발주요청량 -재고량 순위 상위 5개 -->
-    <select id="getOrderRequestVsInventory" resultType="OrderInventoryDTO">
+    <select id="getOrderRequestVsInventory" resultType="OutboundInventoryDTO">
         SELECT
             productName,
-            IFNULL(totalOrderRequest, 0) AS totalOrderRequest,
+            IFNULL(totalOutboundRequest, 0) AS totalOutboundRequest,
             IFNULL(totalInventory, 0) AS totalInventory
-        FROM OrderInventory
+        FROM OutboundInventory
         ORDER BY (totalOrderRequest/totalInventory) DESC
             LIMIT 5
     </select>
@@ -62,6 +62,7 @@
 
     <!--총 출고량-->
     <select id="countTotalOrder" resultType="int">
+
     select count(*)
     from Outbound o
              join Inventory i on o.inventoryCode = i.inventoryCode
