@@ -1,7 +1,6 @@
 package com.donut.prokindonutsweb.dashboard.service;
 
 import com.donut.prokindonutsweb.dashboard.dto.OrderInboundDTO;
-import com.donut.prokindonutsweb.dashboard.dto.OutboundInventoryDTO;
 import com.donut.prokindonutsweb.dashboard.mapper.QhDashboardMapper;
 import com.donut.prokindonutsweb.dashboard.dto.OrderInventoryDTO;
 
@@ -39,7 +38,7 @@ public class QhDashboardServiceImpl implements QhDashboardService {
 
     //발주요청/입고량
     @Override
-    public List<OutboundInventoryDTO> getOrderRequestVsInventory() {
+    public List<OrderInventoryDTO> getOrderRequestVsInventory() {
         return qhDashboardMapper.getOrderRequestVsInventory();
     }
 
