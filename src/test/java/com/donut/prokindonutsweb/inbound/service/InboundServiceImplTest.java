@@ -3,6 +3,8 @@ package com.donut.prokindonutsweb.inbound.service;
 import com.donut.prokindonutsweb.inbound.dto.InboundDTO;
 import com.donut.prokindonutsweb.inbound.dto.InboundDetailDTO;
 import com.donut.prokindonutsweb.inbound.dto.InboundUpdateDTO;
+import com.donut.prokindonutsweb.inbound.dto.InventoryDTO;
+import com.donut.prokindonutsweb.inbound.vo.InventoryVO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Log4j2
 @ExtendWith(SpringExtension.class)
@@ -150,6 +153,27 @@ class InboundServiceImplTest {
     @DisplayName("입고현황 목록 반환")
     void findAllInboundStatusList() {
         inboundService.findInboundStatusList().ifPresent(System.out::println);
+    }
+
+    @Test
+    @DisplayName("입고완료시 재고 반영 테스트")
+    void updateInventory() {
+        List<InventoryDTO> list = new ArrayList<>();
+
+        InventoryDTO dto1 = InventoryDTO.builder()
+                .warehouseCode("GG1")
+                .quantity(400)
+                .productCode("DGL3")
+                .build();
+        list.add(dto1);
+
+//        InventoryDTO dto2 = InventoryDTO.builder()
+//                .warehouseCode("GG1")
+//                .quantity(400)
+//                .productCode("DGL3")
+//                .build();
+//        list.add(dto2);
+        inboundService.updateInventory(list);
     }
 
 }
