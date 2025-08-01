@@ -2,11 +2,9 @@ package com.donut.prokindonutsweb.dashboard.controller;
 
 import com.donut.prokindonutsweb.dashboard.dto.OrderInboundDTO;
 import com.donut.prokindonutsweb.dashboard.dto.OrderInboundRateDTO;
+import com.donut.prokindonutsweb.dashboard.dto.OutboundInventoryDTO;
 import com.donut.prokindonutsweb.dashboard.service.QhDashboardService;
-import com.donut.prokindonutsweb.dashboard.dto.OrderInventoryDTO;
 import com.donut.prokindonutsweb.inventory.service.QhInventoryService;
-import com.donut.prokindonutsweb.warehouse.mapper.WarehouseMapper;
-import com.donut.prokindonutsweb.warehouse.service.WarehouseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -28,16 +26,17 @@ public class QhDashboardController{
 
     @GetMapping("/qh/Dashboard")
     public void QDashboard(Model model, @ModelAttribute("warehouseCode") String warehouseCode){
-     model.addAttribute("CountNewRequest",qhDashboardService.CountNewRequest());
-            model.addAttribute("CountNewInbound",qhDashboardService.CountNewInbound());
-            model.addAttribute("TotalFranchise",qhDashboardService.TotalFranchise());
-            model.addAttribute("TotalWarehouse",qhDashboardService.TotalWarehouse());
+     model.addAttribute("CountNewRequest",qhDashboardService.countNewRequest());
+            model.addAttribute("CountNewInbound",qhDashboardService.countNewInbound());
+            model.addAttribute("TotalFranchise",qhDashboardService.totalFranchise());
+            model.addAttribute("TotalWarehouse",qhDashboardService.totalWarehouse());
             model.addAttribute("warehouseList",qhInventoryService.findWarehouseList());
     }
 
+    //최근 한달 발주량 대비 재고량
     @GetMapping("/qh/order-vs-inventory")
     @ResponseBody
-    public List<OrderInventoryDTO> getOrderRequestVsInventory() {
+    public List<OutboundInventoryDTO> getOrderRequestVsInventory() {
         return qhDashboardService.getOrderRequestVsInventory();
     }
 

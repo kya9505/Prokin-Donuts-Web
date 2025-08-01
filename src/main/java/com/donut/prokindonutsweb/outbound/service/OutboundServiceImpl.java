@@ -1,7 +1,6 @@
 package com.donut.prokindonutsweb.outbound.service;
 
 import com.donut.prokindonutsweb.outbound.dto.OutboundDTO;
-import com.donut.prokindonutsweb.outbound.dto.OutboundDetailDTO;
 import com.donut.prokindonutsweb.outbound.mapper.OutboundMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,10 +19,6 @@ public class OutboundServiceImpl implements OutboundService{
 
     }
 
-    @Override
-    public List<OutboundDetailDTO> findOutboundDetailList() {
-        return outboundMapper.selectAllOutboundDetailList();
-    }
 
     // 재고 존재 여부 확인
     @Override

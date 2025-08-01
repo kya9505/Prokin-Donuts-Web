@@ -1,9 +1,6 @@
 package com.donut.prokindonutsweb.outbound.controller;
 
-import com.donut.prokindonutsweb.inbound.dto.InboundDTO;
-import com.donut.prokindonutsweb.inbound.dto.InboundDetailDTO;
 import com.donut.prokindonutsweb.outbound.dto.OutboundDTO;
-import com.donut.prokindonutsweb.outbound.dto.OutboundDetailDTO;
 import com.donut.prokindonutsweb.outbound.service.OutboundService;
 import com.donut.prokindonutsweb.security.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -23,12 +20,12 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/wm/outbound")
-public class OutboundController {
+public class OutboundApprovalController {
 
     private final OutboundService outboundService;
 
     @GetMapping("/approval")
-    public void getOutboundList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
+    public String getOutboundList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
         log.info("check");
 
         String memberCode = user.getMemberCode();
@@ -37,11 +34,9 @@ public class OutboundController {
 
 
         List<OutboundDTO> outboundList = outboundService.findOutboundList(warehouseCode);
-        List<OutboundDetailDTO> outboundDetailList = outboundService.findOutboundDetailList();
 
         model.addAttribute("outboundList", outboundList);
-        model.addAttribute("outboundDetailList", outboundDetailList);
-//        return "wm/outbound/approval";
+        return "wm/outbound/approval";
     }
 
     @PostMapping("/approval")

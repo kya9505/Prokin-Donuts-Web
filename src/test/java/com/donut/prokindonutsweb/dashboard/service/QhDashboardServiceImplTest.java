@@ -22,7 +22,7 @@ class QhDashboardServiceImplTest {
     @Test
     @DisplayName("미승인 회원가입 요청 건 수")
     void countNewRequest() {
-        int countNewRequest = mapper.CountNewRequest();
+        int countNewRequest = mapper.countNewRequest();
         assertNotNull(countNewRequest);
         log.info(countNewRequest);
     }
@@ -30,7 +30,7 @@ class QhDashboardServiceImplTest {
     @Test
     @DisplayName("미승인 입고 요청 건 수")
     void countNewInbound() {
-        int countNewRequest = mapper.CountNewInbound();
+        int countNewRequest = mapper.countNewInbound();
         assertNotNull(countNewRequest);
         log.info(countNewRequest);
     }
@@ -38,7 +38,7 @@ class QhDashboardServiceImplTest {
     @Test
     @DisplayName("총 가맹점 수 ")
     void totalFranchise() {
-        int countNewRequest = mapper.TotalFranchise();
+        int countNewRequest = mapper.totalFranchise();
         assertNotNull(countNewRequest);
         log.info(countNewRequest);
     }
@@ -46,7 +46,7 @@ class QhDashboardServiceImplTest {
     @Test
     @DisplayName("총 창고 수")
     void totalWarehouse() {
-        int countNewRequest = mapper.TotalWarehouse();
+        int countNewRequest = mapper.totalWarehouse();
         assertNotNull(countNewRequest);
         log.info(countNewRequest);
     }

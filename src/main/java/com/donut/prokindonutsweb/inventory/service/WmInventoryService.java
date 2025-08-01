@@ -1,6 +1,9 @@
 package com.donut.prokindonutsweb.inventory.service;
 
+import com.donut.prokindonutsweb.inbound.dto.ProductDTO;
+import com.donut.prokindonutsweb.inventory.dto.InventoryExpiredDTO;
 import com.donut.prokindonutsweb.inventory.dto.InventorySelectDTO;
+import com.donut.prokindonutsweb.inventory.dto.MinStockDTO;
 
 import java.util.List;
 
@@ -8,4 +11,12 @@ public interface WmInventoryService {
   List<InventorySelectDTO> findInventoryList(String warehouseCode);
   String findWarehouseCodeByMemberCode(String memberCode);
   String findWarehouseNameByWarehouseCode(String warehouseCode);
+  
+  List<InventoryExpiredDTO> getExpiredItems();
+  void discardExpiredItems();
+  
+  List<MinStockDTO> getMinStockList(String warehouseCode);
+  void saveMinStockList(List<MinStockDTO> minStockList);
+  
+  List<ProductDTO> searchProducts(String keyword);
 }

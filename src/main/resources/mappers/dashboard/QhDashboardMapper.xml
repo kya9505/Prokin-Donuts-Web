@@ -6,32 +6,32 @@
 <mapper namespace="com.donut.prokindonutsweb.dashboard.mapper.QhDashboardMapper">
 
     <!--미승인 회원가입 -->
-    <select id="CountNewRequest" resultType="int">
-        select count(*) from memberrequest where request = '승인대기'
+    <select id="countNewRequest" resultType="int">
+        select count(*) from MemberRequest where request = '승인대기'
     </select>
 
     <!--미승인 입고요청-->
-    <select id="CountNewInbound" resultType="int">
-        select count(*) from inbound where inboundStatus = '입고요청'
+    <select id="countNewInbound" resultType="int">
+        select count(*) from Inbound where inboundStatus = '입고요청'
     </select>
 
     <!--총 가맹점 수 -->
-    <select id="TotalFranchise" resultType="int">
-        select count(*) from franchise
+    <select id="totalFranchise" resultType="int">
+        select count(*) from Franchise
     </select>
 
     <!--총 창고 수 -->
-    <select id="TotalWarehouse" resultType="int">
-        select count(*) from warehouse
+    <select id="totalWarehouse" resultType="int">
+        select count(*) from Warehouse
     </select>
 
     <!--최근 3개월간 상품별 발주요청량 -재고량 순위 상위 5개 -->
-    <select id="getOrderRequestVsInventory" resultType="OrderInventoryDTO">
+    <select id="getOrderRequestVsInventory" resultType="OutboundInventoryDTO">
         SELECT
             productName,
-            IFNULL(totalOrderRequest, 0) AS totalOrderRequest,
+            IFNULL(totalOutboundRequest, 0) AS totalOutboundRequest,
             IFNULL(totalInventory, 0) AS totalInventory
-        FROM orderinventory
+        FROM OutboundInventory
         ORDER BY (totalOrderRequest/totalInventory) DESC
             LIMIT 5
     </select>
@@ -39,34 +39,36 @@
     <!--입고완료상태의 입고건-->
 <select id="countApprovedInboundStatus" resultType="int">
     select  count(*)
-    from inbound
+    from Inbound
     where inboundStatus = '입고완료'
       and warehouseCode =#{warehouseCode}
 </select>
 
     <select id="countTotalInbound" resultType="int">
     select  count(*)
-    from inbound
+    from Inbound
     where warehouseCode =#{warehouseCode}
     </select>
 
-    <select id="countApprovedOrderStatus" resultType="int">
+    <select id="countApprovedOutboundStatus" resultType="int">
     select count(*)
-    from `order`
-    where orderStatus = '출고완료'
-      and warehouseCode =#{warehouseCode}
+    from Outbound o
+    join Inventory i on o.inventoryCode = i.inventoryCode
+    where outboundStatus = '출고완료'
+      and i.warehouseCode =#{warehouseCode}
     </select>
 
 
-    <select id="countTotalOrder" resultType="int">
+    <select id="countTotalOutbound" resultType="int">
     select count(*)
-    from `order`
-    where warehouseCode =#{warehouseCode}
+    from Outbound o
+             join Inventory i on o.inventoryCode = i.inventoryCode
+    where i.warehouseCode =#{warehouseCode}
     </select>
 
     <select id="getWarehouseCode" resultType="String">
         select warehouseCode
-        from warehouse
+        from Warehouse
         where warehouseName = #{warehouseName}
     </select>
 

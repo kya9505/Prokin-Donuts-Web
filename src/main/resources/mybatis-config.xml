@@ -19,5 +19,6 @@
         <package name="com.donut.prokindonutsweb.inbound.dto"/>
         <package name="com.donut.prokindonutsweb.inbound.vo"/>
         <package name="com.donut.prokindonutsweb.dashboard.dto"/>
+        <package name="com.donut.prokindonutsweb.outbound.dto"/>
     </typeAliases>
 </configuration>
