@@ -118,19 +118,23 @@
                             <thead>
                             <tr>
                                 <th>출고코드</th>
-                                <th>출고일</th>
-                                <th>출고상태</th>
-                                <th>창고코드</th>
+                                <th>제품코드</th>
+                                <th>제품명</th>
+                                <th>출고예정일</th>
+                                <th>배치차량코드</th>
                                 <th>가맹점코드</th>
+                                <th>출고상태</th>
                             </tr>
                             </thead>
                             <c:forEach var="outbound" items="${outboundList}">
                                 <tr>
                                     <td>${outbound.outboundCode}</td>
+                                    <td>${outbound.productCode}</td>
+                                    <td>${outbound.productName}</td>
                                     <td>${outbound.outboundDate}</td>
-                                    <td>${outbound.outboundStatus}</td>
+                                    <td>${outbound.vehicleCode}</td>
                                     <td>${outbound.franchiseCode}</td>
-                                    <td>${outbound.warehouseCode}</td>
+                                    <td>${outbound.outboundStatus}</td>
                                 </tr>
                             </c:forEach>
 
@@ -350,33 +354,7 @@
         });
     });
 
-    const outboundDetails = [
-        <c:forEach var="detail" items="${outboundDetailList}" varStatus="loop">
-        {
-            outboundDetailCode: '${detail.outboundDetailCode}',
-            quantity: '${detail.quantity}',
-            outboundCode: '${detail.outboundCode}',
-            productCode: `${detail.productCode}`,
-        }<c:if test="${!loop.last}">,</c:if>
-        </c:forEach>
-    ];
-
-
     $(document).ready(function() {
-        // 1. 더미 데이터 정의 (출고상태)
-        const dummyoutboundCategories = [
-            { "id": "출고대기", "name": "출고대기" },
-            { "id": "출고완료", "name": "출고완료" },
-        ];
-
-        // 2. 원본 필터 영역에 출고상태 옵션 채우기
-        var $midSelect = $('#myCustomFilters #outboundCategories');
-        $.each(dummyoutboundCategories, function(index, item) {
-            $midSelect.append($('<option>', {
-                value: item.id,
-                text: item.name
-            }));
-        });
 
         // 5. DataTable 초기화 (dom 옵션에 사용자 정의 영역 포함)
         var table = $('#datatable').DataTable({
