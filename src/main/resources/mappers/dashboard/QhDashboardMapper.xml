@@ -26,12 +26,12 @@
     </select>
 
     <!--최근 3개월간 상품별 발주요청량 -재고량 순위 상위 5개 -->
-    <select id="getOrderRequestVsInventory" resultType="OutboundInventoryDTO">
+    <select id="getOrderRequestVsInventory" resultType="OrderInventoryDTO">
         SELECT
             productName,
-            IFNULL(totalOutboundRequest, 0) AS totalOutboundRequest,
+            IFNULL(totalOrderRequest, 0) AS totalOrderRequest,
             IFNULL(totalInventory, 0) AS totalInventory
-        FROM OutboundInventory
+        FROM OrderInventory
         ORDER BY (totalOrderRequest/totalInventory) DESC
             LIMIT 5
     </select>
@@ -44,13 +44,15 @@
       and warehouseCode =#{warehouseCode}
 </select>
 
+    <!--총 입고량-->
     <select id="countTotalInbound" resultType="int">
     select  count(*)
     from Inbound
     where warehouseCode =#{warehouseCode}
     </select>
 
-    <select id="countApprovedOutboundStatus" resultType="int">
+    <!--출고승인상태의 출고건-->
+    <select id="countApprovedOrderStatus" resultType="int">
     select count(*)
     from Outbound o
     join Inventory i on o.inventoryCode = i.inventoryCode
@@ -58,14 +60,16 @@
       and i.warehouseCode =#{warehouseCode}
     </select>
 
+    <!--총 출고량-->
+    <select id="countTotalOrder" resultType="int">
 
-    <select id="countTotalOutbound" resultType="int">
     select count(*)
     from Outbound o
              join Inventory i on o.inventoryCode = i.inventoryCode
     where i.warehouseCode =#{warehouseCode}
     </select>
 
+    <!--창고이름으로 창고 코드 조회-->
     <select id="getWarehouseCode" resultType="String">
         select warehouseCode
         from Warehouse

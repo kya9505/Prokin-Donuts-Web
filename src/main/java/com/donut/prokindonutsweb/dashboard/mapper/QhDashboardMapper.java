@@ -1,6 +1,6 @@
 package com.donut.prokindonutsweb.dashboard.mapper;
 
-import com.donut.prokindonutsweb.dashboard.dto.OutboundInventoryDTO;
+import com.donut.prokindonutsweb.dashboard.dto.OrderInventoryDTO;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ public interface QhDashboardMapper {
     int countNewInbound();
     int totalFranchise();
     int totalWarehouse();
-    List<OutboundInventoryDTO> getOrderRequestVsInventory();
+    List<OrderInventoryDTO>getOrderRequestVsInventory();
     int countApprovedInboundStatus(String warehouseCode);
     int countTotalInbound(String warehouseCode);
     int countApprovedOrderStatus(String warehouseCode);

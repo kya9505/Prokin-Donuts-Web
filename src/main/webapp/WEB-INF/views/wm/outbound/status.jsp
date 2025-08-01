@@ -90,6 +90,9 @@
                                     <div class="select-position">
                                         <select id="outboundCategories">
                                             <option value="">출고 상태</option>
+                                            <option value="출고대기">출고대기</option>
+                                            <option value="출고준비">출고준비</option>
+                                            <option value="출고완료">출고완료</option>
                                         </select>
                                     </div>
                                 </div>
@@ -479,7 +482,7 @@
         // 7-1. (7번 함수에서 각각이 변경될 때마다) 필터링 함수도 변경된 ID값을 기준으로 수정
         $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
             const selectedOutbound = $('#outboundCategories_clone').val();
-            const categoryOutbound = data[2]; // 출고상태를 기준으로
+            const categoryOutbound = data[6]; // 출고상태는 6번째 컬럼 (0부터 시작)
 
             // 일부 포함에도 검색
             if (selectedOutbound && !categoryOutbound.includes(selectedOutbound)) {
