@@ -47,4 +47,8 @@ public interface InboundMapper {
     List<InboundStatusVO> selectAllInboundStatusList();
 
     void updateQhInboundStatus(String inboundCode);
+
+    // 상품코드 -> 보관타입 반환
+    String selectStoredType(String productCode);
+
 }

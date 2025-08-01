@@ -72,8 +72,8 @@
 
 <!--    입고 완료시 재고에 반영(트리거를 직접 구현)-->
     <insert id="updateInventory" parameterType="com.donut.prokindonutsweb.inbound.vo.InventoryVO">
-        Insert into Inventory (inventoryCode, quantity, productCode, warehouseCode)
-        values (#{inventoryCode}, #{quantity}, #{productCode}, #{warehouseCode})
+        Insert into Inventory (quantity, productCode, warehouseCode, barcode, expirationDate)
+        values (#{quantity}, #{productCode}, #{warehouseCode}, #{barcode}, #{expirationDate})
         on DUPLICATE KEY update quantity = quantity + #{quantity}
     </insert>
 
@@ -117,4 +117,11 @@
     <update id="updateQhInboundStatus">
         update Inbound set inboundStatus = "승인대기" where inboundCode = #{inboundCode}
     </update>
+
+<!--    상품ID -> 보관타입 반환 -->
+    <select id="selectStoredType" resultType="String">
+        select storedType
+        from product
+        where productCode = #{productCode}
+    </select>
 </mapper>
