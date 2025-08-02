@@ -120,23 +120,17 @@ public class WmInboundController {
     public String approveInbound(@RequestParam String inboundCode, RedirectAttributes redirectAttributes) {
         // 입고 상태 ( -> 입고완료!)
         inboundService.approveInbound(inboundCode);
+        log.info("입고상태 변경 완료!");
 
         // 입고상세 목록 재고에 반영
 
         List<InventoryDTO> inventoryList = inboundService.findInboundDetailList(inboundCode)
                 .orElseThrow(()->new UserException(ErrorType.NOT_FOUND_INBOUND_DETAIL));
+        log.info("입고상세 반영!");
 
-        inventoryList.forEach(
-                dto -> {
-                    InventoryVO vo = InventoryVO.builder()
-                            .inventoryCode(dto.getWarehouseCode()+"-"+dto.getProductCode())
-                            .quantity(dto.getQuantity())
-                            .productCode(dto.getProductCode())
-                            .warehouseCode(dto.getWarehouseCode())
-                            .build();
-                    inboundService.updateInventory(vo);
-                }
-        );
+        inboundService.updateInventory(inventoryList);
+
+        // 재고에 반영안됨!
 
         redirectAttributes.addFlashAttribute("approveSuccessMessage", "입고가 완료되었습니다.");
 

@@ -91,7 +91,7 @@
                                 <th>입고일</th>
                                 <th>입고상태</th>
                                 <th>창고코드</th>
-                                <th>승인|취소</th> <!-- 수정/삭제 열 -->
+                                <th>승인</th> <!-- 수정/삭제 열 -->
                             </tr>
                             </thead>
                             <c:forEach var="inbound" items="${inboundList}">
@@ -105,10 +105,6 @@
                                             <button class="btn btn-approve text-success" title="입고 승인" id="btnInboundAdd" data-inbound-code="${inbound.inboundCode}"
                                                     data-inbound-date="${inbound.inboundDate}">
                                                 <i class="lni lni-checkmark-circle"></i>
-                                            </button>
-                                            <button class="btn btn-delete text-danger"  data-inbound-code="${inbound.inboundCode}"
-                                                    data-inbound-date="${inbound.inboundDate}">
-                                                <i class="lni lni-trash-can"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -166,54 +162,6 @@
                 </div>
             </div>
         </form>
-
-
-        <!-- 입고 삭제 모달 ! -->
-        <form id="inboundDeleteForm" method="post" action="/wm/inbound/cancel" accept-charset="UTF-8">
-            <div class="modal fade" id="inboundDeleteModal" tabindex="-1" aria-labelledby="inboundDeleteModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- 크기 조정 가능: modal-sm, modal-lg 등 -->
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="inboundDetailModalLabel">입고 상세 내역</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
-                        </div>
-                        <div class="modal-body">
-
-                            <input type="hidden" id="modalInboundCode_delete" name="inboundCode">
-
-                            <table class="table" id="selectedProductsTable">
-                                <thead>
-                                <tr>
-                                    <th>제품코드</th>
-                                    <th>제품명</th>
-                                    <th>제품단가</th>
-                                    <th>보관타입</th>
-                                    <th>수량</th>
-                                </tr>
-                                </thead>
-                                <tbody id="inboundDetailTableBody_delete">
-                                <!-- JavaScript로 채워짐 -->
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="modal-footer d-flex justify-content-between align-items-center">
-                            <!-- 왼쪽: 입고 날짜 -->
-                            <div class="form-group mb-0">
-                                <input type="date" id="inboundDate_delete" class="form-control" disabled />
-
-                                <%--<input type="date" class="form-control form-control-sm d-inline-block" id="inboundDate" style="width: auto;" />--%>
-                            </div>
-                            <div>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                                <button type="submit" class="main-btn primary-btn btn-primary btn-sm">삭제</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
-
-        </div>
     </section>
     <!-- ========== section end ========== -->
 
