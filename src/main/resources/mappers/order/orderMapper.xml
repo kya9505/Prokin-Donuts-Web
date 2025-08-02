@@ -49,6 +49,7 @@
     <select id="findOrderDetailList" resultType="com.donut.prokindonutsweb.order.dto.OrderDetailDTO">
         Select * From OrderDetail od
         Join `order` o On od.orderCode = o.orderCode
+        Join product p On p.productCode = od.productCode
         Where o.FranchiseCode = #{FranchiseCode}
     </select>
 
