@@ -1,5 +1,7 @@
 package com.donut.prokindonutsweb.order.mapper;
 
+import com.donut.prokindonutsweb.order.dto.OrderDTO;
+import com.donut.prokindonutsweb.order.dto.OrderDetailDTO;
 import com.donut.prokindonutsweb.order.vo.OrderDetailVO;
 import com.donut.prokindonutsweb.order.vo.OrderVO;
 import org.apache.ibatis.annotations.Param;
@@ -19,4 +21,10 @@ public interface OrderMapper {
     String selectFranchiseCode(String memberCode);
 
     List<String> findWarehouseCode();
+
+    List<OrderDTO> findOrderList(String orderCode);
+
+    List<OrderDetailDTO> findOrderDetailList(String FranchiseCode);
+
+
 }

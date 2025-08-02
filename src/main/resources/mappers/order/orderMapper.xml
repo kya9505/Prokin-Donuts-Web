@@ -39,4 +39,17 @@
         select warehouseCode from Warehouse
     </select>
 
+
+    <!--  가맹점의 발주목록 조회 -->
+    <select id="findOrderList" resultType="com.donut.prokindonutsweb.order.dto.OrderDTO">
+        Select * From `order` Where FranchiseCode = #{FranchiseCode}
+    </select>
+
+    <!--  가맹점의 발주목록 상세조회 -->
+    <select id="findOrderDetailList" resultType="com.donut.prokindonutsweb.order.vo.OrderDetailDTO">
+        Select * From OrderDetail od
+        Join `order` o On od.orderCode = o.orderCode
+        Where o.FranchiseCode = #{FranchiseCode}
+    </select>
+
 </mapper>
