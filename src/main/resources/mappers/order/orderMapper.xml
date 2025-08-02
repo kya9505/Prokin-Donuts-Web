@@ -46,7 +46,7 @@
     </select>
 
     <!--  가맹점의 발주목록 상세조회 -->
-    <select id="findOrderDetailList" resultType="com.donut.prokindonutsweb.order.vo.OrderDetailDTO">
+    <select id="findOrderDetailList" resultType="com.donut.prokindonutsweb.order.dto.OrderDetailDTO">
         Select * From OrderDetail od
         Join `order` o On od.orderCode = o.orderCode
         Where o.FranchiseCode = #{FranchiseCode}

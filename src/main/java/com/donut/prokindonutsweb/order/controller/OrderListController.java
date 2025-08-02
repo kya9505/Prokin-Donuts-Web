@@ -31,6 +31,7 @@ public class OrderListController {
         String memberCode = user.getMemberCode();
         log.info("memberCode: {}", memberCode);
         String franchiseCode = orderService.findFranchiseCode(memberCode);
+        log.info("franchiseCode: {}",franchiseCode);
 
         List<OrderDTO> orderList = orderService.findOrderList(franchiseCode);
         model.addAttribute("orderList", orderList);
