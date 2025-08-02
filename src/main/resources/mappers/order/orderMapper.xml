@@ -39,18 +39,18 @@
         select warehouseCode from Warehouse
     </select>
 
-
-    <!--  가맹점의 발주목록 조회 -->
+    <!-- 가맹점의 발주목록 조회 -->
     <select id="findOrderList" resultType="com.donut.prokindonutsweb.order.dto.OrderDTO">
-        Select * From `order` Where FranchiseCode = #{FranchiseCode}
+        SELECT * FROM `order` WHERE FranchiseCode = #{FranchiseCode}
     </select>
 
-    <!--  가맹점의 발주목록 상세조회 -->
+    <!-- 가맹점의 발주목록 상세조회 -->
     <select id="findOrderDetailList" resultType="com.donut.prokindonutsweb.order.dto.OrderDetailDTO">
-        Select * From OrderDetail od
-        Join `order` o On od.orderCode = o.orderCode
-        Join product p On p.productCode = od.productCode
-        Where o.FranchiseCode = #{FranchiseCode}
+        SELECT * FROM `OrderDetail` od
+        JOIN `order` o ON od.orderCode = o.orderCode
+        JOIN `product` p ON p.productCode = od.productCode
+        WHERE o.orderCode = #{orderCode}
+        ORDER BY o.orderDate Desc
     </select>
 
 </mapper>

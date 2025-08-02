@@ -18,5 +18,5 @@ public interface OrderService {
     List<String> findWarehouseCode();
 
     List<OrderDTO>findOrderList(String FranchiseCode);
-    List<OrderDetailDTO>findOrderDetailList(String FranchiseCode);
+    List<OrderDetailDTO>findOrderDetailList(String orderCode);
 }

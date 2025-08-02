@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -40,14 +41,13 @@ public class OrderListController {
     }
 
     @GetMapping("/list/detail")
-    public String getOrderDetailList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
+    public String getOrderDetailList(@RequestParam("orderCode") String orderCode, Model model, @AuthenticationPrincipal CustomUserDetails user) {
         log.info("getOrderDetailList() called");
 
         String memberCode = user.getMemberCode();
         log.info("memberCode: {}", memberCode);
-        String franchiseCode = orderService.findFranchiseCode(memberCode);
 
-        List<OrderDetailDTO> orderDetailList = orderService.findOrderDetailList(franchiseCode);
+        List<OrderDetailDTO> orderDetailList = orderService.findOrderDetailList(orderCode);
         model.addAttribute("orderDetailList", orderDetailList);
 
         return "/fm/list";

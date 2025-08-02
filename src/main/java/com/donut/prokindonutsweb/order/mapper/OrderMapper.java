@@ -22,9 +22,9 @@ public interface OrderMapper {
 
     List<String> findWarehouseCode();
 
-    List<OrderDTO> findOrderList(String orderCode);
+    List<OrderDTO> findOrderList(String FranchiseCode);
 
-    List<OrderDetailDTO> findOrderDetailList(String FranchiseCode);
+    List<OrderDetailDTO> findOrderDetailList(String orderCode);
 
 
 }

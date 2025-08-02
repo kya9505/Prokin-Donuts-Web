@@ -166,38 +166,6 @@
                             </i>
                         </label>
                     </h6>
-
-                    <p class="text-sm mb-20">
-
-                        <!-- 원하는 필터(중분류, 소분류) 설정 -->
-                    <div id="myCustomFilters" style="display: none;">
-
-                        <div class="d-flex flex-wrap gap-2">
-                            <!-- 중분류 -->
-                            <div >
-                                <div class="select-style-1">
-                                    <div class="select-position">
-                                        <select id="outboundCategories">
-                                            <option value="발주상태">발주상태</option>
-                                            <option value="배송대기">배송대기</option>
-                                            <option value="배송중">배송중</option>
-                                            <option value="배송완료">배송완료</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 필터 초기화 -->
-                            <div class="mb-20">
-                                <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="resetFilterBtn" style="height:auto; min-height:auto;">
-                                    필터 초기화
-                                </button>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    </p>
                     <div class="table-wrapper table-responsive w-100" style="padding:0;">
 
 
@@ -211,7 +179,6 @@
                             <tr>
                                 <th>발주코드</th>
                                 <th>발주예정일</th>
-                                <th>발주상태</th>
                                 <th>상세조회</th>
                             </tr>
                             </thead>
@@ -219,7 +186,6 @@
                                 <tr>
                                     <td>${order.orderCode}</td>
                                     <td>${order.orderDate}</td>
-                                    <td>${order.orderStatus}</td>
                                     <td>
                                         <button class="main-btn primary-btn-outline btn-hover btn-sm btn-xs btn-detail"
                                                 data-order-code="${order.orderCode}">

@@ -74,8 +74,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDetailDTO>findOrderDetailList(String FranchiseCode){
-        return orderMapper.findOrderDetailList(FranchiseCode);
+    public List<OrderDetailDTO>findOrderDetailList(String orderCode){
+        return orderMapper.findOrderDetailList(orderCode);
     }
 
 }
