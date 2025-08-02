@@ -170,11 +170,12 @@
 
 
                         <!-- Start table -->
-                        <table id="datatable" class="table striped-table w-100 order-datatable" style="width:100%; table-layout:fixed;">
-
-                            <!-- colgroup를 통해 열 폭을 강제 지정 -->
-                            <!-- colgroup 삭제: 가로폭 자동 조정 -->
-
+                        <table id="datatable" class="table striped-table w-100 " style="width:100%; table-layout:fixed;">
+                            <colgroup>
+                                <col style="width: 30%;">
+                                <col style="width: 30%;">
+                                <col style="width: 30%;">
+                            </colgroup>
                             <thead>
                             <tr>
                                 <th>발주코드</th>
