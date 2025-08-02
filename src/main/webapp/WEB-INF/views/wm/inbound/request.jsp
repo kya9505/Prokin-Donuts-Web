@@ -112,6 +112,7 @@
                                 <!-- 오른쪽: 등록/수정/삭제 -->
                                 <div class="btu-group-1 d-flex gap-2 mb-30">
                                     <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="btnInboundAdd">입고 요청</button>
+                                    <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="btnAutoInboundAdd" onclick="testAutoInbound()">자동입고 요청</button>
                                 </div>
                             </div>
                         </div>
@@ -528,6 +529,61 @@
         $('#addInboundModal').modal('show');
     });
 
+    // "자동입고 요청" 버튼 클릭 시
+    $(document).ready(function() {
+        console.log('문서 로드 완료');
+        console.log('자동입고 버튼 존재 여부:', $('#btnAutoInboundAdd').length);
+        
+        // 버튼에 직접 onclick 이벤트 추가
+        $('#btnAutoInboundAdd').click(function () {
+            console.log('자동입고 요청 버튼 클릭됨');
+            alert('자동입고 요청 버튼이 클릭되었습니다!');
+            
+            // 백엔드에서 자동입고 대상 제품 데이터를 가져오기
+            $.ajax({
+                url: '/wm/inbound/auto-request',
+                method: 'GET',
+                beforeSend: function() {
+                    console.log('AJAX 요청 시작: /wm/inbound/auto-request');
+                },
+                success: function(response) {
+                    console.log('자동입고 요청 성공:', response);
+                    if (response && response.length > 0) {
+                        // 모달 내부 테이블 초기화
+                        const $tableBody = $('#selectedProductsTable tbody');
+                        $tableBody.empty();
+
+                        // 백엔드에서 받은 제품 정보 테이블에 삽입
+                        response.forEach((item, index) => {
+                            const rowHtml = `
+                        <tr>
+                          <td> ` + (index + 1) + `</td>
+                          <td>` + item.productCode + `</td>
+                          <td>` + item.productName + `</td>
+                          <td>` + item.productPrice + `</td>
+                          <td>` + item.storedType + `</td>
+                          <td><input type="number" class="form-control quantity-input" min="100" value="` + (item.suggestedQuantity || 100) + `" step="100" style="width: 80px;"></td>
+                        </tr>
+                      `;
+                            $tableBody.append(rowHtml);
+                        });
+
+                        // 모달 열기
+                        $('#addInboundModal').modal('show');
+                    } else {
+                        alert('자동입고 대상 제품이 없습니다.');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('자동입고 요청 데이터 가져오기 실패:', error);
+                    console.error('상태:', status);
+                    console.error('응답:', xhr.responseText);
+                    alert('자동입고 요청 데이터를 가져오는데 실패했습니다.');
+                }
+            });
+        });
+    });
+
     $('#addInboundModal').on('shown.bs.modal', function () {
         const today = new Date();
         console.log(today);
@@ -627,6 +683,55 @@
         $('#inboundForm').submit();
     });
     console.log($('#inboundDate').length); // 1 아니면 문제 있음
+    
+    // 자동입고 요청 함수
+    function testAutoInbound() {
+        console.log('자동입고 요청 함수 호출됨');
+        
+        // 백엔드에서 자동입고 대상 제품 데이터를 가져오기
+        $.ajax({
+            url: '/wm/inbound/auto-request',
+            method: 'GET',
+            beforeSend: function() {
+                console.log('AJAX 요청 시작: /wm/inbound/auto-request');
+            },
+            success: function(response) {
+                console.log('자동입고 요청 성공:', response);
+                if (response && response.length > 0) {
+                    // 모달 내부 테이블 초기화
+                    const $tableBody = $('#selectedProductsTable tbody');
+                    $tableBody.empty();
+
+                    // 백엔드에서 받은 제품 정보 테이블에 삽입
+                    response.forEach((item, index) => {
+                        const rowHtml = `
+                    <tr>
+                      <td> ` + (index + 1) + `</td>
+                      <td>` + item.productCode + `</td>
+                      <td>` + item.productName + `</td>
+                      <td>` + item.productPrice + `</td>
+                      <td>` + item.storedType + `</td>
+                      <td><input type="number" class="form-control quantity-input" min="100" value="` + (item.suggestedQuantity || 100) + `" step="100" style="width: 80px;"></td>
+                    </tr>
+                  `;
+                        $tableBody.append(rowHtml);
+                    });
+
+                    // 모달 열기
+                    $('#addInboundModal').modal('show');
+                } else {
+                    alert('자동입고 대상 제품이 없습니다.');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('자동입고 요청 데이터 가져오기 실패:', error);
+                console.error('상태:', status);
+                console.error('응답:', xhr.responseText);
+                alert('자동입고 요청 데이터를 가져오는데 실패했습니다.');
+            }
+        });
+    }
+    
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
 
