@@ -1,10 +1,7 @@
 package com.donut.prokindonutsweb.inbound.mapper;
 
 import com.donut.prokindonutsweb.inbound.dto.*;
-import com.donut.prokindonutsweb.inbound.vo.InboundStatusVO;
-import com.donut.prokindonutsweb.inbound.vo.InboundVO;
-import com.donut.prokindonutsweb.inbound.vo.InventoryVO;
-import com.donut.prokindonutsweb.inbound.vo.ProductVO;
+import com.donut.prokindonutsweb.inbound.vo.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDate;
@@ -50,4 +47,8 @@ public interface InboundMapper {
     List<InboundStatusVO> selectAllInboundStatusList();
 
     void updateQhInboundStatus(String inboundCode);
+
+    // 상품코드 -> 보관타입 반환
+    String selectStoredType(String productCode);
+
 }

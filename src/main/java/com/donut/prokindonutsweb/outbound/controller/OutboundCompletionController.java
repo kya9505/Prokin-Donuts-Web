@@ -25,7 +25,7 @@ public class OutboundCompletionController {
     private final OutboundService outboundService;
 
     @GetMapping("/completion")
-    public String getOutboundList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
+    public String getCompletionOutboundList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
         log.info("check");
 
         String memberCode = user.getMemberCode();
@@ -40,7 +40,7 @@ public class OutboundCompletionController {
     }
 
     @PostMapping("/completion")
-    public String approveOutbound(@RequestParam String outboundCode, RedirectAttributes redirectAttributes) {
+    public String completionOutbound(@RequestParam String outboundCode, RedirectAttributes redirectAttributes) {
         log.info(outboundCode);
 
         // 재고 존재 확인
