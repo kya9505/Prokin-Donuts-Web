@@ -83,8 +83,7 @@ public class OrderController {
         OrderDTO dto = OrderDTO.builder()
                 .orderCode(orderCode)
                 .orderDate(LocalDate.parse((orderDate)))
-                .orderStatus(OrderStatus.REQUEST.getStatus())
-                .warehouseCode(warehouseCode)   // 로그인 한 사용자 정보 가져와서 창고 코드 입력!
+                .franchiseCode(franchiseCode)
                 .build();
         log.info(OrderStatus.REQUEST.getStatus());
         orderService.addOrder(dto, orderDetailList, franchiseCode);
