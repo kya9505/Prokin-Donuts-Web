@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -41,15 +42,10 @@ public class OrderListController {
     }
 
     @GetMapping("/list/detail")
-    public String getOrderDetailList(@RequestParam("orderCode") String orderCode, Model model, @AuthenticationPrincipal CustomUserDetails user) {
-        log.info("getOrderDetailList() called");
-
-        String memberCode = user.getMemberCode();
-        log.info("memberCode: {}", memberCode);
-
-        List<OrderDetailDTO> orderDetailList = orderService.findOrderDetailList(orderCode);
-        model.addAttribute("orderDetailList", orderDetailList);
-
-        return "/fm/list";
+    @ResponseBody
+    public List<OrderDetailDTO> getOrderDetailList(@RequestParam("orderCode") String orderCode) {
+        log.info("orderCode: {}", orderCode);
+        return orderService.findOrderDetailList(orderCode);
     }
+
 }

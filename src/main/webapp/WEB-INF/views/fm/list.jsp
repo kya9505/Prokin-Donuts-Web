@@ -459,33 +459,29 @@
                 url: '/fm/list/detail',
                 method: 'GET',
                 data: { orderCode: orderCode },
+                dataType: 'json',
                 success: function(response) {
-                    console.log('🔍 발주 상세 정보:', response);
+                    // DataTable API를 사용해 테이블 갱신
+                    const table = $('#orderDetailTable').DataTable();
 
-                    // tbody 비우고 새로 채우기
-                    const $tbody = $('#orderDetailTableBody');
-                    $tbody.empty();
+                    table.clear();
 
                     if (response && response.length > 0) {
                         response.forEach(detail => {
-                            const row = `
-                                <tr>
-                                    <td>${detail.orderCode}</td>
-                                    <td>${detail.productCode}</td>
-                                    <td>${detail.productName}</td>
-                                    <td>${detail.productPrice}</td>
-                                    <td>${detail.storedType}</td>
-                                    <td>${detail.quantity}</td>
-                                    <td>${detail.orderStatus}</td>
-                                </tr>
-                            `;
-                            $tbody.append(row);
+                            table.row.add([
+                                detail.orderCode,
+                                detail.productCode,
+                                detail.productName,
+                                detail.productPrice,
+                                detail.storedType,
+                                detail.quantity,
+                                detail.orderStatus
+                            ]);
                         });
-                    } else {
-                        $tbody.append('<tr><td colspan="7">데이터가 없습니다.</td></tr>');
                     }
 
-                    // 모달 열기
+                    table.draw();
+
                     const modal = new bootstrap.Modal(document.getElementById('orderDetailModal'));
                     modal.show();
                 },
