@@ -170,7 +170,7 @@
 
 
                         <!-- Start table -->
-                        <table id="datatable" class="table striped-table w-100" style="width:100%; table-layout:fixed;">
+                        <table id="datatable" class="table striped-table w-100 order-datatable" style="width:100%; table-layout:fixed;">
 
                             <!-- colgroup를 통해 열 폭을 강제 지정 -->
                             <!-- colgroup 삭제: 가로폭 자동 조정 -->
@@ -182,6 +182,7 @@
                                 <th>상세조회</th>
                             </tr>
                             </thead>
+                            <tbody>
                             <c:forEach var="order" items="${orderList}">
                                 <tr>
                                     <td>${order.orderCode}</td>
@@ -194,10 +195,7 @@
                                     </td>
                                 </tr>
                             </c:forEach>
-
-                            <tbody>
                             </tbody>
-
                         </table>
                     </div>
                 </div>
@@ -229,7 +227,6 @@
                             <!-- JavaScript로 채워짐 -->
                             </tbody>
                         </table>
-                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                     </div>
@@ -323,7 +320,7 @@
             autoWidth: false,
             columnDefs: [
                 { width: '95px', targets: -1 },  // Actions 열 너비
-                { targets: [0, 1, 2, 3], className: 'text-center' } // JS 속성으로 가운데 정렬
+                { targets: [0, 1, 2], className: 'text-center' } // JS 속성으로 가운데 정렬
             ],
             order: [[0, 'asc']],
             paging: true,
