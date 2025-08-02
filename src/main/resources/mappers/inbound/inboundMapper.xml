@@ -124,4 +124,17 @@
         from product
         where productCode = #{productCode}
     </select>
+
+    <!-- 자동입고 대상 제품 목록 조회 -->
+    <select id="selectAutoInboundProducts" resultType="com.donut.prokindonutsweb.inbound.dto.AutoInboundDTO">
+        SELECT p.productCode, p.productName, p.productPrice, p.storedType,
+            COALESCE(wms.MinStock - SUM(inv.quantity), 1000) as suggestedQuantity
+        FROM Product p
+        INNER JOIN Inventory inv ON p.productCode = inv.productCode AND inv.warehouseCode = #{warehouseCode}
+        INNER JOIN WarehouseMinStock wms ON p.productCode = wms.productCode AND wms.warehouseCode = #{warehouseCode}
+        GROUP BY p.productCode, p.productName, p.productPrice, p.storedType, wms.MinStock
+        HAVING SUM(inv.quantity) &lt; wms.MinStock
+        ORDER BY p.productCode
+    </select>
+
 </mapper>
