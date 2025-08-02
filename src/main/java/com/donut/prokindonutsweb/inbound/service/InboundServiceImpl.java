@@ -233,4 +233,10 @@ public class InboundServiceImpl implements InboundService {
 		String dateStr = expirationDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		return warehouseCode +"-"+ productCode +"-"+ dateStr;
 	}
+
+	@Override
+	public List<AutoInboundDTO> findAutoInboundProducts(String warehouseCode) {
+		// 적정재고량 이하인 제품들을 조회 (suggestedQuantity는 DB에서 계산됨)
+		return inboundMapper.selectAutoInboundProducts(warehouseCode);
+	}
 }
