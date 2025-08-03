@@ -137,4 +137,9 @@
         ORDER BY p.productCode
     </select>
 
+    <update id="updateSection">
+        update SECTION set storageCapacity = storageCapacity - #{quantity}
+        where sectionCode = #{sectionCode}
+    </update>
+
 </mapper>

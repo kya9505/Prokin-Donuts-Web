@@ -54,4 +54,5 @@ public interface InboundMapper {
     // 적정재고 이하 제품 리스트 반환
     List<AutoInboundDTO> selectAutoInboundProducts(String warehouseCode);
 
+	void updateSection(SectionDTO vo);
 }
