@@ -165,6 +165,15 @@ public class InboundServiceImpl implements InboundService {
 							.build();
 					log.info(vo.toString());
 					inboundMapper.updateInventory(vo);
+
+					String sectionCode = dto.getWarehouseCode() + "-" + getSection(inboundMapper.selectStoredType(dto.getProductCode()));
+
+					SectionDTO dto1 = SectionDTO.builder()
+							.sectionCode(sectionCode) //GG1-R
+							.quantity(dto.getQuantity())
+							.build();
+					// 섹션 수용한도 감소
+					inboundMapper.updateSection(dto1);
 				}
 		);
 	}

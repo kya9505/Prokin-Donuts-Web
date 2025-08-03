@@ -1,6 +1,7 @@
 package com.donut.prokindonutsweb.inbound.mapper;
 
 
+import com.donut.prokindonutsweb.inbound.dto.SectionDTO;
 import com.donut.prokindonutsweb.inbound.vo.InboundDetailVO;
 import com.donut.prokindonutsweb.inbound.dto.InboundUpdateDTO;
 import com.donut.prokindonutsweb.inbound.vo.InboundVO;
@@ -180,6 +181,17 @@ class InboundMapperTest {
     @DisplayName("본사관리자의 입고승인(-> 승인대기)")
     void updateQhInboundStatus() {
         inboundMapper.updateQhInboundStatus("IN15");
+    }
+
+    @Test
+    @DisplayName("입고 완료 시 섹션 수용한도 감소")
+    void updateSection() {
+        SectionDTO dto = SectionDTO.builder()
+                .sectionCode("GG1-R")
+                .quantity(111)
+                .build();
+
+        inboundMapper.updateSection(dto);
     }
 
 }
