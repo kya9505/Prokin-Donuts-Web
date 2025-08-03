@@ -71,7 +71,10 @@
                 </a>
                 <ul id="ddmenu_56" class="collapse dropdown-nav">
                     <li class="nav-outbound-request">
-                        <a href="<c:url value='/wm/outbound/approval'/>" class="hover-text-grow">출고요청목록</a>
+                        <a href="<c:url value='/wm/outbound/approval'/>" class="hover-text-grow">출고요청 목록</a>
+                    </li>
+                    <li class="nav-outbound-completion">
+                        <a href="<c:url value='/wm/outbound/completion'/>" class="hover-text-grow">출고완료 등록</a>
                     </li>
                     <li class="nav-outbound-status">
                         <a href="<c:url value='/wm/outbound/status'/>" class="hover-text-grow">출고현황</a>

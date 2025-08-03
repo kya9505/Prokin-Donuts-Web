@@ -26,9 +26,7 @@ public class OrderServiceImpl implements OrderService {
         OrderVO orderVO = OrderVO.builder()
                 .orderCode(orderDTO.getOrderCode())
                 .orderDate(orderDTO.getOrderDate())
-                .orderStatus(orderDTO.getOrderStatus())
                 .franchiseCode(franchiseCode)
-                .warehouseCode(orderDTO.getWarehouseCode())
                 .build();
         orderMapper.insertOrder(orderVO);
         log.info(orderDTO.getOrderCode());
@@ -46,6 +44,7 @@ public class OrderServiceImpl implements OrderService {
                         .quantity(dto.getQuantity())
                         .orderCode(orderCode)
                         .productCode(dto.getProductCode())
+                        .orderStatus(dto.getOrderStatus())
                         .build()
                 ).toList();
     }
@@ -59,7 +58,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public String findFranchiseCode(String memberCode) {
-        return orderMapper.selectFranchiseCode(memberCode).substring(0,2);
+        return orderMapper.selectFranchiseCode(memberCode);
     }
 
     @Override
@@ -68,4 +67,15 @@ public class OrderServiceImpl implements OrderService {
                 .map(code -> code.substring(0,2))
                 .toList();
     }
+
+    @Override
+    public  List<OrderDTO> findOrderList(String FranchiseCode){
+        return orderMapper.findOrderList(FranchiseCode);
+    }
+
+    @Override
+    public List<OrderDetailDTO>findOrderDetailList(String orderCode){
+        return orderMapper.findOrderDetailList(orderCode);
+    }
+
 }
