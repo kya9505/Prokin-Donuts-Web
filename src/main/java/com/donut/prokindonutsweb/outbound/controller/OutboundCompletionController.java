@@ -20,12 +20,12 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/wm/outbound")
-public class OutboundApprovalController {
+public class OutboundCompletionController {
 
     private final OutboundService outboundService;
 
-    @GetMapping("/approval")
-    public String getOutboundList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
+    @GetMapping("/completion")
+    public String getCompletionOutboundList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
         log.info("check");
 
         String memberCode = user.getMemberCode();
@@ -33,32 +33,30 @@ public class OutboundApprovalController {
         String warehouseCode = outboundService.getWarehouseCode(memberCode);
 
 
-        List<OutboundDTO> outboundList = outboundService.findApprovalOutboundList(warehouseCode);
+        List<OutboundDTO> outboundList = outboundService.findOutboundList(warehouseCode);
 
         model.addAttribute("outboundList", outboundList);
         return "wm/outbound/approval";
     }
 
-    @PostMapping("/approval")
-    public String approveOutbound(@RequestParam("outboundCodeList") List<String> outboundCodeList, RedirectAttributes redirectAttributes) {
-        for (String outboundCode : outboundCodeList) {
-            log.info("출고코드: {}", outboundCode);
+    @PostMapping("/completion")
+    public String completionOutbound(@RequestParam String outboundCode, RedirectAttributes redirectAttributes) {
+        log.info(outboundCode);
 
-            // 재고 존재 확인
-            boolean check = outboundService.checkInventory(outboundCode);
-            log.info(String.valueOf(check));
+        // 재고 존재 확인
+        boolean check = outboundService.checkInventory(outboundCode);
+        log.info(String.valueOf(check));
+        // 존재하면 출고 처리
+        if(check) {
+            // 상태 변경 ( -> 출고 완료)
+            outboundService.approveOutbound(outboundCode);
+            // 재고 반영
+            outboundService.updateInventory(outboundCode);
+            redirectAttributes.addFlashAttribute("errorMessage", "출고가 완료되었습니다.");
 
-            // 존재하면 출고 처리
-            if (check) {
-                // 상태 변경 ( -> 출고 준비)
-                outboundService.approveOutbound(outboundCode);
-                // 재고 반영
-                outboundService.updateInventory(outboundCode);
-                redirectAttributes.addFlashAttribute("errorMessage", "출고가 완료되었습니다.");
-            } else {
-                // 출고 X 에러 메시지 반환
-                redirectAttributes.addFlashAttribute("errorMessage", "재고가 부족해 출고할 수 없습니다.");
-            }
+        } else {
+            // 출고 X 에러 메시지 반환
+            redirectAttributes.addFlashAttribute("errorMessage", "재고가 부족해 출고할 수 없습니다.");
         }
 
 

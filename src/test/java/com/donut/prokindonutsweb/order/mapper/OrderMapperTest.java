@@ -29,9 +29,7 @@ public class OrderMapperTest {
         OrderVO vo = OrderVO.builder()
                 .orderCode("ORD9")
                 .orderDate(LocalDate.parse("2025-04-20"))
-                .orderStatus("출고대기")
                 .franchiseCode("DJF1")
-                .warehouseCode("GG1")
                 .build();
 
         orderMapper.insertOrder(vo);

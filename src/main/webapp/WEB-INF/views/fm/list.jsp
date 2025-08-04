@@ -1,6 +1,6 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,7 +32,96 @@
     <img src="<c:url value='/resources/images/logo/donut.svg'/>" alt="cursor">
 </div>
 <!-- ======== sidebar-nav start =========== -->
-<%@include file="/WEB-INF/views/includes/sidebar/wmSidebar.jsp"%>
+
+<!-- ======== sidebar-nav start =========== -->
+<aside class="sidebar-nav-wrapper">
+    <div class="navbar-logo">
+        <a href="fm-dashboard.html">
+            <img src="<c:url value='/resources/images/logo/menu_logo.png'/>" alt="logo" />
+        </a>
+    </div>
+    <nav class="sidebar-nav">
+        <ul>
+            <li class="nav-item nav-order-status">
+                <a href="<c:url value='/fm/order'/>">
+                    <span class="icon">
+                        <i class="lni lni-stats-up"></i>
+                    </span>
+                    <span class="text">발주요청</span>
+                </a>
+            </li>
+
+            <li class="nav-item nav-order-list active">
+                <a href="<c:url value='/fm/list'/>">
+                    <span class="icon">
+                        <i class="lni lni-list"></i>
+                    </span>
+                    <span class="text">발주목록</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</aside>
+
+<style>
+    .sidebar-nav-wrapper {
+        visibility: hidden; /* 깜빡임 방지용 */
+    }
+
+    .sidebar-nav .nav-item.active > a {
+        background-color: transparent !important;
+    }
+
+    .sidebar-nav .nav-item.active i {
+        color: #FF9D32 !important;
+    }
+
+    .sidebar-nav .nav-item.active .text {
+        color: #1c1c1c !important;
+        font-weight: bold;
+    }
+
+    .sidebar-nav .nav-item > a {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        color: #bbb;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-nav .nav-item > a:hover {
+        background-color: rgba(255, 157, 50, 0.1);
+        color: #1c1c1c;
+    }
+
+    .sidebar-nav .nav-item .icon {
+        margin-right: 13px;
+        color: #FF9D32;
+    }
+
+    .sidebar-nav .nav-item .text {
+        color: #1c1c1c;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const path = window.location.pathname;
+
+        // 현재 페이지에 따라 active 클래스 설정
+        if (path.includes('/fm/list')) {
+            document.querySelector('.nav-order-list').classList.add('active');
+        } else if (path.includes('/fm/order')) {
+            document.querySelector('.nav-order-status').classList.add('active');
+        }
+
+        // 깜빡임 방지 → 강조 완료 후 보여줌
+        document.querySelector('.sidebar-nav-wrapper').style.visibility = 'visible';
+    });
+</script>
+
+<div class="overlay"></div>
 <!-- ======== sidebar-nav end =========== -->
 
 <!-- ======== main-wrapper start =========== -->
@@ -52,7 +141,7 @@
                 <div class="row align-items-center">
                     <div class="col-md-6">
                         <div class="title">
-                            <h2>출고관리</h2>
+                            <h2>발주현황</h2>
                         </div>
                     </div>
                 </div>
@@ -63,8 +152,8 @@
             <!-- Start col -->
             <div class="col-lg">
                 <!-- Start card -->
-                <div class="card-style mb-30">
-                    <h6 class="mb-10">출고요청 목록
+                <div class="card-style mb-30 w-100">
+                    <h6 class="mb-10">발주현황
                         <label>
                             <i
                                     class="mdi mdi-help-circle text-primary"
@@ -72,92 +161,79 @@
                                     data-bs-placement="right"
                                     data-bs-html="true"
                                     data-bs-custom-class="wide-tooltip"
-                                    title="<b>승인</b>: 출고 요청을 승인한다.<br>승인된 요청은 출고현황에서 확인할 수 있다.<br>"
+                                    title="<b>요청한 모든 발주목록 조회</b><br>"
                                     style="cursor: pointer;">
                             </i>
                         </label>
                     </h6>
-
-                    <p class="text-sm mb-20">
-                        <!-- 원하는 필터(중분류, 소분류) 설정 -->
-                    <div id="myCustomFilters" style="display: none;">
-                        <div class="d-flex align-items-center gap-2" style="margin-top: -30px;">
-                            <div class="btu-group-1 d-flex gap-2">
-                                <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="btnBulkApprove">승인</button>
-                            </div>
-                        </div>
-                    </div>
-                    </p>
-                    <div class="table-wrapper table-responsive p-0">
+                    <div class="table-wrapper table-responsive w-100" style="padding:0;">
 
 
                         <!-- Start table -->
-                        <table id="datatable" class="table striped-table w-100" style="width:100%">
-
-                            <!-- colgroup를 통해 열 폭을 강제 지정 -->
+                        <table id="datatable" class="table striped-table w-100 " style="width:100%; table-layout:fixed;">
                             <colgroup>
-                                <col style="width: 10%; background-color: null;" />
-                                <col style="width: 18%; background-color: null;" />
-                                <col style="width: 14%; background-color: null;" />
-                                <col style="width: 13%; background-color: null;" />
-                                <col style="width: 10%; background-color: null;" />
-                                <col style="width: 20%; background-color: null;" />
-                                <!-- <col style="width: 10%; background-color: null;" /> -->
+                                <col style="width: 30%;">
+                                <col style="width: 30%;">
+                                <col style="width: 30%;">
                             </colgroup>
-
                             <thead>
                             <tr>
-                                <th><input type="checkbox" id="select-all"></th>
-                                <th>출고코드</th>
-                                <th>출고요청일</th>
-                                <th>제품코드</th>
-                                <th>제품명</th>
-                                <th>수량(개)</th>
-                                <th>가맹점코드</th>
+                                <th>발주코드</th>
+                                <th>발주예정일</th>
+                                <th>상세조회</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <c:forEach var="outbound" items="${outboundList}">
+                            <c:forEach var="order" items="${orderList}">
                                 <tr>
-                                    <td><input type="checkbox" class="row-checkbox" /></td>
-                                    <td>${outbound.outboundCode}</td>
-                                    <td>${outbound.outboundDate}</td>
-                                    <td>${outbound.productCode}</td>
-                                    <td>${outbound.productName}</td>
-                                    <td>${outbound.quantity}</td>
-                                    <td>${outbound.franchiseCode}</td>
+                                    <td>${order.orderCode}</td>
+                                    <td>${order.orderDate}</td>
+                                    <td>
+                                        <button class="main-btn primary-btn-outline btn-hover btn-sm btn-xs btn-detail"
+                                                data-order-code="${order.orderCode}">
+                                            상세조회
+                                        </button>
+                                    </td>
                                 </tr>
                             </c:forEach>
                             </tbody>
-
                         </table>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 승인 모달 (일괄 승인용) -->
-        <form id="outboundApproveForm" method="post" action="/wm/outbound/approval" accept-charset="UTF-8">
-            <div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3 class="modal-title" id="approveModalLabel">출고요청 일괄 승인</h3>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
-                        </div>
-                        <div class="modal-body">
-                            <h5>선택한 출고요청을 승인하겠습니까?</h5><br>
-                            <ul id="approvalList" class="list-group mb-3">
-                                <!-- 선택된 출고요청 목록 삽입 -->
-                            </ul>
-                            <div class="d-flex justify-content-end gap-2">
-                                <button type="button" class="main-btn primary-btn btn-hover text-center" id="confirmApproval">승인</button>
-                            </div>
-                        </div>
+        <!-- 발주 상세 조회 모달 -->
+        <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderDetailModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="orderDetailModalLabel">발주 상세 내역</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table" id="orderDetailTable">
+                            <thead>
+                            <tr>
+                                <th>발주코드</th>
+                                <th>제품코드</th>
+                                <th>제품명</th>
+                                <th>제품단가</th>
+                                <th>보관타입</th>
+                                <th>수량</th>
+                                <th>발주상태</th>
+                            </tr>
+                            </thead>
+                            <tbody id="orderDetailTableBody">
+                            <!-- JavaScript로 채워짐 -->
+                            </tbody>
+                        </table>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
 
         </div>
     </section>
@@ -222,6 +298,12 @@
         background-color: transparent !important; /* 배경도 필요 시 투명하게 */
         box-shadow: none !important; /* 그림자도 제거 */
     }
+    /* 표 컬럼을 동일하게 분배하고, 텍스트 가운데 정렬 */
+    #datatable th, #datatable td {
+        text-align: center;
+        vertical-align: middle;
+        word-break: break-all;
+    }
 </style>
 <script>
     // Bootstrap 5 Tooltip 활성화 (모달 내부)
@@ -232,17 +314,16 @@
         });
     });
 
-
     $(document).ready(function() {
 
         // 5. DataTable 초기화 (dom 옵션에 사용자 정의 영역 포함)
         var table = $('#datatable').DataTable({
             autoWidth: false,
             columnDefs: [
-                { targets: [1, 2, 3, 4, 5], className: 'text-center' },
-                { targets: 0, orderable: false, searchable: false }
+                { width: '95px', targets: -1 },  // Actions 열 너비
+                { targets: [0, 1, 2], className: 'text-center' } // JS 속성으로 가운데 정렬
             ],
-            order: [[1, 'asc']],
+            order: [[0, 'asc']],
             paging: true,
             pageLength: 10,
             lengthMenu: [[5, 10, 20, -1], ['5개', '10개', '20개', '전체']],
@@ -250,7 +331,7 @@
             ordering: true,
             info: true,
             lengthChange: true,
-            dom: '<"top"l<"myFilterArea">fr>t<"bottom"ip>', // request.jsp와 동일한 dom 설정
+            dom: '<"top"l<"myFilterArea">fr>t<"bottom"ip>',
             language: {
                 lengthMenu: '_MENU_',
                 search: "검색 ",
@@ -315,12 +396,15 @@
             $('.dataTables_paginate .paginate_button').removeClass().addClass('main-btn deactive-btn-outline square-btn btn-hover mt-1 pt-2 pb-2 pl-15 pr-15');
         });
 
-        // 6. 사용자 정의 필터 영역에 승인 버튼만 복제 (request.jsp와 동일한 방식)
         var $clone = $('#myCustomFilters').clone(true);
-        $clone.find('#btnBulkApprove').attr('id', 'btnBulkApprove_clone');
-        $clone.find('#btnBulkApprove').remove();
-        $('div.myFilterArea').html($clone.html());
+        // 복제 후 삽입 시, ID 제거 필수!
+        $clone.find('#outboundCategories').attr('id', 'outboundCategories_clone');
 
+        $clone.find('#btnoutboundAdd').attr('id', 'btnoutboundAdd_clone');
+        $clone.find('#btnoutboundEdit').attr('id', 'btnoutboundEdit_clone');
+        $clone.find('#btnoutboundDelete').attr('id', 'btnoutboundDelete_clone');
+        $clone.find('#btnoutboundAdd, #btnoutboundEdit, #btnoutboundDelete').remove();
+        $('div.myFilterArea').html($clone.html());
 
         // select 태그 감싸는 구조 적용
         $('.dataTables_length select').each(function() {
@@ -330,82 +414,84 @@
             }
         });
 
-        // 모달 열릴 때마다 목록 갱신
-        $('#outboundAddModal').on('show.bs.modal', function () {
-            populateManagerDropdown();
+        // 6-1. 이벤트 위임 방식으로 변경된 ID에 새롭게 바인딩 (body를 통해 실제 필터에 작동하게!)
+        $('body').on('change', '#outboundCategories_clone', function() {
+            $('#outboundSubCategories_clone').val('');
+            table.draw();
         });
 
+        $('body').on('click', '#resetFilterBtn', function () {
+            const table = $('#datatable').DataTable();
 
-        // "Select All" 체크박스 이벤트
-        $('#select-all').on('click', function() {
-            const rows = table.rows({ page: 'current' }).nodes();
-            $('input.row-checkbox', rows).prop('checked', this.checked);
-        });
-        $('#datatable tbody').on('change', 'input.row-checkbox', function() {
-            if(!this.checked) {
-                const el = $('#select-all').get(0);
-                if(el && el.checked) {
-                    el.checked = false;
-                }
-            }
-        });
-        table.on('draw', function() {
-            $('#select-all').prop('checked', false);
+            table.search('').columns().search('');
+
+            $('#outboundCategories_clone, #outboundDateInput_clone').val('');
+
+            table.order([[0, 'asc']]);
+            table.draw();
         });
 
-        // 승인 버튼 클릭 시
-        $('#btnBulkApprove_clone').on('click', function (e) {
-            const selectedData = [];
-            $('#datatable tbody input.row-checkbox:checked').each(function () {
-                const $tr = $(this).closest('tr');
-                const rowData = {
-                    outboundCode: $tr.find('td').eq(1).text().trim(),
-                    productName: $tr.find('td').eq(4).text().trim(),
-                    quantity: $tr.find('td').eq(5).text().trim()
-                };
-                selectedData.push(rowData);
-            });
+        // 7. 필터 이벤트: 드롭다운 변경 시 테이블 필터링
+        $('#outboundCategories, #outboundDateInput').on('change keyup', function() {
+            table.draw();
+        });
 
-            if (selectedData.length === 0) {
-                alert('승인할 출고 요청을 선택하세요.');
-                return;
+        // 7-1. (7번 함수에서 각각이 변경될 때마다) 필터링 함수도 변경된 ID값을 기준으로 수정
+        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+            const selectedOutbound = $('#outboundCategories_clone').val();
+            const categoryOutbound = data[2]; // 발주상태는 2번째 컬럼 (0부터 시작)
+
+            // 일부 포함에도 검색
+            if (selectedOutbound && !categoryOutbound.includes(selectedOutbound)) {
+                return false;
             }
 
-            // 출고 요청 목록을 <ul> 안에 추가
-            const $list = $('#approvalList');
-            $list.empty();
+            return true;
+        });
 
-            selectedData.forEach((item) => {
-                const li = `
-                    <li class="list-group-item d-flex justify-content-between align-items-center" data-outbound-code="`+ item.outboundCode +`">
-                        <span>` + item.outboundCode + ` (` + item.productName + `)</span>
-                        <span class="badge bg-secondary">` + item.quantity + `개 </span>
-                    </li>
-                `;
-                $list.append(li);
-            });
+        // 상세조회 버튼 클릭 이벤트
+        $('body').on('click', '.btn-detail', function () {
+            const orderCode = $(this).data('order-code');
+            console.log('✅ 선택된 orderCode:', orderCode);
 
-            // 승인 확인 버튼 클릭 시: form에 hidden input 추가하고 전송
-            $('#confirmApproval').off('click').on('click', function (e) {
-                const $form = $('#outboundApproveForm');
-                $form.find('input[name="outboundCodeList"]').remove();
+            // AJAX로 발주 상세 정보 가져오기
+            $.ajax({
+                url: '/fm/list/detail',
+                method: 'GET',
+                data: { orderCode: orderCode },
+                dataType: 'json',
+                success: function(response) {
+                    // DataTable API를 사용해 테이블 갱신
+                    const table = $('#orderDetailTable').DataTable();
 
-                $('#approvalList .list-group-item').each(function () {
-                    const outboundCode = $(this).data('outbound-code');
-                    const input = `<input type="hidden" name="outboundCodeList" value="` + outboundCode + `" />`;
-                    $form.append(input);
-                });
+                    table.clear();
 
-                const result = confirm('선택하신 출고 요청을 승인 하시겠습니까?');
-                if (result) {
-                    $form.submit();
+                    if (response && response.length > 0) {
+                        response.forEach(detail => {
+                            table.row.add([
+                                detail.orderCode,
+                                detail.productCode,
+                                detail.productName,
+                                detail.productPrice,
+                                detail.storedType,
+                                detail.quantity,
+                                detail.orderStatus
+                            ]);
+                        });
+                    }
+
+                    table.draw();
+
+                    const modal = new bootstrap.Modal(document.getElementById('orderDetailModal'));
+                    modal.show();
+                },
+                error: function(xhr, status, error) {
+                    console.error('발주 상세 정보 조회 실패:', error);
+                    alert('발주 상세 정보를 불러오는데 실패했습니다.');
                 }
             });
-
-            // 모달 열기
-            const modal = new bootstrap.Modal(document.getElementById('approveModal'));
-            modal.show();
         });
+
     });
 
     //mypageData
@@ -441,3 +527,4 @@
 </c:if>
 </body>
 </html>
+
