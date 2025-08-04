@@ -54,11 +54,11 @@
             parameterType="string"
             resultType="int">
         SELECT COUNT(*)
-        FROM `Order` o
-                 JOIN Warehouse w ON o.warehouseCode = w.warehouseCode
-        WHERE o.orderStatus = '출고대기'
-          AND DATE(o.orderDate) = CURDATE()
-          AND w.warehouseCode = #{warehouseCode}
+        FROM Outbound o
+                 JOIN Inventory i ON o.inventoryCode = i.inventoryCode
+        WHERE o.outboundStatus = '출고대기'
+          AND DATE(o.outboundDate) = CURDATE()
+          AND i.warehouseCode = #{warehouseCode}
     </select>
 
     <!--    ///////////////////////////////////////////////////////////////////////// -->
@@ -93,19 +93,21 @@
             parameterType="string"
             resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">
         WITH RECURSIVE months AS (
-        SELECT DATE_SUB(CURDATE(), INTERVAL 11 MONTH) AS month_date
-        UNION ALL
-        SELECT DATE_ADD(month_date, INTERVAL 1 MONTH)
-        FROM months
-        WHERE month_date &lt; CURDATE()
+            SELECT DATE_SUB(CURDATE(), INTERVAL 11 MONTH) AS month_date
+            UNION ALL
+            SELECT DATE_ADD(month_date, INTERVAL 1 MONTH)
+            FROM months
+            WHERE month_date &lt;= CURDATE()
         )
         SELECT DATE_FORMAT(m.month_date, '%Y-%m') AS period,
-        IFNULL(COUNT(o.orderDate), 0) AS count
+               IFNULL(COUNT(o.outboundDate), 0) AS count
         FROM months m
-        LEFT JOIN `Order` o
-        ON DATE_FORMAT(o.orderDate, '%Y-%m') = DATE_FORMAT(m.month_date, '%Y-%m')
-        AND o.orderStatus = '출고완료'
-        AND o.warehouseCode = #{warehouseCode}
+                 LEFT JOIN Outbound o
+                           ON DATE_FORMAT(o.outboundDate, '%Y-%m') = DATE_FORMAT(m.month_date, '%Y-%m')
+                               AND o.outboundStatus = '출고완료'
+                 LEFT JOIN Inventory i
+                           ON o.inventoryCode = i.inventoryCode
+                               AND i.warehouseCode = #{warehouseCode}
         GROUP BY period
         ORDER BY period
     </select>
@@ -139,13 +141,15 @@
             FROM (SELECT 0 AS n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3) AS nums
         )
         SELECT w.period,
-               IFNULL(COUNT(o.orderDate), 0) AS count
+               IFNULL(COUNT(o.outboundDate), 0) AS count
         FROM weeks w
-                 LEFT JOIN `Order` o
-                           ON DATE_FORMAT(o.orderDate, '%x-%v') = w.period
-                               AND o.orderStatus = '출고완료'
-                               AND o.warehouseCode = #{warehouseCode}
-                               AND o.orderDate >= DATE_SUB(CURDATE(), INTERVAL 4 WEEK)
+                 LEFT JOIN Outbound o
+                           ON DATE_FORMAT(o.outboundDate, '%x-%v') = w.period
+                               AND o.outboundStatus = '출고완료'
+                               AND o.outboundDate >= DATE_SUB(CURDATE(), INTERVAL 4 WEEK)
+                 LEFT JOIN Inventory i
+                           ON o.inventoryCode = i.inventoryCode
+                               AND i.warehouseCode = #{warehouseCode}
         GROUP BY w.period
         ORDER BY w.period
     </select>
@@ -182,12 +186,14 @@
                  ) AS nums
         )
         SELECT yl.year AS period,
-               IFNULL(COUNT(o.orderDate), 0) AS count
+               IFNULL(COUNT(o.outboundDate), 0) AS count
         FROM year_list yl
-                 LEFT JOIN `Order` o
-                           ON YEAR(o.orderDate) = yl.year
-                               AND o.orderStatus = '출고완료'
-                               AND o.warehouseCode = #{warehouseCode}
+                 LEFT JOIN Outbound o
+                           ON YEAR(o.outboundDate) = yl.year
+                               AND o.outboundStatus = '출고완료'
+                 LEFT JOIN Inventory i
+                           ON o.inventoryCode = i.inventoryCode
+                               AND i.warehouseCode = #{warehouseCode}
         GROUP BY yl.year
         ORDER BY yl.year
     </select>
