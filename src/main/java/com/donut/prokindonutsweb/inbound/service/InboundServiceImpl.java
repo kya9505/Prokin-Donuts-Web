@@ -165,6 +165,15 @@ public class InboundServiceImpl implements InboundService {
 							.build();
 					log.info(vo.toString());
 					inboundMapper.updateInventory(vo);
+
+					String sectionCode = dto.getWarehouseCode() + "-" + getSection(inboundMapper.selectStoredType(dto.getProductCode()));
+
+					SectionDTO dto1 = SectionDTO.builder()
+							.sectionCode(sectionCode) //GG1-R
+							.quantity(dto.getQuantity())
+							.build();
+					// 섹션 수용한도 감소
+					inboundMapper.updateSection(dto1);
 				}
 		);
 	}
@@ -232,5 +241,11 @@ public class InboundServiceImpl implements InboundService {
 	private String getBarCode(String warehouseCode, String productCode, LocalDate expirationDate) {
 		String dateStr = expirationDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		return warehouseCode +"-"+ productCode +"-"+ dateStr;
+	}
+
+	@Override
+	public List<AutoInboundDTO> findAutoInboundProducts(String warehouseCode) {
+		// 적정재고량 이하인 제품들을 조회 (suggestedQuantity는 DB에서 계산됨)
+		return inboundMapper.selectAutoInboundProducts(warehouseCode);
 	}
 }

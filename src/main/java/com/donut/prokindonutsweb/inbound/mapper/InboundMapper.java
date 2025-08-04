@@ -51,4 +51,8 @@ public interface InboundMapper {
     // 상품코드 -> 보관타입 반환
     String selectStoredType(String productCode);
 
+    // 적정재고 이하 제품 리스트 반환
+    List<AutoInboundDTO> selectAutoInboundProducts(String warehouseCode);
+
+	void updateSection(SectionDTO vo);
 }
