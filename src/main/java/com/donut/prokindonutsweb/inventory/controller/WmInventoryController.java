@@ -1,5 +1,6 @@
 package com.donut.prokindonutsweb.inventory.controller;
 
+import com.donut.prokindonutsweb.common.EmailUtil;
 import com.donut.prokindonutsweb.inbound.dto.ProductDTO;
 import com.donut.prokindonutsweb.inventory.dto.InventoryExpiredDTO;
 import com.donut.prokindonutsweb.inventory.dto.InventorySelectDTO;
@@ -10,26 +11,29 @@ import com.donut.prokindonutsweb.security.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import java.io.FileNotFoundException;
 import java.util.List;
   
-  @Controller
-  @Log4j2
-  @RequiredArgsConstructor
-  @RequestMapping("/wm/warehouse")
-  public class WmInventoryController {
-    
-    private final WmInventoryService wmInventoryService;
-    private final CategoryFilterService categoryFilterService;
+@Controller
+@Log4j2
+@RequiredArgsConstructor
+@RequestMapping("/wm/warehouse")
+public class WmInventoryController {
+  
+  private final WmInventoryService wmInventoryService;
+  private final CategoryFilterService categoryFilterService;
     
     // 1) 초기 페이지 로딩
   @GetMapping
   public void wmGetInventoryList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
-    log.info(String.valueOf(user));
+      log.info(String.valueOf(user));
     // 1. 로그인 안 되어 있으므로 더미 담당자 코드로 설정
     String dummyMemberCode = user.getMemberCode();
     log.info("WM - Fetching inventory list for member: {}", dummyMemberCode);
@@ -78,12 +82,14 @@ import java.util.List;
   
   // 3) 유통기한 지난 재고 일괄 폐기
   @PostMapping("/expired/discard")
-  public ResponseEntity<Void> discardExpiredItems() {
+  public ResponseEntity<Void> discardExpiredItems() throws MessagingException, FileNotFoundException {
     log.info("Discarding expired inventory items");
     wmInventoryService.discardExpiredItems();
+    
     return ResponseEntity.ok().build();
   }
   
+  // 4) 적정재고량 조회
   @GetMapping("/threshold/list")
   public ResponseEntity<List<MinStockDTO>> getMinStockList(@AuthenticationPrincipal CustomUserDetails user) {
     String warehouseCode = wmInventoryService.findWarehouseCodeByMemberCode(user.getMemberCode());
@@ -92,6 +98,7 @@ import java.util.List;
     return ResponseEntity.ok(result);
   }
   
+  // 5) 적정재고량 저장/수정/삭제
   @PostMapping("/threshold/save")
   public ResponseEntity<Void> saveMinStockList(@RequestBody List<MinStockDTO> minStockList) {
     log.info("[적정재고 저장 요청] 건수: {}", minStockList.size());
@@ -99,9 +106,9 @@ import java.util.List;
     return ResponseEntity.ok().build();
   }
   
+  // 6) 적정재고량 - 서브모달 : 추가할 수 있는 제품명 조회
   @GetMapping("/threshold/search")
   public ResponseEntity<List<ProductDTO>> searchProducts(@RequestParam String keyword) {
-    log.info("🔴🔴🔴🔴🔴🔴");
     List<ProductDTO> products = wmInventoryService.searchProducts(keyword);
     return ResponseEntity.ok(products);
   }
