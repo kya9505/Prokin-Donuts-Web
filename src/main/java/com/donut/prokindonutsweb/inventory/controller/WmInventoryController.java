@@ -33,7 +33,7 @@ public class WmInventoryController {
     // 1) 초기 페이지 로딩
   @GetMapping
   public void wmGetInventoryList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
-      log.info(String.valueOf(user));
+    log.info(String.valueOf(user));
     // 1. 로그인 안 되어 있으므로 더미 담당자 코드로 설정
     String dummyMemberCode = user.getMemberCode();
     log.info("WM - Fetching inventory list for member: {}", dummyMemberCode);
