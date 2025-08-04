@@ -172,4 +172,19 @@ public class WmInboundController {
                         .orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_INBOUND_STATUS));
         model.addAttribute("inboundStatusList", inboundStatusList);
     }
+
+    /**
+     * 자동입고 요청을 위한 제품 목록을 반환한다.
+     * 적정재고량 이하인 제품들을 자동으로 선택하여 입고 요청할 수 있도록 한다.
+     * @param user 유저 정보
+     * @return 제품 리스트 반환
+     */
+    @GetMapping("/auto-request")
+    @ResponseBody
+    public List<AutoInboundDTO> getAutoInboundProducts(@AuthenticationPrincipal CustomUserDetails user) {
+        String memberCode = user.getMemberCode();
+        String warehouseCode = inboundService.getWarehouseCode(memberCode);
+
+		return inboundService.findAutoInboundProducts(warehouseCode);
+    }
 }
