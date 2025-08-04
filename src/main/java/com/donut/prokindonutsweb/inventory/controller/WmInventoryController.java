@@ -82,7 +82,7 @@ public class WmInventoryController {
   
   // 3) 유통기한 지난 재고 일괄 폐기
   @PostMapping("/expired/discard")
-  public ResponseEntity<Void> discardExpiredItems() throws MessagingException, FileNotFoundException {
+  public ResponseEntity<Void> discardExpiredItems() {
     log.info("Discarding expired inventory items");
     wmInventoryService.discardExpiredItems();
     
