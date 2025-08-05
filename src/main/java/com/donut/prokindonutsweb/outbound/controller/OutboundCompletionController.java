@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,13 +39,14 @@ public class OutboundCompletionController {
         return "wm/outbound/completion";
     }
 
+
     @PostMapping("/completion")
+    @Transactional
     public String completionOutbound(@RequestParam("outboundCodeList") List<String> outboundCodeList,  @AuthenticationPrincipal CustomUserDetails user,RedirectAttributes redirectAttributes) {
         String memberCode = user.getMemberCode();
         log.info(memberCode);
 
         String warehouseCode = outboundService.getWarehouseCode(memberCode);
-
 
         for (String outboundCode : outboundCodeList) {
             log.info(outboundCode);
@@ -59,11 +61,15 @@ public class OutboundCompletionController {
             // 섹션코드 존재하면 출고 완료처리후 섹션 용량 반영
             if (check) {
                 // 상태 변경 ( -> 출고 완료)
-                outboundService.completionOutbound(warehouseCode,outboundCode);
+                outboundService.completionOutbound(outboundCode);
 
                 // 섹션반영
                 int quantity = outboundService.getQuantity(outboundCode);
                 outboundService.SectionUpdate(sectionCode, quantity);
+
+                //발주상태변경
+                outboundService.completionOrder(outboundCode);
+
                 redirectAttributes.addFlashAttribute("errorMessage", "출고가 완료되었습니다.");
 
             } else {

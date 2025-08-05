@@ -97,6 +97,14 @@
         update outbound set outboundStatus = "출고완료" where outboundCode = #{outboundCode}
     </update>
 
+    <!--    발주상태 변경 (-> 배송중)-->
+    <update id="completionOrder">
+        UPDATE orderdetail od
+        JOIN outbound o ON o.orderdetailCode = od.orderdetailCode
+        SET od.orderStatus = '배송중'
+        WHERE o.outboundCode = #{outboundCode}
+    </update>
+
     <!--    재고차감 (출고승인) -->
     <update id="updateInventory">
         UPDATE Inventory i

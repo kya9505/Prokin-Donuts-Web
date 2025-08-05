@@ -16,7 +16,8 @@ public interface OutboundService {
     int getQuantity(String outboundCode);
     void approveOutbound(String outboundCode);
     String findStoredType(String outboundCode);
-    void completionOutbound(String warehouseCode,String outboundCode);
+    void completionOutbound(String outboundCode);
+    void completionOrder(String outboundCode);
     void SectionUpdate(String sectionCode ,int quantity);
     String getSectionCode(String warehouseCode, String outboundCode);
     void updateInventory(String outboundCode);

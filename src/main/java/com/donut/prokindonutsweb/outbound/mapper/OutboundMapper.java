@@ -17,6 +17,7 @@ public interface OutboundMapper {
 
     void approveOutbound(String outboundCode);
     void completionOutbound(String outboundCode);
+    void completionOrder(String outboundCode);
 
     void updateInventory(String outboundCode);
 

@@ -49,8 +49,13 @@ public class OutboundServiceImpl implements OutboundService{
 
     //출고상태 변경 (출고완료)
     @Override
-    public void completionOutbound(String warehouseCode,String outboundCode) {
+    public void completionOutbound(String outboundCode) {
         outboundMapper.completionOutbound(outboundCode);
+    }
+    // 발주상태 변경 (배송준비 -> 배송중)
+    @Override
+    public void completionOrder(String outboundCode) {
+        outboundMapper.completionOrder(outboundCode);
     }
 
     //보관타입 조회
@@ -81,7 +86,7 @@ public class OutboundServiceImpl implements OutboundService{
         return outboundMapper.selectQuantity(outboundCode);
     }
 
-    //
+
     //섹션반영
     @Override
     public void SectionUpdate(String sectionCode, int quantity){
