@@ -26,40 +26,51 @@ public class OutboundCompletionController {
 
     @GetMapping("/completion")
     public String getCompletionOutboundList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
-        log.info("check");
 
         String memberCode = user.getMemberCode();
         log.info(memberCode);
         String warehouseCode = outboundService.getWarehouseCode(memberCode);
 
 
-        List<OutboundDTO> outboundList = outboundService.findOutboundList(warehouseCode);
+        List<OutboundDTO> outboundList = outboundService.findCompletionOutboundList(warehouseCode);
 
         model.addAttribute("outboundList", outboundList);
-        return "wm/outbound/approval";
+        return "wm/outbound/completion";
     }
 
     @PostMapping("/completion")
-    public String completionOutbound(@RequestParam String outboundCode, RedirectAttributes redirectAttributes) {
-        log.info(outboundCode);
+    public String completionOutbound(@RequestParam("outboundCodeList") List<String> outboundCodeList,  @AuthenticationPrincipal CustomUserDetails user,RedirectAttributes redirectAttributes) {
+        String memberCode = user.getMemberCode();
+        log.info(memberCode);
 
-        // 재고 존재 확인
-        boolean check = outboundService.checkInventory(outboundCode);
-        log.info(String.valueOf(check));
-        // 존재하면 출고 처리
-        if(check) {
-            // 상태 변경 ( -> 출고 완료)
-            outboundService.approveOutbound(outboundCode);
-            // 재고 반영
-            outboundService.updateInventory(outboundCode);
-            redirectAttributes.addFlashAttribute("errorMessage", "출고가 완료되었습니다.");
+        String warehouseCode = outboundService.getWarehouseCode(memberCode);
 
-        } else {
-            // 출고 X 에러 메시지 반환
-            redirectAttributes.addFlashAttribute("errorMessage", "재고가 부족해 출고할 수 없습니다.");
+
+        for (String outboundCode : outboundCodeList) {
+            log.info(outboundCode);
+            //섹션 코드 생성
+            String sectionCode = outboundService.getSectionCode(warehouseCode, outboundCode);
+            log.info(sectionCode);
+            //섹션코드 검증
+            boolean check = outboundService.checkSectionCode(sectionCode);
+
+            log.info(String.valueOf(check));
+
+            // 섹션코드 존재하면 출고 완료처리후 섹션 용량 반영
+            if (check) {
+                // 상태 변경 ( -> 출고 완료)
+                outboundService.completionOutbound(warehouseCode,outboundCode);
+
+                // 섹션반영
+                int quantity = outboundService.getQuantity(outboundCode);
+                outboundService.SectionUpdate(sectionCode, quantity);
+                redirectAttributes.addFlashAttribute("errorMessage", "출고가 완료되었습니다.");
+
+            } else {
+                // 출고 완료 X 에러 메시지 반환
+                redirectAttributes.addFlashAttribute("errorMessage", "섹션이 존재하지 않습니다.");
+            }
         }
-
-
-        return "redirect:/wm/outbound/approval";
+        return "redirect:/wm/outbound/completion";
     }
 }
