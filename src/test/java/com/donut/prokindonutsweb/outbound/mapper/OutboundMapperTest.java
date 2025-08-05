@@ -42,10 +42,45 @@ public class OutboundMapperTest {
 
 
     @Test
-    @DisplayName("출고 목록 반환 메서드 테스트")
+    @DisplayName("출고 승인 목록 반환 메서드 테스트")
     void selectApprovalOutboundList() {
         List<OutboundDTO> outboundDTOList = outboundMapper.selectApprovalOutboundList("DJ1");
         outboundDTOList.forEach(dto -> log.info("출고정보: {}", dto));
+    }
+
+    @Test
+    @DisplayName("출고 준비 목록 반환 메서드 테스트")
+    void findCompletionOutboundList() {
+        List<OutboundDTO> outboundDTOList = outboundMapper.selectCompletionOutboundList("DJ1");
+        outboundDTOList.forEach(dto -> log.info("출고정보: {}", dto));
+    }
+
+
+    @Test
+    @DisplayName("출고 제품의 보관타입 반환")
+    void selectStoredType() {
+        String storedType = outboundMapper.selectStoredType("OB001");
+        log.info(storedType);
+    }
+    @Test
+    @DisplayName("출고 제품의 수량 반환")
+    void selectQuantity() {
+        int quantity = outboundMapper.selectQuantity("OB001");
+        log.info(String.valueOf(quantity));
+    }
+
+    @Test
+    @DisplayName("섹션코드 존재 여부 반환 메서드 ")
+    void checkSection() {
+        boolean GG1R = outboundMapper.checkSection("GG1-R");
+        log.info(String.valueOf(GG1R));
+    }
+
+    @Test
+    @DisplayName("섹션 원복")
+    void updateSection() {
+        outboundMapper.updateSection("GG1-R",50);
+
     }
 
 

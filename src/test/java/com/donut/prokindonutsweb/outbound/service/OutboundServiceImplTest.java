@@ -35,4 +35,27 @@ public class OutboundServiceImplTest {
         outboundList.forEach(log::info);
     }
 
+    @Test
+    @DisplayName("Service 출고준비 목록 조회")
+    public void findCompletionOutboundList(){
+        List<OutboundDTO> outboundList = outboundService.findCompletionOutboundList("DJ1");
+        outboundList.forEach(log::info);
+    }
+
+
+    @Test
+    @DisplayName("보관타입 조회")
+    public void findStoredType(){
+       String storedType =  outboundService.findStoredType("OB001");
+        log.info(storedType);
+    }
+
+    @Test
+    @DisplayName("섹션코드 생성")
+    public void getSectionCode(){
+       String sectionCode = outboundService.getSectionCode("GG1","OB001");
+        log.info(sectionCode);
+    }
+
+
 }
