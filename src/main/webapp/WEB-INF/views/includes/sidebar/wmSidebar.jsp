@@ -129,6 +129,7 @@
             { keyword: '/wm/inbound/approval', selector: '.nav-inbound-approval', parent: '.nav-inbound' },
             { keyword: '/wm/inbound/status', selector: '.nav-inbound-status', parent: '.nav-inbound' },
             { keyword: '/wm/outbound/approval', selector: '.nav-outbound-request', parent: '.nav-outbound' },
+            { keyword: '/wm/outbound/completion', selector: '.nav-outbound-completion', parent: '.nav-outbound' },
             { keyword: '/wm/outbound/status', selector: '.nav-outbound-status', parent: '.nav-outbound' }
         ];
 

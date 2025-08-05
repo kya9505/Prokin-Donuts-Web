@@ -34,7 +34,7 @@
 <!-- ======== sidebar-nav start =========== -->
 <aside class="sidebar-nav-wrapper">
     <div class="navbar-logo">
-        <a href="fm-dashboard.html">
+        <a href="<c:url value='/fm/order'/>">
             <img src="<c:url value='/resources/images/logo/menu_logo.png'/>" alt="logo" />
         </a>
     </div>
@@ -62,44 +62,45 @@
 </aside>
 
 <style>
+    /* 깜빡임 방지: 로딩 완료 후 JS에서 visible 처리 */
     .sidebar-nav-wrapper {
-        visibility: hidden; /* 깜빡임 방지용 */
+        visibility: hidden;
     }
 
-    .sidebar-nav .nav-item.active > a {
-        background-color: transparent !important;
-    }
-
-    .sidebar-nav .nav-item.active i {
-        color: #FF9D32 !important;
-    }
-
-    .sidebar-nav .nav-item.active .text {
-        color: #1c1c1c !important;
-        font-weight: bold;
-    }
-
+    /* 기본 메뉴 링크 */
     .sidebar-nav .nav-item > a {
         display: flex;
         align-items: center;
         padding: 12px 20px;
-        color: #bbb;
+        color: #bbb;               /* 비활성 텍스트 */
         text-decoration: none;
-        transition: all 0.3s ease;
+        transition: color 0.3s ease;
     }
-
     .sidebar-nav .nav-item > a:hover {
-        background-color: rgba(255, 157, 50, 0.1);
-        color: #1c1c1c;
+        color: #1c1c1c;            /* 호버 시 텍스트 진하게 */
     }
 
-    .sidebar-nav .nav-item .icon {
+    /* 아이콘 기본 색상: 회색 */
+    .sidebar-nav .nav-item .icon i {
         margin-right: 13px;
+        color: #bbb;               /* 비활성 아이콘 */
+        transition: color 0.3s ease;
+    }
+    /* 호버 시 아이콘 컬러 */
+    .sidebar-nav .nav-item:hover .icon i {
         color: #FF9D32;
     }
 
-    .sidebar-nav .nav-item .text {
-        color: #1c1c1c;
+    /* 활성 메뉴 */
+    .sidebar-nav .nav-item.active > a {
+        background-color: transparent !important;
+    }
+    .sidebar-nav .nav-item.active .icon i {
+        color: #FF9D32 !important;  /* 활성 시 아이콘 컬러 */
+    }
+    .sidebar-nav .nav-item.active .text {
+        color: #1c1c1c !important;  /* 활성 시 텍스트 컬러 */
+        font-weight: bold;
     }
 </style>
 
