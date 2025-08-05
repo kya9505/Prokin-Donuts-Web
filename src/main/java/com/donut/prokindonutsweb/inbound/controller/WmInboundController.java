@@ -1,10 +1,10 @@
 package com.donut.prokindonutsweb.inbound.controller;
 
+import com.donut.prokindonutsweb.common.UserInfoUtil;
 import com.donut.prokindonutsweb.inbound.dto.*;
 import com.donut.prokindonutsweb.inbound.exception.ErrorType;
 import com.donut.prokindonutsweb.inbound.exception.UserException;
 import com.donut.prokindonutsweb.inbound.service.InboundService;
-import com.donut.prokindonutsweb.inbound.vo.InventoryVO;
 import com.donut.prokindonutsweb.product.service.CategoryFilterService;
 import com.donut.prokindonutsweb.security.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +27,8 @@ import java.util.List;
 public class WmInboundController {
 
     private final InboundService inboundService;
+
+    private final UserInfoUtil userInfoUtil;
 
     private final CategoryFilterService categoryFilterService;
 
@@ -63,9 +65,7 @@ public class WmInboundController {
                              BindingResult bindingResult) {
         log.info(String.valueOf(user));
         log.info("입고요청 호출");
-        String memberCode = user.getMemberCode();
-        String warehouseCode = inboundService.getWarehouseCode(memberCode);
-        log.info(memberCode);
+        String warehouseCode = userInfoUtil.getWarehouseCode(user);
         log.info(warehouseCode);
 
         if(bindingResult.hasErrors()) {
@@ -98,10 +98,7 @@ public class WmInboundController {
     public void getInboundList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
        log.debug("현재 사용자 정보: {}", user.getMemberCode());
 
-        String memberCode = user.getMemberCode();
-        String warehouseCode = inboundService.getWarehouseCode(memberCode);
-        log.info(memberCode);
-        log.info(warehouseCode);
+        String warehouseCode = userInfoUtil.getWarehouseCode(user);
 
         List<InboundDTO> inboundList = inboundService.findInboundList(warehouseCode);
         List<InboundDetailDTO> inboundDetailList = inboundService.findInboundDetailList();
@@ -165,8 +162,7 @@ public class WmInboundController {
     @GetMapping("/status")
     public void getInboundStatusList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
 
-        String memberCode = user.getMemberCode();
-        String warehouseCode = inboundService.getWarehouseCode(memberCode);
+        String warehouseCode = userInfoUtil.getWarehouseCode(user);
 
         List<InboundStatusDTO> inboundStatusList = inboundService.findWMInboundStatusList(warehouseCode)
                         .orElseThrow(() -> new UserException(ErrorType.NOT_FOUND_INBOUND_STATUS));
@@ -182,9 +178,7 @@ public class WmInboundController {
     @GetMapping("/auto-request")
     @ResponseBody
     public List<AutoInboundDTO> getAutoInboundProducts(@AuthenticationPrincipal CustomUserDetails user) {
-        String memberCode = user.getMemberCode();
-        String warehouseCode = inboundService.getWarehouseCode(memberCode);
-
+        String warehouseCode = userInfoUtil.getWarehouseCode(user);
 		return inboundService.findAutoInboundProducts(warehouseCode);
     }
 }
