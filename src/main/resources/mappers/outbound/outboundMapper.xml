@@ -134,4 +134,17 @@
         end
     </select>
 
+    <!--출고 삽입-->
+    <insert id="insertOutbound">
+        insert into outbound (outboundCode,outboundDate,outboundStatus,quantity,orderDetailCode,inventoryCode,vehicleCode)
+        values (#{outboundCode},#{outboundDate},#{outboundStatus},#{quantity},#{orderDetailCode},#{inventoryCode},#{vehicleCode})
+    </insert>
+
+    <!--    최신 출고코드 조회 -->
+    <select id="selectOutboundCode" resultType="String">
+        Select outboundCode From outbound order by CAST(substring(outboundCode, 3) AS UNSIGNED) DESC LIMIT 1
+    </select>
+
+
+
 </mapper>

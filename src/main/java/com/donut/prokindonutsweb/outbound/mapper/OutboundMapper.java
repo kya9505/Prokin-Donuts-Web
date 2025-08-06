@@ -1,6 +1,7 @@
 package com.donut.prokindonutsweb.outbound.mapper;
 
 import com.donut.prokindonutsweb.outbound.dto.OutboundDTO;
+import com.donut.prokindonutsweb.outbound.vo.OutboundVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -24,5 +25,7 @@ public interface OutboundMapper {
     String getWarehouseCode(String memberCode);
 
     void updateSection(@Param("sectionCode") String sectionCode, @Param("quantity") int quantity);
+    void insertOutbound(OutboundVO outboundVO);
+    String selectOutboundCode();
 
 }
