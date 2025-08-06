@@ -13,6 +13,46 @@
     <!-- ========== header start ========== -->
     <%@include file="/WEB-INF/views/includes/header/LoginMemberHeader.jsp"%>
     <!-- ========== header end ========== -->
+
+    <style>
+        /* 1) icon-card: 아이콘 + 콘텐츠를 한 줄에 배치 */
+        .icon-card {
+            display: flex;
+            align-items: center;
+            /* (기존 padding/배경/그림자 등 유지) */
+        }
+        .icon-card .content {
+            flex: 1 1 auto;           /* 아이콘을 뺀 공간 전부 차지 */
+            display: flex;
+            flex-direction: column;   /* 제목과 temp-controls 세로 배치 */
+        }
+
+        /* 2) temp-controls: 버튼–온도–결정 그룹 전체 폭 채우기 */
+        .temp-controls {
+            display: flex;                    /* 공간 차지 동적으로 */
+            align-items: center;
+            justify-content: space-between;   /* 양끝 정렬 */
+            width: 100%;                      /* 콘텐츠 폭 가득 채움 */
+            gap: clamp(8px, 2vw, 16px);       /* 화면 크기에 따라 8px~16px 유동 */
+        }
+
+        .temp-controls > h3 {
+            flex: 1 1 auto;                   /* 남은 공간 모두 차지 */
+            margin: 0;                        /* gap 만으로 여백 처리 */
+            text-align: left;               /* 텍스트 중앙 정렬 */
+        }
+
+        .temp-controls > .main-btn {
+            flex: 50 50 50 50;                   /* 버튼 고정 크기 */
+        }
+
+        .temp-select-btn:hover {
+            background-color: #FF9D32;
+            border-color: #FF9D32;
+            color: #fff;
+        }
+    </style>
+
     <!-- Modal HTML Start -->
     <%@ include file="/WEB-INF/views/includes/mypage/mypage.jsp" %>
     <!-- Modal HTML End -->
@@ -31,6 +71,8 @@
                 <!-- end row -->
             </div>
             <!-- ========== title-wrapper end ========== -->
+
+            <!-- 1번째 열 -->
             <div class="row">
                 <!-- 미승인 입고요청 -->
                 <div class="col-xl-3 col-lg-6">
@@ -57,21 +99,56 @@
                         </div>
                     </div>
                 </div>
+                <!-- 유통기한 경과 상품 -->
+                <div class="col-xl-3 col-lg-6">
+                    <div class="icon-card mb-30">
+                        <div class="icon orange">
+                            <i class="lni lni-alarm-clock"></i>
+                        </div>
+                        <div class="content">
+                            <h6 class="mb-10">유통기한 경과 상품</h6>
+                            <h3 class="text-bold mb-10">${inboundWaiting}건</h3>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- 재고 미달 품목 -->
+                <div class="col-xl-3 col-lg-6">
+                    <div class="icon-card mb-30">
+                        <div class="icon deep-blue">
+                            <i class="lni lni-arrow-down-circle"></i>
+                        </div>
+                        <div class="content">
+                            <h6 class="mb-10">재고 미달 품목</h6>
+                            <h3 class="text-bold mb-10">${orderWaiting}건</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- 2번째 열 -->
+            <div class="row">
                 <!-- 냉장섹션 -->
-                <div class="col-xl-2 col-lg-4">
-                    <div class="icon-card mb-30 text-center">
+                <div class="col-xl-4 col-lg-4">
+                    <div class="icon-card mb-30">
+                        <!-- 냉장/냉동/상온 아이콘 표시 -->
+                        <div class="icon blue-light">
+                            <i class="lni lni-drop"></i>
+                        </div>
+                        <!-- 온도 카드 콘텐츠 (flex-grow 처리) -->
                         <div class="content">
                             <h6 class="mb-10">냉장섹션</h6>
-                            <div class="d-flex justify-content-center align-items-center" style="gap: 8px; margin-bottom: 6px;">
-                                <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1"
-                                        onclick="changeTemp('fridge', -1)">-</button>
-                                <h3 id="temp-fridge" class="text-bold mx-2" style="font-size: 20px; width: 50px;">
+                            <!-- 온도 카드 내부 폭 가득 채우는 그룹 -->
+                            <div class="temp-controls mb-2 pr-10">
+                                <h3 id="temp-fridge" class="text-bold">
                                     ${coldTemp}°C
                                 </h3>
-                                <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1"
-                                        onclick="changeTemp('fridge', 1)">+</button>
-                                <button class="main-btn primary-btn btn-hover btn-sm px-3 py-1 ms-2"
+                                <button class="main-btn warning-btn-outline btn-sm px-2 py-1" style="font-size: 15px;"
+                                        onclick="changeTemp('fridge', -1)">－</button>
+                                <button class="main-btn warning-btn-outline btn-sm px-2 py-1" style="font-size: 15px;"
+                                        onclick="changeTemp('fridge', 1)">＋</button>
+                                <button class="main-btn warning-btn-outline btn-sm px-10 py-1" style="font-size: 15px;"
                                         onclick="confirmTemp('fridge')">결정</button>
                             </div>
                         </div>
@@ -79,19 +156,46 @@
                 </div>
 
                 <!-- 냉동섹션 -->
-                <div class="col-xl-2 col-lg-4">
-                    <div class="icon-card mb-30 text-center">
+                <div class="col-xl-4 col-lg-4">
+                    <div class="icon-card mb-30">
+                        <!-- 냉장/냉동/상온 아이콘 표시 -->
+                        <div class="icon primary">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+                                 stroke="#365CF5" stroke-width="1" stroke-linecap="round">
+                                <g transform="translate(12,12)">
+                                    <!-- 3개의 메인 축 -->
+                                    <line x1="0" y1="-10" x2="0"  y2="10"   />
+                                    <line x1="0" y1="-10" x2="0"  y2="10"   transform="rotate(60)"  />
+                                    <line x1="0" y1="-10" x2="0"  y2="10"   transform="rotate(120)" />
+
+                                    <!-- 공통 가지(위/아래) -->
+                                    <g id="branch">
+                                        <line x1="0" y1="-6" x2="2" y2="-9"  />
+                                        <line x1="0" y1="-6" x2="-2" y2="-9" />
+                                        <line x1="0" y1="6"  x2="2" y2="9"   />
+                                        <line x1="0" y1="6"  x2="-2" y2="9"  />
+                                    </g>
+
+                                    <!-- 가지 복사 & 회전 -->
+                                    <use href="#branch" />
+                                    <use href="#branch" transform="rotate(60)" />
+                                    <use href="#branch" transform="rotate(120)" />
+                                </g>
+                            </svg>
+                        </div>
+                        <!-- 온도 카드 콘텐츠 (flex-grow 처리) -->
                         <div class="content">
                             <h6 class="mb-10">냉동섹션</h6>
-                            <div class="d-flex justify-content-center align-items-center" style="gap: 8px; margin-bottom: 6px;">
-                                <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1"
-                                        onclick="changeTemp('freezer', -1)">-</button>
-                                <h3 id="temp-freezer" class="text-bold mx-2" style="font-size: 20px; width: 50px;">
+                            <!-- 온도 카드 내부 폭 가득 채우는 그룹 -->
+                            <div class="temp-controls mb-2 pr-10">
+                                <h3 id="temp-freezer" class="text-bold">
                                     ${frozenTemp}°C
                                 </h3>
-                                <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1"
-                                        onclick="changeTemp('freezer', 1)">+</button>
-                                <button class="main-btn primary-btn btn-hover btn-sm px-3 py-1 ms-2"
+                                <button class="main-btn warning-btn-outline btn-sm px-2 py-1" style="font-size: 15px;"
+                                        onclick="changeTemp('freezer', -1)">－</button>
+                                <button class="main-btn warning-btn-outline btn-sm px-2 py-1" style="font-size: 15px;"
+                                        onclick="changeTemp('freezer', 1)">＋</button>
+                                <button class="main-btn warning-btn-outline btn-sm px-10 py-1" style="font-size: 15px;"
                                         onclick="confirmTemp('freezer')">결정</button>
                             </div>
                         </div>
@@ -99,29 +203,34 @@
                 </div>
 
                 <!-- 상온섹션 -->
-                <div class="col-xl-2 col-lg-4">
-                    <div class="icon-card mb-30 text-center">
+                <div class="col-xl-4 col-lg-4">
+                    <div class="icon-card mb-30">
+                        <!-- 냉장/냉동/상온 아이콘 표시 -->
+                        <div class="icon success">
+                            <i class="lni lni-sun"></i>
+                        </div>
+                        <!-- 온도 카드 콘텐츠 (flex-grow 처리) -->
                         <div class="content">
                             <h6 class="mb-10">상온섹션</h6>
-                            <div class="d-flex justify-content-center align-items-center" style="gap: 8px; margin-bottom: 6px;">
-                                <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1"
-                                        onclick="changeTemp('room', -1)">-</button>
-                                <h3 id="temp-room" class="text-bold mx-2" style="font-size: 20px; width: 50px;">
+                            <!-- 온도 카드 내부 폭 가득 채우는 그룹 -->
+                            <div class="temp-controls mb-2 pr-10">
+                                <h3 id="temp-room" class="text-bold">
                                     ${roomTemp}°C
                                 </h3>
-                                <button class="main-btn warning-btn-outline btn-hover btn-sm px-2 py-1"
-                                        onclick="changeTemp('room', 1)">+</button>
-                                <button class="main-btn primary-btn btn-hover btn-sm px-3 py-1 ms-2"
+                                <button class="main-btn warning-btn-outline btn-sm px-2 py-1" style="font-size: 15px;"
+                                        onclick="changeTemp('room', -1)">－</button>
+                                <button class="main-btn warning-btn-outline btn-sm px-2 py-1" style="font-size: 15px;"
+                                        onclick="changeTemp('room', 1)">＋</button>
+                                <button class="main-btn warning-btn-outline btn-sm px-10 py-1" style="font-size: 15px;"
                                         onclick="confirmTemp('room')">결정</button>
                             </div>
                         </div>
                     </div>
                 </div>
-
-            </div> <!-- ← 이 부분이 빠져 있었음 -->
-                <input type="hidden" id="warehouseCode" value="${warehouseCode}" />
-
+            </div>
             <!-- End Row -->
+
+                <input type="hidden" id="warehouseCode" value="${warehouseCode}" />
 
 <%--            -------------------------------------------------------------------------------                --%>
 
