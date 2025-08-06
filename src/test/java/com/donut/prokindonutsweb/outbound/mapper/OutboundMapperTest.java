@@ -1,6 +1,7 @@
 package com.donut.prokindonutsweb.outbound.mapper;
 
 import com.donut.prokindonutsweb.outbound.dto.OutboundDTO;
+import com.donut.prokindonutsweb.outbound.vo.OutboundVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -83,6 +85,26 @@ public class OutboundMapperTest {
 
     }
 
+    @Test
+    @DisplayName("출고 삽입")
+    void insertOutbound() {
+        OutboundVO outboundVO = OutboundVO.builder()
+                .outboundCode("test")
+                .outboundDate(LocalDate.now())
+                .outboundStatus("출고대기")
+                .quantity(30)
+                .orderDetailCode("test")
+                .inventoryCode("test")
+                .build();
+        outboundMapper.insertOutbound(outboundVO);
+    }
 
+
+    @Test
+    @DisplayName("최신출고코드 조회")
+    void selectOutboundCode(){
+        String outboundCode = outboundMapper.selectOutboundCode();
+        log.info(outboundCode);
+    }
 
 }
