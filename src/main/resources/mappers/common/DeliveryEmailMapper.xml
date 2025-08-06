@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.donut.prokindonutsweb.common.mapper.DeliveryEmailMapper">
+
+    <!-- 배송준비중 이메일용 ResultMap -->
+    <resultMap id="PrepareEmailResult"
+               type="com.donut.prokindonutsweb.common.dto.DeliveryPrepareDTO">
+        <result property="memberEmail" column="email"/>
+        <result property="memberName"  column="name"/>
+    </resultMap>
+
+    <select id="getPrepareEmailData"
+            parameterType="string"
+            resultMap="PrepareEmailResult">
+        SELECT
+            email,
+            name
+        FROM MemberAccount
+        WHERE memberCode = #{memberCode}
+    </select>
+
+    <!-- 배송중/완료 이메일용 ResultMap -->
+    <resultMap id="ShippingEmailResult" type="com.donut.prokindonutsweb.common.dto.DeliveryShippingDTO">
+        <result property="memberEmail"     column="email"/>
+        <result property="memberName"      column="name"/>
+        <result property="productName"     column="productName"/>
+    </resultMap>
+
+    <select id="getShippingEmailData"
+            parameterType="string"
+            resultMap="ShippingEmailResult">
+        SELECT
+            ma.email,
+            ma.name,
+            p.productName
+        FROM Outbound ob
+                 JOIN OrderDetail od   ON ob.orderDetailCode = od.orderDetailCode
+                 JOIN `Order` o        ON od.orderCode       = o.orderCode
+                 JOIN Product p        ON od.productCode     = p.productCode
+                 JOIN Franchise f      ON o.franchiseCode    = f.franchiseCode
+                 JOIN MemberAccount ma ON f.memberCode       = ma.memberCode
+        WHERE ob.outboundCode = #{outboundCode}
+    </select>
+
+</mapper>

@@ -21,5 +21,6 @@
         <package name="com.donut.prokindonutsweb.dashboard.dto"/>
         <package name="com.donut.prokindonutsweb.outbound.dto"/>
         <package name="com.donut.prokindonutsweb.scheduler.dto"/>
+        <package name="com.donut.prokindonutsweb.common.dto"/>
     </typeAliases>
 </configuration>
