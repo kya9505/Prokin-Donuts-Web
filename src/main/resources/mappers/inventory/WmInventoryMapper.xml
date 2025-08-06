@@ -8,12 +8,13 @@
     <!-- 1) 창고명을 조건으로 재고 조회 -->
     <select id="selectInventoryList" parameterType="String" resultType="InventorySelectDTO">
         SELECT
-            i.inventoryCode,
+            i.barcode,
             p.storedType,
             c.categoryMid,
             c.categorySub,
             p.productName,
-            i.quantity
+            i.quantity,
+            i.expirationDate
         FROM Inventory i
                  JOIN Warehouse w ON i.warehouseCode = w.warehouseCode
                  JOIN Product p   ON i.productCode = p.productCode

@@ -55,7 +55,8 @@
             resultType="int">
         SELECT COUNT(*)
         FROM Outbound o
-                 JOIN Inventory i ON o.inventoryCode = i.inventoryCode
+                 JOIN Inventory i
+                      ON o.inventoryCode = i.inventoryCode
         WHERE o.outboundStatus = '출고대기'
           AND DATE(o.outboundDate) = CURDATE()
           AND i.warehouseCode = #{warehouseCode}
@@ -97,18 +98,25 @@
             UNION ALL
             SELECT DATE_ADD(month_date, INTERVAL 1 MONTH)
             FROM months
-            WHERE month_date &lt;= CURDATE()
-        )
-        SELECT DATE_FORMAT(m.month_date, '%Y-%m') AS period,
-               IFNULL(COUNT(o.outboundDate), 0) AS count
+            WHERE month_date &lt; CURDATE()
+        ),
+                       outbound_per_month AS (
+                           SELECT
+                               DATE_FORMAT(o.outboundDate, '%Y-%m') AS period,
+                               COUNT(*) AS cnt
+                           FROM Outbound o
+                                    INNER JOIN Inventory i
+                                               ON o.inventoryCode = i.inventoryCode
+                                                   AND i.warehouseCode = #{warehouseCode}
+                           WHERE o.outboundStatus = '출고완료'
+                           GROUP BY DATE_FORMAT(o.outboundDate, '%Y-%m')
+                       )
+        SELECT
+            DATE_FORMAT(m.month_date, '%Y-%m') AS period,
+            IFNULL(opm.cnt, 0) AS count
         FROM months m
-                 LEFT JOIN Outbound o
-                           ON DATE_FORMAT(o.outboundDate, '%Y-%m') = DATE_FORMAT(m.month_date, '%Y-%m')
-                               AND o.outboundStatus = '출고완료'
-                 LEFT JOIN Inventory i
-                           ON o.inventoryCode = i.inventoryCode
-                               AND i.warehouseCode = #{warehouseCode}
-        GROUP BY period
+                 LEFT JOIN outbound_per_month opm
+                           ON DATE_FORMAT(m.month_date, '%Y-%m') = opm.period
         ORDER BY period
     </select>
 
@@ -138,19 +146,31 @@
             resultType="com.donut.prokindonutsweb.dashboard.dto.CountStatDTO">
         WITH weeks AS (
             SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL n WEEK), '%x-%v') AS period
-            FROM (SELECT 0 AS n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3) AS nums
-        )
-        SELECT w.period,
-               IFNULL(COUNT(o.outboundDate), 0) AS count
+            FROM (
+                     SELECT 0 AS n UNION ALL
+                     SELECT 1 UNION ALL
+                     SELECT 2 UNION ALL
+                     SELECT 3
+                 ) AS nums
+        ),
+             outbound_per_week AS (
+                 SELECT
+                     DATE_FORMAT(o.outboundDate, '%x-%v') AS period,
+                     COUNT(*) AS cnt
+                 FROM Outbound o
+                          INNER JOIN Inventory i
+                                     ON o.inventoryCode = i.inventoryCode
+                                         AND i.warehouseCode = #{warehouseCode}
+                 WHERE o.outboundStatus = '출고완료'
+                   AND o.outboundDate >= DATE_SUB(CURDATE(), INTERVAL 4 WEEK)
+                 GROUP BY DATE_FORMAT(o.outboundDate, '%x-%v')
+             )
+        SELECT
+            w.period AS period,
+            IFNULL(opw.cnt, 0) AS count
         FROM weeks w
-                 LEFT JOIN Outbound o
-                           ON DATE_FORMAT(o.outboundDate, '%x-%v') = w.period
-                               AND o.outboundStatus = '출고완료'
-                               AND o.outboundDate >= DATE_SUB(CURDATE(), INTERVAL 4 WEEK)
-                 LEFT JOIN Inventory i
-                           ON o.inventoryCode = i.inventoryCode
-                               AND i.warehouseCode = #{warehouseCode}
-        GROUP BY w.period
+                 LEFT JOIN outbound_per_week opw
+                           ON w.period = opw.period
         ORDER BY w.period
     </select>
 
@@ -182,18 +202,26 @@
         WITH year_list AS (
             SELECT (YEAR(CURDATE()) - n) AS year
             FROM (
-                     SELECT 0 AS n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+                     SELECT 0 AS n
+                     UNION ALL SELECT 1
+                     UNION ALL SELECT 2
+                     UNION ALL SELECT 3
+                     UNION ALL SELECT 4
                  ) AS nums
         )
-        SELECT yl.year AS period,
-               IFNULL(COUNT(o.outboundDate), 0) AS count
+        SELECT
+            yl.year   AS period,
+            COUNT(o.outboundDate) AS count
         FROM year_list yl
                  LEFT JOIN Outbound o
                            ON YEAR(o.outboundDate) = yl.year
                                AND o.outboundStatus = '출고완료'
-                 LEFT JOIN Inventory i
-                           ON o.inventoryCode = i.inventoryCode
-                               AND i.warehouseCode = #{warehouseCode}
+                               AND EXISTS (
+                                   SELECT 1
+                                   FROM Inventory i
+                                   WHERE i.inventoryCode = o.inventoryCode
+                                     AND i.warehouseCode = #{warehouseCode}
+                               )
         GROUP BY yl.year
         ORDER BY yl.year
     </select>

@@ -96,12 +96,13 @@
 
                                 <!-- colgroup를 통해 열 폭을 강제 지정 -->
                                 <colgroup>
-                                    <col style="width: 15%;" />
-                                    <col style="width: 10%;" />
-                                    <col style="width: 15%;" />
-                                    <col style="width: 20%;" />
-                                    <col style="width: 25%;" />
-                                    <col style="width: 15%;" />
+                                    <col style="width: 18%;" /> <!-- 재고코드 -->
+                                    <col style="width: 10%;" /> <!-- 보관타입 -->
+                                    <col style="width: 14%;" /> <!-- 중분류 -->
+                                    <col style="width: 14%;" /> <!-- 소분류 -->
+                                    <col style="width: 18%;" /> <!-- 제품명 -->
+                                    <col style="width: 13%;" /> <!-- 유통기한 -->
+                                    <col style="width: 13%;" /> <!-- 재고수량 -->
                                 </colgroup>
 
                                 <thead>
@@ -111,6 +112,7 @@
                                     <th>중분류</th>
                                     <th>소분류</th>
                                     <th>제품명</th>
+                                    <th>유통기한</th>
                                     <th>재고수량</th>
                                 </tr>
                                 </thead>
@@ -118,12 +120,16 @@
                                 <tbody>
                                 <c:forEach var="item" items="${inventoryList}">
                                 <tr>
-                                    <td>${item.inventoryCode}</td>
+                                    <td>${item.barcode}</td>
                                     <td>${item.storedType}</td>
                                     <td>${item.categoryMid}</td>
                                     <td>${item.categorySub}</td>
                                     <td>${item.productName}</td>
-                                    <td><fmt:formatNumber value="${item.quantity}" type="number" groupingUsed="true"/> 개</td>
+                                    <td>${item.expirationDate}</td>
+                                    <!-- 재고수량이 숫자를 기준으로 정렬되도록 수정 -->
+                                    <td data-order="${item.quantity}">
+                                        <fmt:formatNumber value="${item.quantity}" type="number" groupingUsed="true"/> 개
+                                    </td>
                                 </tr>
                                 </c:forEach>
                                 </tbody>
@@ -250,7 +256,7 @@
             autoWidth: false,
             columnDefs: [
                 { width: '95px', targets: -1 },  // Actions 열 너비
-                { targets: [0, 1, 2, 3, 4, 5], className: 'text-center' } // JS 속성으로 가운데 정렬
+                { targets: [0, 1, 2, 3, 4, 5, 6], className: 'text-center' } // JS 속성으로 가운데 정렬
             ],
             paging: true,
             pageLength: 10,
