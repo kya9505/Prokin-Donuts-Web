@@ -25,6 +25,10 @@ public interface OrderMapper {
     List<OrderDTO> findOrderList(String FranchiseCode);
 
     List<OrderDetailDTO> findOrderDetailList(String orderCode);
+    String findWarehouseCodeOne(String warehouseCode);
+
+    String findInventoryCode(@Param("warehouseCode") String warehouseCode,@Param("productCode") String productCode, @Param("quantity") int quantity);
+
 
 
 }

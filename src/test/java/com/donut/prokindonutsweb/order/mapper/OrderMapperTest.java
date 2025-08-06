@@ -78,5 +78,17 @@ public class OrderMapperTest {
         List<String> list = orderMapper.findWarehouseCode();
         list.forEach(log::info);
     }
+    @Test
+    @DisplayName("재고코드  반환")
+    void findInventoryCode() {
+        String Code = orderMapper.findInventoryCode("GG1","DGL4",900);
+        log.info(Code);
+    }
+    @Test
+    @DisplayName("창고코드  반환")
+    void findWarehouseCodeOne() {
+        String Code = orderMapper.findWarehouseCodeOne("GG");
+        log.info(Code);
+    }
 
 }
