@@ -13,6 +13,7 @@
 
     <!-- 1) 스캔 설정 -->
     <context:component-scan base-package="com.donut.prokindonutsweb.common"/>
+    <context:component-scan base-package="com.donut.prokindonutsweb.scheduler"/>
     <context:component-scan base-package="com.donut.prokindonutsweb.franchise.controller"/>
     <context:component-scan base-package="com.donut.prokindonutsweb.warehouse.controller"/>
     <context:component-scan base-package="com.donut.prokindonutsweb.product.controller"/>
