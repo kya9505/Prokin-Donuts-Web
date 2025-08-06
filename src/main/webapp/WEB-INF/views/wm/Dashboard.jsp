@@ -75,54 +75,63 @@
             <!-- 1번째 열 -->
             <div class="row">
                 <!-- 미승인 입고요청 -->
-                <div class="col-xl-3 col-lg-6">
-                    <div class="icon-card mb-30">
-                        <div class="icon purple">
-                            <i class="lni lni-package"></i>
+                <div class="col-xl-3 col-lg-6" >
+                    <a href="<c:url value='/wm/inbound/approval'/>" class="d-block" style="text-decoration: none; color: inherit;">
+                        <div class="icon-card mb-30">
+                            <div class="icon purple">
+                                <i class="lni lni-package"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">미승인 입고요청</h6>
+                                <h3 class="text-bold mb-10">${inboundWaiting}건</h3>
+                            </div>
                         </div>
-                        <div class="content">
-                            <h6 class="mb-10">미승인 입고요청</h6>
-                            <h3 class="text-bold mb-10">${inboundWaiting}건</h3>
-                        </div>
-                    </div>
+                    </a>
                 </div>
 
                 <!-- 미승인 출고요청 -->
-                <div class="col-xl-3 col-lg-6">
-                    <div class="icon-card mb-30">
-                        <div class="icon success">
-                            <i class="lni lni-delivery"></i>
+                <div class="col-xl-3 col-lg-6" >
+                    <a href="<c:url value='/wm/outbound/approval'/>" class="d-block" style="text-decoration: none; color: inherit;">
+                        <div class="icon-card mb-30">
+                            <div class="icon success">
+                                <i class="lni lni-delivery"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">미승인 출고요청</h6>
+                                <h3 class="text-bold mb-10">${orderWaiting}건</h3>
+                            </div>
                         </div>
-                        <div class="content">
-                            <h6 class="mb-10">미승인 출고요청</h6>
-                            <h3 class="text-bold mb-10">${orderWaiting}건</h3>
-                        </div>
-                    </div>
+                    </a>
                 </div>
+
                 <!-- 유통기한 경과 상품 -->
-                <div class="col-xl-3 col-lg-6">
-                    <div class="icon-card mb-30">
-                        <div class="icon orange">
-                            <i class="lni lni-alarm-clock"></i>
+                <div class="col-xl-3 col-lg-6" >
+                    <a href="<c:url value='/wm/warehouse'/>" class="d-block" style="text-decoration: none; color: inherit;">
+                        <div class="icon-card mb-30">
+                            <div class="icon orange">
+                                <i class="lni lni-alarm-clock"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">유통기한 경과 상품</h6>
+                                <h3 class="text-bold mb-10">${expiredInventoryCount}건</h3>
+                            </div>
                         </div>
-                        <div class="content">
-                            <h6 class="mb-10">유통기한 경과 상품</h6>
-                            <h3 class="text-bold mb-10">${inboundWaiting}건</h3>
-                        </div>
-                    </div>
+                    </a>
                 </div>
 
                 <!-- 재고 미달 품목 -->
-                <div class="col-xl-3 col-lg-6">
-                    <div class="icon-card mb-30">
-                        <div class="icon deep-blue">
-                            <i class="lni lni-arrow-down-circle"></i>
+                <div class="col-xl-3 col-lg-6" >
+                    <a href="<c:url value='/wm/warehouse'/>" class="d-block" style="text-decoration: none; color: inherit;">
+                        <div class="icon-card mb-30">
+                            <div class="icon deep-blue">
+                                <i class="lni lni-arrow-down-circle"></i>
+                            </div>
+                            <div class="content">
+                                <h6 class="mb-10">재고 미달 품목</h6>
+                                <h3 class="text-bold mb-10">${underMinStockCount}건</h3>
+                            </div>
                         </div>
-                        <div class="content">
-                            <h6 class="mb-10">재고 미달 품목</h6>
-                            <h3 class="text-bold mb-10">${orderWaiting}건</h3>
-                        </div>
-                    </div>
+                    </a>
                 </div>
             </div>
 

@@ -31,6 +31,12 @@ public interface WmDashboardMapper {
   // 오늘 미승인 출고요청 수
   int selectTodayWaitingOrderCount(String warehouseCode);
   
+  // 유통기한 지난 재고 갯수
+  int selectExpiredInventoryCount(String warehouseCode);
+  
+  // 적정재고량 미달 제품 갯수
+  int selectUnderMinStockCount(String warehouseCode);
+  
   // 입고 완료 - 최근 12개월 (월별)
   List<CountStatDTO> selectInboundCountLast12Months(@Param("warehouseCode") String warehouseCode);
   // 출고 완료 - 최근 12개월 (월별)

@@ -50,6 +50,16 @@
     </select>
 
     <!-- 오늘 미승인 출고대기 수 -->
+<!--    <select id="selectWaitingOrderCount"-->
+<!--            parameterType="string"-->
+<!--            resultType="int">-->
+<!--        SELECT COUNT(*)-->
+<!--        FROM Outbound o-->
+<!--                 JOIN Inventory i-->
+<!--                      ON o.inventoryCode = i.inventoryCode-->
+<!--        WHERE o.outboundStatus = '출고대기'-->
+<!--          AND i.warehouseCode = #{warehouseCode}-->
+<!--    </select>-->
     <select id="selectTodayWaitingOrderCount"
             parameterType="string"
             resultType="int">
@@ -58,8 +68,35 @@
                  JOIN Inventory i
                       ON o.inventoryCode = i.inventoryCode
         WHERE o.outboundStatus = '출고대기'
-          AND DATE(o.outboundDate) = CURDATE()
           AND i.warehouseCode = #{warehouseCode}
+    </select>
+
+    <!-- 유통기한 지난 재고 갯수 조회 -->
+    <select id="selectExpiredInventoryCount"
+            parameterType="string"
+            resultType="int">
+        SELECT COUNT(*)
+        FROM Inventory
+        WHERE warehouseCode   = #{warehouseCode}
+          AND expirationDate &lt; NOW()
+    </select>
+
+    <!-- 적정재고량 미달 제품 개수 조회 (제품별 합계 비교) -->
+    <select id="selectUnderMinStockCount"
+            parameterType="string"
+            resultType="int">
+        SELECT COUNT(*)
+        FROM (
+                 SELECT
+                     i.productCode
+                 FROM Inventory i
+                          JOIN WarehouseMinStock m
+                               ON i.warehouseCode = m.warehouseCode
+                                   AND i.productCode   = m.productCode
+                 WHERE i.warehouseCode = #{warehouseCode}
+                 GROUP BY i.productCode, m.minStock
+                 HAVING SUM(i.quantity) &lt; m.minStock
+             ) AS understock
     </select>
 
     <!--    ///////////////////////////////////////////////////////////////////////// -->

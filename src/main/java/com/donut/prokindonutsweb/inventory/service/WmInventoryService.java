@@ -12,8 +12,8 @@ public interface WmInventoryService {
   String findWarehouseCodeByMemberCode(String memberCode);
   String findWarehouseNameByWarehouseCode(String warehouseCode);
   
-  List<InventoryExpiredDTO> getExpiredItems();
-  void discardExpiredItems();
+  List<InventoryExpiredDTO> getExpiredItems(String warehouseCode);
+  void discardExpiredItems(String warehouseCode);
   
   List<MinStockDTO> getMinStockList(String warehouseCode);
   void saveMinStockList(List<MinStockDTO> minStockList);

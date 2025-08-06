@@ -36,18 +36,27 @@
         WHERE warehouseCode = #{warehouseCode}
     </select>
 
-    <!-- 4) 유통기한 지난 재고 조회 -->
-    <select id="selectExpiredItems" resultType="com.donut.prokindonutsweb.inventory.dto.InventoryExpiredDTO">
-        SELECT i.inventoryCode, i.productCode, p.productName
+    <!-- 4) 유통기한 지난 재고 조회 (warehouseCode 기준 필터링) -->
+    <select id="selectExpiredItems"
+            parameterType="string"
+            resultType="com.donut.prokindonutsweb.inventory.dto.InventoryExpiredDTO">
+        SELECT
+            i.inventoryCode,
+            i.productCode,
+            p.productName
         FROM Inventory i
-                 JOIN Product p ON i.productCode = p.productCode
+                 JOIN Product p
+                      ON i.productCode = p.productCode
         WHERE i.expirationDate &lt; NOW()
+          AND i.warehouseCode   = #{warehouseCode}
     </select>
 
-    <!-- 5) 유통기한 지난 재고 일괄 폐기 -->
-    <delete id="deleteExpiredItems">
+    <!-- 5) 유통기한 지난 재고 일괄 폐기 (warehouseCode 기준 필터링) -->
+    <delete id="deleteExpiredItems"
+            parameterType="string">
         DELETE FROM Inventory
         WHERE expirationDate &lt; CURDATE()
+          AND warehouseCode    = #{warehouseCode}
     </delete>
 
     <!-- 6) 창고별 적정재고 조회 -->

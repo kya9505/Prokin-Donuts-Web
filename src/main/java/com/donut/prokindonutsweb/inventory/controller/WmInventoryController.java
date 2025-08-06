@@ -74,17 +74,19 @@ public class WmInventoryController {
   
   // 2) 유통기한 지난 재고 조회
   @GetMapping("/expired/check")
-  public ResponseEntity<List<InventoryExpiredDTO>> checkExpiredItems() {
+  public ResponseEntity<List<InventoryExpiredDTO>> checkExpiredItems(@AuthenticationPrincipal CustomUserDetails user) {
     log.info("Checking expired inventory items");
-    List<InventoryExpiredDTO> expiredList = wmInventoryService.getExpiredItems();
+    String warehouseCode = wmInventoryService.findWarehouseCodeByMemberCode(user.getMemberCode());
+    List<InventoryExpiredDTO> expiredList = wmInventoryService.getExpiredItems(warehouseCode);
     return ResponseEntity.ok(expiredList);
   }
   
   // 3) 유통기한 지난 재고 일괄 폐기
   @PostMapping("/expired/discard")
-  public ResponseEntity<Void> discardExpiredItems() {
+  public ResponseEntity<Void> discardExpiredItems(@AuthenticationPrincipal CustomUserDetails user) {
     log.info("Discarding expired inventory items");
-    wmInventoryService.discardExpiredItems();
+    String warehouseCode = wmInventoryService.findWarehouseCodeByMemberCode(user.getMemberCode());
+    wmInventoryService.discardExpiredItems(warehouseCode);
     
     return ResponseEntity.ok().build();
   }

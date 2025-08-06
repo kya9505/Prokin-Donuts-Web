@@ -81,8 +81,8 @@
 
                                 <!-- 오른쪽: 등록/수정/삭제 -->
                                 <div class="btu-group-1 d-flex gap-2 mb-30">
-                                    <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="btnSetStockThreshold">적정재고량 설정</button>
                                     <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="btnCheckExpiry">유통기한 점검</button>
+                                    <button class="main-btn warning-btn-outline btn-hover btn-sm btn-xs" id="btnSetStockThreshold">적정재고량 설정</button>
                                 </div>
                             </div>
 
