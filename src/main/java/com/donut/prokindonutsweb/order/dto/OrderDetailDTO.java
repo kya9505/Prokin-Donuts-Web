@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @ToString
 public class OrderDetailDTO {
+    private String OrderDetailCode;
     private String OrderCode;
     private String productCode;
     private String productName;
