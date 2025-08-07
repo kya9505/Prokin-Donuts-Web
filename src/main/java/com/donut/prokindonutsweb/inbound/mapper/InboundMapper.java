@@ -29,7 +29,7 @@ public interface InboundMapper {
 
     Integer selectProductPrice(String productCode);
 
-    void approveInbound(String inboundCode);
+    void approveInbound(@Param("inboundCode") String inboundCode, @Param("status") String status);
 
     void updateInventory(InventoryVO inventoryVO);
 
@@ -42,11 +42,11 @@ public interface InboundMapper {
 
 
 
-    void deleteInbound(String inboundCode);
+    void deleteInbound(@Param("inboundCode") String inboundCode, @Param("status") String status);
 
     List<InboundStatusVO> selectAllInboundStatusList();
 
-    void updateQhInboundStatus(String inboundCode);
+    void updateQhInboundStatus(@Param("inboundCode") String inboundCode, @Param("status") String status);
 
     // 상품코드 -> 보관타입 반환
     String selectStoredType(String productCode);

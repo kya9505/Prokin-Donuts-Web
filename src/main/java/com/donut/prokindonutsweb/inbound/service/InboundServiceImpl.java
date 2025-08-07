@@ -142,7 +142,7 @@ public class InboundServiceImpl implements InboundService {
 	// 입고 상태를 변경한다 (-> 입고완료)
 	@Override
 	public void approveInbound(String inboundCode) {
-		inboundMapper.approveInbound(inboundCode);
+		inboundMapper.approveInbound(inboundCode, InboundStatus.APPROVE.getStatus());
 	}
 
 	@Override
@@ -190,7 +190,7 @@ public class InboundServiceImpl implements InboundService {
 
 	@Override
 	public void deleteInbound(String inboundCode) {
-		inboundMapper.deleteInbound(inboundCode);
+		inboundMapper.deleteInbound(inboundCode, InboundStatus.CANCEL.getStatus());
 	}
 
 	@Override
@@ -213,7 +213,7 @@ public class InboundServiceImpl implements InboundService {
 
 	@Override
 	public void updateInboundStatus(String inboundCode) {
-		inboundMapper.updateQhInboundStatus(inboundCode);
+		inboundMapper.updateQhInboundStatus(inboundCode, InboundStatus.APPROVE.getStatus());
 	}
 
 
