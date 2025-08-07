@@ -1,6 +1,7 @@
 package com.donut.prokindonutsweb.order.controller;
 
 
+import com.donut.prokindonutsweb.common.EmailUtil;
 import com.donut.prokindonutsweb.inbound.dto.ProductDTO;
 import com.donut.prokindonutsweb.inbound.service.InboundService;
 import com.donut.prokindonutsweb.inbound.exception.ErrorType;
@@ -11,10 +12,12 @@ import com.donut.prokindonutsweb.order.dto.OrderForm;
 import com.donut.prokindonutsweb.order.dto.OrderStatus;
 import com.donut.prokindonutsweb.order.service.OrderService;
 import com.donut.prokindonutsweb.outbound.dto.OutboundDTO;
+import com.donut.prokindonutsweb.outbound.service.OutboundService;
 import com.donut.prokindonutsweb.security.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,9 +40,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequestMapping("/fm")
 public class OrderController {
 
-    @Autowired
+    private final EmailUtil emailUtil;
+    private final JavaMailSender javaMailSender;
     private final InboundService inboundService;
-    @Autowired private final OrderService orderService;
+    private final OrderService orderService;
 
     // 발주 요청에 필요한 제품 목록 출력
     @GetMapping("/order")
@@ -110,6 +114,10 @@ public class OrderController {
 
             //출고 저장 생성
             orderService.addOutbound(warehouseCode,dto,orderDetailList);
+
+            //메일발송
+            emailUtil.sendDeliveryStatusEmail(javaMailSender,memberCode,"배송준비" );
+
 
             redirectAttributes.addFlashAttribute("successMessage", "발주 요청이 완료되었습니다!");
         } catch (Exception e) {

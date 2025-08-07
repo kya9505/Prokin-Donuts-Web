@@ -1,9 +1,13 @@
 package com.donut.prokindonutsweb.outbound.service;
 
+import com.donut.prokindonutsweb.common.EmailUtil;
+import com.donut.prokindonutsweb.order.mapper.OrderMapper;
 import com.donut.prokindonutsweb.outbound.dto.OutboundDTO;
 import com.donut.prokindonutsweb.outbound.mapper.OutboundMapper;
+import com.donut.prokindonutsweb.outbound.vo.OutboundVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +18,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OutboundServiceImpl implements OutboundService{
 
+    private final EmailUtil emailUtil;
+    private final JavaMailSender javaMailSender;
     private final OutboundMapper outboundMapper;
+    private final OrderMapper orderMapper;
+
 
     //출고목록 조회
     @Override
@@ -52,10 +60,12 @@ public class OutboundServiceImpl implements OutboundService{
     public void completionOutbound(String outboundCode) {
         outboundMapper.completionOutbound(outboundCode);
     }
-    // 발주상태 변경 (배송준비 -> 배송중)
+    // 발주상태 변경 (배송준비 -> 배송중) 후 메일발송
     @Override
     public void completionOrder(String outboundCode) {
+        log.info("발주상태 변경");
         outboundMapper.completionOrder(outboundCode);
+        emailUtil.sendDeliveryStatusEmail(javaMailSender,outboundCode,"배송중" );
     }
 
     //보관타입 조회
