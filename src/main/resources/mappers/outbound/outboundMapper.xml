@@ -166,5 +166,12 @@
         WHERE o.outboundCode = #{outboundCode}
     </select>
 
+    <!--출고 승인 시 재고 코드 등록-->
+    <update id="updateInventoryCode">
+        update outbound set inventoryCode = #{inventoryCode}
+        where outboundCode = #{outboundCode}
+    </update>
+
+
 
 </mapper>

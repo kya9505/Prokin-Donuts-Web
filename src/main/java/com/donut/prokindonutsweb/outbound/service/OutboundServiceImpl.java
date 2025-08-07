@@ -107,8 +107,30 @@ public class OutboundServiceImpl implements OutboundService{
 
     // 재고 반영
     @Override
-    public void updateInventory(String outboundCode) {
-        outboundMapper.updateInventory(outboundCode);
+    public void updateInventory(String outboundCode , String warehouseCode) {
+        //  VO와 DTO 조회
+        OutboundVO outboundVO = outboundMapper.selectOutboundVoOne(outboundCode);
+        OutboundDTO outboundDTO = outboundMapper.selectOutboundDtoOne(outboundCode);
+
+        //  재고 코드 존재 여부에 따라 처리
+        if (outboundVO.getInventoryCode() != null) {
+            // 기존 재고 차감 처리
+            outboundMapper.updateInventory(outboundCode);
+        } else {
+            // 재고 코드가 없으면 재고 코드 검색 후 VO에 세팅
+            String inventoryCode = orderMapper.findInventoryCode(
+                    warehouseCode,
+                    outboundDTO.getProductCode(),
+                    Integer.parseInt(outboundDTO.getQuantity())
+            );
+
+            // 재고 코드 세팅 및 DB에 반영
+            outboundVO.setInventoryCode(inventoryCode);
+            outboundMapper.updateInventoryCode(outboundVO);
+
+            // 이후 차감 처리
+            outboundMapper.updateInventory(outboundCode);
+        }
     }
 
     //창고코드 조회

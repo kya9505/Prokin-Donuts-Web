@@ -20,7 +20,7 @@ public interface OutboundService {
     void completionOrder(String outboundCode);
     void SectionUpdate(String sectionCode ,int quantity);
     String getSectionCode(String warehouseCode, String outboundCode);
-    void updateInventory(String outboundCode);
+    void updateInventory(String outboundCode,String warehouseCode);
 
     String getWarehouseCode(String memberCode);
 }

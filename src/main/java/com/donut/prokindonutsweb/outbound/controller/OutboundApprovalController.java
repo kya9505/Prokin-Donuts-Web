@@ -1,5 +1,6 @@
 package com.donut.prokindonutsweb.outbound.controller;
 
+import com.donut.prokindonutsweb.common.mapper.UserInfoMapper;
 import com.donut.prokindonutsweb.outbound.dto.OutboundDTO;
 import com.donut.prokindonutsweb.outbound.service.OutboundService;
 import com.donut.prokindonutsweb.security.dto.CustomUserDetails;
@@ -23,6 +24,7 @@ import java.util.List;
 public class OutboundApprovalController {
 
     private final OutboundService outboundService;
+    private final UserInfoMapper userInfoMapper;
 
     @GetMapping("/approval")
     public String getOutboundList(Model model, @AuthenticationPrincipal CustomUserDetails user) {
@@ -40,7 +42,9 @@ public class OutboundApprovalController {
     }
 
     @PostMapping("/approval")
-    public String approveOutbound(@RequestParam("outboundCodeList") List<String> outboundCodeList, RedirectAttributes redirectAttributes) {
+    public String approveOutbound(@AuthenticationPrincipal CustomUserDetails user,@RequestParam("outboundCodeList") List<String> outboundCodeList, RedirectAttributes redirectAttributes) {
+        String warehouseCode = userInfoMapper.getWarehouseCode(user.getMemberCode());
+
         for (String outboundCode : outboundCodeList) {
             log.info("출고코드: {}", outboundCode);
 
@@ -53,7 +57,7 @@ public class OutboundApprovalController {
                 // 상태 변경 ( -> 출고 준비)
                 outboundService.approveOutbound(outboundCode);
                 // 재고 반영
-                outboundService.updateInventory(outboundCode);
+                outboundService.updateInventory(outboundCode,warehouseCode);
                 redirectAttributes.addFlashAttribute("errorMessage", "출고가 완료되었습니다.");
             } else {
                 // 출고 X 에러 메시지 반환
