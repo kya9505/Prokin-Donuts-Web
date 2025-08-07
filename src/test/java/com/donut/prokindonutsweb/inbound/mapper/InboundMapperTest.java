@@ -1,6 +1,7 @@
 package com.donut.prokindonutsweb.inbound.mapper;
 
 
+import com.donut.prokindonutsweb.inbound.dto.InboundStatus;
 import com.donut.prokindonutsweb.inbound.dto.SectionDTO;
 import com.donut.prokindonutsweb.inbound.vo.InboundDetailVO;
 import com.donut.prokindonutsweb.inbound.dto.InboundUpdateDTO;
@@ -111,7 +112,7 @@ class InboundMapperTest {
     @Test
     @DisplayName("입고 완료 시 상태 변경 메서드")
     void approveInbound() {
-        inboundMapper.approveInbound("IN1");
+        inboundMapper.approveInbound("IN1", InboundStatus.COMPLETE.getStatus());
         inboundMapper.selectAllInboundList().forEach(System.out::println);
     }
 
@@ -168,7 +169,7 @@ class InboundMapperTest {
     @Test
     @DisplayName("입고 취소(입고상태 -> 입고취소)")
     void deleteInbound() {
-        inboundMapper.deleteInbound("IN7");
+        inboundMapper.deleteInbound("IN7",  InboundStatus.CANCEL.getStatus());
     }
 
     @Test
@@ -180,7 +181,7 @@ class InboundMapperTest {
     @Test
     @DisplayName("본사관리자의 입고승인(-> 승인대기)")
     void updateQhInboundStatus() {
-        inboundMapper.updateQhInboundStatus("IN15");
+        inboundMapper.updateQhInboundStatus("IN15", InboundStatus.APPROVE.getStatus());
     }
 
     @Test
