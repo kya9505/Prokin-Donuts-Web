@@ -23,6 +23,12 @@ public interface WmDashboardService {
   // 오늘 미승인 출고요청 수
   int findTodayWaitingOrderCount(String warehouseCode);
   
+  // 유통기한 지난 재고 갯수
+  int findExpiredInventoryCount(String warehouseCode);
+  
+  // 적정재고량 미달 제품 갯수
+  int findUnderMinStockCount(String warehouseCode);
+  
   // 입고 완료 - 최근 12개월 (월별)
   List<CountStatDTO> findInboundCountLast12Months(String warehouseCode);
   // 출고 완료 - 최근 12개월 (월별)

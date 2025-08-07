@@ -13,8 +13,8 @@ public interface WmInventoryMapper {
   String selectWarehouseCodeByMemberCode(String memberCode);
   String selectWarehouseNameByWarehouseCode(String warehouseCode);
   
-  List<InventoryExpiredDTO> selectExpiredItems();
-  void deleteExpiredItems();
+  List<InventoryExpiredDTO> selectExpiredItems(String warehouseCode);
+  void deleteExpiredItems(String warehouseCode);
   
   List<MinStockDTO> selectByWarehouse(String warehouseCode);
   void upsert(MinStockDTO dto);

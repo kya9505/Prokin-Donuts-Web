@@ -37,13 +37,13 @@ public class WmInventoryServiceImpl implements WmInventoryService {
   }
   
   @Override
-  public List<InventoryExpiredDTO> getExpiredItems() {
-    return wmInventoryMapper.selectExpiredItems();
+  public List<InventoryExpiredDTO> getExpiredItems(String warehouseCode) {
+    return wmInventoryMapper.selectExpiredItems(warehouseCode);
   }
   
   @Override
-  public void discardExpiredItems() {
-    wmInventoryMapper.deleteExpiredItems();
+  public void discardExpiredItems(String warehouseCode) {
+    wmInventoryMapper.deleteExpiredItems(warehouseCode);
   }
   
   @Override
