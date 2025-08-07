@@ -145,6 +145,26 @@
         Select outboundCode From outbound order by CAST(substring(outboundCode, 3) AS UNSIGNED) DESC LIMIT 1
     </select>
 
+    <select id="selectOutboundVoOne"  resultType="com.donut.prokindonutsweb.outbound.vo.OutboundVO">
+        SELECT * FROM outbound o WHERE o.outboundCode = #{outboundCode}
+    </select>
+
+    <select id="selectOutboundDtoOne"  resultType="com.donut.prokindonutsweb.outbound.dto.OutboundDTO">
+        SELECT
+        o.outboundCode,
+        p.productCode,
+        p.productName,
+        o.outboundDate,
+        o.vehicleCode,
+        od.franchiseCode,
+        o.outboundStatus
+        FROM outbound o
+        JOIN inventory i ON o.inventoryCode = i.inventoryCode
+        JOIN product p ON i.productCode = p.productCode
+        JOIN orderdetail odd ON o.orderDetailCode = odd.orderDetailCode
+        JOIN `order` od ON od.orderCode = odd.orderCode
+        WHERE o.outboundCode = #{outboundCode}
+    </select>
 
 
 </mapper>

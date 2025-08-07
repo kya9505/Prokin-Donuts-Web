@@ -107,4 +107,15 @@ public class OutboundMapperTest {
         log.info(outboundCode);
     }
 
+
+    @Test
+    @DisplayName("출고 반환 메서드 테스트")
+    void selectOutboundOne() {
+        OutboundVO outboundVO = outboundMapper.selectOutboundVoOne("OB001");
+        OutboundDTO outboundDTO = outboundMapper.selectOutboundDtoOne("OB001");
+
+        log.info("outboundVO : {}", outboundVO);
+        log.info("outboundDTO : {}", outboundDTO);
+    }
+
 }

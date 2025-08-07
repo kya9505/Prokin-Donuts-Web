@@ -21,11 +21,14 @@ public interface OutboundMapper {
     void completionOrder(String outboundCode);
 
     void updateInventory(String outboundCode);
+    void updateInventoryCode(OutboundVO outboundVO);
 
     String getWarehouseCode(String memberCode);
 
     void updateSection(@Param("sectionCode") String sectionCode, @Param("quantity") int quantity);
     void insertOutbound(OutboundVO outboundVO);
     String selectOutboundCode();
+    OutboundVO selectOutboundVoOne(String outboundCode);
+    OutboundDTO selectOutboundDtoOne(String outboundCode);
 
 }
