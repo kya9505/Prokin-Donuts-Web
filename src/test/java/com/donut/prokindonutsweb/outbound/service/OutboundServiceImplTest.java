@@ -1,6 +1,8 @@
 package com.donut.prokindonutsweb.outbound.service;
 
 import com.donut.prokindonutsweb.outbound.dto.OutboundDTO;
+import com.donut.prokindonutsweb.outbound.dto.VehicleDTO;
+import com.donut.prokindonutsweb.outbound.dto.VehicleScheduleDTO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -57,5 +60,38 @@ public class OutboundServiceImplTest {
         log.info(sectionCode);
     }
 
+    @Test
+    @DisplayName("출고요청일 2일 이전까지 창고의 모든 차량이 차량스케쥴표에 등록되어있는 지 조회")
+    void getVehicleSchedule(){
+        VehicleDTO vehicleDTO = VehicleDTO.builder()
+                .storedType("냉장")
+                .warehouseCode("GG1")
+                .outboundDate(LocalDate.parse("2025-01-13"))
+                .outboundCode("OB005")
+                .quantity(45)
+                .build();
+        boolean scheduledCount = outboundService.getVehicleSchedule(vehicleDTO);
+        log.info(scheduledCount);
+    }
+    @Test
+    @DisplayName("해당날짜의 창고의 모든 차량을 스케쥴표에 등록 (중복제외)")
+    void insertVehicleSchedule(){
+        VehicleDTO vehicleDTO = VehicleDTO.builder()
+                .storedType("냉장")
+                .warehouseCode("GG1")
+                .outboundDate(LocalDate.parse("2025-01-13"))
+                .outboundCode("OB005")
+                .quantity(45)
+                .build();
+        outboundService.insertVehicleSchedule(vehicleDTO);
+    }
+
+
+    @Test
+    @DisplayName("출고에 차량 배치")
+    void outboundVehicle(){
+        outboundService.outboundVehicle("OB156");
+        //결과 : 로그 확인
+    }
 
 }
