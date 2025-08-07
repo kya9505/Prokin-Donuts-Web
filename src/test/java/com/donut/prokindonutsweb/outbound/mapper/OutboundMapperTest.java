@@ -1,7 +1,11 @@
 package com.donut.prokindonutsweb.outbound.mapper;
 
 import com.donut.prokindonutsweb.outbound.dto.OutboundDTO;
+import com.donut.prokindonutsweb.outbound.dto.VehicleDTO;
+import com.donut.prokindonutsweb.outbound.dto.VehicleScheduleDTO;
 import com.donut.prokindonutsweb.outbound.vo.OutboundVO;
+import com.donut.prokindonutsweb.outbound.vo.VehicleScheduleVO;
+import com.donut.prokindonutsweb.outbound.vo.VehicleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -118,4 +122,75 @@ public class OutboundMapperTest {
         log.info("outboundDTO : {}", outboundDTO);
     }
 
+    @Test
+    @DisplayName("배치 차량 조회")
+    void selectVehicleCode(){
+        VehicleDTO vehicleDTO = VehicleDTO.builder()
+                .storedType("냉장")
+                .warehouseCode("GG1")
+                .outboundDate(LocalDate.parse("2025-01-13"))
+                .outboundCode("OB005")
+                .quantity(45)
+                .build();
+        VehicleScheduleDTO vehicleScheduleDTO = outboundMapper.selectVehicle(vehicleDTO);
+        log.info("vehicleScheduleDTO : {}",vehicleScheduleDTO);
+    }
+
+    @Test
+    @DisplayName("출고일포함 3일내 스케쥴에 등록되어있는 차량 수 ")
+    void countRegisteredVehicleSchedule(){
+        VehicleDTO vehicleDTO = VehicleDTO.builder()
+                .storedType("냉장")
+                .warehouseCode("GG1")
+                .outboundDate(LocalDate.parse("2025-01-13"))
+                .outboundCode("OB005")
+                .quantity(45)
+                .build();
+        int countRegisteredVehicleSchedule = outboundMapper.countRegisteredVehicleSchedule(vehicleDTO);
+        log.info(String.valueOf(countRegisteredVehicleSchedule));
+    }
+    @Test
+    @DisplayName("해당 창고의 보관타입이 일치하는 차량 수 조회  ")
+    void countAllVehiclesInWarehouse(){
+        VehicleDTO vehicleDTO = VehicleDTO.builder()
+                .storedType("냉장")
+                .warehouseCode("GG1")
+                .outboundDate(LocalDate.parse("2025-01-13"))
+                .outboundCode("OB005")
+                .quantity(45)
+                .build();
+        int countAllVehiclesInWarehouse = outboundMapper.countAllVehiclesInWarehouse(vehicleDTO);
+        log.info(String.valueOf(countAllVehiclesInWarehouse));
+    }
+
+    @Test
+    @DisplayName("차량DTO조회")
+    void getVehicleDTO(){
+        VehicleDTO vehicleDTO = outboundMapper.getVehicleDTO("OB005");
+        log.info("vehicleDTO : {}",vehicleDTO);
+    }
+    @Test
+    @DisplayName("차량VO조회")
+    void getVehicleVO(){
+        List<VehicleVO> vehicleVOs = outboundMapper.getVehicleVO("GG1");
+        vehicleVOs.forEach(vehicleVO -> log.info("vehicleVO : {}",vehicleVO));
+    }
+
+    @Test
+    @DisplayName("최신차량 스케줄 코드 조회")
+    void selectVehicleScheduleCode(){
+        String code = outboundMapper.selectVehicleScheduleCode();
+        log.info(code);
+    }
+
+    @Test
+    @DisplayName("차량스케줄코드 등록(잔여 적재량 차감)")
+    void updateVehicleSchedule(){
+        VehicleScheduleDTO vehicleScheduleDTO = VehicleScheduleDTO.builder()
+                .vehicleCode("V010")
+                .dispatchDate(LocalDate.parse("2025-01-13"))
+                .quantity(45)
+                .build();
+        outboundMapper.updateVehicleSchedule(vehicleScheduleDTO);
+    }
 }

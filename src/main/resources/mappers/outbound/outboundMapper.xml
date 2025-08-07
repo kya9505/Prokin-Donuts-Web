@@ -172,6 +172,88 @@
         where outboundCode = #{outboundCode}
     </update>
 
+    <!--최적 차량 조회
+    1. 해당 창고 보유 차량 중
+    2. 출고요청일 2일 이내에(우선순위 : 당일 > 하루전 > 이틀전)
+    3. 제품과 보관타입 일치
+    4. 잔여 적재용량 존재
+    5. 제품 출고량 적재가능한 차량 중
+    6. 가장 잔여 적재용량이 큰 차량 조회
+    -->
+    <select id="selectVehicle" resultType="com.donut.prokindonutsweb.outbound.dto.VehicleScheduleDTO">
+        select v.vehicleCode , vs.dispatchDate , o.quantity
+        from outbound o
+        left join inventory i on o.inventoryCode = i.inventoryCode
+        left join warehouse w on i.warehouseCode = w.warehouseCode
+        right join vehicle v on  v.warehouseCode = w. warehouseCode
+        left join vehicleschedule vs on v.vehicleCode = vs.vehicleCode
+        where o.outboundCode = #{outboundCode}
+        and vs.dispatchDate IN ( #{outboundDate} ,
+                                 DATE_SUB(#{outboundDate}, INTERVAL 1 DAY),
+                                 DATE_SUB(#{outboundDate}, INTERVAL 2 DAY))
+        and v.type = #{storedType}
+        and vs.remainingCapacity > 0
+        and vs.remainingCapacity - #{quantity} >= 0
+        order by case vs.dispatchDate
+            when #{outboundDate} THEN 0
+            when DATE_SUB(#{outboundDate}, INTERVAL 1 DAY) THEN 1
+            when DATE_SUB(#{outboundDate}, INTERVAL 2 DAY) THEN 2
+            else 3
+            end, v.capacity desc limit 1
+    </select>
 
+    <!--출고요청일 포함 3일 내의 해당창고의 차량이 차량스케쥴표에 등록되어있는 차량수 조회-->
+    <select id="countRegisteredVehicleSchedule" resultType="int">
+        select count(distinct v.vehicleCode)
+        from vehicleschedule vs
+        join vehicle v on  v.vehicleCode = vs. vehicleCode
+        and vs.dispatchDate IN (#{outboundDate},
+                                DATE_SUB(#{outboundDate}, INTERVAL 1 DAY),
+                                DATE_SUB(#{outboundDate}, INTERVAL 2 DAY)
+        )
+        and v.type = #{storedType}
+        and v.warehouseCode = #{warehouseCode}
+    </select>
+
+    <!-- 해당 창고의 보관타입이 출고제품의 보관타입과 일치하는 차량의 수 조회 -->
+    <select id="countAllVehiclesInWarehouse" resultType="int">
+        select count(distinct vehicleCode)
+        from vehicle
+        where warehouseCode = #{warehouseCode}
+        and type = #{storedType}
+    </select>
+
+    <!--차량DTO조회 -->
+    <select id="getVehicleDTO" resultType="com.donut.prokindonutsweb.outbound.dto.VehicleDTO">
+        select o.outboundCode , i.warehouseCode , p.storedType , o.quantity, o.outboundDate
+        from outbound o
+        join inventory i on o.inventoryCode = i.inventoryCode
+        join product p on i.productCode = p.productCode
+        where o.outboundCode = #{outboundCode}
+    </select>
+
+    <!--차량VO조회 -->
+    <select id="getVehicleVO" resultType="com.donut.prokindonutsweb.outbound.vo.VehicleVO">
+        select vehicleCode , warehouseCode , type , capacity, vehicleNum
+        from vehicle
+        where warehouseCode = #{warehouseCode}
+    </select>
+
+    <!--해당날짜의 창고의 모든 차량을 스케쥴표에 등록 (중복제외)-->
+    <insert id="insertVehicleSchedule">
+        insert ignore into vehicleschedule (VehicleScheduleCode , dispatchDate , remainingCapacity, vehicleCode)
+        values (#{vehicleScheduleCode},#{dispatchDate},#{remainingCapacity},#{vehicleCode})
+    </insert>
+
+    <!--    최신 차량스케줄코드 조회 -->
+    <select id="selectVehicleScheduleCode" resultType="String">
+        Select vehicleScheduleCode From vehicleschedule order by CAST(substring(vehicleScheduleCode, 3) AS UNSIGNED) DESC LIMIT 1
+    </select>
+
+    <!--   차량스케줄코드 (잔여 적재량 차감) -->
+    <update id="updateVehicleSchedule">
+        update vehicleschedule set remainingCapacity = remainingCapacity - #{quantity}
+        where vehicleCode = #{vehicleCode} and dispatchDate = #{dispatchDate}
+    </update>
 
 </mapper>
