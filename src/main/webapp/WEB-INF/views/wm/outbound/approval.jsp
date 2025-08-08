@@ -439,5 +439,16 @@
         alert('${errorMessage}');
     </script>
 </c:if>
+
+<c:if test="${not empty successMessage}">
+    <div class="alert alert-success">${successMessage}</div>
+</c:if>
+<c:if test="${not empty inventoryErrorMessage}">
+    <div class="alert alert-danger">${inventoryErrorMessage}</div>
+</c:if>
+<c:if test="${not empty vehicleErrorMessage}">
+    <div class="alert alert-warning">${vehicleErrorMessage}</div>
+</c:if>
+
 </body>
 </html>
