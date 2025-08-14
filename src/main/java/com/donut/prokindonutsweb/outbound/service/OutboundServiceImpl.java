@@ -76,10 +76,6 @@ public class OutboundServiceImpl implements OutboundService{
         return warehouseCode+"-"+storedType;
     }
 
-    //생성된 섹션번호 실제 존재하는 지 조회
-    public boolean checkSectionCode(String sectionCode){;
-        return outboundMapper.checkSection(sectionCode);
-    }
 
 
     //섹션반영
@@ -195,10 +191,11 @@ public class OutboundServiceImpl implements OutboundService{
         });
     }
 
+    //출고 승인 처리
     @Transactional
     @Override
     public boolean processOutbound(String outboundCode, String warehouseCode) {
-        // 1. 출고 VO 조회 + FOR UPDATE
+        // 1. 출고 VO 조회 + 비관적락(FOR UPDATE)
         OutboundVO outboundVO = outboundMapper.selectOutboundVoOneForUpdate(outboundCode);
 
         // 2. 이미 처리된 출고면 실패 처리
@@ -223,7 +220,7 @@ public class OutboundServiceImpl implements OutboundService{
         return vehicleAssigned;
     }
 
-
+    //출고 완료처리 - 비관적락 적용
     @Override
     @Transactional
     public OutboundCompletionResult  processCompletion(List<String> outboundCodeList, String warehouseCode) {
@@ -231,30 +228,39 @@ public class OutboundServiceImpl implements OutboundService{
         int failCount = 0;
 
         for (String outboundCode : outboundCodeList) {
-            // 섹션 코드 생성 및 존재 여부 확인
-            String sectionCode = getSectionCode(warehouseCode, outboundCode);
-            if (checkSectionCode(sectionCode)) {
-                // 출고 완료
-                outboundMapper.completionOutbound(outboundCode);
+            // 1. 출고 VO 조회 + FOR UPDATE (비관적 락)
+            OutboundVO outboundVO = outboundMapper.selectOutboundVoOneForUpdate(outboundCode);
 
-                //수량 조회
-                int quantity = outboundMapper.selectQuantity(outboundCode);
-
-                // 섹션 용량 반영
-                SectionUpdate(sectionCode, quantity);
-
-                // 발주 상태 변경
-                completionOrder(outboundCode);
-
-                successCount++;
-            } else {
+            // 2. 이미 완료된 출고면 실패 처리
+            if (!"출고대기".equals(outboundVO.getOutboundStatus())) {
+                log.info("이미 처리된 출고: {}", outboundCode);
                 failCount++;
+                continue;
             }
+
+            // 3. 섹션 코드 생성 및 존재 여부 확인
+            String sectionCode = getSectionCode(warehouseCode, outboundCode);
+            if (!outboundMapper.checkSection(sectionCode)) {
+                log.warn("섹션 없음: {}", outboundCode);
+                failCount++;
+                continue;
+            }
+
+            // 4. 출고 완료 처리
+            outboundMapper.completionOutbound(outboundCode);
+
+            // 5. 수량 조회 및 섹션 용량 반영
+            int quantity = outboundMapper.selectQuantity(outboundCode);
+            SectionUpdate(sectionCode, quantity);
+
+            // 6. 발주 상태 변경 + 메일 발송
+            completionOrder(outboundCode);
+
+            successCount++;
         }
 
         log.info("출고 처리 결과: 성공={}건, 실패={}건", successCount, failCount);
 
-        // 성공 건수가 있으면 true, 없으면 false
         return new OutboundCompletionResult(successCount, failCount);
     }
 

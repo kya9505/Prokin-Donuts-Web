@@ -256,4 +256,13 @@
         where vehicleCode = #{vehicleCode} and dispatchDate = #{dispatchDate}
     </update>
 
+    <!--vo 조회 시 비관적락 -->
+    <select id="selectOutboundVoOneForUpdate" resultType="com.donut.prokindonutsweb.outbound.vo.OutboundVO">
+        SELECT *
+        FROM outbound
+        WHERE outbound_code = #{outboundCode}
+        FOR UPDATE
+    </select>
+
+
 </mapper>

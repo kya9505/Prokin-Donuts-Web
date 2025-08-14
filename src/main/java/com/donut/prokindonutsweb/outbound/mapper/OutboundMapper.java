@@ -43,4 +43,5 @@ public interface OutboundMapper {
     List<VehicleVO> getVehicleVO(String warehouseCode);
     String selectVehicleScheduleCode();
     void updateVehicleSchedule(VehicleScheduleDTO vehicleScheduleDTO);
+    OutboundVO selectOutboundVoOneForUpdate(String outboundCode);
 }

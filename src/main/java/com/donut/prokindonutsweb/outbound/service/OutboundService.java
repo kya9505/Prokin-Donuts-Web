@@ -12,9 +12,6 @@ public interface OutboundService {
     List<OutboundDTO> findOutboundList(String warehouseCode);
     List<OutboundDTO> findApprovalOutboundList(String warehouseCode);
     List<OutboundDTO> findCompletionOutboundList(String warehouseCode);
-
-
-    boolean checkSectionCode(String sectionCode);
     String findStoredType(String outboundCode);
     void completionOrder(String outboundCode);
     void SectionUpdate(String sectionCode ,int quantity);
