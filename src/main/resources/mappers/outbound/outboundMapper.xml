@@ -260,7 +260,7 @@
     <select id="selectOutboundVoOneForUpdate" resultType="com.donut.prokindonutsweb.outbound.vo.OutboundVO">
         SELECT *
         FROM outbound
-        WHERE outbound_code = #{outboundCode}
+        WHERE outboundCode = #{outboundCode}
         FOR UPDATE
     </select>
 

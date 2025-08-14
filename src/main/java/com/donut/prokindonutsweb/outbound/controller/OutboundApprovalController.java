@@ -52,6 +52,7 @@ public class OutboundApprovalController {
 
         for (String outboundCode : outboundCodeList) {
             try {
+                // 1. 승인 처리
                 boolean vehicleAssigned = outboundService.processOutbound(outboundCode, warehouseCode);
                 if (vehicleAssigned) successList.add(outboundCode);
                 else noVehicleList.add(outboundCode);
@@ -61,7 +62,7 @@ public class OutboundApprovalController {
             }
         }
         if (!successList.isEmpty()) redirectAttributes.addFlashAttribute("successMessage", successList.size() + "건 출고 완료했습니다.");
-        if (!noVehicleList.isEmpty()) redirectAttributes.addFlashAttribute("vehicleFailMessage", noVehicleList.size() + "건은 배차 불가");
+        if (!noVehicleList.isEmpty()) redirectAttributes.addFlashAttribute("vehicleFailMessage", noVehicleList.size() + "건 출고실패(배차 불가, 이미 처리중인 출고건 일 수 있으니 잠시 후 다시 시도해주세요. )");
         if (!failList.isEmpty()) redirectAttributes.addFlashAttribute("errorMessage", failList.size() + "건 출고 실패 (재고 부족 등)");
 
         return "redirect:/wm/outbound/approval";
