@@ -249,9 +249,8 @@ public class OutboundServiceImpl implements OutboundService{
             // 4. 출고 완료 처리
             outboundMapper.completionOutbound(outboundCode);
 
-            // 5. 수량 조회 및 섹션 용량 반영
-            int quantity = outboundMapper.selectQuantity(outboundCode);
-            SectionUpdate(sectionCode, quantity);
+            // 5. 섹션 용량 반영
+            SectionUpdate(sectionCode, outboundVO.getQuantity());
 
             // 6. 발주 상태 변경 + 메일 발송
             completionOrder(outboundCode);

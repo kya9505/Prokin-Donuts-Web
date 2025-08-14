@@ -17,7 +17,6 @@ public interface OutboundMapper {
     List<OutboundDTO> selectApprovalOutboundList(String warehouseCode);
     List<OutboundDTO> selectCompletionOutboundList(String warehouseCode);
     String selectStoredType(String outboundCode);
-    int selectQuantity(String outboundCode);
     boolean checkInventory(@Param("outboundCode") String outboundCode);
     boolean checkSection(String sectionCode);
 

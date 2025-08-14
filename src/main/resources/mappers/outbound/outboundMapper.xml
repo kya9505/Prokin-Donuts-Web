@@ -69,13 +69,6 @@
         WHERE o.outboundCode = #{outboundCode}
     </select>
 
-    <!-- 출고코드로 상품 제품수량 반환-->
-    <select id="selectQuantity" resultType="int">
-        SELECT quantity
-        FROM outbound
-        WHERE outboundCode = #{outboundCode}
-    </select>
-
     <!-- 재고 존재 확인 반환-->
     <select id="checkInventory" resultType="boolean">
         select case
