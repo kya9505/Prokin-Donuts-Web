@@ -1,5 +1,6 @@
 package com.donut.prokindonutsweb.outbound.controller;
 
+import com.donut.prokindonutsweb.outbound.dto.OutboundCompletionResult;
 import com.donut.prokindonutsweb.outbound.dto.OutboundDTO;
 import com.donut.prokindonutsweb.outbound.service.OutboundService;
 import com.donut.prokindonutsweb.security.dto.CustomUserDetails;
@@ -41,41 +42,16 @@ public class OutboundCompletionController {
 
 
     @PostMapping("/completion")
-    @Transactional
     public String completionOutbound(@RequestParam("outboundCodeList") List<String> outboundCodeList,  @AuthenticationPrincipal CustomUserDetails user,RedirectAttributes redirectAttributes) {
-        String memberCode = user.getMemberCode();
-        log.info(memberCode);
 
-        String warehouseCode = outboundService.getWarehouseCode(memberCode);
+        String warehouseCode = outboundService.getWarehouseCode(user.getMemberCode());
+        OutboundCompletionResult result = outboundService.processCompletion(outboundCodeList, warehouseCode);
 
-        for (String outboundCode : outboundCodeList) {
-            log.info(outboundCode);
-            //섹션 코드 생성
-            String sectionCode = outboundService.getSectionCode(warehouseCode, outboundCode);
-            log.info(sectionCode);
-            //섹션코드 검증
-            boolean check = outboundService.checkSectionCode(sectionCode);
-
-            log.info(String.valueOf(check));
-
-            // 섹션코드 존재하면 출고 완료처리후 섹션 용량 반영
-            if (check) {
-                // 상태 변경 ( -> 출고 완료)
-                outboundService.completionOutbound(outboundCode);
-
-                // 섹션반영
-                int quantity = outboundService.getQuantity(outboundCode);
-                outboundService.SectionUpdate(sectionCode, quantity);
-
-                //발주상태변경
-                outboundService.completionOrder(outboundCode);
-
-                redirectAttributes.addFlashAttribute("errorMessage", "출고가 완료되었습니다.");
-
-            } else {
-                // 출고 완료 X 에러 메시지 반환
-                redirectAttributes.addFlashAttribute("errorMessage", "섹션이 존재하지 않습니다.");
-            }
+        if (result.getSuccessCount() > 0) {
+            redirectAttributes.addFlashAttribute("successMessage",
+                    result.getSuccessCount() + "건 출고 완료, " + result.getFailCount() + "건 섹션 미존재");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "출고 처리에 실패했습니다. 섹션을 확인해주세요.");
         }
         return "redirect:/wm/outbound/completion";
     }

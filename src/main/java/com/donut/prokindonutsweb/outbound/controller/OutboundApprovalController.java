@@ -51,24 +51,12 @@ public class OutboundApprovalController {
         List<String> noVehicleList = new ArrayList<>();
 
         for (String outboundCode : outboundCodeList) {
-            log.info("출고코드: {}", outboundCode);
-
-            // 재고 존재 확인
-            if (outboundService.checkInventory(outboundCode)) {
-                try {
-                    //존재하면 출고 처리(상태 변경 : 출고 준비)
-                    outboundService.approveOutbound(outboundCode);
-                    // 재고 반영
-                    outboundService.updateInventory(outboundCode,warehouseCode);
-                    //차량배치
-                    boolean vehicleAssigned = outboundService.outboundVehicle(outboundCode);
-                    if (vehicleAssigned) successList.add(outboundCode);
-                     else noVehicleList.add(outboundCode);
-                } catch (Exception e) {
-                    log.info("출고 처리 중 오류 발생: {}", e.getMessage());
-                    failList.add(outboundCode);
-                }
-            } else {
+            try {
+                boolean vehicleAssigned = outboundService.processOutbound(outboundCode, warehouseCode);
+                if (vehicleAssigned) successList.add(outboundCode);
+                else noVehicleList.add(outboundCode);
+            } catch (Exception e) {
+                log.info("출고 처리 중 오류 발생: {}", e.getMessage());
                 failList.add(outboundCode);
             }
         }
