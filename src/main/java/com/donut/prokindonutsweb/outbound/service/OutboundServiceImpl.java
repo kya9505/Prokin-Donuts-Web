@@ -2,6 +2,7 @@ package com.donut.prokindonutsweb.outbound.service;
 
 import com.donut.prokindonutsweb.common.EmailUtil;
 import com.donut.prokindonutsweb.order.mapper.OrderMapper;
+import com.donut.prokindonutsweb.outbound.dto.OutboundCompletionResult;
 import com.donut.prokindonutsweb.outbound.dto.OutboundDTO;
 import com.donut.prokindonutsweb.outbound.dto.VehicleDTO;
 import com.donut.prokindonutsweb.outbound.dto.VehicleScheduleDTO;
@@ -11,12 +12,10 @@ import com.donut.prokindonutsweb.outbound.vo.VehicleScheduleVO;
 import com.donut.prokindonutsweb.outbound.vo.VehicleVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -50,23 +49,7 @@ public class OutboundServiceImpl implements OutboundService{
     }
 
 
-    // 재고 존재 여부 확인
-    @Override
-    public boolean checkInventory(String outboundCode) {
-        return outboundMapper.checkInventory(outboundCode);
-    }
 
-    //출고요청 승인
-    @Override
-    public void approveOutbound(String outboundCode) {
-        outboundMapper.approveOutbound(outboundCode);
-    }
-
-    //출고상태 변경 (출고완료)
-    @Override
-    public void completionOutbound(String outboundCode) {
-        outboundMapper.completionOutbound(outboundCode);
-    }
     // 발주상태 변경 (배송준비 -> 배송중) 후 메일발송
     @Override
     public void completionOrder(String outboundCode) {
@@ -93,15 +76,6 @@ public class OutboundServiceImpl implements OutboundService{
         return warehouseCode+"-"+storedType;
     }
 
-    //생성된 섹션번호 실제 존재하는 지 조회
-    public boolean checkSectionCode(String sectionCode){;
-        return outboundMapper.checkSection(sectionCode);
-    }
-
-    //수량 조회
-    public int getQuantity(String outboundCode){
-        return outboundMapper.selectQuantity(outboundCode);
-    }
 
 
     //섹션반영
@@ -114,7 +88,7 @@ public class OutboundServiceImpl implements OutboundService{
 
     // 재고 반영
     @Override
-    public void updateInventory(String outboundCode , String warehouseCode) {
+    public boolean updateInventory(String outboundCode , String warehouseCode) {
         //  VO와 DTO 조회
         OutboundVO outboundVO = outboundMapper.selectOutboundVoOne(outboundCode);
         OutboundDTO outboundDTO = outboundMapper.selectOutboundDtoOne(outboundCode);
@@ -123,6 +97,7 @@ public class OutboundServiceImpl implements OutboundService{
         if (outboundVO.getInventoryCode() != null) {
             // 기존 재고 차감 처리
             outboundMapper.updateInventory(outboundCode);
+            return true;
         } else {
             // 재고 코드가 없으면 재고 코드 검색 후 VO에 세팅
             String inventoryCode = orderMapper.findInventoryCode(
@@ -137,6 +112,7 @@ public class OutboundServiceImpl implements OutboundService{
 
             // 이후 차감 처리
             outboundMapper.updateInventory(outboundCode);
+            return false;
         }
     }
 
@@ -215,7 +191,77 @@ public class OutboundServiceImpl implements OutboundService{
         });
     }
 
+    //출고 승인 처리
+    @Transactional
+    @Override
+    public boolean processOutbound(String outboundCode, String warehouseCode) {
+        // 1. 출고 VO 조회 + 비관적락(FOR UPDATE)
+        OutboundVO outboundVO = outboundMapper.selectOutboundVoOneForUpdate(outboundCode);
 
+        // 2. 이미 처리된 출고면 실패 처리
+        if (!"출고대기".equals(outboundVO.getOutboundStatus())) {
+            return false;
+        }
+
+        // 3. 재고 존재 여부 확인
+        if (!outboundMapper.checkInventory(outboundCode)) {
+            return false;
+        }
+
+        // 4. 출고 상태 변경(출고 준비)
+        outboundMapper.approveOutbound(outboundCode);
+
+        // 5. 재고 반영 (재고 코드가 없으면 세팅까지 포함)
+        updateInventory(outboundCode, warehouseCode);
+
+        // 6. 차량 배치
+        boolean vehicleAssigned = outboundVehicle(outboundCode);
+
+        return vehicleAssigned;
+    }
+
+    //출고 완료처리 - 비관적락 적용
+    @Override
+    @Transactional
+    public OutboundCompletionResult  processCompletion(List<String> outboundCodeList, String warehouseCode) {
+        int successCount = 0;
+        int failCount = 0;
+
+        for (String outboundCode : outboundCodeList) {
+            // 1. 출고 VO 조회 + FOR UPDATE (비관적 락)
+            OutboundVO outboundVO = outboundMapper.selectOutboundVoOneForUpdate(outboundCode);
+
+            // 2. 이미 완료된 출고면 실패 처리
+            if (!"출고대기".equals(outboundVO.getOutboundStatus())) {
+                log.info("이미 처리된 출고: {}", outboundCode);
+                failCount++;
+                continue;
+            }
+
+            // 3. 섹션 코드 생성 및 존재 여부 확인
+            String sectionCode = getSectionCode(warehouseCode, outboundCode);
+            if (!outboundMapper.checkSection(sectionCode)) {
+                log.warn("섹션 없음: {}", outboundCode);
+                failCount++;
+                continue;
+            }
+
+            // 4. 출고 완료 처리
+            outboundMapper.completionOutbound(outboundCode);
+
+            // 5. 섹션 용량 반영
+            SectionUpdate(sectionCode, outboundVO.getQuantity());
+
+            // 6. 발주 상태 변경 + 메일 발송
+            completionOrder(outboundCode);
+
+            successCount++;
+        }
+
+        log.info("출고 처리 결과: 성공={}건, 실패={}건", successCount, failCount);
+
+        return new OutboundCompletionResult(successCount, failCount);
+    }
 
 
 }

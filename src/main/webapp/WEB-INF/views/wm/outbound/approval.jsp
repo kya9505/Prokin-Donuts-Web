@@ -413,24 +413,15 @@
 
 </script>
 
-<%--출고승인 완료 알림창--%>
-<c:if test="${not empty approveSuccessMessage}">
+<c:if test="${not empty successMessage}">
     <script>
-        alert('${approveSuccessMessage}');
+        alert('${successMessage}');
     </script>
 </c:if>
 
-<%--출고수정 완료 알림창--%>
-<c:if test="${not empty editSuccessMessage}">
+<c:if test="${not empty vehicleFailMessage}">
     <script>
-        alert('${editSuccessMessage}');
-    </script>
-</c:if>
-
-<%--출고취소 완료 알림창--%>
-<c:if test="${not empty deleteSuccessMessage}">
-    <script>
-        alert('${deleteSuccessMessage}');
+        alert('${vehicleFailMessage}');
     </script>
 </c:if>
 
@@ -438,16 +429,6 @@
     <script>
         alert('${errorMessage}');
     </script>
-</c:if>
-
-<c:if test="${not empty successMessage}">
-    <div class="alert alert-success">${successMessage}</div>
-</c:if>
-<c:if test="${not empty inventoryErrorMessage}">
-    <div class="alert alert-danger">${inventoryErrorMessage}</div>
-</c:if>
-<c:if test="${not empty vehicleErrorMessage}">
-    <div class="alert alert-warning">${vehicleErrorMessage}</div>
 </c:if>
 
 </body>
