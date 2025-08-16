@@ -12,8 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -31,17 +30,17 @@ public class OrderServiceImpl implements OrderService {
             Map.entry("GW", List.of("GG", "CB")),         // 강원 → 경기, 충북
             Map.entry("CB", List.of("DJ","GG", "CN", "GW")),   // 충북 → 대전, 경기, 충남, 강원
             Map.entry("CN", List.of("DJ","GG", "CB", "JB")), // 충남 → 대전,경기, 충북, 전북
-            Map.entry("JB", List.of("CN", "JN", "DJ")),   // 전북 → 충남, 전남, 대전
+            Map.entry("JB", List.of("CN", "JN", "GJ")),   // 전북 → 충남, 전남, 광주
             Map.entry("JN", List.of("JB", "GN", "GJ")),   // 전남 → 전북, 경남, 광주
-            Map.entry("GB", List.of("DG", "GN", "CB")),   // 경북 → 대구, 경남, 충북
+            Map.entry("GB", List.of("DG", "GN")),   // 경북 → 대구, 경남
             Map.entry("GN", List.of("GB", "JN", "BS", "US")), // 경남 → 경북, 전남, 부산, 울산
-            Map.entry("JJ", List.of("JN","BS","GN")),         // 제주 → 전남,부산,경남
-            Map.entry("DJ", List.of("CN", "JB")),         // 대전 → 충남, 전북
+            Map.entry("JJ", List.of("BS","JN","GN")),         // 제주 → 전남,부산,경남
+            Map.entry("DJ", List.of("CN")),         // 대전 → 충남
             Map.entry("DG", List.of("GB", "GN","BS")),    // 대구 → 경북, 경남,부산
             Map.entry("GJ", List.of("JN","JB")),          // 광주 → 전남,전북
             Map.entry("BS", List.of("GN", "US")),         // 부산 → 경남, 울산
             Map.entry("US", List.of("GN", "BS")),         // 울산 → 경남, 부산
-            Map.entry("SJ", List.of("CN", "CB", "DJ"))    // 세종 → 충남, 충북, 대전
+            Map.entry("SJ", List.of( "CB", "DJ","CN"))    // 세종 →  충북, 대전, 충남
     );
 
     @Transactional
@@ -96,30 +95,45 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.findOrderDetailList(orderCode);
     }
 
-    /*창고배치
-     *가맹점 코드와 일치하는 창고코드 조회
-     *없으면 인근 창고 조회
-     **/
+    /**
+     * 가맹점 인근 창고 조회 BFS(너비 우선 탐색)
+     * 1. 현재 지역에서 창고를 조회
+     * 2. 없으면 인접 지역을 순차적으로 탐색
+     * 3. 이미 방문한 지역은 재조회하지 않음(중복 방지)
+     */
     public String findWarehouseCodeToFranchise(String franchiseCode) {
+        //가맹점 코드를 통해 지역조회
         String regionPrefix = franchiseCode.substring(0, 2);
 
-        // 먼저 직접 매칭되는 창고코드 확인
-        String directMatch = orderMapper.findWarehouseCodeOne(regionPrefix);
-        if (directMatch != null) {
-            return directMatch;
-        }
+        //큐와 방문 기록
+        Queue<String> queue = new LinkedList<>();
+        Set<String> visited = new HashSet<>();
 
-        // 인접 지역 조회
-        List<String> nearbyRegions = NEARBY_REGION_MAP.get(regionPrefix);
-        if (nearbyRegions != null) {
-            for (String nearbyRegion : nearbyRegions) {
-                String nearbyMatch = orderMapper.findWarehouseCodeOne(nearbyRegion);
-                if (nearbyMatch != null) {
-                    return nearbyMatch;
-                }
+        //큐(선입선출)와 방문기록(set:중복저장방지)에 현재 지역 저장
+        queue.add(regionPrefix);
+        visited.add(regionPrefix);
+        //큐가 빌때까지 반복(모든 요소 poll할 때까지)
+        while (!queue.isEmpty()){
+            //큐에 저장된 최상위 요소(헤드) 검색 후 제거
+            String currentRegion = queue.poll();
+            //가맹점 위치와 일치하는 창고 존재여부 확인
+            String warehouseCode = orderMapper.findWarehouseCodeOne(currentRegion);
+            if (warehouseCode != null){
+                return warehouseCode; // 존재하면 반환
+            }
+            //인접지역 조회
+            List<String> nearbyRegions = NEARBY_REGION_MAP.get(currentRegion);
+            //인접지역이 존재하고
+            if (nearbyRegions != null) {
+                for (String nearbyRegion : nearbyRegions)
+                    //방문지역에 포함되어있지 않으면
+                    if (!visited.contains(nearbyRegion)) {
+                        //큐와 방문지역에 저장
+                        queue.add(nearbyRegion);
+                        visited.add(nearbyRegion);
+                    }
             }
         }
-        // 인접 지역에도 없으면 null 반환
         return null;
     }
 
