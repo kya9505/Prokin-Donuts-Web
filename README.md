@@ -31,7 +31,7 @@
     <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 👥 팀원 소개 </h2>
     <div style="font-weight: 700; font-size: 15px; text-align: center; color: #282d33;">
         <p>박건희 <a href="https://github.com/psns0122" target="_blank">#psns0122</a> - 팀장 | 창고 관리, 가맹점 관리,재고관리</p>
-        <p>고윤아 <a href="https://github.com/kya9505" target="_blank">#kya9505</a> - 서기(Notion) | 출고/발주관리, 인증/인가 ,회원 관리</p>
+        <p>고윤아 <a href="https://github.com/kya9505" target="_blank">#kya9505</a> - 서기(Notion) | 출고/발주관리, 인증/인가, 회원 관리 , 동시성제어어</p>
         <p>최문규 <a href="https://github.com/Cmk1031" target="_blank">#Cmk1031</a> - GitHub | 입고/출고 관리</p>
     </div>
 </div>
