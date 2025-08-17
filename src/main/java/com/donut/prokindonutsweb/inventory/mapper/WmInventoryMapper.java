@@ -7,6 +7,7 @@ import com.donut.prokindonutsweb.inventory.dto.MinStockDTO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface WmInventoryMapper {
   List<InventorySelectDTO> selectInventoryList(String warehouseCode);
@@ -22,4 +23,11 @@ public interface WmInventoryMapper {
                           @Param("productCodes") List<String> productCodes);
   
   List<ProductDTO> searchProducts(@Param("keyword") String keyword);
+  
+  List<Map<String, Object>> selectSuggestedMinStock(
+      @Param("warehouseCode") String warehouseCode,
+      @Param("L") int L,
+      @Param("z") double z,
+      @Param("packSize") int packSize
+  );
 }

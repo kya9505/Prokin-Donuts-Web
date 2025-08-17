@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,5 +85,15 @@ public class WmInventoryServiceImpl implements WmInventoryService {
   @Override
   public List<ProductDTO> searchProducts(String keyword) {
     return wmInventoryMapper.searchProducts("%" + keyword + "%");
+  }
+  
+  @Override
+  public List<Map<String, Object>> suggestMinStock(String warehouseCode, Integer L, Double z, Integer packSize) {
+    // 기본값 가드 (프론트와 동일)
+    int lead = (L == null || L < 1) ? 4 : L;
+    double zval = (z == null || z <= 0) ? 1.65 : z;
+    int pack = (packSize == null || packSize < 1) ? 1 : packSize;
+    
+    return wmInventoryMapper.selectSuggestedMinStock(warehouseCode, lead, zval, pack);
   }
 }
