@@ -134,13 +134,16 @@
     <!-- 12) 카테고리 상태 조회 -->
     <select id="selectCategoryStatus" parameterType="string" resultType="string">
         SELECT CASE
+                   -- 카테고리 내에 재고가 있는 경우
                    WHEN EXISTS (
                        SELECT 1
                        FROM Inventory inv
                                 JOIN Product prod ON inv.productCode = prod.productCode
                        WHERE prod.categoryCode = #{categoryCode}
-                         AND inv.quantity > 0
+                         AND inv.quantity &gt; 0
                    ) THEN '재고있음'
+
+                   -- 카테고리 내에 입고가 진행 중인 경우
                    WHEN EXISTS (
                        SELECT 1
                        FROM InboundDetail d
@@ -149,32 +152,40 @@
                        WHERE prod.categoryCode = #{categoryCode}
                          AND i.inboundStatus IN ('입고진행','승인대기')
                    ) THEN '입고진행'
+
+                   -- 카테고리 내에 출고가 준비 혹은 대기 중인 경우
                    WHEN EXISTS (
                        SELECT 1
                        FROM OrderDetail od
-                                JOIN `Order` o ON od.orderCode = o.orderCode
                                 JOIN Product prod ON od.productCode = prod.productCode
                        WHERE prod.categoryCode = #{categoryCode}
-                         AND o.orderStatus IN ('출고대기')
+                         AND od.orderStatus IN ('출고준비', '출고대기')
                    ) THEN '출고진행'
+
+                   -- 해당 카테고리에 등록된 제품이 있을 경우
                    WHEN EXISTS (
                        SELECT 1
                        FROM Product prod
                        WHERE prod.categoryCode = #{categoryCode}
                    ) THEN '제품등록'
+
+                   -- 그 외에는 삭제 가능 상태
                    ELSE '삭제가능'
-                   END
+                   END AS status
     </select>
 
     <!-- 13) 제품 상태 조회 -->
     <select id="selectProductStatus" parameterType="string" resultType="string">
         SELECT CASE
+                   -- 제품에 재고가 있는 경우
                    WHEN EXISTS (
                        SELECT 1
                        FROM Inventory
                        WHERE productCode = #{productCode}
-                         AND quantity > 0
+                         AND quantity &gt; 0
                    ) THEN '재고있음'
+
+                   -- 해당 제품의 입고가 진행 중인 경우
                    WHEN EXISTS (
                        SELECT 1
                        FROM InboundDetail d
@@ -182,15 +193,18 @@
                        WHERE d.productCode = #{productCode}
                          AND i.inboundStatus IN ('입고진행','승인대기')
                    ) THEN '입고진행'
+
+                   -- 해당 제품의 출고가 준비 혹은 대기 중인 경우
                    WHEN EXISTS (
                        SELECT 1
                        FROM OrderDetail od
-                                JOIN `Order` o ON od.orderCode = o.orderCode
                        WHERE od.productCode = #{productCode}
-                         AND o.orderStatus IN ('출고대기')
+                         AND od.orderStatus IN ('출고준비', '출고대기')
                    ) THEN '출고진행'
+
+                   -- 그 외에는 삭제 가능 상태
                    ELSE '삭제가능'
-                   END
+                   END AS status
     </select>
 
     <!-- 14) 중분류 + 소분류로 카테고리코드 조회 -->
