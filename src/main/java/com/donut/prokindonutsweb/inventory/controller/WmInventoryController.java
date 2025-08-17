@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.mail.MessagingException;
 import java.io.FileNotFoundException;
 import java.util.List;
-  
+import java.util.Map;
+
 @Controller
 @Log4j2
 @RequiredArgsConstructor
@@ -113,6 +114,28 @@ public class WmInventoryController {
   public ResponseEntity<List<ProductDTO>> searchProducts(@RequestParam String keyword) {
     List<ProductDTO> products = wmInventoryService.searchProducts(keyword);
     return ResponseEntity.ok(products);
+  }
+  
+  /**
+   * 7) 적정재고량 - 메인모달 : 적정재고량 제안 받기 버튼 클릭시
+   * @param warehouseCode 필수
+   * @param L 리드타임(일), 기본 4
+   * @param z 서비스레벨 Z, 기본 1.65
+   * @param packSize 묶음 단위, 기본 1
+   * @return [{ productCode, productName, suggestedMinStock }]
+   */
+  @GetMapping(value = "/threshold/suggest", produces = "application/json;charset=UTF-8")
+  public ResponseEntity<?> suggest(
+      @RequestParam String warehouseCode,
+      @RequestParam(required = false) Integer L,
+      @RequestParam(required = false) Double z,
+      @RequestParam(required = false) Integer packSize
+  ) {
+    if (warehouseCode == null || warehouseCode.isBlank()) {
+      return ResponseEntity.badRequest().body(Map.of("message", "warehouseCode is required"));
+    }
+    List<Map<String, Object>> list = wmInventoryService.suggestMinStock(warehouseCode, L, z, packSize);
+    return ResponseEntity.ok(list);
   }
   
 }

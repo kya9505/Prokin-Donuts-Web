@@ -182,7 +182,7 @@
                                 <!-- 오른쪽 버튼 -->
                                 <div class="d-flex gap-2">
                                     <button type="button" class="main-btn warning-btn-outline btn-sm" onclick="openProductSearchModal()">+ 제품 추가</button>
-                                    <button type="button" class="main-btn warning-btn-outline btn-sm">적정재고량 제안 받기</button>
+                                    <button type="button" class="main-btn warning-btn-outline btn-sm" id="btnSuggestMinStock">적정재고량 제안 받기</button>
                                 </div>
                             </div>
 
@@ -543,6 +543,16 @@
             $('#stockThresholdTableBody').append(row);
         }
 
+        // 모달 표에 이미 값이 있으면 threshold만 갱신, 없으면 추가
+        function appendOrUpdateStockRow(code, name, suggested) {
+            const $row = $('#stockThresholdTableBody tr[data-code="' + code + '"]');
+            if ($row.length) {
+                $row.find('input[name*="threshold"]').val(suggested);
+            } else {
+                appendStockRow(code, name, suggested);
+            }
+        }
+
         // 선택된 항목 삭제
         window.removeSelectedItems = function () {
             const checked = $('#stockThresholdTableBody .row-checkbox:checked');
@@ -632,7 +642,6 @@
             return $('.product-code-input').toArray().some(el => $(el).val() === code);
         }
 
-
         ////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////
@@ -715,6 +724,64 @@
             $('#productSearchModal').modal('hide');
             appendStockRow(code, name);
         });
+
+        ////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////
+
+        // 적정재고량 제안 받기 버튼 클릭
+        $(document).on('click', '#btnSuggestMinStock', function () {
+            const $btn = $(this);
+            const warehouseCode = $('#hiddenWarehouseCode').val();
+
+            // 리드타임/서비스레벨/묶음단위(임시 기본값) — 필요시 서버/설정값으로 치환
+            const L = 4;         // 리드타임(일)
+            const z = 1.65;      // 서비스레벨 95%
+            const packSize = 1;  // 묶음 단위 없으면 1
+
+            const params = new URLSearchParams({
+                warehouseCode: warehouseCode ?? '',
+                L: String(L),
+                z: String(z),
+                packSize: String(packSize),
+            });
+
+            const url = '/wm/warehouse/threshold/suggest?' + params.toString();
+
+            // 로딩 표시
+            const prevHTML = $btn.html();
+            $btn.prop('disabled', true).html('계산 중...');
+
+            fetch(url)
+                .then(res => {
+                    if (!res.ok) throw new Error('서버 오류');
+                    return res.json();
+                })
+                .then(list => {
+                    // 기대 응답: [{ productCode, productName, suggestedMinStock }, ...]
+                    if (!Array.isArray(list) || list.length === 0) {
+                        alert('제안할 적정재고량이 없습니다.');
+                        return;
+                    }
+
+                    // "항목 없음" 안내행 제거
+                    $('#stockThresholdTableBody tr.text-muted').remove();
+
+                    list.forEach(item => {
+                        appendOrUpdateStockRow(item.productCode, item.productName, item.suggestedMinStock);
+                    });
+
+                    alert('제안값을 테이블에 반영했습니다.');
+                })
+                .catch(err => {
+                    alert('적정재고량 제안 중 오류 발생');
+                    console.error(err);
+                })
+                .finally(() => {
+                    $btn.prop('disabled', false).html(prevHTML);
+                });
+        });
     });
 
     // 체크박스 전체 선택/해제 (제목행)
@@ -730,6 +797,7 @@
 
         $('#selectAllStockItems').prop('checked', all === checked);
     });
+
 
     //mypageData
     <%@ include file="/WEB-INF/views/includes/mypage/mypageData.jsp" %>
