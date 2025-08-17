@@ -68,12 +68,6 @@ public class OutboundMapperTest {
         String storedType = outboundMapper.selectStoredType("OB001");
         log.info(storedType);
     }
-    @Test
-    @DisplayName("출고 제품의 수량 반환")
-    void selectQuantity() {
-        int quantity = outboundMapper.selectQuantity("OB001");
-        log.info(String.valueOf(quantity));
-    }
 
     @Test
     @DisplayName("섹션코드 존재 여부 반환 메서드 ")
@@ -192,5 +186,13 @@ public class OutboundMapperTest {
                 .quantity(45)
                 .build();
         outboundMapper.updateVehicleSchedule(vehicleScheduleDTO);
+    }
+
+
+    @Test
+    @DisplayName("출고일 변경 ")
+    void updateOutboundDate(){
+        outboundMapper.updateOutboundDate(LocalDate.parse("2027-01-01"),"OB001");
+
     }
 }
