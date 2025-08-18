@@ -48,8 +48,8 @@
     <!-- 가맹점의 발주목록 상세조회 -->
     <select id="findOrderDetailList" resultType="com.donut.prokindonutsweb.order.dto.OrderDetailDTO">
         SELECT * FROM `OrderDetail` od
-        JOIN `order` o ON od.orderCode = o.orderCode
-        JOIN `product` p ON p.productCode = od.productCode
+        JOIN `Order` o ON od.orderCode = o.orderCode
+        JOIN `Product` p ON p.productCode = od.productCode
         WHERE o.orderCode = #{orderCode}
         ORDER BY o.orderDate Desc
     </select>
@@ -69,7 +69,7 @@
     -->
     <select id="findInventoryCode" resultType="String">
         select inventoryCode
-        from inventory
+        from Inventory
         where warehouseCode = #{warehouseCode}
         and productCode = #{productCode}
         and quantity >= #{quantity}
