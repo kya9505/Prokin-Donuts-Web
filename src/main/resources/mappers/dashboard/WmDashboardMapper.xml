@@ -94,8 +94,8 @@
                                ON i.warehouseCode = m.warehouseCode
                                    AND i.productCode   = m.productCode
                  WHERE i.warehouseCode = #{warehouseCode}
-                 GROUP BY i.productCode, m.minStock
-                 HAVING SUM(i.quantity) &lt; m.minStock
+                 GROUP BY i.productCode, m.MinStock
+                 HAVING SUM(i.quantity) &lt; m.MinStock
              ) AS understock
     </select>
 
