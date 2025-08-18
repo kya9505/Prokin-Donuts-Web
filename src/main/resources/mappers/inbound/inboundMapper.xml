@@ -67,7 +67,7 @@
 
 <!--    입고 완료시 입고 상태 변경-->
     <update id="approveInbound">
-        update inbound set inboundStatus = #{status} where inboundCode = #{inboundCode}
+        update Inbound set inboundStatus = #{status} where inboundCode = #{inboundCode}
     </update>
 
 <!--    입고 완료시 재고에 반영(트리거를 직접 구현)-->
@@ -101,7 +101,7 @@
 
 <!--    입고 취소 (입고상태 -> 입고취소로 변경)-->
     <update id="deleteInbound">
-        update inbound set inboundStatus = #{status} where inboundCode = #{inboundCode}
+        update Inbound set inboundStatus = #{status} where inboundCode = #{inboundCode}
     </update>
 
 <!--    창고관리자 입고 현황-->
@@ -115,13 +115,13 @@
 
 <!--    입고상태 변경 ( -> 승인대기)-->
     <update id="updateQhInboundStatus">
-        update inbound set inboundStatus = #{status} where inboundCode = #{inboundCode}
+        update Inbound set inboundStatus = #{status} where inboundCode = #{inboundCode}
     </update>
 
 <!--    상품ID -> 보관타입 반환 -->
     <select id="selectStoredType" resultType="String">
         select storedType
-        from product
+        from Product
         where productCode = #{productCode}
     </select>
 
@@ -138,7 +138,7 @@
     </select>
 
     <update id="updateSection">
-        update SECTION set storageCapacity = storageCapacity - #{quantity}
+        update Section set storageCapacity = storageCapacity - #{quantity}
         where sectionCode = #{sectionCode}
     </update>
 
