@@ -14,11 +14,11 @@
         o.vehicleCode,
         od.franchiseCode,
         o.outboundStatus
-        FROM outbound o
-        JOIN inventory i ON o.inventoryCode = i.inventoryCode
-        JOIN product p ON i.productCode = p.productCode
-        JOIN orderdetail odd ON o.orderDetailCode = odd.orderDetailCode
-        JOIN `order` od ON od.orderCode = odd.orderCode
+        FROM Outbound o
+        JOIN Inventory i ON o.inventoryCode = i.inventoryCode
+        JOIN Product p ON i.productCode = p.productCode
+        JOIN OrderDetail odd ON o.orderDetailCode = odd.orderDetailCode
+        JOIN `Order` od ON od.orderCode = odd.orderCode
         WHERE i.warehouseCode = #{warehouseCode}
     </select>
 
@@ -32,11 +32,11 @@
         od.franchiseCode,
         o.outboundStatus,
         o.quantity
-        FROM outbound o
-        JOIN inventory i ON o.inventoryCode = i.inventoryCode
-        JOIN product p ON i.productCode = p.productCode
-        JOIN orderdetail odd ON o.orderDetailCode = odd.orderDetailCode
-        JOIN `order` od ON od.orderCode = odd.orderCode
+        FROM Outbound o
+        JOIN Inventory i ON o.inventoryCode = i.inventoryCode
+        JOIN Product p ON i.productCode = p.productCode
+        JOIN OrderDetail odd ON o.orderDetailCode = odd.orderDetailCode
+        JOIN `Order` od ON od.orderCode = odd.orderCode
         WHERE i.warehouseCode = #{warehouseCode}
         AND o.outboundStatus = "출고대기"
     </select>
@@ -51,11 +51,11 @@
         od.franchiseCode,
         o.outboundStatus,
         o.quantity
-        FROM outbound o
-        JOIN inventory i ON o.inventoryCode = i.inventoryCode
-        JOIN product p ON i.productCode = p.productCode
-        JOIN orderdetail odd ON o.orderDetailCode = odd.orderDetailCode
-        JOIN `order` od ON od.orderCode = odd.orderCode
+        FROM Outbound o
+        JOIN Inventory i ON o.inventoryCode = i.inventoryCode
+        JOIN Product p ON i.productCode = p.productCode
+        JOIN OrderDetail odd ON o.orderDetailCode = odd.orderDetailCode
+        JOIN `Order` od ON od.orderCode = odd.orderCode
         WHERE i.warehouseCode = #{warehouseCode}
         AND o.outboundStatus = "출고준비"
     </select>
@@ -63,9 +63,9 @@
     <!-- 출고코드로 상품 보관타입 반환-->
     <select id="selectStoredType" resultType="String">
         SELECT p.storedType
-        FROM outbound o
-        JOIN inventory i ON o.inventoryCode = i.inventoryCode
-        JOIN product p ON i.productCode = p.productCode
+        FROM Outbound o
+        JOIN Inventory i ON o.inventoryCode = i.inventoryCode
+        JOIN Product p ON i.productCode = p.productCode
         WHERE o.outboundCode = #{outboundCode}
     </select>
 
@@ -76,24 +76,24 @@
         THEN TRUE
         ELSE FALSE
         END AS IsAllProductEnough
-        from outbound o, Inventory i
+        from Outbound o, Inventory i
         Where o.outboundCode = #{outboundCode}
     </select>
 
     <!--    출고상태 변경 (-> 출고준비)-->
     <update id="approveOutbound">
-        update outbound set outboundStatus = "출고준비" where outboundCode = #{outboundCode}
+        update Outbound set outboundStatus = "출고준비" where outboundCode = #{outboundCode}
     </update>
 
     <!--    출고상태 변경 (-> 출고완료)-->
     <update id="completionOutbound">
-        update outbound set outboundStatus = "출고완료" where outboundCode = #{outboundCode}
+        update Outbound set outboundStatus = "출고완료" where outboundCode = #{outboundCode}
     </update>
 
     <!--    발주상태 변경 (-> 배송중)-->
     <update id="completionOrder">
-        UPDATE orderdetail od
-        JOIN outbound o ON o.orderdetailCode = od.orderdetailCode
+        UPDATE OrderDetail od
+        JOIN Outbound o ON o.orderDetailCode = od.orderDetailCode
         SET od.orderStatus = '배송중'
         WHERE o.outboundCode = #{outboundCode}
     </update>
@@ -129,17 +129,17 @@
 
     <!--출고 삽입-->
     <insert id="insertOutbound">
-        insert into outbound (outboundCode,outboundDate,outboundStatus,quantity,orderDetailCode,inventoryCode,vehicleCode)
+        insert into Outbound (outboundCode,outboundDate,outboundStatus,quantity,orderDetailCode,inventoryCode,vehicleCode)
         values (#{outboundCode},#{outboundDate},#{outboundStatus},#{quantity},#{orderDetailCode},#{inventoryCode},#{vehicleCode})
     </insert>
 
     <!--    최신 출고코드 조회 -->
     <select id="selectOutboundCode" resultType="String">
-        Select outboundCode From outbound order by CAST(substring(outboundCode, 3) AS UNSIGNED) DESC LIMIT 1
+        Select outboundCode From Outbound order by CAST(substring(outboundCode, 3) AS UNSIGNED) DESC LIMIT 1
     </select>
 
     <select id="selectOutboundVoOne"  resultType="com.donut.prokindonutsweb.outbound.vo.OutboundVO">
-        SELECT * FROM outbound o WHERE o.outboundCode = #{outboundCode}
+        SELECT * FROM Outbound o WHERE o.outboundCode = #{outboundCode}
     </select>
 
     <select id="selectOutboundDtoOne"  resultType="com.donut.prokindonutsweb.outbound.dto.OutboundDTO">
@@ -151,17 +151,17 @@
         o.vehicleCode,
         od.franchiseCode,
         o.outboundStatus
-        FROM outbound o
-        JOIN inventory i ON o.inventoryCode = i.inventoryCode
-        JOIN product p ON i.productCode = p.productCode
-        JOIN orderdetail odd ON o.orderDetailCode = odd.orderDetailCode
-        JOIN `order` od ON od.orderCode = odd.orderCode
+        FROM Outbound o
+        JOIN Inventory i ON o.inventoryCode = i.inventoryCode
+        JOIN Product p ON i.productCode = p.productCode
+        JOIN OrderDetail odd ON o.orderDetailCode = odd.orderDetailCode
+        JOIN `Order` od ON od.orderCode = odd.orderCode
         WHERE o.outboundCode = #{outboundCode}
     </select>
 
     <!--출고 승인 시 재고 코드 등록-->
     <update id="updateInventoryCode">
-        update outbound set inventoryCode = #{inventoryCode}
+        update Outbound set inventoryCode = #{inventoryCode}
         where outboundCode = #{outboundCode}
     </update>
 
@@ -175,11 +175,11 @@
     -->
     <select id="selectVehicle" resultType="com.donut.prokindonutsweb.outbound.dto.VehicleScheduleDTO">
         select v.vehicleCode , vs.dispatchDate , o.quantity
-        from outbound o
-        left join inventory i on o.inventoryCode = i.inventoryCode
-        left join warehouse w on i.warehouseCode = w.warehouseCode
-        right join vehicle v on  v.warehouseCode = w. warehouseCode
-        left join vehicleschedule vs on v.vehicleCode = vs.vehicleCode
+        from Outbound o
+        left join Inventory i on o.inventoryCode = i.inventoryCode
+        left join Warehouse w on i.warehouseCode = w.warehouseCode
+        right join Vehicle v on  v.warehouseCode = w. warehouseCode
+        left join VehicleSchedule vs on v.vehicleCode = vs.vehicleCode
         where o.outboundCode = #{outboundCode}
         and vs.dispatchDate IN ( #{outboundDate} ,
                                  DATE_SUB(#{outboundDate}, INTERVAL 1 DAY),
@@ -198,8 +198,8 @@
     <!--출고요청일 포함 3일 내의 해당창고의 차량이 차량스케쥴표에 등록되어있는 차량수 조회-->
     <select id="countRegisteredVehicleSchedule" resultType="int">
         select count(distinct v.vehicleCode)
-        from vehicleschedule vs
-        join vehicle v on  v.vehicleCode = vs. vehicleCode
+        from VehicleSchedule vs
+        join Vehicle v on  v.vehicleCode = vs. vehicleCode
         and vs.dispatchDate IN (#{outboundDate},
                                 DATE_SUB(#{outboundDate}, INTERVAL 1 DAY),
                                 DATE_SUB(#{outboundDate}, INTERVAL 2 DAY)
@@ -211,7 +211,7 @@
     <!-- 해당 창고의 보관타입이 출고제품의 보관타입과 일치하는 차량의 수 조회 -->
     <select id="countAllVehiclesInWarehouse" resultType="int">
         select count(distinct vehicleCode)
-        from vehicle
+        from Vehicle
         where warehouseCode = #{warehouseCode}
         and type = #{storedType}
     </select>
@@ -219,47 +219,47 @@
     <!--차량DTO조회 -->
     <select id="getVehicleDTO" resultType="com.donut.prokindonutsweb.outbound.dto.VehicleDTO">
         select o.outboundCode , i.warehouseCode , p.storedType , o.quantity, o.outboundDate
-        from outbound o
-        join inventory i on o.inventoryCode = i.inventoryCode
-        join product p on i.productCode = p.productCode
+        from Outbound o
+        join Inventory i on o.inventoryCode = i.inventoryCode
+        join Product p on i.productCode = p.productCode
         where o.outboundCode = #{outboundCode}
     </select>
 
     <!--차량VO조회 -->
     <select id="getVehicleVO" resultType="com.donut.prokindonutsweb.outbound.vo.VehicleVO">
         select vehicleCode , warehouseCode , type , capacity, vehicleNum
-        from vehicle
+        from Vehicle
         where warehouseCode = #{warehouseCode}
     </select>
 
     <!--해당날짜의 창고의 모든 차량을 스케쥴표에 등록 (중복제외)-->
     <insert id="insertVehicleSchedule">
-        insert ignore into vehicleschedule (VehicleScheduleCode , dispatchDate , remainingCapacity, vehicleCode)
+        insert ignore into VehicleSchedule (VehicleScheduleCode , dispatchDate , remainingCapacity, vehicleCode)
         values (#{vehicleScheduleCode},#{dispatchDate},#{remainingCapacity},#{vehicleCode})
     </insert>
 
     <!--    최신 차량스케줄코드 조회 -->
     <select id="selectVehicleScheduleCode" resultType="String">
-        Select vehicleScheduleCode From vehicleschedule order by CAST(substring(vehicleScheduleCode, 3) AS UNSIGNED) DESC LIMIT 1
+        Select vehicleScheduleCode From VehicleSchedule order by CAST(substring(vehicleScheduleCode, 3) AS UNSIGNED) DESC LIMIT 1
     </select>
 
     <!--   차량스케줄코드 (잔여 적재량 차감) -->
     <update id="updateVehicleSchedule">
-        update vehicleschedule set remainingCapacity = remainingCapacity - #{quantity}
+        update VehicleSchedule set remainingCapacity = remainingCapacity - #{quantity}
         where vehicleCode = #{vehicleCode} and dispatchDate = #{dispatchDate}
     </update>
 
     <!--vo 조회 시 비관적락 -->
     <select id="selectOutboundVoOneForUpdate" resultType="com.donut.prokindonutsweb.outbound.vo.OutboundVO">
         SELECT *
-        FROM outbound
+        FROM Outbound
         WHERE outboundCode = #{outboundCode}
         FOR UPDATE
     </select>
 
     <!--출고일을 차량배치일로 변경 -->
     <select id="updateOutboundDate" >
-        update outbound set outboundDate = #{outboundDate}
+        update Outbound set outboundDate = #{outboundDate}
         where outboundCode = #{outboundCode}
     </select>
 
