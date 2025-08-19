@@ -263,5 +263,11 @@
         where outboundCode = #{outboundCode}
     </select>
 
+    <!--출고 저장 -->
+    <select id="updateOutbound" >
+        update Outbound set vehicleCode = #{vehicleCode}
+        where outboundCode = #{outboundCode}
+    </select>
+
 
 </mapper>
