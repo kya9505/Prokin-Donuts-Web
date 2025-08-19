@@ -150,6 +150,8 @@ public class OutboundServiceImpl implements OutboundService{
             addVehicleshcedule(vehicleScheduleDTO);
             //출고날짜와 차량 배치날짜가 일치하지 않으면 출고날짜를 차량배치 날짜로 변경
             if(outboundVO.getOutboundDate() != vehicleScheduleDTO.getDispatchDate())outboundMapper.updateOutboundDate(vehicleScheduleDTO.getDispatchDate(),outboundCode);
+            //DB 저장
+            outboundMapper.updateOutbound(outboundVO);
             return true;
         } else return false; //배치 가능한 차량 없을 경우 false
     }
