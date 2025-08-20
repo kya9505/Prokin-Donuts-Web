@@ -113,7 +113,7 @@
 
     <!--   섹션복원 (출고완료) -->
     <update id="updateSection">
-        update SECTION set storageCapacity = storageCapacity + #{quantity}
+        update Section set storageCapacity = storageCapacity + #{quantity}
         where sectionCode = #{sectionCode}
     </update>
 
