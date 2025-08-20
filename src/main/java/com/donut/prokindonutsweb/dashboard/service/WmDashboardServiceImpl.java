@@ -44,6 +44,16 @@ public class WmDashboardServiceImpl implements WmDashboardService {
   }
   
   @Override
+  public int findExpiredInventoryCount(String warehouseCode) {
+    return wmDashboardMapper.selectExpiredInventoryCount(warehouseCode);
+  }
+  
+  @Override
+  public int findUnderMinStockCount(String warehouseCode) {
+    return wmDashboardMapper.selectUnderMinStockCount(warehouseCode);
+  }
+  
+  @Override
   public List<CountStatDTO> findInboundCountLast12Months(String warehouseCode) {
     return wmDashboardMapper.selectInboundCountLast12Months(warehouseCode);
   }

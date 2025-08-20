@@ -6,20 +6,21 @@
 
     <!--    발주 정보를 저장한다. -->
     <insert id="insertOrder">
-        Insert into `Order` (orderCode, orderDate, orderStatus, franchiseCode, warehouseCode)
-        values ( #{orderCode}, #{orderDate}, #{orderStatus}, #{franchiseCode}, #{warehouseCode} )
+        Insert into `Order` (orderCode, orderDate, franchiseCode)
+        values ( #{orderCode}, #{orderDate}, #{franchiseCode} )
     </insert>
 
     <!--    발주상세 정보를 저장한다.-->
     <insert id="insertOrderDetailList" parameterType="java.util.List">
-        INSERT INTO OrderDetail ( orderDetailCode, quantity, orderCode, productCode )
+        INSERT INTO OrderDetail ( orderDetailCode, quantity, orderCode, productCode,orderStatus )
         VALUES
         <foreach collection="list" item="detail" separator=",">
             (
             #{detail.orderDetailCode},
             #{detail.quantity},
             #{detail.orderCode},
-            #{detail.productCode}
+            #{detail.productCode},
+            #{detail.orderStatus}
             )
         </foreach>
     </insert>
@@ -39,4 +40,39 @@
         select warehouseCode from Warehouse
     </select>
 
+    <!-- 가맹점의 발주목록 조회 -->
+    <select id="findOrderList" resultType="com.donut.prokindonutsweb.order.dto.OrderDTO">
+        SELECT * FROM `Order` WHERE FranchiseCode = #{FranchiseCode}
+    </select>
+
+    <!-- 가맹점의 발주목록 상세조회 -->
+    <select id="findOrderDetailList" resultType="com.donut.prokindonutsweb.order.dto.OrderDetailDTO">
+        SELECT * FROM `OrderDetail` od
+        JOIN `Order` o ON od.orderCode = o.orderCode
+        JOIN `Product` p ON p.productCode = od.productCode
+        WHERE o.orderCode = #{orderCode}
+        ORDER BY o.orderDate Desc
+    </select>
+
+    <!--창고코드 조회 -->
+    <select id="findWarehouseCodeOne" resultType="String">
+        select warehouseCode
+        from Warehouse
+        where warehouseCode like concat(#{warehouseCode},'%')
+    </select>
+
+    <!--재고코드 조회
+        1. 창고코드가 일치하고
+        2. 상품코드가 일치하며
+        3. 재고가 존재하고
+        4. 유통기한이 짧은 순으로
+    -->
+    <select id="findInventoryCode" resultType="String">
+        select inventoryCode
+        from Inventory
+        where warehouseCode = #{warehouseCode}
+        and productCode = #{productCode}
+        and quantity >= #{quantity}
+        order by expirationDate Limit 1
+    </select>
 </mapper>

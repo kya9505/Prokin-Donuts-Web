@@ -6,22 +6,22 @@
 <mapper namespace="com.donut.prokindonutsweb.dashboard.mapper.QhDashboardMapper">
 
     <!--미승인 회원가입 -->
-    <select id="CountNewRequest" resultType="int">
+    <select id="countNewRequest" resultType="int">
         select count(*) from MemberRequest where request = '승인대기'
     </select>
 
     <!--미승인 입고요청-->
-    <select id="CountNewInbound" resultType="int">
+    <select id="countNewInbound" resultType="int">
         select count(*) from Inbound where inboundStatus = '입고요청'
     </select>
 
     <!--총 가맹점 수 -->
-    <select id="TotalFranchise" resultType="int">
+    <select id="totalFranchise" resultType="int">
         select count(*) from Franchise
     </select>
 
     <!--총 창고 수 -->
-    <select id="TotalWarehouse" resultType="int">
+    <select id="totalWarehouse" resultType="int">
         select count(*) from Warehouse
     </select>
 
@@ -44,26 +44,32 @@
       and warehouseCode =#{warehouseCode}
 </select>
 
+    <!--총 입고량-->
     <select id="countTotalInbound" resultType="int">
     select  count(*)
     from Inbound
     where warehouseCode =#{warehouseCode}
     </select>
 
+    <!--출고승인상태의 출고건-->
     <select id="countApprovedOrderStatus" resultType="int">
     select count(*)
-    from `Order`
-    where orderStatus = '출고완료'
-      and warehouseCode =#{warehouseCode}
+    from Outbound o
+    join Inventory i on o.inventoryCode = i.inventoryCode
+    where outboundStatus = '출고완료'
+      and i.warehouseCode =#{warehouseCode}
     </select>
 
-
+    <!--총 출고량-->
     <select id="countTotalOrder" resultType="int">
+
     select count(*)
-    from `Order`
-    where warehouseCode =#{warehouseCode}
+    from Outbound o
+             join Inventory i on o.inventoryCode = i.inventoryCode
+    where i.warehouseCode =#{warehouseCode}
     </select>
 
+    <!--창고이름으로 창고 코드 조회-->
     <select id="getWarehouseCode" resultType="String">
         select warehouseCode
         from Warehouse

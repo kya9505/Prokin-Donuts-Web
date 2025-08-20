@@ -1,12 +1,19 @@
 package com.donut.prokindonutsweb.inventory.service;
 
+import com.donut.prokindonutsweb.inbound.dto.ProductDTO;
+import com.donut.prokindonutsweb.inventory.dto.InventoryExpiredDTO;
 import com.donut.prokindonutsweb.inventory.dto.InventorySelectDTO;
+import com.donut.prokindonutsweb.inventory.dto.MinStockDTO;
 import com.donut.prokindonutsweb.inventory.mapper.WmInventoryMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -28,5 +35,65 @@ public class WmInventoryServiceImpl implements WmInventoryService {
   @Override
   public String findWarehouseNameByWarehouseCode(String WarehouseCode) {
     return wmInventoryMapper.selectWarehouseNameByWarehouseCode(WarehouseCode);
+  }
+  
+  @Override
+  public List<InventoryExpiredDTO> getExpiredItems(String warehouseCode) {
+    return wmInventoryMapper.selectExpiredItems(warehouseCode);
+  }
+  
+  @Override
+  public void discardExpiredItems(String warehouseCode) {
+    wmInventoryMapper.deleteExpiredItems(warehouseCode);
+  }
+  
+  @Override
+  public List<MinStockDTO> getMinStockList(String warehouseCode) {
+    return wmInventoryMapper.selectByWarehouse(warehouseCode);
+  }
+  
+  @Transactional
+  @Override
+  public void saveMinStockList(List<MinStockDTO> minStockList) {
+    if (minStockList == null || minStockList.isEmpty()) return;
+    
+    // 1) 창고코드는 첫 항목 기준 (모두 동일해야 한다는 전제)
+    String warehouseCode = minStockList.get(0).getWarehouseCode();
+    
+    // (예외) 전체 삭제 조건: productCode 없는 항목만 전달된 경우
+    boolean isFullDelete = minStockList.size() == 1 && minStockList.get(0).getProductCode() == null;
+    if (isFullDelete) {
+      wmInventoryMapper.deleteMissingItems(warehouseCode, Collections.emptyList());
+      return;
+    }
+    
+    // 2) 전달된 항목 upsert
+    for (MinStockDTO dto : minStockList) {
+      wmInventoryMapper.upsert(dto);
+    }
+    
+    // 3) 전달된 productCode 목록만 남기고 나머지 삭제
+    List<String> productCodes = minStockList.stream()
+        .map(MinStockDTO::getProductCode)
+        .collect(Collectors.toList());
+    
+    if (!productCodes.isEmpty()) {
+      wmInventoryMapper.deleteMissingItems(warehouseCode, productCodes);
+    }
+  }
+  
+  @Override
+  public List<ProductDTO> searchProducts(String keyword) {
+    return wmInventoryMapper.searchProducts("%" + keyword + "%");
+  }
+  
+  @Override
+  public List<Map<String, Object>> suggestMinStock(String warehouseCode, Integer L, Double z, Integer packSize) {
+    // 기본값 가드 (프론트와 동일)
+    int lead = (L == null || L < 1) ? 4 : L;
+    double zval = (z == null || z <= 0) ? 1.65 : z;
+    int pack = (packSize == null || packSize < 1) ? 1 : packSize;
+    
+    return wmInventoryMapper.selectSuggestedMinStock(warehouseCode, lead, zval, pack);
   }
 }

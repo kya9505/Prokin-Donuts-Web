@@ -89,11 +89,16 @@
     <select id="selectFranchiseStatus" parameterType="string" resultType="string">
         SELECT
             CASE
+                -- 가맹점의 진행 중인 발주가 있는 경우 (배송중, 배송준비 상태)
                 WHEN EXISTS (
-                    SELECT 1 FROM `Order` o
+                    SELECT 1
+                    FROM `Order` o
+                             JOIN `OrderDetail` od ON o.orderCode = od.orderCode
                     WHERE o.franchiseCode = #{franchiseCode}
-                      AND o.orderStatus IN ('출고대기')
-                ) THEN '출고진행'
+                      AND od.orderStatus IN ('배송준비', '배송중')
+                ) THEN '발주진행'
+
+                -- 진행 중인 발주가 없으면 삭제 가능 상태
                 ELSE '삭제가능'
                 END AS status
     </select>
