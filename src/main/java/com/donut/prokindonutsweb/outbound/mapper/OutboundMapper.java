@@ -43,5 +43,5 @@ public interface OutboundMapper {
     String selectVehicleScheduleCode();
     void updateVehicleSchedule(VehicleScheduleDTO vehicleScheduleDTO);
     OutboundVO selectOutboundVoOneForUpdate(String outboundCode);
-    void updateOutboundDate(@Param("outboundDate") LocalDate dispatchDate , @Param("outboundCode") String outboundCode);
+    void updateOutbound(OutboundVO outboundVO);
 }

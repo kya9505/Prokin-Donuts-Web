@@ -113,7 +113,7 @@
 
     <!--   섹션복원 (출고완료) -->
     <update id="updateSection">
-        update SECTION set storageCapacity = storageCapacity + #{quantity}
+        update Section set storageCapacity = storageCapacity + #{quantity}
         where sectionCode = #{sectionCode}
     </update>
 
@@ -121,7 +121,7 @@
     <!--섹션코드 존재여부 확인-->
     <select id="checkSection" resultType="boolean">
         select case
-        when exists(select 1 from section where sectionCode = #{sectionCode})
+        when exists(select 1 from Section where sectionCode = #{sectionCode})
         then true
         else false
         end
@@ -257,9 +257,9 @@
         FOR UPDATE
     </select>
 
-    <!--출고일을 차량배치일로 변경 -->
-    <select id="updateOutboundDate" >
-        update Outbound set outboundDate = #{outboundDate}
+    <!--출고 저장 -->
+    <select id="updateOutbound" >
+        update Outbound set vehicleCode = #{vehicleCode}
         where outboundCode = #{outboundCode}
     </select>
 
