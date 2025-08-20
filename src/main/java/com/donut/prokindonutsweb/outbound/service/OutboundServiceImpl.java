@@ -241,23 +241,36 @@ public class OutboundServiceImpl implements OutboundService{
                 failCount++;
                 continue;
             }
+            log.info("출고 상태 : {} ",outboundVO.getOutboundStatus());
 
             // 3. 섹션 코드 생성 및 존재 여부 확인
-            String sectionCode = getSectionCode(warehouseCode, outboundCode);
-            if (!outboundMapper.checkSection(sectionCode)) {
-                log.warn("섹션 없음: {}", outboundCode);
+            String sectionCode = null;
+            try {
+                sectionCode = getSectionCode(warehouseCode, outboundCode);
+                if (!outboundMapper.checkSection(sectionCode)) {
+                    log.warn("섹션 없음: {}", outboundCode);
+                    failCount++;
+                    continue;
+                }
+                log.info("재고코드 : {}", outboundVO.getInventoryCode());
+            } catch (Exception e) {
+                log.error("섹션 처리 중 에러 발생: {}", outboundCode, e);
                 failCount++;
                 continue;
             }
 
             // 4. 출고 완료 처리
             outboundMapper.completionOutbound(outboundCode);
+            log.info("출고완료 : {}" ,outboundVO.getOutboundCode());
 
             // 5. 섹션 용량 반영
             SectionUpdate(sectionCode, outboundVO.getQuantity());
+            log.info("섹션반영 완료");
 
             // 6. 발주 상태 변경 + 메일 발송
             completionOrder(outboundCode);
+            log.info("메일발송 완료");
+
 
             successCount++;
         }

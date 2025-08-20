@@ -121,7 +121,7 @@
     <!--섹션코드 존재여부 확인-->
     <select id="checkSection" resultType="boolean">
         select case
-        when exists(select 1 from section where sectionCode = #{sectionCode})
+        when exists(select 1 from Section where sectionCode = #{sectionCode})
         then true
         else false
         end
