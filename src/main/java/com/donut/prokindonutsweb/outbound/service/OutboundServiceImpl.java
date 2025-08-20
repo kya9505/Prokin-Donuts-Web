@@ -236,7 +236,7 @@ public class OutboundServiceImpl implements OutboundService{
             OutboundVO outboundVO = outboundMapper.selectOutboundVoOneForUpdate(outboundCode);
 
             // 2. 이미 완료된 출고면 실패 처리
-            if (!"출고대기".equals(outboundVO.getOutboundStatus())) {
+            if (!"출고준비".equals(outboundVO.getOutboundStatus())) {
                 log.info("이미 처리된 출고: {}", outboundCode);
                 failCount++;
                 continue;
