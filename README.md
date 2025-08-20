@@ -3,11 +3,17 @@
     </div>
     
 
+
+
 <div align="left">
     <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 프로젝트 소개 </h2>
     <div style="font-weight: 700; font-size: 15px; text-align: center; color: #282d33;">
         <h3> Prokin' Donuts WMS</h3>
         <p>건강한 도넛 브랜드 ‘Prokin Donuts’을 창설하고, 창고 통합 관리를 위한 WMS(Warehouse Management System)의 web기반 시스템을 개발합니다.</p>
+        <h2><strong>👉AWS 기반 배포 완료:</strong>
+          <a href="http://15.165.122.67:8080/" style="text-decoration: none; color: #282d33;">
+    <strong>Prokin' Donuts WMS 바로가기</strong>
+  </a></h2> 
     </div>
 </div>
 
