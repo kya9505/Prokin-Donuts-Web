@@ -40,6 +40,9 @@ public class WmDashboardController {
     
     int inboundWaiting = wmDashboardService.findTodayWaitingInboundCount(warehouseCode); // 오늘 미승인 입고요청 건수
     int orderWaiting = wmDashboardService.findTodayWaitingOrderCount(warehouseCode); // 오늘 미승인 출고요청 건수
+    int expiredInventoryCount = wmDashboardService.findExpiredInventoryCount(warehouseCode); // 유통기한 지난 재고 갯수
+    int underMinStockCount = wmDashboardService.findUnderMinStockCount(warehouseCode); // 적정재고량 미달 제품 갯수
+    
     int coldTemp = wmDashboardService.findSectionTemperature(warehouseCode, "냉장"); // 냉장 섹션 현재 온도
     int frozenTemp = wmDashboardService.findSectionTemperature(warehouseCode, "냉동"); // 냉동 섹션 현재 온도
     int roomTemp = wmDashboardService.findSectionTemperature(warehouseCode, "상온"); // 상온 섹션 현재 온도
@@ -53,6 +56,8 @@ public class WmDashboardController {
     model.addAttribute("warehouseCode", warehouseCode); // 로그인한 창고관리자의 창고코드
     model.addAttribute("inboundWaiting", inboundWaiting); // 오늘 미승인 입고요청 건수
     model.addAttribute("orderWaiting", orderWaiting); // 오늘 미승인 출고요청 건수
+    model.addAttribute("expiredInventoryCount", expiredInventoryCount); // 유통기한 지난 재고 갯수
+    model.addAttribute("underMinStockCount", underMinStockCount); // 적정재고량 미달 제품 갯수
     model.addAttribute("coldTemp", coldTemp); // 냉장 섹션 현재 온도
     model.addAttribute("frozenTemp", frozenTemp); // 냉동 섹션 현재 온도
     model.addAttribute("roomTemp", roomTemp); // 상온 섹션 현재 온도

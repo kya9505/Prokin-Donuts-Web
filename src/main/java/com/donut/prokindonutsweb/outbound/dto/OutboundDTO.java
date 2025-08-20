@@ -11,8 +11,11 @@ import java.time.LocalDate;
 @ToString
 public class OutboundDTO {
     private String outboundCode;
+    private String productCode;
+    private String productName;
     private LocalDate outboundDate;
-    private String outboundStatus;
+    private String vehicleCode;
     private String franchiseCode;
-    private String warehouseCode;
+    private String outboundStatus;
+    private String quantity;
 }

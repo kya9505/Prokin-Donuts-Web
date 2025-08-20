@@ -40,18 +40,86 @@
     </div>
     <nav class="sidebar-nav">
         <ul>
-            <li class="nav-item">
-                <a href="fm-dashboard.html">
-              <span style="color:  #FF9D32; margin-right: 13px;">
-                <i width="20" height="20" viewBox="0 0 20 20" fill="none" class="lni lni-delivery"></i>
+            <li class="nav-item nav-order-status">
+                <a href="<c:url value='/fm/order'/>">
+              <span class="icon">
+                <i class="lni lni-stats-up"></i>
               </span>
-                    <span style="color:  #1c1c1c;">발주관리</span>
+                    <span class="text">발주요청</span>
+                </a>
+            </li>
+            
+            <li class="nav-item nav-order-list">
+                <a href="<c:url value='/fm/list'/>">
+                    <span class="icon">
+                        <i class="lni lni-list"></i>
+                    </span>
+                    <span class="text">발주목록</span>
                 </a>
             </li>
         </ul>
     </nav>
-
 </aside>
+
+<style>
+    /* 깜빡임 방지: 로딩 완료 후 JS에서 visible 처리 */
+    .sidebar-nav-wrapper {
+        visibility: hidden;
+    }
+
+    /* 기본 메뉴 링크 */
+    .sidebar-nav .nav-item > a {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        color: #bbb;               /* 비활성 텍스트 */
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    .sidebar-nav .nav-item > a:hover {
+        color: #1c1c1c;            /* 호버 시 텍스트 진하게 */
+    }
+
+    /* 아이콘 기본 색상: 회색 */
+    .sidebar-nav .nav-item .icon i {
+        margin-right: 13px;
+        color: #bbb;               /* 비활성 아이콘 */
+        transition: color 0.3s ease;
+    }
+    /* 호버 시 아이콘 컬러 */
+    .sidebar-nav .nav-item:hover .icon i {
+        color: #FF9D32;
+    }
+
+    /* 활성 메뉴 */
+    .sidebar-nav .nav-item.active > a {
+        background-color: transparent !important;
+    }
+    .sidebar-nav .nav-item.active .icon i {
+        color: #FF9D32 !important;  /* 활성 시 아이콘 컬러 */
+    }
+    .sidebar-nav .nav-item.active .text {
+        color: #1c1c1c !important;  /* 활성 시 텍스트 컬러 */
+        font-weight: bold;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const path = window.location.pathname;
+
+        // 현재 페이지에 따라 active 클래스 설정
+        if (path.includes('/fm/list')) {
+            document.querySelector('.nav-order-list').classList.add('active');
+        } else if (path.includes('/fm/order')) {
+            document.querySelector('.nav-order-status').classList.add('active');
+        }
+
+        // 깜빡임 방지 → 강조 완료 후 보여줌
+        document.querySelector('.sidebar-nav-wrapper').style.visibility = 'visible';
+    });
+</script>
+
 <div class="overlay"></div>
 <!-- ======== sidebar-nav end =========== -->
 

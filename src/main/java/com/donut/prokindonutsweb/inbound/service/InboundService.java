@@ -25,7 +25,7 @@ public interface InboundService {
 
     Optional<List<InventoryDTO>> findInboundDetailList(String inboundCode);
 
-    void updateInventory(InventoryVO inventoryVO);
+    void updateInventory(List<InventoryDTO> inventoryList);
 
     void updateInbound(List<InboundUpdateDTO> list, LocalDate inboundDate);
 
@@ -38,4 +38,12 @@ public interface InboundService {
     void updateInboundStatus(String inboundCode);
 
     Optional<List<InboundDTO>> findQhInboundList();
+
+    /**
+     * 자동입고 대상 제품 목록을 조회한다.
+     * 적정재고량 이하인 제품들을 반환한다.
+     * @param warehouseCode 창고 코드
+     * @return 자동입고 대상 제품 목록
+     */
+    List<AutoInboundDTO> findAutoInboundProducts(String warehouseCode);
 }

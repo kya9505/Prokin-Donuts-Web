@@ -1,7 +1,9 @@
 package com.donut.prokindonutsweb.inbound.mapper;
 
 
-import com.donut.prokindonutsweb.inbound.dto.InboundDetailVO;
+import com.donut.prokindonutsweb.inbound.dto.InboundStatus;
+import com.donut.prokindonutsweb.inbound.dto.SectionDTO;
+import com.donut.prokindonutsweb.inbound.vo.InboundDetailVO;
 import com.donut.prokindonutsweb.inbound.dto.InboundUpdateDTO;
 import com.donut.prokindonutsweb.inbound.vo.InboundVO;
 import com.donut.prokindonutsweb.inbound.vo.InventoryVO;
@@ -110,33 +112,35 @@ class InboundMapperTest {
     @Test
     @DisplayName("입고 완료 시 상태 변경 메서드")
     void approveInbound() {
-        inboundMapper.approveInbound("IN1");
+        inboundMapper.approveInbound("IN1", InboundStatus.COMPLETE.getStatus());
         inboundMapper.selectAllInboundList().forEach(System.out::println);
     }
 
     @Test
-    @DisplayName("입고 완료시 재고에 반영하는 메서드(재고 O)")
-    void updateInventory1() {
-        InventoryVO vo = InventoryVO.builder()
-                .inventoryCode("BS1-BGL1")
-                .quantity(150)
+    @DisplayName("재고 변경사항 적용 테스트")
+    void updateInventory() {
+        InventoryVO vo1 = InventoryVO.builder()
+                .quantity(100)
                 .productCode("BGL1")
-                .warehouseCode("BS1")
+                .warehouseCode("GG1")
+                .barcode("GG1-BGL1-20250804")
+                .expirationDate(LocalDate.parse("2025-08-04"))
                 .build();
-        inboundMapper.updateInventory(vo);
+
+        InventoryVO vo2 = InventoryVO.builder()
+                .quantity(200)
+                .productCode("DGL3")
+                .warehouseCode("GG1")
+                .barcode("GG1-DGL3-20250805")
+                .expirationDate(LocalDate.parse("2025-08-05"))
+                .build();
+
+        List<InventoryVO> list = new ArrayList<>();
+        list.add(vo1);
+        list.add(vo2);
+        inboundMapper.updateInventory(vo2);
     }
 
-    @Test
-    @DisplayName("입고 완료시 재고에 반영하는 메서드(재고 X)")
-    void updateInventory2() {
-        InventoryVO vo = InventoryVO.builder()
-                .inventoryCode("BS3-BGL1")
-                .quantity(150)
-                .productCode("BGL1")
-                .warehouseCode("BS1")
-                .build();
-        inboundMapper.updateInventory(vo);
-    }
 
     @Test
     @DisplayName("입고 날짜 수정 메서드")
@@ -165,7 +169,7 @@ class InboundMapperTest {
     @Test
     @DisplayName("입고 취소(입고상태 -> 입고취소)")
     void deleteInbound() {
-        inboundMapper.deleteInbound("IN7");
+        inboundMapper.deleteInbound("IN7",  InboundStatus.CANCEL.getStatus());
     }
 
     @Test
@@ -177,7 +181,18 @@ class InboundMapperTest {
     @Test
     @DisplayName("본사관리자의 입고승인(-> 승인대기)")
     void updateQhInboundStatus() {
-        inboundMapper.updateQhInboundStatus("IN15");
+        inboundMapper.updateQhInboundStatus("IN15", InboundStatus.APPROVE.getStatus());
+    }
+
+    @Test
+    @DisplayName("입고 완료 시 섹션 수용한도 감소")
+    void updateSection() {
+        SectionDTO dto = SectionDTO.builder()
+                .sectionCode("GG1-R")
+                .quantity(111)
+                .build();
+
+        inboundMapper.updateSection(dto);
     }
 
 }

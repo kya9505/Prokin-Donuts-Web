@@ -85,16 +85,36 @@
     <select id="selectWarehouseStatus" resultType="string">
         SELECT
             CASE
+                -- 입고 상태가 진행 중인 경우 (입고요청, 승인대기)
                 WHEN EXISTS (
                     SELECT 1 FROM Inbound
                     WHERE warehouseCode = #{warehouseCode}
                       AND inboundStatus IN ('입고진행', '승인대기')
                 ) THEN '입고진행'
+
+                -- 출고 상태가 준비 중인 경우 (출고준비 또는 출고대기)
+                WHEN EXISTS (
+                    SELECT 1
+                    FROM OrderDetail od
+                             JOIN Outbound ob ON od.orderDetailCode = ob.orderDetailCode
+                    WHERE od.orderStatus = '배송준비'
+                      AND ob.outboundStatus IN ('출고준비', '출고대기')
+                      AND EXISTS (
+                        SELECT 1
+                        FROM Inventory i
+                        WHERE i.warehouseCode = #{warehouseCode}
+                          AND i.inventoryCode = ob.inventoryCode
+                    )
+                ) THEN '출고진행'
+
+                -- 재고가 있는 경우
                 WHEN EXISTS (
                     SELECT 1 FROM Inventory
                     WHERE warehouseCode = #{warehouseCode}
                       AND quantity > 0
                 ) THEN '재고있음'
+
+                -- 진행 중인 입고/출고 작업이 없고 재고도 없는 경우
                 ELSE '삭제가능'
                 END AS status
     </select>

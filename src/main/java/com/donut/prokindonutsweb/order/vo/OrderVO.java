@@ -12,7 +12,5 @@ import java.time.LocalDate;
 public class OrderVO {
     private String orderCode;
     private LocalDate orderDate;
-    private String orderStatus;
     private String franchiseCode;
-    private String warehouseCode;
 }

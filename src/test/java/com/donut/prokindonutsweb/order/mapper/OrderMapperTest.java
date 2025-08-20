@@ -1,8 +1,5 @@
 package com.donut.prokindonutsweb.order.mapper;
 
-import com.donut.prokindonutsweb.inbound.dto.InboundDetailVO;
-import com.donut.prokindonutsweb.inbound.mapper.InboundMapper;
-import com.donut.prokindonutsweb.inbound.vo.InboundVO;
 import com.donut.prokindonutsweb.order.vo.OrderDetailVO;
 import com.donut.prokindonutsweb.order.vo.OrderVO;
 import lombok.extern.slf4j.Slf4j;
@@ -32,9 +29,7 @@ public class OrderMapperTest {
         OrderVO vo = OrderVO.builder()
                 .orderCode("ORD9")
                 .orderDate(LocalDate.parse("2025-04-20"))
-                .orderStatus("출고대기")
                 .franchiseCode("DJF1")
-                .warehouseCode("GG1")
                 .build();
 
         orderMapper.insertOrder(vo);
@@ -82,6 +77,18 @@ public class OrderMapperTest {
     void findWarehouseCode() {
         List<String> list = orderMapper.findWarehouseCode();
         list.forEach(log::info);
+    }
+    @Test
+    @DisplayName("재고코드  반환")
+    void findInventoryCode() {
+        String Code = orderMapper.findInventoryCode("GG1","DGL4",900);
+        log.info(Code);
+    }
+    @Test
+    @DisplayName("창고코드  반환")
+    void findWarehouseCodeOne() {
+        String Code = orderMapper.findWarehouseCodeOne("GG");
+        log.info(Code);
     }
 
 }

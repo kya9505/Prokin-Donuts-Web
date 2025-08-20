@@ -29,6 +29,9 @@ dependencies {
     testImplementation 'javax.servlet:javax.servlet-api:4.0.1'
 
 
+    providedCompile 'javax.servlet:javax.servlet-api:4.0.1'
+    providedCompile 'javax.servlet.jsp:javax.servlet.jsp-api:2.3.3'
+
     /**
      * Spring Framework 의 핵심 기능을 프로젝트에 포함시킨다.
      */

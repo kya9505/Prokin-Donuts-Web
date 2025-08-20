@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @ToString
 public class OrderDetailDTO {
+    private String OrderDetailCode;
     private String OrderCode;
     private String productCode;
     private String productName;
@@ -18,4 +19,6 @@ public class OrderDetailDTO {
     private String storedType;
     @Min(value=100, message ="수량은 최소 100개 이상부터 선택 가능합니다.")
     private Integer quantity;
+    private String orderStatus;
+
 }
