@@ -257,12 +257,6 @@
         FOR UPDATE
     </select>
 
-    <!--출고일을 차량배치일로 변경 -->
-    <select id="updateOutboundDate" >
-        update Outbound set outboundDate = #{outboundDate}
-        where outboundCode = #{outboundCode}
-    </select>
-
     <!--출고 저장 -->
     <select id="updateOutbound" >
         update Outbound set vehicleCode = #{vehicleCode}
